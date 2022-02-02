@@ -1,5 +1,6 @@
 .bundle
 .rubocop-http*
 .yardoc
+config
 doc/yard
 tmp
