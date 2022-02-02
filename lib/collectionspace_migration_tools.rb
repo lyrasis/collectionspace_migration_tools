@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "zeitwerk"
+require 'zeitwerk'
 
 Zeitwerk::Loader.for_gem.setup
 
