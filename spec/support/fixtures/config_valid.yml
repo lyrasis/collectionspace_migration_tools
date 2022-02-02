@@ -1,0 +1,14 @@
+client:
+  base_uri: https://core.dev.collectionspace.org/cspace-services
+  username: admin@core.collectionspace.org
+  password: Administrator
+  page_size: 50
+database:
+  db_user: username
+  db_password: pwstring
+  db_name: db_db
+  db_host: target-db-host.collectionspace.org
+  bastion_user: busername
+  bastion_host: target-db-host-bastion.collectionspace.org
+  host: localhost
+  port: 5432

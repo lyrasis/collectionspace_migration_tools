@@ -6,4 +6,5 @@ Zeitwerk::Loader.for_gem.setup
 
 # Main namespace.
 module CollectionspaceMigrationTools
+  ::CMT = CollectionspaceMigrationTools
 end
