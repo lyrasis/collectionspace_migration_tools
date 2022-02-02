@@ -1,0 +1,62 @@
+:toc: macro
+:toclevels: 5
+:figure-caption!:
+
+= Collectionspace Migration Tools
+
+[link=https://www.alchemists.io/projects/code_quality]
+image::https://img.shields.io/badge/code_style-alchemists-brightgreen.svg[Alchemists Style Guide]
+
+toc::[]
+
+== Features
+
+== Screencasts
+
+== Requirements
+
+. link:https://www.ruby-lang.org[Ruby].
+
+== Setup
+
+To set up the project, run:
+
+[source,bash]
+----
+bin/setup
+----
+
+== Usage
+
+== Development
+
+You can also use the IRB console for direct access to all objects:
+
+[source,bash]
+----
+bin/console
+----
+
+== Tests
+
+To test, run:
+
+[source,bash]
+----
+bundle exec rake
+----
+
+== link:[License]
+
+== link:[Security]
+
+== link:[Code of Conduct]
+
+== link:[Contributions]
+
+== link:[Versions]
+
+== Credits
+
+* Built with link:https://www.alchemists.io/projects/rubysmith[Rubysmith].
+* Engineered by link:https://github.com/kspurgin[Kristina Spurgin].
