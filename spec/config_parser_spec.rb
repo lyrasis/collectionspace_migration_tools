@@ -4,7 +4,7 @@ require 'spec_helper'
 
 RSpec.describe CollectionspaceMigrationTools::ConfigParser do
   let(:config_path) { File.join(Bundler.root.to_s, 'spec', 'support', 'fixtures', config_file) }
-  let(:result) { described_class.call(config: config_path) }
+  let(:result) { described_class.call(config_path) }
     
   context 'with valid file and yaml' do
     let(:config_file) { 'config_valid.yml' }

@@ -2,5 +2,6 @@
 .rubocop-http*
 .yardoc
 config
+coverage
 doc/yard
 tmp
