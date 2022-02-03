@@ -2,9 +2,9 @@
 # frozen_string_literal: true
 
 require 'bundler/setup'
-Bundler.require :tools
+Bundler.require(:tools)
 
 require_relative '../lib/collectionspace_migration_tools'
 require 'irb'
 
-IRB.start __FILE__
+IRB.start(__FILE__)

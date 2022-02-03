@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../spec_helper'
+require_relative '../../spec_helper'
 
 RSpec.describe CollectionspaceMigrationTools::Validate::ConfigDatabaseContract do
   let(:valid_config) do
@@ -12,10 +12,11 @@ RSpec.describe CollectionspaceMigrationTools::Validate::ConfigDatabaseContract d
       bastion_host: 'target-db-bastion.collectionspace.org'
     }
   end
-  let(:result) { described_class.new.(client_config).to_monad }
+  let(:result){ described_class.new.call(client_config).to_monad }
 
   context 'with valid data' do
-    let(:client_config) { valid_config }
+    let(:client_config){ valid_config }
+
     it 'returns Success' do
       expect(result).to be_a(Dry::Monads::Success)
     end
@@ -23,11 +24,14 @@ RSpec.describe CollectionspaceMigrationTools::Validate::ConfigDatabaseContract d
 
   context 'with hosts swapped' do
     let(:client_config) do
-      valid_config.merge({db_host: 'target-db-bastion.collectionspace.org', bastion_host: 'target-db.collectionspace.org'})
+      valid_config.merge({
+        db_host: 'target-db-bastion.collectionspace.org',
+        bastion_host: 'target-db.collectionspace.org'
+      })
     end
+
     it 'returns Failure' do
       expect(result).to be_a(Dry::Monads::Failure)
     end
   end
 end
-

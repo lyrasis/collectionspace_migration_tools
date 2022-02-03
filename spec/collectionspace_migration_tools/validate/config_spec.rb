@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require_relative '../spec_helper'
+require_relative '../../spec_helper'
 
 RSpec.describe CollectionspaceMigrationTools::Validate::Config do
   let(:valid_config) do
     {
       client: {
-      base_uri: 'something/cspace-services',
-      username: 'valid@email.com',
-      password: 'string',
-      page_size: 19
-    },
+        base_uri: 'something/cspace-services',
+        username: 'valid@email.com',
+        password: 'string',
+        page_size: 19
+      },
       database: {
         db_password: 'password',
         db_name: 'db_db',
@@ -21,12 +21,13 @@ RSpec.describe CollectionspaceMigrationTools::Validate::Config do
       }
     }
   end
-  
-  let(:result) { described_class.call(config_data) }
+
+  let(:result){ described_class.call(config_data) }
 
   context 'with valid data' do
-    let(:config_data) { valid_config.dup }
-    it 'returns Success' do
+    let(:config_data){ valid_config.dup }
+
+    it 'returns Success containing Hash', :aggregate_failures do
       expect(result.success?).to be true
       expect(result.value!).to be_a(Hash)
     end
@@ -38,7 +39,8 @@ RSpec.describe CollectionspaceMigrationTools::Validate::Config do
       data[:client][:base_uri] = 'something/cspace'
       data
     end
-    it 'returns Failure' do
+
+    it 'returns Failure with expected message', :aggregate_failures do
       expect(result).to be_a(Dry::Monads::Failure)
       expect(result.failure.message).to eq('base_uri must end with "/cspace-services"')
     end
@@ -50,7 +52,8 @@ RSpec.describe CollectionspaceMigrationTools::Validate::Config do
       data[:database][:db_host] = 'target-db-bastion.collectionspace.org'
       data
     end
-    it 'returns Failure' do
+
+    it 'returns Failure with expected message', :aggregate_failures do
       expect(result).to be_a(Dry::Monads::Failure)
       expect(result.failure.message).to eq('db_host must not contain "-bastion"')
     end
@@ -63,10 +66,11 @@ RSpec.describe CollectionspaceMigrationTools::Validate::Config do
       data[:database][:db_host] = 'target-db-bastion.collectionspace.org'
       data
     end
-    it 'returns Failure' do
+
+    it 'returns Failure with expected message', :aggregate_failures do
       expect(result).to be_a(Dry::Monads::Failure)
-      expect(result.failure.message).to eq('base_uri must end with "/cspace-services"; db_host must not contain "-bastion"')
+      msg = 'base_uri must end with "/cspace-services"; db_host must not contain "-bastion"'
+      expect(result.failure.message).to eq(msg)
     end
   end
 end
-

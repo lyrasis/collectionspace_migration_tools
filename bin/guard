@@ -3,4 +3,4 @@
 
 require 'bundler/setup'
 
-load Gem.bin_path 'guard', 'guard'
+load Gem.bin_path('guard', 'guard')

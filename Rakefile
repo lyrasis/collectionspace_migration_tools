@@ -10,7 +10,7 @@ require 'yard'
 
 Bundler::Plumber::Task.new
 Reek::Rake::Task.new
-RSpec::Core::RakeTask.new :spec
+RSpec::Core::RakeTask.new(:spec)
 RuboCop::RakeTask.new
 
 YARD::Rake::YardocTask.new do |task|
