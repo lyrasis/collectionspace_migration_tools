@@ -17,6 +17,22 @@
         "branches": {
         }
       },
+      "/Users/kristina/code/collectionspace_migration_tools/spec/helpers.rb": {
+        "lines": [
+          null,
+          null,
+          1,
+          1,
+          null,
+          1,
+          6,
+          null,
+          null,
+          null
+        ],
+        "branches": {
+        }
+      },
       "/Users/kristina/code/collectionspace_migration_tools/spec/support/shared_contexts/temp_dir.rb": {
         "lines": [
           null,
@@ -49,26 +65,26 @@
           1,
           null,
           1,
+          21,
+          null,
+          null,
+          1,
+          null,
+          1,
+          10,
+          null,
+          1,
+          1,
+          null,
           9,
           null,
           null,
           1,
-          null,
-          1,
-          4,
-          null,
-          1,
-          1,
-          null,
-          3,
-          null,
-          null,
-          1,
-          5,
+          11,
           null,
           1,
           null,
-          4,
+          10,
           null,
           null,
           null,
@@ -273,15 +289,6 @@
           1,
           null,
           1,
-          1,
-          2,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
           3,
           null,
           1,
@@ -295,9 +302,9 @@
           1,
           1,
           1,
-          null,
-          null,
-          null,
+          1,
+          1,
+          1,
           null,
           null,
           1,
@@ -324,6 +331,9 @@
           1,
           1,
           1,
+          1,
+          1,
+          1,
           null,
           null,
           1,
@@ -338,13 +348,13 @@
           null
         ],
         "branches": {
-          "[:if, 0, 17, 8, 17, 72]": {
-            "[:then, 1, 17, 8, 17, 51]": 4,
-            "[:else, 2, 17, 8, 17, 72]": 4
+          "[:if, 0, 20, 8, 20, 72]": {
+            "[:then, 1, 20, 8, 20, 51]": 4,
+            "[:else, 2, 20, 8, 20, 72]": 4
           },
-          "[:unless, 3, 21, 8, 21, 72]": {
-            "[:else, 4, 21, 8, 21, 72]": 6,
-            "[:then, 5, 21, 8, 21, 47]": 2
+          "[:unless, 3, 24, 8, 24, 72]": {
+            "[:else, 4, 24, 8, 24, 72]": 6,
+            "[:then, 5, 24, 8, 24, 47]": 2
           }
         }
       },
@@ -355,25 +365,6 @@
           1,
           null,
           1,
-          1,
-          null,
-          4,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
           5,
           null,
           1,
@@ -501,6 +492,6 @@
         }
       }
     },
-    "timestamp": 1643929025
+    "timestamp": 1644016555
   }
 }

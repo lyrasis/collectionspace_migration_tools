@@ -3,25 +3,6 @@
 require_relative '../../spec_helper'
 
 RSpec.describe CollectionspaceMigrationTools::Validate::Config do
-  let(:valid_config) do
-    {
-      client: {
-        base_uri: 'something/cspace-services',
-        username: 'valid@email.com',
-        password: 'string',
-        page_size: 19
-      },
-      database: {
-        db_password: 'password',
-        db_name: 'db_db',
-        db_host: 'target-db.collectionspace.org',
-        bastion_user: 'me',
-        bastion_host: 'target-db-bastion.collectionspace.org'
-
-      }
-    }
-  end
-
   let(:result){ described_class.call(config_data) }
 
   context 'with valid data' do

@@ -4,11 +4,11 @@ client:
   password: Administrator
   page_size: 50
 database:
-  db_user: username
+  port: 5432
   db_password: pwstring
   db_name: db_db
   db_host: target-db-host.collectionspace.org
+  db_user: username
+  db_connect_host: hostname
   bastion_user: busername
   bastion_host: target-db-host-bastion.collectionspace.org
-  host: localhost
-  port: 5432

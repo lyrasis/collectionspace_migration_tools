@@ -7,6 +7,7 @@ require 'simplecov'
 SimpleCov.start{ enable_coverage :branch }
 
 require 'collectionspace_migration_tools'
+require_relative './helpers'
 require 'refinements'
 
 using Refinements::Pathnames
@@ -14,6 +15,7 @@ using Refinements::Pathnames
 Pathname.require_tree(__dir__, 'support/shared_contexts/**/*.rb')
 
 RSpec.configure do |config|
+  config.include Helpers
   config.color = true
   config.disable_monkey_patching!
   config.example_status_persistence_file_path = './tmp/rspec-examples.txt'

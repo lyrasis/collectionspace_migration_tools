@@ -11,6 +11,9 @@ module CollectionspaceMigrationTools
         required(:db_host).filled(:string)
         required(:bastion_user).filled(:string)
         required(:bastion_host).filled(:string)
+        required(:port).filled(:integer)
+        required(:db_user).filled(:string)
+        required(:db_connect_host).filled(:string)
       end
 
       rule(:db_host) do

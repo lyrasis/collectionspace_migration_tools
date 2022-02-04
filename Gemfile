@@ -6,6 +6,7 @@ source 'https://rubygems.org'
 
 gem 'bcrypt_pbkdf', '~> 1.0'
 gem 'dry-monads', '~> 1.4'
+gem 'dry-transaction', '~>0.13'
 gem 'dry-validation', '~> 1.7'
 gem 'ed25519', '~> 1.2'
 gem 'net-ssh-gateway', '~> 2'
