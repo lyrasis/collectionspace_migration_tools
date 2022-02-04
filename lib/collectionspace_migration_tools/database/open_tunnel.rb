@@ -10,25 +10,23 @@ module CollectionspaceMigrationTools
         include Dry::Monads[:result]
 
         def call
-          open_tunnel.fmap do |tunnel|
-            tunnel
-          end
+          open_tunnel.fmap{ |tunnel| tunnel }
         end
-        
+
         private
 
         def open_tunnel
-          tunnel = fork{ exec tunnel_command }
+          tunnel = fork{ exec(tunnel_command) }
         rescue StandardError => err
           Failure(CMT::Failure.new(context: "#{name}.#{__callee__}", message: err))
         else
-          
           Process.detach(tunnel)
 
           if tunnel.is_a?(Integer)
             Success(tunnel)
           else
-            Failure(CMT::Failure.new(context: "#{name}.#{__callee__}", message: 'Tunnel not created'))
+            Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
+                                     message: 'Tunnel not created'))
           end
         end
 
@@ -37,11 +35,10 @@ module CollectionspaceMigrationTools
           db_host = CMT.config.database.db_host
           user = CMT.config.database.bastion_user
           host = CMT.config.database.bastion_host
-          
+
           %(ssh -N -L #{port}:#{db_host}:#{port} #{user}@#{host})
         end
       end
     end
   end
 end
-

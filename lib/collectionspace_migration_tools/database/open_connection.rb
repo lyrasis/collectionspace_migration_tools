@@ -17,18 +17,22 @@ module CollectionspaceMigrationTools
             end
           end
         end
-        
+
         private
 
-        def get_connection(tunnel)
-          sleep(3)
-          connection = PG::Connection.new(
+        def db_info
+          {
             host: CMT.config.database.db_connect_host,
             port: CMT.config.database.port,
             dbname: CMT.config.database.db_name,
             user: CMT.config.database.db_user,
-            password: CMT.config.database.db_password,
-          )
+            password: CMT.config.database.db_password
+          }
+        end
+
+        def get_connection(tunnel)
+          sleep(3)
+          connection = PG::Connection.new(**db_info)
         rescue StandardError => err
           CMT::DB::CloseTunnel.call(tunnel)
           Failure(CMT::Failure.new(context: "#{name}.#{__callee__}", message: err.message))

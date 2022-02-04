@@ -8,11 +8,11 @@ module CollectionspaceMigrationTools
     class CloseConnection
       class << self
         include Dry::Monads[:result]
-        
+
         def call(connection)
           db = connection.db
           db.close if db_connected?(db).success?
-          CMT::DB::CloseTunnel.call(connection.tunnel)
+          CMT::DB.close_tunnel(connection.tunnel)
         end
 
         private
