@@ -3,7 +3,10 @@
 ruby File.read('.ruby-version').strip
 
 source 'https://rubygems.org'
+git_source(:github){ |repo_name| "https://github.com/#{repo_name}" }
 
+gem 'collectionspace-client', tag: 'v0.13.1', git: 'https://github.com/collectionspace/collectionspace-client.git'
+gem 'collectionspace-refcache', tag: 'v0.7.7', git: 'https://github.com/collectionspace/collectionspace-refcache.git'
 gem 'dry-monads', '~> 1.4'
 gem 'dry-transaction', '~>0.13'
 gem 'dry-validation', '~> 1.7'
