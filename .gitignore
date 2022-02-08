@@ -1,6 +1,7 @@
 .bundle
 .rubocop-http*
 .yardoc
+config.yml
 config
 coverage
 doc/yard
