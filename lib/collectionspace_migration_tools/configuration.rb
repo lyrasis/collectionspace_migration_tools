@@ -8,6 +8,8 @@ module CollectionspaceMigrationTools
     include Dry::Monads[:result]
     include Dry::Monads::Do.for(:validated_config_data)
 
+    attr_reader :client, :database
+    
     def initialize(config_path)
       @path = config_path
       validated_config_data.either(
@@ -29,7 +31,6 @@ module CollectionspaceMigrationTools
     def build_config(result)
       result.each do |section, config_data|
         instance_variable_set("@#{section}".to_sym, section_struct(config_data))
-        self.class.class_eval{ attr_reader(section) }
       end
     end
 
