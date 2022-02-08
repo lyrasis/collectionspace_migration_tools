@@ -6,7 +6,7 @@ RSpec.describe CollectionspaceMigrationTools::Validate::ConfigDatabaseContract d
   let(:result){ described_class.new.call(client_config).to_monad }
 
   context 'with valid data' do
-    let(:client_config){ valid_config[:database].dup }
+    let(:client_config){ valid_config_hash[:database].dup }
 
     it 'returns Success' do
       expect(result).to be_a(Dry::Monads::Success)
@@ -15,7 +15,7 @@ RSpec.describe CollectionspaceMigrationTools::Validate::ConfigDatabaseContract d
 
   context 'with hosts swapped' do
     let(:client_config) do
-      config = valid_config[:database].dup
+      config = valid_config_hash[:database].dup
       config[:db_host] = 'target-db-bastion.collectionspace.org'
       config[:bastion_host] = 'target-db.collectionspace.org'
       config

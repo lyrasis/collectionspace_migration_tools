@@ -6,7 +6,7 @@ RSpec.describe CollectionspaceMigrationTools::Validate::Config do
   let(:result){ described_class.call(config_data) }
 
   context 'with valid data' do
-    let(:config_data){ valid_config.dup }
+    let(:config_data){ valid_config_hash.dup }
 
     it 'returns Success containing Hash', :aggregate_failures do
       expect(result.success?).to be true
@@ -16,7 +16,7 @@ RSpec.describe CollectionspaceMigrationTools::Validate::Config do
 
   context 'with invalid client config' do
     let(:config_data) do
-      data = valid_config.dup
+      data = valid_config_hash.dup
       data[:client][:base_uri] = 'something/cspace'
       data
     end
@@ -29,7 +29,7 @@ RSpec.describe CollectionspaceMigrationTools::Validate::Config do
 
   context 'with invalid db config' do
     let(:config_data) do
-      data = valid_config.dup
+      data = valid_config_hash.dup
       data[:database][:db_host] = 'target-db-bastion.collectionspace.org'
       data
     end
@@ -42,7 +42,7 @@ RSpec.describe CollectionspaceMigrationTools::Validate::Config do
 
   context 'with invalid client and db config' do
     let(:config_data) do
-      data = valid_config.dup
+      data = valid_config_hash.dup
       data[:client][:base_uri] = 'something/cspace'
       data[:database][:db_host] = 'target-db-bastion.collectionspace.org'
       data
