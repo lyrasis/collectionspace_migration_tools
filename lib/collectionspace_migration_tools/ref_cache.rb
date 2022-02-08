@@ -4,16 +4,15 @@ require 'collectionspace/refcache'
 require 'dry/monads'
 
 module CollectionspaceMigrationTools
-  # Namespace and shared data/functions for the cache
-  module Cache
-
+  # Service object to return a CollectionSpace::RefCache object
+  class RefCache
     class << self
       include Dry::Monads[:result]
 
       def call
         CMT::Client.call.bind do |client|
           @client = client
-          build_config.bind do |config|
+          build_cache_config.bind do |config|
             @config = config
             build_cache
           end
@@ -32,7 +31,7 @@ module CollectionspaceMigrationTools
         Failure(CMT::Failure.new(context: "#{name}.#{__callee__}", message: 'No CS RefCache object'))
       end
       
-      def build_config
+      def build_cache_config
         config = {
           domain: @client.domain,
           error_if_not_found: false,
@@ -49,8 +48,5 @@ module CollectionspaceMigrationTools
         Failure(CMT::Failure.new(context: "#{name}.#{__callee__}", message: 'No RefCache Configuration object'))
       end
     end
-    
-    module_function
-
   end
 end
