@@ -10,11 +10,11 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
 
       def call
-        build_config.bind do |config|
-          build_client(config).bind do |client|
-            verify(client)
+        build_client_config.bind do |config|
+            build_client(config).bind do |client|
+              verify(client)
+            end
           end
-        end
       end
 
       private
@@ -29,7 +29,7 @@ module CollectionspaceMigrationTools
         Failure(CMT::Failure.new(context: "#{name}.#{__callee__}", message: 'No CS Client object'))
       end
       
-      def build_config
+      def build_client_config
         config = CollectionSpace::Configuration.new(
           base_uri: CMT.config.client.base_uri,
           username: CMT.config.client.username,
