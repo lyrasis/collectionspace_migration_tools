@@ -12,9 +12,7 @@ module CollectionspaceMigrationTools
 
         def call
           CMT::DB::OpenTunnel.call.bind do |tunnel|
-            get_connection(tunnel).bind do |connection|
-              connection
-            end
+            get_connection(tunnel)
           end
         end
 
