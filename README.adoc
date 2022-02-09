@@ -9,15 +9,13 @@ image::https://img.shields.io/badge/code_style-alchemists-brightgreen.svg[Alchem
 
 toc::[]
 
-== Features
-
-== Screencasts
 
 == Requirements
 
-. link:https://www.ruby-lang.org[Ruby].
+. link:https://www.ruby-lang.org[Ruby] 3.1.0.
 
 == Setup
+
 
 To set up the project, run:
 
@@ -25,6 +23,15 @@ To set up the project, run:
 ----
 bin/setup
 ----
+
+Then, copy `sample_config.yml` to `config.yml` and edit `config.yml` to reflect the CS instance you will be working on.
+
+The application reads in `config.yml` to set up everything. 
+
+[TIP]
+====
+Save multiple .yml configs in the `/config` folder. Name them for the instances you are working with. The contents of this folder are not tracked by git, so secure details will not inadvertently end up in Github. To switch instances/projects, `cp config/my_instance.yml config.yml`
+====
 
 == Usage
 

@@ -9,6 +9,10 @@ module CollectionspaceMigrationTools
   ::CMT = CollectionspaceMigrationTools
 
   class << self
+    def config
+      @config ||= CMT::Configuration.new('config.yml')
+    end
+
     def client
       return @client if instance_variable_defined?(:@client)
       

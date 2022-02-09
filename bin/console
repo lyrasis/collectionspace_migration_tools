@@ -7,12 +7,4 @@ Bundler.require(:tools)
 require_relative '../lib/collectionspace_migration_tools'
 require 'irb'
 
-module CollectionspaceMigrationTools
-  class << self
-    def config
-      @config ||= CMT::Configuration.new('config/csws_staging.yml')
-    end
-  end
-end
-
 IRB.start(__FILE__)

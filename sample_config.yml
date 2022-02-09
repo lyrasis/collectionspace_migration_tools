@@ -1,0 +1,14 @@
+client:
+  base_uri: https://my.cs-instance.org/cspace-services
+  username: admin@my.cs-instance.org
+  password: mypassword
+  page_size: 50
+database:
+  port: 5432
+  db_password: dbpassword
+  db_name: cs_cs
+  db_host: cs_staging_db.cs-instance.org
+  db_user: dbadminuser
+  db_connect_host: localhost
+  bastion_user: user_for_ssh_tunneling_through_bastion
+  bastion_host: cs_staging_db-bastion.cs-instance.org
