@@ -11,18 +11,18 @@ module CollectionspaceMigrationTools
 
       def call
         CMT::Client.call.bind do |client|
-          @client = client
-          build_cache_config.bind do |config|
-            @config = config
-            build_cache
+          build_cache_config(client).bind do |config|
+            build_cache(client, config).fmap do |refcache|
+              CMT::Cache::WithClient.new(client, refcache)
+            end
           end
         end
       end
 
       private
 
-      def build_cache
-        cache = CollectionSpace::RefCache.new(config: @config, client: @client)
+      def build_cache(client, config)
+        cache = CollectionSpace::RefCache.new(config: config, client: client)
       rescue StandardError => err
         Failure(CMT::Failure.new(context: "#{name}.#{__callee__}", message: err.message))
       else
@@ -31,9 +31,10 @@ module CollectionspaceMigrationTools
         Failure(CMT::Failure.new(context: "#{name}.#{__callee__}", message: 'No CS RefCache object'))
       end
       
-      def build_cache_config
+      def build_cache_config(client)
         config = {
-          domain: @client.domain,
+          redis: 'redis://localhost:6379/1',
+          domain: client.domain,
           error_if_not_found: false,
           lifetime: 60 * 60 * 24 * 7, #a week
           search_delay: 0,

@@ -25,5 +25,18 @@ module CollectionspaceMigrationTools
       puts client.failure.to_s
       exit
     end
+
+    def refcache
+      return @refcache if instance_variable_defined?(:@refcache)
+      
+      refcache = CMT::RefCache.call
+      if refcache.success?
+        @refcache = refcache.value!
+        return @refcache
+      end
+
+      puts refcache.failure.to_s
+      exit
+    end
   end
 end
