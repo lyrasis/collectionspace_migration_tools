@@ -5,7 +5,7 @@ ruby File.read('.ruby-version').strip
 source 'https://rubygems.org'
 git_source(:github){ |repo_name| "https://github.com/#{repo_name}" }
 
-gem 'collectionspace-client', tag: 'v0.13.2', git: 'https://github.com/collectionspace/collectionspace-client.git'
+gem 'collectionspace-client', tag: 'v0.13.4', git: 'https://github.com/collectionspace/collectionspace-client.git'
 gem 'collectionspace-refcache', tag: 'v0.7.7', git: 'https://github.com/collectionspace/collectionspace-refcache.git'
 gem 'collectionspace-mapper', tag: 'v3.0.0', git: 'https://github.com/collectionspace/collectionspace-mapper.git'
 
@@ -32,6 +32,7 @@ group :development do
   gem 'asciidoctor', '~> 2.0'
   gem 'rake', '~> 13.0'
   gem 'yard', '~> 0.9'
+  gem 'time_up'
 end
 
 group :test do
