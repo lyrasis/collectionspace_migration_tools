@@ -12,9 +12,7 @@ module CollectionspaceMigrationTools
       def call
         CMT::Client.call.bind do |client|
           build_cache_config(client).bind do |config|
-            build_cache(client, config).fmap do |refcache|
-              CMT::Cache::WithClient.new(client, refcache)
-            end
+            build_cache(client, config)
           end
         end
       end

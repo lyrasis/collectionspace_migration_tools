@@ -7,9 +7,9 @@ RSpec.describe CollectionspaceMigrationTools::RefCache do
   
   describe '.call' do
     context 'with valid config' do
-      it 'returns a Success containing a CollectionSpace::Cache::WithClient object', :aggregate_failures do
+      it 'returns a Success containing a CollectionSpace::RefCache object', :aggregate_failures do
         expect(result).to be_a(Dry::Monads::Success)
-        expect(result.value!).to be_a(CollectionspaceMigrationTools::Cache::WithClient)
+        expect(result.value!).to be_a(CollectionSpace::RefCache)
       end
     end
 
