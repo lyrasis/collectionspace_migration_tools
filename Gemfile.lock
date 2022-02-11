@@ -35,6 +35,8 @@ GEM
     amazing_print (1.4.0)
     asciidoctor (2.0.17)
     ast (2.4.2)
+    benchmark-memory (0.2.0)
+      memory_profiler (~> 1)
     bundler-leak (0.2.0)
       bundler (>= 1.2.0, < 3)
       thor (>= 0.18, < 2)
@@ -132,6 +134,7 @@ GEM
       rb-inotify (~> 0.9, >= 0.9.10)
     lumberjack (1.2.8)
     memo_wise (1.1.0)
+    memory_profiler (1.0.0)
     method_source (1.0.0)
     mime-types (3.4.1)
       mime-types-data (~> 3.2015)
@@ -228,6 +231,7 @@ PLATFORMS
 DEPENDENCIES
   amazing_print (~> 1.4)
   asciidoctor (~> 2.0)
+  benchmark-memory (~> 0.2)
   bundler-leak (~> 0.2)
   collectionspace-client!
   collectionspace-mapper!

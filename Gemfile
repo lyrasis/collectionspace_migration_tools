@@ -5,10 +5,10 @@ ruby File.read('.ruby-version').strip
 source 'https://rubygems.org'
 git_source(:github){ |repo_name| "https://github.com/#{repo_name}" }
 
+gem 'benchmark-memory', '~> 0.2'
 gem 'collectionspace-client', tag: 'v0.13.4', git: 'https://github.com/collectionspace/collectionspace-client.git'
-gem 'collectionspace-refcache', tag: 'v0.7.7', git: 'https://github.com/collectionspace/collectionspace-refcache.git'
 gem 'collectionspace-mapper', tag: 'v3.0.0', git: 'https://github.com/collectionspace/collectionspace-mapper.git'
-
+gem 'collectionspace-refcache', tag: 'v0.7.7', git: 'https://github.com/collectionspace/collectionspace-refcache.git'
 gem 'dry-monads', '~> 1.4'
 gem 'dry-transaction', '~>0.13'
 gem 'dry-validation', '~> 1.7'

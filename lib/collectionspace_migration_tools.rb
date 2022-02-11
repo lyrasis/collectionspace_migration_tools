@@ -4,7 +4,7 @@ require 'zeitwerk'
 
 Zeitwerk::Loader.for_gem.setup
 
-# Main namespace.
+# Main namespace
 module CollectionspaceMigrationTools
   ::CMT = CollectionspaceMigrationTools
 
@@ -40,3 +40,34 @@ module CollectionspaceMigrationTools
     end
   end
 end
+
+# Adding for benchmarking cache population
+module CollectionSpace
+  # patch in size
+  class RefCache
+    def size
+      @cache.size
+    end
+
+    def reset
+      @cache.reset
+    end
+
+    module Backend
+      # patch in size
+      class Redis
+        def reset
+          @c.flushdb
+        end
+        
+        def size
+          @c.dbsize
+        end
+      end
+    end
+  end
+end
+# End added for benchmarking
+
+pop = CMT::Cache::Populate.call(CMT::Database::Query.refnames)
+
