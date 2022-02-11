@@ -13,6 +13,7 @@ toc::[]
 == Requirements
 
 . link:https://www.ruby-lang.org[Ruby] 3.1.0.
+. Redis, running in Docker on your machine on port 6379. link:https://hub.docker.com/_/redis[Redis docker image] -- In my initial tests, populating a cache with a large number of refnames was over twice as fast using Redis as Zache.
 
 == Setup
 
@@ -32,6 +33,13 @@ The application reads in `config.yml` to set up everything.
 ====
 Save multiple .yml configs in the `/config` folder. Name them for the instances you are working with. The contents of this folder are not tracked by git, so secure details will not inadvertently end up in Github. To switch instances/projects, `cp config/my_instance.yml config.yml`
 ====
+
+== Notes
+
+Because this is meant to be used only by migration specialists who know exactly what they are doing in a CS instance, it makes some assumptions like:
+
+- Stuff that matters isn't changing under you without you knowing. Therefore, the cache lifetime is set to a week, and if stuff changes, you need to refresh the cache yourself.
+- For mapping CSV to XML payloads, all necessary refnames will be cached. Therefore, searching via the API is done.
 
 == Usage
 
