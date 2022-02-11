@@ -14,6 +14,7 @@ gem 'dry-transaction', '~>0.13'
 gem 'dry-validation', '~> 1.7'
 gem 'pg', '~> 1.3'
 gem 'refinements', '~> 9.1'
+gem 'thor', '~> 1.2'
 gem 'zeitwerk', '~> 2.5'
 
 group :code_quality do

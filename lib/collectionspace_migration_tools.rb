@@ -69,5 +69,5 @@ module CollectionSpace
 end
 # End added for benchmarking
 
-pop = CMT::Cache::Populate.call(CMT::Database::Query.refnames)
+#pop = CMT::Cache::Populate.call(CMT::Database::Query.refnames)
 

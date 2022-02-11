@@ -253,6 +253,7 @@ DEPENDENCIES
   rubocop-rake (~> 0.6)
   rubocop-rspec (~> 2.6)
   simplecov (~> 0.21)
+  thor (~> 1.2)
   time_up
   yard (~> 0.9)
   zeitwerk (~> 2.5)
