@@ -2,16 +2,21 @@
 
 require 'bundler/setup'
 require_relative '../lib/collectionspace_migration_tools'
+require 'benchmark'
 require 'debug'
 require 'fileutils'
 
-TERMS_CREATED_FILE = 'tmp/created_persons.txt'
 SERVICE_PATH = CMT.client.service(type: 'personauthorities', subtype: 'person')[:path]
 REL_SVC_PATH = CMT.client.service(type: 'relations', subtype: nil)[:path]
+NUM_RECS_IN_TEST = 100
+
+TermData = Struct.new(:csid, :refname, :uri, :term)
+RelData = Struct.new(:sbj, :obj)
+RelBundle = Struct.new(:xml, :reldata, :post_result, :rel_uri)
 
 def csid_xml(subject:, object:)
   <<~XML
-  <?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <document name="relations">
     <ns2:relations_common xmlns:ns2="http://collectionspace.org/services/relation">
     <subjectCsid>#{subject}</subjectCsid>
@@ -40,7 +45,7 @@ end
 
 def refname_xml(subject:, object:)
   <<~XML
-  <?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <document name="relations">
     <ns2:relations_common xmlns:ns2="http://collectionspace.org/services/relation">
     <subjectRefName>#{subject}</subjectRefName>
@@ -61,7 +66,7 @@ def random_term(size = 6)
 end
 
 def term_list
-  Array.new(100).map{ |i| random_term(20) }
+  Array.new(NUM_RECS_IN_TEST).map{ |i| random_term(20) }
 end
 
 # @param terms [Array]
@@ -72,8 +77,8 @@ def write(terms, path)
   end
 end
 
-def do_post(payload)
-  CMT.client.post(SERVICE_PATH, payload)
+def do_post(payload, service_path)
+  CMT.client.post(service_path, payload)
 rescue StandardError => err
   err.message
 end
@@ -84,8 +89,8 @@ rescue StandardError => err
   err.message
 end
 
-def do_delete(term_uri)
-  CMT.client.delete(term_uri)
+def do_delete(uri)
+  CMT.client.delete(uri)
 rescue StandardError => err
   err.message
 end
@@ -96,38 +101,55 @@ def get_term_data(term)
   return "Failed to find term" unless result.result.success?
 
   item = result.parsed['abstract_common_list']['list_item']
-  Struct.new(:csid, :refname, :uri).new(item['csid'], item['refName'], item['uri'])
+  TermData.new(item['csid'], item['refName'], item['uri'], term)
+end
+
+def put_rel(rel_bundle)
+  result = do_post(rel_bundle.xml, REL_SVC_PATH)
+  rel_bundle.post_result = result
+  rel_bundle
 end
 
 def put_term(payload, term)
-  result = do_post(payload)
+  result = do_post(payload, SERVICE_PATH)
   return result if result.is_a?(String)
   return "Failed to create term" unless result.result.success?
 
   get_term_data(term)
 end
 
-def set_up
-  terms = term_list
-  write(terms, TERMS_CREATED_FILE)
-  terms.each do |term|
-    result = put_term(person_xml(term), term)
+def write_put_names(term_data, type)
+  File.open(file_path(:put, :person, type), 'w') do |outfile|
+    term_data.each do |term_struct|
+      term_struct.to_h.each{ |key, val| outfile.write "#{key}|#{val}\n" }
+      outfile.write("\n")
+    end
   end
-  
-  xml = terms.map{ |term| person_xml(term) }
-  results = xml.map{ |payload| put_term(payload) }
+end
 
-  abort_setup(results) if results.any?(String)
+def file_path(action, rectype, reltype)
+  "tmp/#{action}_#{rectype}_#{reltype}.txt"
+end
+
+def set_up(reltype)
+  terms = term_list
+  write(terms, file_path(:created, :person, reltype))
+
+  puts "#{reltype}: Creating and loading terms starting with #{terms.first}..."
+  results = terms.map{ |term| put_term(person_xml(term), term) }
+  results_by_class = results.group_by(&:class)
+  write_put_names(results_by_class[TermData], reltype) unless results_by_class[TermData].empty?
+
+  abort_setup(results_by_class, reltype) if results.any?(String)
 
   results
 end
 
-def abort_setup(term_data)
-  cat = term_data.group_by(&:class)
-  puts 'Cannot continue because person records for the following could not be created:'
-  puts cat[String].map{ |str| "  #{str}" }
-  puts 'Starting teardown...'
-  tear_down(cat[Struct])
+def abort_setup(term_data_by_class, reltype)
+  puts '#{reltype}: Cannot continue because person records for the following could not be created:'
+  puts term_data_by_class[String].map{ |str| "  #{str}" }
+  puts '#{reltype}: Starting teardown...'
+  tear_down(term_data_by_class[TermData])
   exit
 end
 
@@ -139,32 +161,150 @@ def delete_term(term_data)
   term_data
 end
 
-def tear_down(term_data)
-  res = delete_term(term_data)
-  if res.is_a?(String)
-    puts %{Cannot delete "#{term}" because #{res}}
-    next
+def tear_down_terms(term_data, type)
+  puts "#{type}: Tearing down terms..."
+  term_data.each do |term_struct|
+    res = delete_term(term_struct)
+    if res.is_a?(String)
+      puts %{#{type}: Cannot delete "#{term_struct.term}" because #{res}}
+      next
+    end
+
+#    puts %{ #{type}: Deleted #{term_struct.term} }
   end
 
-  puts %{ Deleted #{term} }
+  FileUtils.rm(file_path(:created, :person, type))
+  FileUtils.rm(file_path(:put, :person, type))
+end
 
-  FileUtils.rm(TERMS_CREATED_FILE)
+def rel_xml(reldata, mthd)
+  sbj = reldata.sbj.send(mthd)
+  obj = reldata.obj.send(mthd)
+  if mthd == :refname
+    refname_xml(subject: sbj, object:obj)
+  else
+    csid_xml(subject: sbj, object:obj)
+  end
 end
 
 def make_rel_xml(term_data, mthd)
+  puts "#{mthd}: Creating relations XML payloads..." 
   rels = []
-  until(term_data.length < 2) do
-    sbj = term_data.shift.send(mthd)
-    obj = term_data.shift.send(mthd)
-    if mthd == :refname
-      rels << refname_xml(subject: sbj, object:obj)
-    else
-      rels << csid_xml(subject: sbj, object:obj)
+  until(term_data.empty?) do
+    reldata = RelData.new(term_data.shift, term_data.shift)
+    xml = rel_xml(reldata, mthd)
+    rels << RelBundle.new(xml, reldata)
+  end
+
+  File.open(file_path(:created, :rel, mthd), 'w') do |outfile|
+    rels.each do |rel|
+      outfile.write("#{rel.reldata.sbj.term} > #{rel.reldata.obj.term}\n")
+      outfile.write("#{rel.reldata.sbj.uri} > #{rel.reldata.obj.uri}\n")
+      outfile.write("#{rel.reldata.sbj.csid} > #{rel.reldata.obj.csid}\n")
     end
   end
+  
   rels
 end
 
-refname_term_data = set_up
-rel_xml = make_rel_xml(refname_term_data, :refname)
-tear_down(refname_term_data)
+def rel_uri(relbundle)
+  result = CMT.client.find_relation(subject_csid: relbundle.reldata.sbj.csid,
+                                 object_csid: relbundle.reldata.obj.csid)
+  return result if result.is_a?(String)
+  return 'Failed to find relation' unless result.result.success?
+
+  result.parsed['relations_common_list']['relation_list_item']['uri']
+end
+
+def do_delete_rel(rel)
+  uri = rel_uri(rel)
+  return "Could not find relation" unless uri.start_with?('/relations/')
+
+  result = do_delete(uri)
+  return result if result.is_a?(String)
+  return "Failed to delete term" unless result.result.success?
+
+  rel
+end
+
+def delete_rel(rel, type)
+  rel_str = "#{rel.reldata.sbj.term} > #{rel.reldata.obj.term}"
+  result = do_delete_rel(rel)
+  return "#{rel_str}: #{result}" if result.is_a?(String)
+
+#  puts "#{type}: Deleted #{rel_str}"
+  rel
+end
+
+def tear_down_rels(data, type)
+  puts "#{type}: Tearing down relations..."
+  did_not_post = data.select{ |relbundle| relbundle.post_result.is_a?(String) || !relbundle.post_result.result.success? }
+  puts "#{type}: WARNING: SOME RELS DID NOT POST" unless did_not_post.empty?
+
+  deletes = data.map{ |rel| delete_rel(rel, type) }
+  delete_failures = deletes.select{ |result| result.is_a?(String) }
+
+  if delete_failures.empty?
+    FileUtils.rm(file_path(:created, :rel, type))
+  else
+    puts "Relation delete failures:"
+    delete_failures.each{ |f| puts "  #{f}" }
+  end
+end
+
+# [
+# ].each do |rel_csid|
+#   do_delete("/relations/#{rel_csid}")
+# end
+
+
+# [
+# ].each{ |term|
+#   puts "deleting #{term}"
+#   delete_term(get_term_data(term))
+# }
+
+
+# Refname first, CSID second
+ref_first_term_data = set_up(:refname)
+ref_first_rel_xml = make_rel_xml(ref_first_term_data.dup, :refname)
+
+csid_second_term_data = set_up(:csid)
+csid_second_rel_xml = make_rel_xml(csid_second_term_data.dup, :csid)
+
+puts "Transferring (and benchmarking) transfer of relations and receipt of response\n\n"
+Benchmark.bm do |x|
+  puts "Running refname first, csid second, #{NUM_RECS_IN_TEST/2} records each"
+  x.report('refname rel creation'){ ref_first_rel_xml.map{ |rel| put_rel(rel) } }
+  x.report('csid rel creation') { csid_second_rel_xml.map{ |rel| put_rel(rel) } }
+end
+puts "\n\n"
+
+tear_down_rels(ref_first_rel_xml, :refname)
+tear_down_terms(ref_first_term_data, :refname)
+
+tear_down_rels(csid_second_rel_xml, :csid)
+tear_down_terms(csid_second_term_data, :csid)
+
+
+# CSID first, Refname second
+puts "\nStarting run with CSID first, Refname second\n"
+csid_first_term_data = set_up(:csid)
+csid_first_rel_xml = make_rel_xml(csid_first_term_data.dup, :csid)
+
+ref_second_term_data = set_up(:refname)
+ref_second_rel_xml = make_rel_xml(ref_second_term_data.dup, :refname)
+
+puts "Transferring (and benchmarking) transfer of relations and receipt of response\n\n"
+Benchmark.bm do |x|
+  puts "Running csid first, refname second, #{NUM_RECS_IN_TEST/2} records each"
+  x.report('csid rel creation') { csid_first_rel_xml.map{ |rel| put_rel(rel) } }
+  x.report('refname rel creation'){ ref_second_rel_xml.map{ |rel| put_rel(rel) } }
+end
+puts "\n\n"
+
+tear_down_rels(csid_first_rel_xml, :csid)
+tear_down_terms(csid_first_term_data, :csid)
+
+tear_down_rels(ref_second_rel_xml, :refname)
+tear_down_terms(ref_second_term_data, :refname)
