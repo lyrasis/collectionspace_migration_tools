@@ -8,7 +8,7 @@ require 'fileutils'
 
 SERVICE_PATH = CMT.client.service(type: 'personauthorities', subtype: 'person')[:path]
 REL_SVC_PATH = CMT.client.service(type: 'relations', subtype: nil)[:path]
-NUM_RECS_IN_TEST = 100
+NUM_RECS_IN_TEST = 200
 
 TermData = Struct.new(:csid, :refname, :uri, :term)
 RelData = Struct.new(:sbj, :obj)
@@ -135,7 +135,7 @@ def set_up(reltype)
   terms = term_list
   write(terms, file_path(:created, :person, reltype))
 
-  puts "#{reltype}: Creating and loading terms starting with #{terms.first}..."
+  puts "#{reltype}: Creating and loading #{NUM_RECS_IN_TEST} terms starting with #{terms.first}..."
   results = terms.map{ |term| put_term(person_xml(term), term) }
   results_by_class = results.group_by(&:class)
   write_put_names(results_by_class[TermData], reltype) unless results_by_class[TermData].empty?
@@ -188,7 +188,7 @@ def rel_xml(reldata, mthd)
 end
 
 def make_rel_xml(term_data, mthd)
-  puts "#{mthd}: Creating relations XML payloads..." 
+  puts "#{mthd}: Creating #{NUM_RECS_IN_TEST/2} relations XML payloads..." 
   rels = []
   until(term_data.empty?) do
     reldata = RelData.new(term_data.shift, term_data.shift)
@@ -272,7 +272,7 @@ ref_first_rel_xml = make_rel_xml(ref_first_term_data.dup, :refname)
 csid_second_term_data = set_up(:csid)
 csid_second_rel_xml = make_rel_xml(csid_second_term_data.dup, :csid)
 
-puts "Transferring (and benchmarking) transfer of relations and receipt of response\n\n"
+puts "Transferring (and benchmarking) transfer of #{NUM_RECS_IN_TEST/2} relations and receipt of response\n\n"
 Benchmark.bm do |x|
   puts "Running refname first, csid second, #{NUM_RECS_IN_TEST/2} records each"
   x.report('refname rel creation'){ ref_first_rel_xml.map{ |rel| put_rel(rel) } }
@@ -295,7 +295,7 @@ csid_first_rel_xml = make_rel_xml(csid_first_term_data.dup, :csid)
 ref_second_term_data = set_up(:refname)
 ref_second_rel_xml = make_rel_xml(ref_second_term_data.dup, :refname)
 
-puts "Transferring (and benchmarking) transfer of relations and receipt of response\n\n"
+puts "Transferring (and benchmarking) transfer of #{NUM_RECS_IN_TEST/2} relations and receipt of response\n\n"
 Benchmark.bm do |x|
   puts "Running csid first, refname second, #{NUM_RECS_IN_TEST/2} records each"
   x.report('csid rel creation') { csid_first_rel_xml.map{ |rel| put_rel(rel) } }
@@ -308,3 +308,77 @@ tear_down_terms(csid_first_term_data, :csid)
 
 tear_down_rels(ref_second_rel_xml, :refname)
 tear_down_terms(ref_second_term_data, :refname)
+
+__END__
+
+refname: Creating and loading 100 terms starting with wNjGVgjrvMFwcpuvajwe BENCHMARK TEST...
+refname: Creating 50 relations XML payloads...
+csid: Creating and 100 loading terms starting with mmCEZYpcTeLo.qzdMfzA BENCHMARK TEST...
+csid: Creating 50 relations XML payloads...
+Transferring (and benchmarking) transfer of 50 relations and receipt of response
+
+       user     system      total        real
+Running refname first, csid second, 50 records each
+refname rel creation  0.187575   0.037203   0.224778 ( 26.915908)
+csid rel creation  0.185499   0.035924   0.221423 ( 26.739460)
+
+
+refname: Tearing down relations...
+refname: Tearing down terms...
+csid: Tearing down relations...
+csid: Tearing down terms...
+
+Starting run with CSID first, Refname second
+csid: Creating and 100 loading terms starting with egLGTukyqqnXAMT ygdJ BENCHMARK TEST...
+csid: Creating 50 relations XML payloads...
+refname: Creating and loading 100 terms starting with XxVSOWL waPjsqWpXyQw BENCHMARK TEST...
+refname: Creating 50 relations XML payloads...
+Transferring (and benchmarking) transfer of 50 relations and receipt of response
+
+       user     system      total        real
+Running csid first, refname second, 50 records each
+csid rel creation  0.185836   0.036172   0.222008 ( 26.514017)
+refname rel creation  0.183944   0.036299   0.220243 ( 26.486293)
+
+
+csid: Tearing down relations...
+csid: Tearing down terms...
+refname: Tearing down relations...
+refname: Tearing down terms...
+
+--------------------------------------------------------------------------------
+
+refname: Creating and loading 200 terms starting with BtSMJGktSrDUdEjDWbAM BENCHMARK TEST...
+refname: Creating 100 relations XML payloads...
+csid: Creating and loading 200 terms starting with sTqlqTBbVAOEJpxkvWkQ BENCHMARK TEST...
+csid: Creating 100 relations XML payloads...
+Transferring (and benchmarking) transfer of 100 relations and receipt of response
+
+       user     system      total        real
+Running refname first, csid second, 100 records each
+refname rel creation  0.352469   0.068445   0.420914 ( 53.357641)
+csid rel creation  0.357175   0.067506   0.424681 ( 52.778184)
+
+
+refname: Tearing down relations...
+refname: Tearing down terms...
+csid: Tearing down relations...
+csid: Tearing down terms...
+
+Starting run with CSID first, Refname second
+csid: Creating and loading 200 terms starting with HcuUAUPaKoJNWGDeoPlk BENCHMARK TEST...
+csid: Creating 100 relations XML payloads...
+refname: Creating and loading 200 terms starting with ANrJEgXZvqlfPQAUGugn BENCHMARK TEST...
+refname: Creating 100 relations XML payloads...
+Transferring (and benchmarking) transfer of 100 relations and receipt of response
+
+       user     system      total        real
+Running csid first, refname second, 100 records each
+csid rel creation  0.347619   0.067349   0.414968 ( 54.111061)
+refname rel creation  0.342433   0.063451   0.405884 ( 53.965949)
+
+
+csid: Tearing down relations...
+csid: Tearing down terms...
+refname: Tearing down relations...
+refname: Tearing down terms...
