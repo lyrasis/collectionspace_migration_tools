@@ -10,6 +10,7 @@ module CollectionspaceMigrationTools
         required(:username).filled(:string)
         required(:password).filled(:string)
         required(:page_size).filled(:integer)
+        required(:redis_db_number).filled(:integer)
       end
 
       rule(:base_uri) do

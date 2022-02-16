@@ -28,6 +28,7 @@ RSpec.configure do |config|
   config.expect_with(:rspec) do |expectations|
     expectations.syntax = :expect
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
+    expectations.max_formatted_output_length = nil
   end
 
   config.mock_with(:rspec) do |mocks|

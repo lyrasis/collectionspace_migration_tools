@@ -3,11 +3,10 @@
 require_relative '../spec_helper'
 
 RSpec.describe CollectionspaceMigrationTools::Configuration do
-  let(:config_path){ File.join(Bundler.root, 'spec', 'support', 'fixtures', config_file) }
-  let(:result){ described_class.new(config_path) }
+  let(:result){ described_class.new(client: config_file) }
 
   context 'with valid config' do
-    let(:config_file){ 'config_valid.yml' }
+    let(:config_file){ valid_config_path }
 
     it 'returns Configuration object', :aggregate_failures do
       expect(result).to be_a(CMT::Configuration)
@@ -17,14 +16,14 @@ RSpec.describe CollectionspaceMigrationTools::Configuration do
   end
 
   context 'with invalid config' do
-    let(:config_file){ 'config_invalid.yml' }
+    let(:config_file){ invalid_config_path }
 
     it 'outputs error message and exits' do
       out = <<~OUT
         Could not create config.
         Error occurred in: CollectionspaceMigrationTools::Validate::Config
         Error message: base_uri must end with "/cspace-services"; db_host must not contain "-bastion"; bastion_host must contain "-bastion"
-        Please provide a valid config .yml file and try again. Exiting...
+        Exiting...
       OUT
       expect{ result }
         .to output(out).to_stdout.and raise_error(SystemExit)

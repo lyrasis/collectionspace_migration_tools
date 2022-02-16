@@ -1,0 +1,45 @@
+== Cache backend
+
+Uses Redis because in initial testing, populating a cache with a large number of refnames was over twice as fast using Redis as Zache.
+
+Redis also offers the ability to run multiple instances at once, and to have separate databases within a given instance, which I am leveraging. Not sure if Zache can do that or not, but didn't look into it given the basic performance difference.
+
+== Redis/cache setup
+
+=== Required
+
+* Cache and retrieve RefNames and CSIDs for the same keys (i.e. the term/record fingerprint used as unique id in RefCache)
+* Data in cache should be persisted when we aren't actively working on a migration
+* Work on migrations for multiple clients simultaneously, and to be able to wipe out full cache for a given client quickly without affecting other clients
+
+After an initial discussion with Mark about these requirements, he suggested the following architecture:
+
+* one Redis instance per client/connection, with a separate database in each instance for RefNames and CSIDs; OR
+* two Redis instances per client/connection: one for RefNames and one for CSIDs
+
+Thinking on it further, I realized I had the following desires for how this will work. (Preferences, not hard requirements).
+
+=== Desired
+* Not needing to mess with docker-compose setup if we need to work on an additional client migration
+* All necessary config for a given client can be handled in that client's config .yml
+* Potentially: leverage multithreading to simultaneously populate RefName and CSID caches
+
+=== Background info
+
+[quote, https://kb.objectrocket.com/redis/guide-on-the-redis-databases-1451[source]]
+Every Redis database instance will support 16 databases. While the default database is “0,” this can be changed to any number from 0-15 and can also be configured to support additional databases. To help avoid confusion, each database provides a distinct keyspace that is independent from all of the other databases and the database index number is listed at the end of the Redis URL. Additionally, separate instances of Redis can be run on different ports, providing even greater flexibility.
+
+[quote, https://stackoverflow.com/a/10644197[source]]
+redis is single threaded, if you need two different data sources, another redis instance will improve performance since it will utilize another CPU you probably have, whereas one instance will always utilize just one.
+
+In a number of places, I ran into people saying that using multiple databases inside a Redis instance is considered bad practice and will eventually be deprecated. Conversely, I found a number of recent guides to using databases inside a Redis instance, that contained no such warnings.
+
+=== Decision (initial)
+
+* Two Redis instances set up via docker-compose:
+** `refnames`, running on port 6379
+** `csids`, running on port 6380
+* Each client/migration project's config.yml includes a required `redis_db_number` setting, which controls which database is used in the Redis instances for that client
+** This allows all keys for a given client to efficiently be removed via `FLUSHDB` command
+* One instance of `CollectionSpace::RefCache` is set up to act as client to `refnames`, and another to act as client to `csids`. These two should be able to both be processing/populating simultaneously
+

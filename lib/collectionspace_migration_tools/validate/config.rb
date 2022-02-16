@@ -9,22 +9,21 @@ module CollectionspaceMigrationTools
         include Dry::Monads[:result]
 
         def call(config_hash)
-          client = validate(config: config_hash, type: :client)
-          db = validate(config: config_hash, type: :database)
-          return Success(config_hash) if client.success? && db.success?
+          validated = config_hash.keys.map{ |key| validate(config: config_hash, type: key) }
+          return Success(config_hash) if validated.all?(&:success?)
 
-          Failure(CMT::Failure.new(context: name, message: compile_error_messages(client, db)))
+          Failure(CMT::Failure.new(context: name, message: compile_error_messages(validated)))
         end
 
         private
 
-        def compile_error_messages(client, db)
-          failures(client, db).map{ |result| format_errors(result) }
+        def compile_error_messages(arr)
+          failures(arr).map{ |result| format_errors(result) }
                               .join('; ')
         end
 
-        def failures(client, db)
-          [client, db].select(&:failure?)
+        def failures(arr)
+          arr.select(&:failure?)
         end
 
         def format_errors(result)

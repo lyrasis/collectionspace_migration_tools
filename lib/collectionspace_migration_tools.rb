@@ -10,7 +10,7 @@ module CollectionspaceMigrationTools
 
   class << self
     def config
-      @config ||= CMT::Configuration.new('config.yml')
+      @config ||= CMT::Configuration.new
     end
 
     def client
@@ -26,16 +26,33 @@ module CollectionspaceMigrationTools
       exit
     end
 
-    def refcache
-      return @refcache if instance_variable_defined?(:@refcache)
+    def csid_cache
+      return @csid_cache if instance_variable_defined?(:@csid_cache)
       
-      refcache = CMT::RefCache.call
-      if refcache.success?
-        @refcache = refcache.value!
-        return @refcache
+      csid_cache = CMT::CsidCache.call
+      if csid_cache.success?
+        @csid_cache = csid_cache.value!
+        return @csid_cache
       end
 
-      puts refcache.failure.to_s
+      puts csid_cache.failure.to_s
+      exit
+    end
+
+    def domain
+      @domain ||= client.domain
+    end
+    
+    def refname_cache
+      return @refname_cache if instance_variable_defined?(:@refname_cache)
+      
+      refname_cache = CMT::Refname_Cache.call
+      if refname_cache.success?
+        @refname_cache = refname_cache.value!
+        return @refname_cache
+      end
+
+      puts refname_cache.failure.to_s
       exit
     end
   end

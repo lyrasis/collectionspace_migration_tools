@@ -8,10 +8,11 @@ module CollectionspaceMigrationTools
     include Dry::Monads[:result]
     include Dry::Monads::Do.for(:validated_config_data)
 
-    attr_reader :client, :database
+    attr_reader :client, :database, :redis
     
-    def initialize(config_path)
-      @path = config_path
+    def initialize(client: File.join(Bundler.root, 'client_config.yml'), redis: File.join(Bundler.root, 'redis.yml'))
+      @client_path = client
+      @redis_path = redis
       validated_config_data.either(
         ->(result){ build_config(result) },
         ->(result){ bad_config_exit(result) }
@@ -24,7 +25,7 @@ module CollectionspaceMigrationTools
       puts('Could not create config.')
       puts("Error occurred in: #{result.context}")
       puts("Error message: #{result.message}")
-      puts('Please provide a valid config .yml file and try again. Exiting...')
+      puts('Exiting...')
       exit
     end
 
@@ -34,6 +35,10 @@ module CollectionspaceMigrationTools
       end
     end
 
+    def combine_configs(hash_a, hash_b)
+      hash_a.merge(hash_b)
+    end
+    
     def section_struct(config_data)
       keys = config_data.keys
       values = config_data.values
@@ -41,7 +46,9 @@ module CollectionspaceMigrationTools
     end
 
     def validated_config_data
-      config_hash = yield(CMT::ConfigParser.call(@path))
+      client_hash = yield(CMT::ConfigParser.call(@client_path))
+      redis_hash = yield(CMT::ConfigParser.call(@redis_path))
+      config_hash = combine_configs(client_hash, redis_hash)
       validated = yield(CMT::Validate::Config.call(config_hash))
 
       Success(validated)

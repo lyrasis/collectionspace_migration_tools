@@ -9,11 +9,36 @@ image::https://img.shields.io/badge/code_style-alchemists-brightgreen.svg[Alchem
 
 toc::[]
 
+See doc/decisions.adoc for more info/background on some of the decisions made
+
 
 == Requirements
 
 . link:https://www.ruby-lang.org[Ruby] 3.1.0.
-. Redis, running in Docker on your machine on port 6379. link:https://hub.docker.com/_/redis[Redis docker image] -- In my initial tests, populating a cache with a large number of refnames was over twice as fast using Redis as Zache.
+. Docker and docker-compose. Running the required docker-compose command will by default set up two instances of Redis on ports 6380 and 6381
+
+== Configuration
+On start up, the application reads in `./client_config.yml` and `./redis_config.yml` to set up its internal configuration.
+
+=== Redis config
+This should "just work" without you having to do anything, but you might want to change it if the ports being used for Redis conflict with something you use for other work.
+
+If you want to change the Redis ports, you need to update them in the `./docker-compose.yml` file (which builds the Redis instances and makes them locally accessible via the given ports) and the `./redis.yml` file (which tells the application which port/Redis instance to use for storing RefNames vs. CSIDs).
+
+Nothing in this is sensitive, as it's all just on your local machine.
+
+=== Client/instance-specific settings
+Copy `sample_client_config.yml` to `client_config.yml` and edit `client_config.yml` to reflect the CS instance you will be working on.
+
+The application reads in `client_config.yml` to set up everything.
+
+**Make very sure you do not commit `./client_config.yml` to version control, as it will contain sensitive/secure information.** `./gitignore` is set up to ignore `./client_config.yml` and everything in the `./config` directory. But if you rename `./client_config.yml` in the root directory or change the name of `./config`, do not accidentally add these "untracked files" to git!
+
+[TIP]
+====
+Save multiple .yml configs in the `./config` directory. Name them for the instances you are working with. The contents of this folder are not tracked by git, so secure details will not inadvertently end up in Github. To switch instances/projects, `cp config/my_instance.yml client_config.yml`
+====
+
 
 == Setup
 
@@ -25,14 +50,6 @@ To set up the project, run:
 bin/setup
 ----
 
-Then, copy `sample_config.yml` to `config.yml` and edit `config.yml` to reflect the CS instance you will be working on.
-
-The application reads in `config.yml` to set up everything. 
-
-[TIP]
-====
-Save multiple .yml configs in the `/config` folder. Name them for the instances you are working with. The contents of this folder are not tracked by git, so secure details will not inadvertently end up in Github. To switch instances/projects, `cp config/my_instance.yml config.yml`
-====
 
 == Notes
 

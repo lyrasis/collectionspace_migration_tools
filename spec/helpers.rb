@@ -18,7 +18,7 @@ module Helpers
 
   # returns valid config parsed as hash
   def valid_config
-    CMT::Configuration.new(valid_config_path)
+    CMT::Configuration.new(client: valid_config_path)
   end
 
   # returns valid config parsed as hash
@@ -29,5 +29,10 @@ module Helpers
   # returns path to valid test config (core.dev)
   def valid_config_path
     File.join(Bundler.root, 'spec', 'support', 'fixtures', 'config_valid.yml')
+  end
+
+  # returns path to valid test config (core.dev)
+  def invalid_config_path
+    File.join(Bundler.root, 'spec', 'support', 'fixtures', 'config_invalid.yml')
   end
 end

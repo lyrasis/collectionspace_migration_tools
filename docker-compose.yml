@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  refnames:
+    image: redis:6
+    command: redis-server --port 6380 --appendonly yes --loglevel warning
+    ports:
+      - 6380:6380
+    volumes:
+      - refnames:/data
+  csids:
+    image: redis:6
+    command: redis-server --port 6380 --appendonly yes --loglevel warning
+    ports:
+      - 6381:6380
+    volumes:
+      - csids:/data
+volumes:
+  refnames:
+  csids:

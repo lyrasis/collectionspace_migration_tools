@@ -3,14 +3,7 @@
 require_relative '../../spec_helper'
 
 RSpec.describe CollectionspaceMigrationTools::Validate::ConfigClientContract do
-  let(:valid_config) do
-    {
-      base_uri: 'something/cspace-services',
-      username: 'valid@email.com',
-      password: 'string',
-      page_size: 19
-    }
-  end
+  let(:valid_config){ valid_config_hash[:client] }
   let(:result){ described_class.new.call(client_config).to_monad }
 
   context 'with valid data' do

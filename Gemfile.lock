@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/collectionspace/collectionspace-client.git
   revision: 4e144cd1ec14cc89fd72845d7fff5d1776473c05
-  tag: v0.13.4
+  branch: master
   specs:
     collectionspace-client (0.13.4)
       httparty
@@ -10,8 +10,8 @@ GIT
 
 GIT
   remote: https://github.com/collectionspace/collectionspace-mapper.git
-  revision: 7ee69747be0865686d33b872bb038fa39d3baf51
-  tag: v3.0.0
+  revision: 5b4985954e6bd5a93909646128368819acc92b9a
+  branch: migration-tooling
   specs:
     collectionspace-mapper (3.0.0)
       chronic
@@ -22,10 +22,10 @@ GIT
 
 GIT
   remote: https://github.com/collectionspace/collectionspace-refcache.git
-  revision: 25194130156f4d92bb795bbf1227cf792e906726
-  tag: v0.7.7
+  revision: d188029203463aee532d0717746b857f1d1231ef
+  branch: migration-tooling
   specs:
-    collectionspace-refcache (0.7.7)
+    collectionspace-refcache (1.0.0)
       redis (~> 4.2.1)
       zache (~> 0.12.0)
 
@@ -245,6 +245,7 @@ DEPENDENCIES
   guard-rspec (~> 4.7)
   pg (~> 1.3)
   rake (~> 13.0)
+  redis (~> 4.2.1)
   reek (~> 6.1)
   refinements (~> 9.1)
   rspec (~> 3.10)
