@@ -29,7 +29,7 @@ module CollectionspaceMigrationTools
     def csid_cache
       return @csid_cache if instance_variable_defined?(:@csid_cache)
       
-      csid_cache = CMT::CsidCache.call
+      csid_cache = CMT::Cache::Builder.call(:csid)
       if csid_cache.success?
         @csid_cache = csid_cache.value!
         return @csid_cache
@@ -46,7 +46,7 @@ module CollectionspaceMigrationTools
     def refname_cache
       return @refname_cache if instance_variable_defined?(:@refname_cache)
       
-      refname_cache = CMT::Refname_Cache.call
+      refname_cache = CMT::Cache::Builder.call(:refname)
       if refname_cache.success?
         @refname_cache = refname_cache.value!
         return @refname_cache
@@ -58,33 +58,6 @@ module CollectionspaceMigrationTools
   end
 end
 
-# Adding for benchmarking cache population
-module CollectionSpace
-  # patch in size
-  class RefCache
-    def size
-      @cache.size
-    end
-
-    def reset
-      @cache.reset
-    end
-
-    module Backend
-      # patch in size
-      class Redis
-        def reset
-          @c.flushdb
-        end
-        
-        def size
-          @c.dbsize
-        end
-      end
-    end
-  end
-end
-# End added for benchmarking
 
 #pop = CMT::Cache::Populate.call(CMT::Database::Query.refnames)
 

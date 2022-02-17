@@ -22,7 +22,7 @@ RSpec.describe CollectionspaceMigrationTools::Configuration do
       out = <<~OUT
         Could not create config.
         Error occurred in: CollectionspaceMigrationTools::Validate::Config
-        Error message: base_uri must end with "/cspace-services"; db_host must not contain "-bastion"; bastion_host must contain "-bastion"
+        Error message: base_uri must end with "/cspace-services"; db_host must not contain "-bastion"; bastion_host must contain "-bastion"; refname_port Redis not available on port 6380
         Exiting...
       OUT
       expect{ result }
