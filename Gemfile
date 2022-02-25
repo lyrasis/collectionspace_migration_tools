@@ -15,6 +15,9 @@ gem 'collectionspace-refcache', branch: 'migration-tooling', git: 'https://githu
 gem 'dry-monads', '~> 1.4'
 gem 'dry-transaction', '~>0.13'
 gem 'dry-validation', '~> 1.7'
+# @todo See https://github.com/mime-types/mime-types-data/pull/50
+# `mime-types-data` is a dependency of `mime-types` < `httparty` < `collectionspace-client`
+gem 'mime-types-data', '3.2021.1115'
 gem 'pg', '~> 1.3'
 gem 'redis', '~> 4.2.1'
 gem 'refinements', '~> 9.1'
