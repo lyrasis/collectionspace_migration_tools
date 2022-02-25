@@ -12,7 +12,7 @@ module CollectionspaceMigrationTools
 
         def initialize(rectype)
           @name = rectype
-          raise(CMT::QB::Authority::UnknownTypeError) unless valid?
+          raise(CMT::QB::Authority::UnknownTypeError, "Unknown record type: #{rectype}") unless valid?
         end
 
         def query
