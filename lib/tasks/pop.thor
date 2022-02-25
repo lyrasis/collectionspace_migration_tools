@@ -19,5 +19,10 @@ class Pop < Thor
     CMT.safe_exit
   end
 
+  desc 'terms', 'populate caches with all authority and vocabulary terms'
+  def terms
+    invoke 'pop:auth:all'
+    invoke :vocabs
+  end
 end
 
