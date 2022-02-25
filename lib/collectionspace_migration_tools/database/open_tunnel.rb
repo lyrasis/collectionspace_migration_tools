@@ -10,20 +10,29 @@ module CollectionspaceMigrationTools
         include Dry::Monads[:result]
 
         def call
-          open_tunnel.fmap{ |tunnel| tunnel }
+          check_tunnel = CMT.tunnel
+
+          if check_tunnel && check_tunnel.open?
+            puts 'DB SSH tunnel already open. Using existing.'
+            Success(check_tunnel)
+          else
+            open_tunnel.fmap{ |tunnel| tunnel }
+          end
         end
 
         private
 
         def open_tunnel
-          tunnel = fork{ exec(tunnel_command) }
+          tunnel_pid = spawn(tunnel_command)
         rescue StandardError => err
           Failure(CMT::Failure.new(context: "#{name}.#{__callee__}", message: err))
         else
-          Process.detach(tunnel)
+          Process.detach(tunnel_pid)
 
-          if tunnel.is_a?(Integer)
-            Success(tunnel)
+          if tunnel_pid.is_a?(Integer)
+            tunnel_obj = CMT::Tunnel.new(tunnel_pid)
+            CMT.tunnel = tunnel_obj
+            Success(tunnel_obj)
           else
             Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
                                      message: 'Tunnel not created'))

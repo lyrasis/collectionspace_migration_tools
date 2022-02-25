@@ -59,6 +59,13 @@ Because this is meant to be used only by migration specialists who know exactly 
 - For mapping CSV to XML payloads, all necessary refnames will be cached. Therefore, searching via the API is done.
 
 == Usage
+Ensure desired config is in place (See Configuration section above)
+
+`cd` into repository root
+
+`docker-compose up -d` (starts Redis instances)
+
+`thor list` (to see available commands)
 
 == Development
 

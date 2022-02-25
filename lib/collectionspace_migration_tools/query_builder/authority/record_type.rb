@@ -27,7 +27,8 @@ module CollectionspaceMigrationTools
             inner join #{term_group_table} tg on h.id = tg.id
             )
             
-            select acv.shortidentifier as subtype, t.termdisplayname, ac.refname, h.name as csid from #{term_table} ac
+            select '#{service_type}' as type, acv.shortidentifier as subtype, t.termdisplayname as label, ac.refname, h.name as csid
+            from #{term_table} ac
             inner join misc on ac.id = misc.id and misc.lifecyclestate != 'deleted'
             inner join auth_vocab_csid acv on ac.inauthority = acv.csid
             inner join terms t on ac.id = t.id
@@ -40,7 +41,7 @@ module CollectionspaceMigrationTools
           @service_config ||= CollectionSpace::Service.get(type: service_type)
         end
 
-        # returns `type` value to be used in hash key
+        # returns `type` value to be used in cache hash key
         def service_type
           return @service_type if instance_variable_defined?(:@service_type)
 
@@ -74,7 +75,7 @@ module CollectionspaceMigrationTools
         end
 
         def valid?
-          CMT::QB::Authority.record_types.any?(name)
+          CMT::RecordTypes.authority.any?(name)
         end
       end
     end

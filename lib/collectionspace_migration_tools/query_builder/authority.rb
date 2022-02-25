@@ -9,24 +9,25 @@ module CollectionspaceMigrationTools
       module_function
 
       def record_types
-        %w[citation concept location material organization person place taxon work]
+        
       end
 
       def queries
-        record_types.map{ |rectype| CMT::QB::Authority::RecordType.new(rectype) }
+        CMT::RecordTypes.authority.map{ |rectype| CMT::QB::Authority::RecordType.new(rectype) }
             .each{ |q| puts q.query; puts "\n------------------------------\n" }
       end
 
       def types
-        record_types.map{ |rectype| CMT::QB::Authority::RecordType.new(rectype).service_type }
+        CMT::RecordTypes.authority.map{ |rectype| CMT::QB::Authority::RecordType.new(rectype).service_type }
       end
 
       def services
         types.map{ |type| CollectionSpace::Service.get(type: type) }
       end
 
+      # database table names associated with record types
       def term_tables
-        record_types.map{ |rectype| CMT::QB::Authority::RecordType.new(rectype).term_table }
+        CMT::RecordTypes.authority.map{ |rectype| CMT::QB::Authority::RecordType.new(rectype).term_table }
       end
       
       # [{:identifier=>"shortIdentifier",

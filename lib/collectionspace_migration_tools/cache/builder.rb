@@ -44,10 +44,7 @@ module CollectionspaceMigrationTools
           redis: "redis://localhost:#{port}/#{db}",
           domain: CMT.domain,
           error_if_not_found: false,
-          lifetime: 60 * 60 * 24 * 7, #a week
-          search_delay: 0,
-          search_enabled: false,
-          search_identifiers: false
+          lifetime: nil
         }
       rescue StandardError => err
         Failure(CMT::Failure.new(context: "#{self.class}.#{__callee__}", message: err.message))

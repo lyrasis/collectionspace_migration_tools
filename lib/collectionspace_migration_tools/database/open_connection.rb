@@ -5,14 +5,41 @@ require 'pg'
 
 module CollectionspaceMigrationTools
   module Database
+    class PG::Connection
+      def close
+        if open?
+          finish
+          puts 'Closed DB connection'
+        else
+          puts 'DB connection already closed'
+        end
+        CMT.tunnel.close
+      end
+      
+      def open?
+        status
+      rescue PG::ConnectionBad
+        false
+      else
+        true
+      end
+    end
+    
     # opens database connection through tunnel
     class OpenConnection
       class << self
         include Dry::Monads[:result]
 
         def call
-          CMT::DB::OpenTunnel.call.bind do |tunnel|
-            get_connection(tunnel)
+          check_connection = CMT.connection
+
+          if check_connection && check_connection.open?
+            puts 'DB connection already open. Using existing.'
+            Success(check_connection)
+          else
+            CMT::DB::OpenTunnel.call.bind do
+              get_connection
+            end
           end
         end
 
@@ -28,14 +55,14 @@ module CollectionspaceMigrationTools
           }
         end
 
-        def get_connection(tunnel)
+        def get_connection
           sleep(3)
           connection = PG::Connection.new(**db_info)
         rescue StandardError => err
-          CMT::DB::CloseTunnel.call(tunnel)
           Failure(CMT::Failure.new(context: "#{name}.#{__callee__}", message: err.message))
         else
-          Success(CMT::Database::Connection.new(db: connection, tunnel: tunnel))
+          CMT.connection = connection
+          Success(connection)
         end
       end
     end

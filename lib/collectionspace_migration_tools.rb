@@ -26,6 +26,17 @@ module CollectionspaceMigrationTools
       exit
     end
 
+    def connection
+      @connection
+    end
+    
+    # @param connection_obj [CMT::Connection]
+    def connection=(connection_obj)
+      return connection if connection && connection.open?
+      
+      @connection = connection_obj
+    end
+
     def csid_cache
       return @csid_cache if instance_variable_defined?(:@csid_cache)
       
@@ -54,6 +65,23 @@ module CollectionspaceMigrationTools
 
       puts refname_cache.failure.to_s
       exit
+    end
+
+    def safe_exit
+      connection.close if connection
+      tunnel.close if tunnel
+      exit
+    end
+
+    def tunnel
+      @tunnel
+    end
+    
+    # @param tunnel_obj [CMT::Tunnel]
+    def tunnel=(tunnel_obj)
+      return tunnel if tunnel && tunnel.open?
+      
+      @tunnel = tunnel_obj
     end
   end
 end

@@ -10,18 +10,15 @@ module CollectionspaceMigrationTools
         include Dry::Monads[:result]
 
         def call(query)
-          CMT::DB::OpenConnection.call.bind do |connection|
-            execute_query(connection.db, query).fmap do |result|
-              CMT::DB::CloseConnection.call(connection)
-              result
-            end
+          CMT::Database::OpenConnection.call.bind do |db|            
+            execute_query(db, query)
           end
         end
 
         private
-        
-        def execute_query(db, sql)
-          result = db.exec(sql)
+
+        def execute_query(db, query)
+          result = db.exec(query)
         rescue StandardError => err
           Failure(CMT::Failure.new(context: "#{name}.#{__callee__}", message: err.message))
         else

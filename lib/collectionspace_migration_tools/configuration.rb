@@ -9,6 +9,7 @@ module CollectionspaceMigrationTools
     include Dry::Monads::Do.for(:validated_config_data)
 
     attr_reader :client, :database, :redis
+    attr_accessor :tunnel_pid
     
     def initialize(client: File.join(Bundler.root, 'client_config.yml'), redis: File.join(Bundler.root, 'redis.yml'))
       @client_path = client
