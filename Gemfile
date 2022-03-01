@@ -22,6 +22,7 @@ gem 'pg', '~> 1.3'
 gem 'redis', '~> 4.2.1'
 gem 'refinements', '~> 9.1'
 gem 'thor', '~> 1.2'
+gem 'thor-hollaback', '~> 0.2'
 gem 'zeitwerk', '~> 2.5'
 
 group :code_quality do

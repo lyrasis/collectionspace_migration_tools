@@ -9,6 +9,46 @@ module CollectionspaceMigrationTools
     
     module_function
 
+    def authorities
+      CMT::RecordTypes.authority
+    end
+    
+    def authority_args(rectypes)
+      [rectypes, authority_queries(rectypes), 'AuthTerms']
+    end
+    
+    def authority_queries(rectypes)
+      rectypes.map do |rectype|
+        CMT::QueryBuilder::Authority.call(rectype)
+      end
+    end
+
+    def procedures
+      CMT::RecordTypes.procedures.keys
+    end
+    
+    def procedure_args(rectypes)
+      [rectypes, procedure_queries(rectypes), 'Procedures']
+    end
+    
+    def procedure_queries(rectypes)
+      rectypes.map do |rectype|
+        CMT::QueryBuilder::Procedure.call(rectype)
+      end
+    end
+
+    def object_args
+      [['object'], [CMT::QueryBuilder::Object.call], 'Objects', :csid]
+    end
+
+    def relation_args(reltype)
+      [["#{reltype} rels"], [CMT::QueryBuilder::Relation.call(reltype)], 'Relations', :csid]
+    end
+
+    def vocab_args
+      [['vocab'], [CMT::QueryBuilder::Vocabulary.call], 'VocabTerms']
+    end
+
     def get_query_results(rectype, query)
       puts "\nQuerying for #{rectype} terms..."
       CMT::Database::ExecuteQuery.call(query)
@@ -46,6 +86,22 @@ module CollectionspaceMigrationTools
       result_size = rows.num_tuples
       puts "Got #{result_size} results..."
       result_size
+    end
+
+
+    def db_disconnect
+      CMT.connection.close
+      CMT.tunnel.close
+    end
+    
+    def safe_db
+      yield
+    rescue StandardError => err
+      raise err if options[:debug]
+      STDERR.puts err.message
+      db_disconnect
+    else
+      db_disconnect
     end
   end
 end
