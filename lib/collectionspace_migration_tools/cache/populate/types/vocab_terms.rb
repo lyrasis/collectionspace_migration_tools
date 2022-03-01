@@ -3,12 +3,14 @@
 module CollectionspaceMigrationTools
   module Cache
     module Populate
-      module Csids
-        class Terms < CMT::Cache::Populate::Csids::AbstractCsidPopulator
-          private
+      module Types
+        module VocabTerms
+          def command
+            :put_vocab_term
+          end
           
           def signature(row)
-            [row['type'], row['subtype'], row['label'], row['csid']]
+            [row['vocab'], row['term'], row[cache_type]]
           end
         end
       end

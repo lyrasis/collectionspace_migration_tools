@@ -4,68 +4,81 @@ require 'collectionspace/client'
 
 module CollectionspaceMigrationTools
   module QueryBuilder
-    module Authority
+    class Authority
 
-      module_function
-
-      def record_types
-        
-      end
-
-      def queries
-        CMT::RecordTypes.authority.map{ |rectype| CMT::QB::Authority::RecordType.new(rectype) }
-            .each{ |q| puts q.query; puts "\n------------------------------\n" }
-      end
-
-      def types
-        CMT::RecordTypes.authority.map{ |rectype| CMT::QB::Authority::RecordType.new(rectype).service_type }
-      end
-
-      def services
-        types.map{ |type| CollectionSpace::Service.get(type: type) }
-      end
-
-      # database table names associated with record types
-      def term_tables
-        CMT::RecordTypes.authority.map{ |rectype| CMT::QB::Authority::RecordType.new(rectype).term_table }
+      def self.call(rectype)
+        self.new(rectype).call
       end
       
-      # [{:identifier=>"shortIdentifier",
-      #   :ns_prefix=>"citations",
-      #   :path=>"citationauthorities/urn:cspace:name()/items",
-      #   :term=>"citationTermGroupList/0/termDisplayName"},
-      #  {:identifier=>"shortIdentifier",
-      #   :ns_prefix=>"concepts",
-      #   :path=>"conceptauthorities/urn:cspace:name()/items",
-      #   :term=>"conceptTermGroupList/0/termDisplayName"},
-      #  {:identifier=>"shortIdentifier",
-      #   :ns_prefix=>"locations",
-      #   :path=>"locationauthorities/urn:cspace:name()/items",
-      #   :term=>"locTermGroupList/0/termDisplayName"},
-      #  {:identifier=>"shortIdentifier",
-      #   :ns_prefix=>"materials",
-      #   :path=>"materialauthorities/urn:cspace:name()/items",
-      #   :term=>"materialTermGroupList/0/termDisplayName"},
-      #  {:identifier=>"shortIdentifier",
-      #   :ns_prefix=>"organizations",
-      #   :path=>"orgauthorities/urn:cspace:name()/items",
-      #   :term=>"orgTermGroupList/0/termDisplayName"},
-      #  {:identifier=>"shortIdentifier",
-      #   :ns_prefix=>"persons",
-      #   :path=>"personauthorities/urn:cspace:name()/items",
-      #   :term=>"personTermGroupList/0/termDisplayName"},
-      #  {:identifier=>"shortIdentifier",
-      #   :ns_prefix=>"places",
-      #   :path=>"placeauthorities/urn:cspace:name()/items",
-      #   :term=>"placeTermGroupList/0/termDisplayName"},
-      #  {:identifier=>"shortIdentifier",
-      #   :ns_prefix=>"taxon",
-      #   :path=>"taxonomyauthority/urn:cspace:name()/items",
-      #   :term=>"taxonTermGroupList/0/termDisplayName"},
-      #  {:identifier=>"shortIdentifier",
-      #   :ns_prefix=>"works",
-      #   :path=>"workauthorities/urn:cspace:name()/items",
-      #   :term=>"workTermGroupList/0/termDisplayName"}]
+      attr_reader :name
+
+      def initialize(rectype)
+        @name = rectype
+        raise(CMT::QB::UnknownTypeError, "Unknown record type: #{rectype}") unless valid?
+      end
+
+      def call
+          <<~SQL
+            with auth_vocab_csid as (
+            select acv.id, h.name as csid, acv.shortidentifier from #{vocab_table} acv
+            inner join hierarchy h on acv.id = h.id
+            ),
+            terms as (
+            select h.parentid as id, tg.termdisplayname from hierarchy h
+            inner join #{term_table} ac on ac.id = h.parentid and h.name like '%TermGroupList' and pos = 0
+            inner join #{term_group_table} tg on h.id = tg.id
+            )
+            
+            select '#{service_type}' as type, acv.shortidentifier as subtype, t.termdisplayname as term, ac.refname, h.name as csid
+            from #{term_table} ac
+            inner join misc on ac.id = misc.id and misc.lifecyclestate != 'deleted'
+            inner join auth_vocab_csid acv on ac.inauthority = acv.csid
+            inner join terms t on ac.id = t.id
+            inner join hierarchy h on ac.id = h.id
+          SQL
+      end
+
+      private
+      
+      # returns Hash from CollectionSpace::Service
+      def service_config
+        @service_config ||= CollectionSpace::Service.get(type: service_type)
+      end
+
+      # returns `type` value to be used in cache hash key
+      def service_type
+        return @service_type if instance_variable_defined?(:@service_type)
+
+        set_service_type
+      end
+
+      def term_table
+        "#{service_config[:ns_prefix]}_common"
+      end
+
+      def term_group_table
+        service_config[:term].sub(/GroupList.*/, 'group').downcase
+      end
+      
+      def vocab_table
+        "#{service_type}_common"
+      end
+
+      def set_service_type
+        case name
+        when 'organization'
+          @service_type = 'orgauthorities'
+        when 'taxon'
+          @service_type = 'taxonomyauthority'
+        else
+          @service_type = "#{name}authorities"
+        end
+        @service_type
+      end
+
+      def valid?
+        CMT::RecordTypes.authority.any?(name)
+      end
     end
   end
 end

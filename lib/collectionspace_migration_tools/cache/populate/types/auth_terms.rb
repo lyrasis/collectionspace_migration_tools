@@ -3,12 +3,14 @@
 module CollectionspaceMigrationTools
   module Cache
     module Populate
-      module Refnames
-        class Terms < CMT::Cache::Populate::Refnames::AbstractRefnamePopulator
-          private
+      module Types
+        module AuthTerms
+          def command
+            :put_auth_term
+          end
           
           def signature(row)
-            [row['type'], row['subtype'], row['label'], row['refname']]
+            [row['type'], row['subtype'], row['term'], row[cache_type]]
           end
         end
       end
