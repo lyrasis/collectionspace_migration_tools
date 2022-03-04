@@ -1,16 +1,16 @@
 GIT
   remote: https://github.com/collectionspace/collectionspace-client.git
-  revision: 4e144cd1ec14cc89fd72845d7fff5d1776473c05
-  branch: master
+  revision: d56c6637f21ad4af6bcf7b0645a3bd9b75d581a3
+  branch: migration-tooling
   specs:
-    collectionspace-client (0.13.4)
+    collectionspace-client (0.14.0)
       httparty
       json
       nokogiri
 
 GIT
   remote: https://github.com/collectionspace/collectionspace-mapper.git
-  revision: b978e22f62b3348aa8ffef53d23ba9e85e0a2764
+  revision: e3590cfd7c7b999948f7d7ca4b07f253671cd7c9
   branch: migration-tooling
   specs:
     collectionspace-mapper (3.0.0)
