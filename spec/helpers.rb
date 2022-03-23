@@ -34,6 +34,15 @@ module Helpers
     File.join(Bundler.root, 'spec', 'support', 'fixtures', 'config_invalid.yml')
   end
 
+  def setup_handler(rectype)
+    setup_mapping
+    mapper = CMT::Parse::RecordMapper.call(rectype)
+    config = CMT::Parse::BatchConfig.call
+    if mapper.success? && config.success?
+      CMT::Build::DataHandler.call(mapper.value!, config.value!).value!
+    end
+  end
+  
   def setup_mapping
     mapper_dir = File.join(Bundler.root.to_s, 'spec', 'support', 'fixtures', 'record_mappers')
     CMT.config.client.mapper_dir = mapper_dir
