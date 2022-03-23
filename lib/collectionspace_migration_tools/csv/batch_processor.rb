@@ -7,7 +7,7 @@ require 'smarter_csv'
 module CollectionspaceMigrationTools
   module Csv
     # Handles spinning off record mapping for individual rows
-    class Processor
+    class BatchProcessor
       include Dry::Monads[:result]
 
       # @param csv_path [String]

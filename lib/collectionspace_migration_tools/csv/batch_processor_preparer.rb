@@ -5,8 +5,8 @@ require 'dry/monads/do'
 
 module CollectionspaceMigrationTools
   module Csv
-    # All the preparatory stuff to successfully spin up a CMT::Csv::Processor
-    class ProcessorPreparer
+    # All the preparatory stuff to successfully spin up a CMT::Csv::BatchProcessor
+    class BatchProcessorPreparer
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)
 
@@ -49,7 +49,7 @@ module CollectionspaceMigrationTools
           namer: namer
         ))
 
-        processor = CMT::Csv::Processor.new(
+        processor = CMT::Csv::BatchProcessor.new(
           csv_path: csv,
           handler: handler,
           row_processor: row_processor

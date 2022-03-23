@@ -2,7 +2,7 @@
 
 require_relative '../../spec_helper'
 
-RSpec.describe CollectionspaceMigrationTools::Csv::ProcessorPreparer do
+RSpec.describe CollectionspaceMigrationTools::Csv::BatchProcessorPreparer do
 #  before{ CMT.config }
   
   let(:rectype){ 'collectionobject' }
@@ -15,7 +15,7 @@ RSpec.describe CollectionspaceMigrationTools::Csv::ProcessorPreparer do
 
     it 'is Success', :aggregate_failures do
       expect(result).to be_a(Dry::Monads::Success)
-      expect(result.value!).to be_a(CMT::Csv::Processor)
+      expect(result.value!).to be_a(CMT::Csv::BatchProcessor)
     end
 
     context 'with invalid rectype' do
