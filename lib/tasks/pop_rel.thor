@@ -5,7 +5,7 @@ require 'thor/hollaback'
 
 # tasks populating caches with object/procedure data
 class Relation < Thor
-  include CMT::CliHelpers
+  include CMT::CliHelpers::Pop
   namespace 'pop:rel'.to_sym
 
   class_option :debug, desc: 'Sets up debug mode', aliases: ['-d'], type: :boolean

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module CollectionspaceMigrationTools
-  #  class << self
   module_function
     def config
       @config ||= Helpers.valid_config
@@ -10,7 +9,6 @@ module CollectionspaceMigrationTools
     def config=(config_object)
       @config = config_object
     end
- # end
 end
 
 module Helpers  
@@ -23,7 +21,7 @@ module Helpers
 
   # returns valid config parsed as hash
   def valid_config_hash
-    CMT::ConfigParser.call(valid_config_path).value!
+    CMT::Parse::ClientConfig.call(valid_config_path).value!
   end
 
   # returns path to valid test config (core.dev)
@@ -34,5 +32,12 @@ module Helpers
   # returns path to valid test config (core.dev)
   def invalid_config_path
     File.join(Bundler.root, 'spec', 'support', 'fixtures', 'config_invalid.yml')
+  end
+
+  def setup_mapping
+    mapper_dir = File.join(Bundler.root.to_s, 'spec', 'support', 'fixtures', 'record_mappers')
+    CMT.config.client.mapper_dir = mapper_dir
+    CMT.config.client.profile = 'anthro'
+    CMT.config.client.profile_version = '5-0-0'
   end
 end

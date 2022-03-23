@@ -17,18 +17,23 @@ See doc/decisions.adoc for more info/background on some of the decisions made
 . link:https://www.ruby-lang.org[Ruby] 3.1.0.
 . Docker and docker-compose. Running the required docker-compose command will by default set up two instances of Redis on ports 6380 and 6381
 
-== Configuration
-On start up, the application reads in `./client_config.yml` and `./redis_config.yml` to set up its internal configuration.
+== One-time setup
+=== Add `bin` to PATH
+
+To avoid having to prepend `thor`, `rspec` and other commands with `bundle exec`, add this repo's `./bin` to your PATH. 
 
 === Redis config
 This should "just work" without you having to do anything, but you might want to change it if the ports being used for Redis conflict with something you use for other work.
 
 If you want to change the Redis ports, you need to update them in the `./docker-compose.yml` file (which builds the Redis instances and makes them locally accessible via the given ports) and the `./redis.yml` file (which tells the application which port/Redis instance to use for storing RefNames vs. CSIDs).
 
-Nothing in this is sensitive, as it's all just on your local machine.
+Nothing in `./redis.yml` is sensitive, as it's all just on your local machine.
 
-=== Client/instance-specific settings
+== Per-instance setup
+=== Client config
 Copy `sample_client_config.yml` to `client_config.yml` and edit `client_config.yml` to reflect the CS instance you will be working on.
+
+`sample_client_config.yml` is self-documenting.
 
 The application reads in `client_config.yml` to set up everything.
 
@@ -39,33 +44,33 @@ The application reads in `client_config.yml` to set up everything.
 Save multiple .yml configs in the `./config` directory. Name them for the instances you are working with. The contents of this folder are not tracked by git, so secure details will not inadvertently end up in Github. To switch instances/projects, `cp config/my_instance.yml client_config.yml`
 ====
 
+=== Batch config
+If you wish to provide https://github.com/collectionspace/collectionspace-mapper/blob/main/doc/batch_configuration.adoc[configuration options] for `collectionspace-mapper`, put them in `./client_batch_config.json`.
 
-== Setup
+If this file is not provided, `collectionspace-mapper` defaults will be used.
 
+=== Provide record mappers
+Initially this needs to be done manually per client. Eventually it'd be nice to make the tool automatically grab these from Github. 
 
-To set up the project, run:
+Clone https://github.com/collectionspace/cspace-config-untangler/
 
-[source,bash]
-----
-bin/setup
-----
+In `cspace-config-untangler/data/mappers`, find the directory containing the mappers for the profile/version the client is using.
 
+Copy all the .json record mapper files from there into the `mapper_dir` you specified in your config.
 
-== Notes
-
-Because this is meant to be used only by migration specialists who know exactly what they are doing in a CS instance, it makes some assumptions like:
-
-- Stuff that matters isn't changing under you without you knowing. Therefore, the cache lifetime is set to a week, and if stuff changes, you need to refresh the cache yourself.
-- For mapping CSV to XML payloads, all necessary refnames will be cached. Therefore, searching via the API is done.
 
 == Usage
 Ensure desired config is in place (See Configuration section above)
 
 `cd` into repository root
 
-`docker-compose up -d` (starts Redis instances)
+`docker-compose up -d` (Starts Redis instances. The `-d` puts docker-compose into the background, so you can use the terminal for other things)
 
 `thor list` (to see available commands)
+
+Run available commands as necessary
+
+`docker-compose down` (Stops and closes Redis containers. The Redis volumes are NOT removed, so your cached data should still be available next time you run `docker-compose up -d`.)
 
 == Development
 
@@ -82,8 +87,15 @@ To test, run:
 
 [source,bash]
 ----
-bundle exec rake
+rspec
 ----
+
+== Notes
+
+Because this is meant to be used only by migration specialists who know exactly what they are doing in a CS instance, it makes some assumptions like:
+
+- Stuff that matters isn't changing under you without you knowing. Therefore, the cache lifetime is set to a week, and if stuff changes, you need to refresh the cache yourself.
+- For mapping CSV to XML payloads, all necessary refnames will be cached. Therefore, searching via the API is done.
 
 == link:[License]
 

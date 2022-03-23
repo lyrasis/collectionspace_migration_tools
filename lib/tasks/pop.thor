@@ -5,7 +5,7 @@ require 'thor/hollaback'
 
 # tasks targeting CS XML payloads
 class Pop < Thor
-  include CMT::CliHelpers
+  include CMT::CliHelpers::Pop
   
   class_option :debug, desc: 'Sets up debug mode', aliases: ['-d'], type: :boolean
   class_around :safe_db

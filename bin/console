@@ -7,4 +7,17 @@ Bundler.require(:tools)
 require_relative '../lib/collectionspace_migration_tools'
 require 'irb'
 
+def reload!(print = true)
+  load("#{Bundler.root}/lib/collectionspace_migration_tools.rb")
+end
+
+
+def cpp
+  CMT::Csv::ProcessorPreparer.new(csv_path: '~/data/CollectionSpace/importer_tool_testing/core_co/mftest_shorter.csv', rectype: 'collectionobject', action: 'create')
+end
+
+def res
+  cpp.call
+end
+
 IRB.start(__FILE__)

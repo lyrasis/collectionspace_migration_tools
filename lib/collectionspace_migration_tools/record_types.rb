@@ -8,6 +8,14 @@ module CollectionspaceMigrationTools
       %w[citation concept location material organization person place taxon work]
     end
 
+    def mappable
+      Dir.new(CMT.config.client.mapper_dir)
+        .children
+        .map{ |fn| fn.delete_prefix("#{CMT.config.client.profile}_#{CMT.config.client.profile_version}_") }
+        .map{ |fn| fn.delete_suffix(".json") }
+        .sort
+    end
+    
     def procedures
       {
         'acq' => 'acquisitions',

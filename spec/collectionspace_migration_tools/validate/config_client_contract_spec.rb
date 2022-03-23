@@ -21,4 +21,52 @@ RSpec.describe CollectionspaceMigrationTools::Validate::ConfigClientContract do
       expect(result).to be_a(Dry::Monads::Failure)
     end
   end
+
+  context 'with bad cs_version' do
+    let(:client_config){ valid_config.merge({cs_version: '7.0'}) }
+
+    it 'returns Failure' do
+      expect(result).to be_a(Dry::Monads::Failure)
+    end
+  end
+
+  context 'with bad profile' do
+    let(:client_config){ valid_config.merge({profile: 'fineart'}) }
+
+    it 'returns Failure' do
+      expect(result).to be_a(Dry::Monads::Failure)
+    end
+  end
+
+  context 'with bad profile version' do
+    let(:client_config){ valid_config.merge({profile_version: '7.0.0'}) }
+
+    it 'returns Failure' do
+      expect(result).to be_a(Dry::Monads::Failure)
+    end
+  end
+
+  context 'with bad base_dir' do
+    let(:client_config){ valid_config.merge({base_dir: '~/non-existent_directory'}) }
+
+    it 'returns Failure' do
+      expect(result).to be_a(Dry::Monads::Failure)
+    end
+  end
+
+  context 'with existing batch config file' do
+    let(:client_config){ valid_config.merge({batch_config_path: '~/code/cs/migration_tools/spec/support/fixtures/client_batch_config.json'}) }
+
+    it 'returns Success' do
+      expect(result).to be_a(Dry::Monads::Success)
+    end
+  end
+
+  context 'with non-existent batch config file' do
+    let(:client_config){ valid_config.merge({batch_config_path: '~/code/cs/migration_tools/spec/support/fixtures/batch_config.json'}) }
+
+    it 'returns Failure' do
+      expect(result).to be_a(Dry::Monads::Failure)
+    end
+  end
 end

@@ -1,0 +1,40 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+= Workflows
+
+toc::[]
+
+.About CSV parsing errors
+[NOTE]
+====
+`csvlint` is not Ruby 3-ready yet, so is not incorporated. I don't have time now to investigate integration of other potential CSV validation stuff. **If you get errors about your CSV not being readable or parseable, you'll need to look into it yourself.**
+====
+
+== Steps under the hood
+=== Preprocess
+==== `CMT::Csv::FirstRowValidator`
+* Report whether required field is missing
+** Outputs error, system exit. Don't waste time creating records that can't be imported!
+* Are any columns lacking a header?
+** You will receive warning. Processing can continue, but will throw out any values from fields lacking header
+* Report count of known/processable fields, and list of unknown/unprocessable fields
+** You will receive warning. Processing can continue, but will ignore any values in unknown fields
+
+==== `CMT::Csv::Row::RequiredFieldValueChecker`
+* Check whether each row has required field value(s). If not:
+** Tags row as failure
+** Processing of any successful rows can continue
+* Reports number of failures and successes
+
+=== Process
+=== Transfer

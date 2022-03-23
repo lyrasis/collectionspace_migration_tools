@@ -4,5 +4,7 @@
 client_config.yml
 config/*.yml
 coverage
+data
+!/data/.keep
 doc/yard
 tmp

@@ -5,7 +5,7 @@ require 'thor/hollaback'
 
 # tasks targeting CS XML payloads
 class Auth < Thor
-  include CMT::CliHelpers
+  include CMT::CliHelpers::Pop
   namespace 'pop:auth'.to_sym
 
   class_option :debug, desc: 'Sets up debug mode', aliases: ['-d'], type: :boolean

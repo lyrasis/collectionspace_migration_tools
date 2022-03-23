@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../spec_helper'
+require_relative '../../spec_helper'
 
-RSpec.describe CollectionspaceMigrationTools::ConfigParser do
+RSpec.describe CollectionspaceMigrationTools::Parse::YamlConfig do
   let(:config_path){ File.join(Bundler.root.to_s, 'spec', 'support', 'fixtures', config_file) }
   let(:result){ described_class.call(config_path) }
 
@@ -28,7 +28,7 @@ RSpec.describe CollectionspaceMigrationTools::ConfigParser do
 
     it 'is Failure', :aggregate_failures do
       expect(result).to be_a(Dry::Monads::Failure)
-      expect(result.failure.context).to eq('CollectionspaceMigrationTools::ConfigParser.parse')
+      expect(result.failure.context).to eq('CollectionspaceMigrationTools::Parse::YamlConfig.parse')
     end
   end
 end

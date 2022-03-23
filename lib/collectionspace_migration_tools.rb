@@ -2,13 +2,27 @@
 
 require 'zeitwerk'
 
-Zeitwerk::Loader.for_gem.setup
-
 # Main namespace
 module CollectionspaceMigrationTools
   ::CMT = CollectionspaceMigrationTools
 
   class << self
+
+    def loader
+      @loader ||= setup_loader
+    end
+
+    private def setup_loader
+              @loader = Zeitwerk::Loader.for_gem
+              @loader.enable_reloading
+              @loader.setup
+              @loader
+            end
+
+    def reload!
+      @loader.reload
+    end
+    
     def config
       @config ||= CMT::Configuration.new
     end
@@ -86,6 +100,5 @@ module CollectionspaceMigrationTools
   end
 end
 
-
-#pop = CMT::Cache::Populate.call(CMT::Database::Query.refnames)
+CMT.loader
 

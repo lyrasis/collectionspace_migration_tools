@@ -4,6 +4,7 @@ require 'dry/monads'
 
 module CollectionspaceMigrationTools
   module Validate
+    # Runs the individual validation contracts on the different config sections
     class Config
       class << self
         include Dry::Monads[:result]

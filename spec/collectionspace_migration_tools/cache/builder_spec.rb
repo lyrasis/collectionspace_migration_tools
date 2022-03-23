@@ -48,15 +48,5 @@ RSpec.describe CollectionspaceMigrationTools::Cache::Builder do
         end
       end
     end
-
-    context 'with invalid config' do
-      it 'returns a Failure with expected message', :aggregate_failures do
-        CMT.config.client.password = '123'
-        expect(result).to be_a(Dry::Monads::Failure)
-        expect(result.failure.context).to eq('CollectionspaceMigrationTools::Client.verify')
-        msg = 'lacks valid authentication credentials for the target'
-        expect(result.failure.message).to include(msg)
-      end
-    end
   end
 end

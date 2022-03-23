@@ -6,6 +6,7 @@ Bundler.require(:tools)
 require 'simplecov'
 SimpleCov.start{ enable_coverage :branch }
 
+require 'collectionspace/mapper'
 require 'collectionspace_migration_tools'
 require_relative './helpers'
 require 'refinements'
@@ -28,7 +29,7 @@ RSpec.configure do |config|
   config.expect_with(:rspec) do |expectations|
     expectations.syntax = :expect
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
-    expectations.max_formatted_output_length = nil
+    expectations.max_formatted_output_length = 2000
   end
 
   config.mock_with(:rspec) do |mocks|

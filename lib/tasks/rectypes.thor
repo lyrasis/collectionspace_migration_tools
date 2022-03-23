@@ -5,16 +5,21 @@ require 'thor'
 # tasks targeting CS XML payloads
 class Rectypes < Thor
 
-  desc 'auth', 'list available authority rectype values'
-  def auth
+  desc 'c_auth', 'list CACHEABLE authority rectype values'
+  def c_auth
     puts CMT::RecordTypes.authority
   end
 
-  desc 'oap', 'list available object and procedure rectype values and short codes for CLI use'
-  def oap
-    CMT::RecordTypes.objects_and_procedures.keys.sort.each do |key|
-      puts "#{key} | Shortcut: #{CMT::RecordTypes.objects_and_procedures[key]}"
+  desc 'c_proc', 'list CACHEABLE procedure rectype values and short codes for CLI use'
+  def c_proc
+    CMT::RecordTypes.procedures.sort_by{ |_k, v| v }.each do |key, value|
+      puts "#{value} | Shortcut: #{key}"
     end
+  end
+
+  desc 'map', 'list MAPPABLE rectypes'
+  def map
+    puts CMT::RecordTypes.mappable
   end
 end
 

@@ -1,0 +1,27 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+= Foundation concepts
+
+toc::[]
+
+== General overview of ecosystem for getting data into CollectionSpace
+
+* collectionspace-client - creating connection/authenticating to a CS instance; wrappers around services api functionality, including CRUD and search
+* collectionspace-refcache - syntactic sugar for using a Zache- or Redis-based cache to store pieces of data about CS entities (authority terms, vocabulary terms, objects, procedures, and relations) for efficient retrieval
+* cspace-config-untangler - takes JSON UI configs output by >=Release 6.1 CollectionSpace instances (https://core.collectionspace.org/cspace/core/config[example]) and processes them into other useable data:
+**  a set of JSON "record mappers"---one record mapper per record type in the profile. A record mapper contains the logic/instructions for how to map a CSV row (or hash) of data into CS XML.
+** **CSV templates** for preparing data for import 
+** a CSV listing all the info on all the fields (contains everything in the old DDD-hand curated "schema" spreadsheets except the field usage notes/descriptions and the database-related columns)
+** diffs of two specified profiles, which make it easy to see what fields are present/lacking, and any differences in how fields are defined and labeled.
+* collectionspace-mapper - converts a hash of data into CS XML. Provides powerful, flexible https://github.com/collectionspace/collectionspace-mapper/blob/main/doc/batch_configuration.adoc[configuration options]. The general idea of how it works can be found in the https://github.com/collectionspace/collectionspace-mapper/blob/main/doc/usage.adoc[Usage docs]. 
+* collectionspace-csv-importer - a webapp/user interface that lets non-technical folks specify a connection to a CS instance, upload a CSV, and transfer the records derived from the CSV data into the CS instance. https://collectionspace.atlassian.net/wiki/spaces/COL/pages/2271936513/User+Manual%3A+CollectionSpace+CSV+Importer[End-user documentation for CSV Importer]

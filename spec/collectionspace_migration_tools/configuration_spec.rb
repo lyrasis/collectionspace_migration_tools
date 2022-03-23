@@ -11,22 +11,17 @@ RSpec.describe CollectionspaceMigrationTools::Configuration do
     it 'returns Configuration object', :aggregate_failures do
       expect(result).to be_a(CMT::Configuration)
       expect(result.client.base_uri).to eq('https://core.dev.collectionspace.org/cspace-services')
-      expect(result.database.db_name).to eq('db_db')
+      expect(result.database.db_name).to eq('cs_cs')
     end
   end
 
   context 'with invalid config' do
     let(:config_file){ invalid_config_path }
 
+    # If this test fails make sure you do not have redis running
     it 'outputs error message and exits' do
-      out = <<~OUT
-        Could not create config.
-        Error occurred in: CollectionspaceMigrationTools::Validate::Config
-        Error message: base_uri must end with "/cspace-services"; db_host must not contain "-bastion"; bastion_host must contain "-bastion"; refname_port Redis not available on port 6380
-        Exiting...
-      OUT
       expect{ result }
-        .to output(out).to_stdout.and raise_error(SystemExit)
+        .to output(/Could not create config/).to_stdout.and raise_error(SystemExit)
     end
   end
 end
