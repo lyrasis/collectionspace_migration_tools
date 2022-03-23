@@ -4,10 +4,9 @@ require 'collectionspace/client'
 require 'dry/monads'
 
 module CollectionspaceMigrationTools
-  module RecordMapper
+  module Xml
     # Returns CS Services API path for record type
-    class ServicesPathGetter
-      include CMT::RecordMapper::Extensions
+    class ServicesApiPathGetter
       include Dry::Monads[:result]
 
       class << self
@@ -34,8 +33,8 @@ module CollectionspaceMigrationTools
 
       def authority_service
         result = CollectionSpace::Service.get(
-          type: rec_type,
-          subtype: rec_subtype
+          type: mapper.type,
+          subtype: mapper.subtype
         )
       rescue StandardError => err
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: err))
@@ -45,7 +44,7 @@ module CollectionspaceMigrationTools
 
       def normal_service
         result = CollectionSpace::Service.get(
-          type: rec_service_path
+          type: mapper.service_path
         )
       rescue StandardError => err
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: err))
@@ -54,7 +53,7 @@ module CollectionspaceMigrationTools
       end
       
       def service
-        return authority_service if authority?
+        return authority_service if mapper.authority?
 
         normal_service
       end

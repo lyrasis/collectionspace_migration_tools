@@ -39,9 +39,9 @@ module CollectionspaceMigrationTools
 
         csv = yield(CMT::Csv::Checker.call(csv_path))
 
-        services_path = yield(CMT::RecordMapper::ServicesPathGetter.call(mapper))
+        services_path = yield(CMT::Xml::ServicesApiPathGetter.call(mapper))
         namer = yield(CMT::Xml::FileNamer.new(svc_path: services_path, action: action))
-        output_dir = yield(CMT::RecordMapper::DirPathGetter.call(mapper))
+        output_dir = yield(CMT::Xml::DirPathGetter.call(mapper))
         row_processor = yield(CMT::Csv::RowProcessor.new(
           output_dir: output_dir,
           namer: namer

@@ -4,7 +4,7 @@ require 'dry/monads'
 require 'fileutils'
 
 module CollectionspaceMigrationTools
-  module RecordMapper
+  module Xml
     # Returns directory path for batch and creates directory if it does not exist
     class DirPathGetter
       include Dry::Monads[:result]
