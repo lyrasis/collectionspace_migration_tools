@@ -21,7 +21,7 @@ module Helpers
 
   # returns valid config parsed as hash
   def valid_config_hash
-    CMT::Parse::ClientConfig.call(valid_config_path).value!
+    CMT::Parse::YamlConfig.call(valid_config_path).value!
   end
 
   # returns path to valid test config (core.dev)
