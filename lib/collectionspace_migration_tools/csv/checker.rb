@@ -9,18 +9,19 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
 
       class << self
-        def call(path)
-          self.new(path).call
+        def call(path, row_getter)
+          self.new(path, row_getter).call
         end
       end
       
-      def initialize(path)
+      def initialize(path, row_getter)
         @path = File.expand_path(path)
+        @row_getter = row_getter
       end
 
       def call
         check_file.bind do
-          parse_line.bind do
+          row_getter.call.bind do
             Success(path)
           end
         end
@@ -28,20 +29,12 @@ module CollectionspaceMigrationTools
       
       private
       
-      attr_reader :path
+      attr_reader :path, :row_getter
 
       def check_file
         return Success(path) if File.file?(path)
 
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: "#{path} does not exist"))
-      end
-
-      def parse_line
-        result = File.open(path){ |file| CSV.parse_line(file, headers: true, col_sep: CMT.config.client.csv_delimiter) }
-      rescue StandardError => err
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: err.message))
-      else
-        Success(result)
       end
     end
   end
