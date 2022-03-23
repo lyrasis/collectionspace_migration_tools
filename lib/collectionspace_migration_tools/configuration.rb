@@ -53,38 +53,12 @@ module CollectionspaceMigrationTools
       fix_config_paths
     end
 
-    def create_subdirs
+    def handle_subdirs
       %i[mapper_dir xml_dir].each do |subdir|
-        updatemeth = "#{subdir}=".to_sym
-        own_path = is_own_dir?(client.send(subdir))
-        
-        client.send(updatemeth, own_path) if own_path
-        next if own_path
-        
-        path = "#{client.base_dir}/#{client.send(subdir)}"
-        next if Dir.exists?(path)
-
-        puts "Creating directory: #{path}"
-        FileUtils.mkdir(path)
+        CMT::ConfigSubdirectoryHandler.call(config: client, setting: subdir)
       end
     end
 
-    def expand_subdir(subdir)
-      File.expand_path(subdir)
-    rescue StandardError
-      false
-    end
-    
-    def is_own_dir?(subdir)
-      expanded = expand_subdir(subdir)
-      return expanded unless expanded
-
-      test =  Dir.exist?(expanded)
-      return test unless test
-
-      expanded
-    end
-    
     def expand_base_dir
       expanded = File.expand_path(client.base_dir).delete_suffix('/')
       client.base_dir = expanded
@@ -92,7 +66,7 @@ module CollectionspaceMigrationTools
     
     def fix_config_paths
       expand_base_dir
-      create_subdirs
+      handle_subdirs
     end
 
     def section_struct(config_data)
