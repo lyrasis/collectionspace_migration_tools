@@ -2,7 +2,7 @@
 
 require_relative '../../spec_helper'
 
-RSpec.describe CollectionspaceMigrationTools::Csv::Checker do
+RSpec.describe CollectionspaceMigrationTools::Csv::FileChecker do
   let(:csv_path){ File.join(Bundler.root.to_s, 'spec', 'support', 'fixtures', 'csv', csv_name) }
   let(:row_getter){ CMT::Csv::FirstRowGetter.new(csv_path) }
   

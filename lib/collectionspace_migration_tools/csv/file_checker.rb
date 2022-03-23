@@ -5,7 +5,7 @@ require 'dry/monads'
 
 module CollectionspaceMigrationTools
   module Csv
-    class Checker
+    class FileChecker
       include Dry::Monads[:result]
 
       class << self
