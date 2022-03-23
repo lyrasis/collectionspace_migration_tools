@@ -56,8 +56,7 @@ Clone https://github.com/collectionspace/cspace-config-untangler/
 
 In `cspace-config-untangler/data/mappers`, find the directory containing the mappers for the profile/version the client is using.
 
-Copy all the .json record mapper files from there into the `mapper_dir` you specified in your config.
-
+This is the directory path to use as `mapper_dir` in your `client_config`.
 
 == Usage
 Ensure desired config is in place (See Configuration section above)
