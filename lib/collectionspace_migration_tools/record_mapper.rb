@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
+require 'dry/monads'
+
 module CollectionspaceMigrationTools
   class RecordMapper
+    include Dry::Monads[:result]
+
     attr_reader :to_h
 
     def initialize(hash)
@@ -32,6 +36,11 @@ module CollectionspaceMigrationTools
     def service_path
       config['service_path']
     end
+
+    def to_monad
+      Success(self)
+    end
+
     
     private
 

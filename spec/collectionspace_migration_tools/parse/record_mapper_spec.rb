@@ -20,9 +20,9 @@ RSpec.describe CollectionspaceMigrationTools::Parse::RecordMapper do
     context 'with valid JSON mapper for given rectype' do
       let(:rectype){ 'objecthierarchy' }
 
-      it 'is Success with parsed JSON as hash' do
+      it 'is Success with CMT::RecordMapper' do
         expect(result).to be_a(Dry::Monads::Success)
-        expect(result.value!).to be_a(Hash)
+        expect(result.value!).to be_a(CMT::RecordMapper)
       end
     end
   end

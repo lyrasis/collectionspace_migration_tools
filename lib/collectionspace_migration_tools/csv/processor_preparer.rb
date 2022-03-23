@@ -22,7 +22,7 @@ module CollectionspaceMigrationTools
       # @param csv [String] path to CSV
       # @param rectype [String] record type for retrieving RecordMapper
       # @param action [String<'CREATE', 'UPDATE', 'DELETE'>]
-      def initialize(csv_path:,  rectype:, action:)
+      def initialize(csv_path:, rectype:, action:)
         @csv_path = csv_path
         @rectype = rectype
         if ACTIONS.any?(action)
@@ -35,7 +35,8 @@ module CollectionspaceMigrationTools
 
       def call
         mapper = yield(CMT::Parse::RecordMapper.call(rectype))
-        handler = yield(CMT::DataHandlerBuilder.call(mapper))
+        batch_config = yield(CMT::Parse::BatchConfig.call)
+        handler = yield(CMT::Build::DataHandler.call(mapper, batch_config))
 
         row_getter = CMT::Csv::FirstRowGetter.new(csv_path)
         csv = yield(CMT::Csv::Checker.call(csv_path, row_getter))

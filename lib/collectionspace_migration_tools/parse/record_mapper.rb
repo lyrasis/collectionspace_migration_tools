@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'dry/monads'
+require 'dry/monads/do'
 require 'json'
 
 module CollectionspaceMigrationTools
@@ -8,6 +9,8 @@ module CollectionspaceMigrationTools
     # Parses the JSON record mapper for the given record type
     class RecordMapper
       include Dry::Monads[:result]
+      include Dry::Monads::Do.for(:call)
+      
       class << self
 
         def call(rectype)
@@ -20,13 +23,12 @@ module CollectionspaceMigrationTools
       end
 
       def call
-        validate_rectype.bind do
-          read_json.bind do |json|
-            parse(json) do |hash|
-              Success(CMT::RecordMapper.new(hash))
-            end
-          end
-        end
+        rec_type = yield(validate_rectype)
+        json = yield(read_json)
+        hash = yield(parse(json))
+        mapper = yield(CMT::RecordMapper.new(hash))
+
+        Success(mapper)
       end
       
       private

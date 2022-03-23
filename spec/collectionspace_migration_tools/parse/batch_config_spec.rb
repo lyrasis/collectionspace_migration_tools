@@ -35,6 +35,7 @@ RSpec.describe CollectionspaceMigrationTools::Parse::BatchConfig do
         path = File.join(Bundler.root, 'spec', 'support', 'fixtures', 'missing_batch_config.json')
         CMT.config.client.batch_config_path = path
       end
+      after{ CMT.config.client.batch_config_path = nil }
 
       it 'is Failure', :aggregate_failures do
         expect(result).to be_a(Dry::Monads::Failure)
