@@ -2,22 +2,13 @@
 
 require_relative '../../spec_helper'
 
-RSpec.describe CollectionspaceMigrationTools::Csv::BatchPreprocessor do
+RSpec.describe CollectionspaceMigrationTools::Csv::MissingRequiredFieldsCheck do
   let(:csv_path){ File.join(Bundler.root.to_s, 'spec', 'support', 'fixtures', 'csv', csv_name) }
   let(:row){ CMT::Csv::FirstRowGetter.call(csv_path).value! }
   let(:handler){ setup_handler('collectionobject')}
   
   describe '#call' do
-    let(:result){ described_class.call(handler: handler, first_row: row) }
-
-    context 'when missing a header' do
-      let(:csv_name){ 'missing_header.csv' }
-      
-      it 'is Failure', :aggregate_failures do
-        expect(result).to be_a(Dry::Monads::Failure)
-        expect(result.failure).to eq('1 field(s) lack a header value')
-      end
-    end
+    let(:result){ described_class.call(handler, row) }
 
     context 'when missing a required field' do
       let(:csv_name){ 'required_field_missing.csv' }
@@ -28,8 +19,7 @@ RSpec.describe CollectionspaceMigrationTools::Csv::BatchPreprocessor do
       end
     end
 
-
-    context 'when all checks passed' do
+    context 'when required field present' do
       let(:csv_name){ 'unknown_header.csv' }
       
       it 'is Success' do

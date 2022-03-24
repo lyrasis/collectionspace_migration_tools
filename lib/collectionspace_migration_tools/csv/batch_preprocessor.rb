@@ -26,6 +26,7 @@ module CollectionspaceMigrationTools
 
       def call
         headers_present = yield(CMT::Csv::MissingHeaderCheck.call(row))
+        required_present = yield(CMT::Csv::MissingRequiredFieldsCheck.call(handler, row))
 
         Success()
       end
