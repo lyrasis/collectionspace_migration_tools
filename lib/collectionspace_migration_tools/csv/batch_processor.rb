@@ -10,14 +10,15 @@ module CollectionspaceMigrationTools
     class BatchProcessor
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:preprocess)
-      
+
+      attr_reader :unknown_fields
       # @param csv_path [String]
       # @param mapper [Hash] parsed JSON record mapper
       # @param row_processor [CMT::Csv::RowProcessor]
       def initialize(csv_path:, handler:, row_getter:, row_processor: )
         @csv_path = csv_path
         @handler = handler
-        @first_row = row_getter.call
+        @first_row = row_getter.call.value!
         @row_processor = row_processor
         @unknown_fields = []
       end
@@ -27,13 +28,12 @@ module CollectionspaceMigrationTools
       end
       
       def preprocess
-        CMT::Csv::BatchPreprocessor.call(handler:, first_row:, batch: self)
+        CMT::Csv::BatchPreprocessor.call(handler: handler, first_row: first_row, batch: self)
       end
       
-      attr_reader :csv, :handler, :first_row, :row_processor
-      
       private
-
+      
+      attr_reader :csv, :handler, :first_row, :row_processor
     end
   end
 end

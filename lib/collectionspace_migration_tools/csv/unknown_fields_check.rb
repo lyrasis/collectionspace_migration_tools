@@ -19,16 +19,24 @@ module CollectionspaceMigrationTools
       end
 
       def call
-        result = handler.check_fields(row)[:unknown_fields]
-        return Success() if result.empty?
+        puts 'Checking for unknown fields in data...'
+        result = handler.check_fields(row)
+        report_known(result)
+        unknown = result[:unknown_fields]
+        return Success() if unknown.empty?
 
-        warn("WARNING: #{result.length} unknown fields in data will be ignored: #{result.join(', ')}")
-        return Success()
+        warn("\nWARNING: #{unknown.length} unknown fields in data will be ignored: #{unknown.join(', ')}")
+        return Success(unknown)
       end
       
       private
 
       attr_reader :handler, :row
+
+      def report_known(result)
+        known = result[:known_fields]
+        puts "INFO: #{known.length} known fields in data will be processed: #{known.join(', ')}"
+      end
     end
   end
 end

@@ -9,16 +9,17 @@ module CollectionspaceMigrationTools
     class RowProcessor
       include Dry::Monads[:result]
       
-      # @param svc_path [String]
       # @param output_dir [String]
       # @param namer [CMT::Xml::FileNamer]
-      def initialize(output_dir:, namer:)
+      # @param handler [CollectionSpace::Mapper::DataHandler]
+      def initialize(output_dir:, namer:, handler:)
         @output_dir = output_dir
         @namer = namer
+        @handler = handler
       end
-
+      
       # @param row [CSV::Row] with headers
-      def call(row)
+      def call(row, batch)
       end
 
       def to_monad
@@ -27,7 +28,7 @@ module CollectionspaceMigrationTools
       
       private
       
-      attr_reader :output_dir, :namer
+      attr_reader :output_dir, :namer, :handler
 
     end
   end

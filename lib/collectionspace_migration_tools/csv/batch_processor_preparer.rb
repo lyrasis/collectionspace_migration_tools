@@ -46,12 +46,14 @@ module CollectionspaceMigrationTools
         output_dir = yield(CMT::Xml::DirPathGetter.call(mapper))
         row_processor = yield(CMT::Csv::RowProcessor.new(
           output_dir: output_dir,
-          namer: namer
+          namer: namer,
+          handler: handler
         ))
 
         processor = CMT::Csv::BatchProcessor.new(
           csv_path: csv,
           handler: handler,
+          row_getter: row_getter,
           row_processor: row_processor
         )
         

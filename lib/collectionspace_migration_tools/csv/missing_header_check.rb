@@ -18,6 +18,7 @@ module CollectionspaceMigrationTools
       end
 
       def call
+        puts 'Checking for missing headers...'
         missing_headers = row.headers.select(&:blank?)
         return Success(row) if missing_headers.empty?
 

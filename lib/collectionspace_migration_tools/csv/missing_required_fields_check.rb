@@ -19,6 +19,7 @@ module CollectionspaceMigrationTools
       end
 
       def call
+        puts 'Checking for presence of required field(s)...'
         validated = handler.validate(row)
         return Success() if validated.valid?
 
