@@ -11,30 +11,37 @@ module CollectionspaceMigrationTools
       include Dry::Monads::Do.for(:call)
 
       class << self
-        def call(handler:, first_row:)
-          self.new(handler: handler, first_row: first_row).call
+        def call(handler:, first_row:, batch:)
+          self.new(handler: handler, first_row: first_row, batch: batch).call
         end
       end
 
       # @param csv_path [String]
       # @param mapper [Hash] parsed JSON record mapper
       # @param row_processor [CMT::Csv::RowProcessor]
-      def initialize(handler:, first_row:)
+      def initialize(handler:, first_row:, batch:)
         @handler = handler
         @row = first_row
+        @batch = batch
       end
 
       def call
-        headers_present = yield(CMT::Csv::MissingHeaderCheck.call(row))
-        required_present = yield(CMT::Csv::MissingRequiredFieldsCheck.call(handler, row))
+        _headers_present = yield(CMT::Csv::MissingHeaderCheck.call(row))
+        _required_present = yield(CMT::Csv::MissingRequiredFieldsCheck.call(handler, row))
+        unknown = yield(CMT::Csv::UnknownFieldsCheck.call(handler, row))
 
+        report_unknown_fields(unknown) if unknown
+        
         Success()
       end
       
-      attr_reader :handler, :row
-      
       private
 
+      attr_reader :handler, :row, :batch
+
+      def report_unknown_fields(fields)
+        fields.each{ |field| batch.add_unknown_field(field) }
+      end
     end
   end
 end

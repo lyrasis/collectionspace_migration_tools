@@ -6,9 +6,10 @@ RSpec.describe CollectionspaceMigrationTools::Csv::BatchPreprocessor do
   let(:csv_path){ File.join(Bundler.root.to_s, 'spec', 'support', 'fixtures', 'csv', csv_name) }
   let(:row){ CMT::Csv::FirstRowGetter.call(csv_path).value! }
   let(:handler){ setup_handler('collectionobject')}
+  let(:batch){ instance_double('CollectionspaceMigrationTools::Csv::BatchProcessor') }
   
   describe '#call' do
-    let(:result){ described_class.call(handler: handler, first_row: row) }
+    let(:result){ described_class.call(handler: handler, first_row: row, batch: batch) }
 
     context 'when missing a header' do
       let(:csv_name){ 'missing_header.csv' }
@@ -29,10 +30,11 @@ RSpec.describe CollectionspaceMigrationTools::Csv::BatchPreprocessor do
     end
 
 
-    context 'when all checks passed' do
+    context 'when unknown header present' do
       let(:csv_name){ 'unknown_header.csv' }
       
-      it 'is Success' do
+      it 'Success that reports unknown headers to batch processor', :aggregate_failures do
+        expect(batch).to receive(:add_unknown_field).with('miscfield')
         expect(result).to be_a(Dry::Monads::Success)
       end
     end

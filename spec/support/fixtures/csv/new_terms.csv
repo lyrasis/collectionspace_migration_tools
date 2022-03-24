@@ -1,0 +1,6 @@
+"objectNumber","numberOfObjects","numberValue","numberType","title","titleLanguage","namedCollection","collection"
+"20CS.001.0001",1,"123456|98765","lender|obsolete","A Man| A Woman","English| Klingon","Test collection","permanent collection"
+"20CS.001.0002",1,,,"Rainbow","English","Test Collection","rando"
+"20CS.001.0003",1,,,"Cloudy Day","English","'Test’ Collection","permanent-collection"
+"BI TEST 2",1,,,"Duplicate record id",,,
+"BI TEST 1",1,,,,,,
