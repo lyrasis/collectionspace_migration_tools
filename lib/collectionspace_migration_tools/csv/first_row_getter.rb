@@ -25,6 +25,10 @@ module CollectionspaceMigrationTools
       else
         Success(result)
       end
+
+      def to_monad
+        Success(self)
+      end
       
       private
       

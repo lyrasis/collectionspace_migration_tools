@@ -2,11 +2,13 @@
 
 require 'csv'
 require 'dry/monads'
+require 'dry/monads/do'
 
 module CollectionspaceMigrationTools
   module Csv
     class FileChecker
       include Dry::Monads[:result]
+      include Dry::Monads::Do.for(:call)
 
       class << self
         def call(path, row_getter)
@@ -20,11 +22,10 @@ module CollectionspaceMigrationTools
       end
 
       def call
-        check_file.bind do
-          row_getter.call.bind do
-            Success(path)
-          end
-        end
+        _csv = yield(check_file)
+        row = yield(row_getter.call)
+        
+        Success(row)
       end
       
       private

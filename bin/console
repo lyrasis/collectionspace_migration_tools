@@ -13,11 +13,18 @@ end
 
 
 def cpp
-  CMT::Csv::BatchProcessorPreparer.new(csv_path: '~/data/CollectionSpace/importer_tool_testing/core_co/mftest_shorter.csv', rectype: 'collectionobject', action: 'create')
+  CMT::Csv::BatchProcessorPreparer.new(csv_path: '/Users/kristina/data/CSWS/cs/collectionobject.csv', rectype: 'collectionobject', action: 'create')
 end
 
-def res
-  cpp.call
+def bp
+  cpp.call.value!
 end
 
+def bpp
+  bp.process
+end
+
+IRB.conf[:BACK_TRACE_LIMIT]=10
+IRB.conf[:INSPECT_MODE]=nil
 IRB.start(__FILE__)
+

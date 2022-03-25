@@ -22,6 +22,7 @@ module CollectionspaceMigrationTools
       end
 
       def call
+        puts "Setting up #{self.class.name}..."
         service.bind do |service_hash|
           Success("/#{service_hash[:path]}")
         end

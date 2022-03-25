@@ -16,9 +16,9 @@ module CollectionspaceMigrationTools
         end
       end
 
-      # @param csv_path [String]
-      # @param mapper [Hash] parsed JSON record mapper
-      # @param row_processor [CMT::Csv::RowProcessor]
+      # @param handler [CollectionSpace::Mapper::DataHandler]
+      # @param first_row [CSV::Row]
+      # @param batch [CMT::Csv::BatchProcessor
       def initialize(handler:, first_row:, batch:)
         @handler = handler
         @row = first_row

@@ -41,6 +41,9 @@ module CollectionspaceMigrationTools
       Success(self)
     end
 
+    def to_s
+      "<##{self.class}:#{self.object_id.to_s(8)} #{config}>"
+    end
     
     private
 

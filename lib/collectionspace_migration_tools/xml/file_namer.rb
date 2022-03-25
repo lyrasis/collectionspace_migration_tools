@@ -14,6 +14,7 @@ module CollectionspaceMigrationTools
       # @param svc_path [String]
       # @param action [String<'CREATE', 'UPDATE', 'DELETE'>]
       def initialize(svc_path:, action:)
+        puts "Setting up #{self.class.name}..."
         @svc_path = svc_path
         @action = action
       end

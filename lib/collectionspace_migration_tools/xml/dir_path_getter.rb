@@ -18,6 +18,7 @@ module CollectionspaceMigrationTools
 
       # @param record_mapper [Hash] parsed JSON record mapper
       def initialize(mapper)
+        puts "Setting up #{self.class.name}..."
         @mapper = mapper
         @xml_dir = File.expand_path(CMT.config.client.xml_dir)
       end
