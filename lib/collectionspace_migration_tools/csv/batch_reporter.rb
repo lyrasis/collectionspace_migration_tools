@@ -14,6 +14,7 @@ module CollectionspaceMigrationTools
         @path = "#{output_dir}/mapper_report.csv"
         @fields = [fields, 'warnings', 'errors'].flatten
         @csv = CSV.open(path, 'wb')
+        puts "I GOT TOUCHED"
         csv << fields
       end
 
@@ -22,11 +23,11 @@ module CollectionspaceMigrationTools
       end
 
       def report_failure(result)
-        puts 'Failure!'
+#        puts 'Failure!'
       end
 
       def report_success(result)
-        puts 'Success!'
+ #       puts 'Success!'
       end
 
       def to_monad

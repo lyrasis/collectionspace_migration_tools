@@ -58,7 +58,7 @@ module CollectionspaceMigrationTools
 
       def timestamp
         now = Time.now
-        now.strftime("%F_%H:%M")
+        now.strftime("%F_%H_%M")
       end
     end
   end

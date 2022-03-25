@@ -28,20 +28,14 @@ module CollectionspaceMigrationTools
       def call
         _headers_present = yield(CMT::Csv::MissingHeaderCheck.call(row))
         _required_present = yield(CMT::Csv::MissingRequiredFieldsCheck.call(handler, row))
-        unknown = yield(CMT::Csv::UnknownFieldsCheck.call(handler, row))
+        _unknown = yield(CMT::Csv::UnknownFieldsCheck.call(handler, row))
 
-        report_unknown_fields(unknown) if unknown
-        
         Success()
       end
       
       private
 
       attr_reader :handler, :row, :batch
-
-      def report_unknown_fields(fields)
-        fields.each{ |field| batch.add_unknown_field(field) }
-      end
     end
   end
 end

@@ -12,16 +12,17 @@ def reload!(print = true)
 end
 
 
-def cpp
+def bpp
   CMT::Csv::BatchProcessorPreparer.new(csv_path: '/Users/kristina/data/CSWS/cs/collectionobject.csv', rectype: 'collectionobject', action: 'create')
 end
 
 def bp
-  cpp.call.value!
+  bpp.call.value!
 end
 
-def bpp
-  bp.process
+def do_it
+  processor = bpp.call.value!
+  processor.call
 end
 
 IRB.conf[:BACK_TRACE_LIMIT]=10

@@ -44,18 +44,18 @@ module CollectionspaceMigrationTools
         services_path = yield(CMT::Xml::ServicesApiPathGetter.call(mapper))
         namer = yield(CMT::Xml::FileNamer.new(svc_path: services_path, action: action))
         output_dir = yield(CMT::Xml::DirPathGetter.call(mapper))
-
+        writer = yield(CMT::Xml::FileWriter.new(output_dir: output_dir, namer: namer))
+        
         reporter = yield(CMT::Csv::BatchReporter.new(output_dir: output_dir, fields: row.headers))
 
         validator = yield(CMT::Csv::RowValidator.new(handler, reporter))
         row_mapper = yield(CMT::Csv::RowMapper.new(handler, reporter))
         
         row_processor = yield(CMT::Csv::RowProcessor.new(
-          output_dir: output_dir,
-          namer: namer,
           validator: validator,
           mapper: row_mapper,
-          reporter: reporter
+          reporter: reporter,
+          writer: writer
         ))
         
         processor = yield(CMT::Csv::BatchProcessor.new(
@@ -63,7 +63,7 @@ module CollectionspaceMigrationTools
           handler: handler,
           first_row: row,
           row_processor: row_processor,
-          reporter: reporter
+#          reporter: reporter
         ))
 
         Success(processor)

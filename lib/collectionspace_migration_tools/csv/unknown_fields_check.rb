@@ -23,10 +23,12 @@ module CollectionspaceMigrationTools
         result = handler.check_fields(row)
         report_known(result)
         unknown = result[:unknown_fields]
-        return Success() if unknown.empty?
 
-        warn("\nWARNING: #{unknown.length} unknown fields in data will be ignored: #{unknown.join(', ')}")
-        return Success(unknown)
+        unless unknown.empty?
+          warn("\nWARNING: #{unknown.length} unknown fields in data will be ignored: #{unknown.join(', ')}")
+        end
+        
+        return Success()
       end
       
       private

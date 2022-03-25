@@ -18,12 +18,12 @@ module CollectionspaceMigrationTools
       # @param first_row [CSV::Row]
       # @param row_processor [CMT::Csv::RowProcessor]
       # @param reporter [CMT::Csv::Reporter]
-      def initialize(csv_path:, handler:, first_row:, row_processor:, reporter:)
+      def initialize(csv_path:, handler:, first_row:, row_processor:)
         @csv_path = csv_path
         @handler = handler
         @first_row = first_row
         @row_processor = row_processor
-        @reporter = reporter
+#        @reporter = reporter
         @unknown_fields = []
       end
 
@@ -33,7 +33,11 @@ module CollectionspaceMigrationTools
 
       def call
         _preprocessed = yield(preprocess)
-
+        start_time = Time.now
+        _processed = yield(process)
+        elap = Time.now - start_time
+        puts "Processing time: #{elap}"
+        
         Success()
       end
       
@@ -41,19 +45,25 @@ module CollectionspaceMigrationTools
         CMT::Csv::BatchPreprocessor.call(handler: handler, first_row: first_row, batch: self)
       end
 
-      def process
-        chunks = SmarterCSV.process(
+      def chunks
+        SmarterCSV.process(
           csv_path, {
             chunk_size: CMT.config.system.csv_chunk_size,
             convert_values_to_numeric: false,
             strings_as_keys: true
           })
-
+      end
+      
+      def process
         Parallel.map(chunks, in_processes: CMT.config.system.max_threads) do |chunk|
           worker(chunk)
         end
-
-        reporter.close
+        rescue StandardError => err
+          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: err))
+      else
+        Success()
+      ensure
+#        reporter.close
       end
 
       def worker(chunk)
@@ -71,7 +81,7 @@ module CollectionspaceMigrationTools
 
       private
       
-      attr_reader :csv_path, :handler, :first_row, :row_processor, :reporter
+      attr_reader :csv_path, :handler, :first_row, :row_processor #, :reporter
     end
   end
 end
