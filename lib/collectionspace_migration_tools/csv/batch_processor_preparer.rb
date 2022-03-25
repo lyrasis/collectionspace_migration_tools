@@ -48,8 +48,8 @@ module CollectionspaceMigrationTools
         
         reporter = yield(CMT::Csv::BatchReporter.new(output_dir: output_dir, fields: row.headers))
 
-        validator = yield(CMT::Csv::RowValidator.new(handler, reporter))
-        row_mapper = yield(CMT::Csv::RowMapper.new(handler, reporter))
+        validator = yield(CMT::Csv::RowValidator.new(handler))
+        row_mapper = yield(CMT::Csv::RowMapper.new(handler))
         
         row_processor = yield(CMT::Csv::RowProcessor.new(
           validator: validator,

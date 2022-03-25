@@ -8,10 +8,9 @@ module CollectionspaceMigrationTools
     class RowValidator
       include Dry::Monads[:result]
 
-      def initialize(handler, reporter)
+      def initialize(handler)
         puts "Setting up #{self.class.name}..."
         @handler = handler
-        @reporter = reporter
       end
 
       def call(row)
@@ -19,10 +18,7 @@ module CollectionspaceMigrationTools
         return result if result.failure? # i.e. if sending handler.validate barfs
 
         response = result.value!
-        return Success(response) if response.valid?
-        
-        reporter.report_failure(response)
-        Failure(response)
+        response.valid? ? Success(response) : Failure(response)
       end
 
       def to_monad
@@ -31,7 +27,7 @@ module CollectionspaceMigrationTools
       
       private
 
-      attr_reader :handler, :reporter
+      attr_reader :handler
 
       def validate(row)
         result = handler.validate(row)

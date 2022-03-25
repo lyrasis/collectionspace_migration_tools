@@ -8,21 +8,17 @@ module CollectionspaceMigrationTools
     class RowMapper
       include Dry::Monads[:result]
 
-      def initialize(handler, reporter)
+      def initialize(handler)
         puts "Setting up #{self.class.name}..."
         @handler = handler
-        @reporter = reporter
       end
 
       def call(row)
         result = map(row)
-        return result if result.failure? # i.e. if sending handler.validate barfs
+        return result if result.failure? # i.e. if sending handler.process barfs
 
         response = result.value!
-        return Success(response) if response.valid?
-        
-        reporter.report_failure(response)
-        Failure(response)
+        response.valid? ? Success(response) : Failure(response)
       end
 
       def to_monad
@@ -31,7 +27,7 @@ module CollectionspaceMigrationTools
       
       private
 
-      attr_reader :handler, :reporter
+      attr_reader :handler
 
       def map(row)
         result = handler.process(row)
