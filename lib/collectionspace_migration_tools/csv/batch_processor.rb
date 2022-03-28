@@ -12,23 +12,17 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)
 
-      attr_reader :unknown_fields
       # @param csv_path [String]
       # @param handler [CollectionSpace::Mapper::DataHandler]
       # @param first_row [CSV::Row]
       # @param row_processor [CMT::Csv::RowProcessor]
-      # @param reporter [CMT::Csv::Reporter]
-      def initialize(csv_path:, handler:, first_row:, row_processor:)
+      # @param term_reporter [CMT::Csv::BatchTermReporter]
+      def initialize(csv_path:, handler:, first_row:, row_processor:, term_reporter:)
         @csv_path = csv_path
         @handler = handler
         @first_row = first_row
         @row_processor = row_processor
-#        @reporter = reporter
-        @unknown_fields = []
-      end
-
-      def add_unknown_field(field)
-        @unknown_fields << field
+        @term_reporter = term_reporter
       end
 
       def call
@@ -58,12 +52,11 @@ module CollectionspaceMigrationTools
         Parallel.map(chunks, in_processes: CMT.config.system.max_threads) do |chunk|
           worker(chunk)
         end
-        rescue StandardError => err
+      rescue StandardError => err
           Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: err))
       else
+        term_reporter.deduplicate
         Success()
-      ensure
-#        reporter.close
       end
 
       def worker(chunk)
@@ -71,7 +64,6 @@ module CollectionspaceMigrationTools
       end
 
       def to_monad
-        puts "Returning monad of #{self}"
         Success(self)
       end
       
@@ -81,7 +73,7 @@ module CollectionspaceMigrationTools
 
       private
       
-      attr_reader :csv_path, :handler, :first_row, :row_processor #, :reporter
+      attr_reader :csv_path, :handler, :first_row, :row_processor, :term_reporter
     end
   end
 end
