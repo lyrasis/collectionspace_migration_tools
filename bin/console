@@ -11,20 +11,6 @@ def reload!(print = true)
   load("#{Bundler.root}/lib/collectionspace_migration_tools.rb")
 end
 
-
-def bpp
-  CMT::Csv::BatchProcessorPreparer.new(csv_path: '/Users/kristina/data/CSWS/cs/collectionobject.csv', rectype: 'collectionobject', action: 'delete')
-end
-
-def bp
-  bpp.call.value!
-end
-
-def do_it
-  processor = bpp.call.value!
-  processor.call
-end
-
 IRB.conf[:BACK_TRACE_LIMIT]=10
 IRB.conf[:INSPECT_MODE]=nil
 IRB.start(__FILE__)
