@@ -70,7 +70,7 @@ module CollectionspaceMigrationTools
       def warning(status, actual_action)
         {
           category: :services_api_transfer_action_mismatch,
-          message: "Given: #{action}. Record status: #{status}. Will transfer as: #{actual_action}"
+          message: "API TRANSFER ACTION MISMATCH: Given: #{action}. Record status: #{status}. Will transfer as: #{actual_action}"
         }
       end
     end
