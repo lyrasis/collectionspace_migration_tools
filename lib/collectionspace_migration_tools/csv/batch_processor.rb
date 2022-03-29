@@ -53,7 +53,8 @@ module CollectionspaceMigrationTools
           worker(chunk)
         end
       rescue StandardError => err
-          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: err))
+        msg = "#{err.message} IN #{err.backtrace[0]}"
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
       else
         term_reporter.deduplicate
         Success()

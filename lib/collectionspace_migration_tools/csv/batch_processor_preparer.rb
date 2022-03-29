@@ -42,13 +42,17 @@ module CollectionspaceMigrationTools
         row = yield(CMT::Csv::FileChecker.call(csv_path, row_getter))
 
         services_path = yield(CMT::Xml::ServicesApiPathGetter.call(mapper))
-        namer = yield(CMT::Xml::FileNamer.new(svc_path: services_path, action: action))
+        action_checker = yield(CMT::Xml::ServicesApiActionChecker.new(action))
+        namer = yield(CMT::Xml::FileNamer.new(svc_path: services_path))
         output_dir = yield(CMT::Xml::DirPathGetter.call(mapper))
         term_reporter = yield(CMT::Csv::BatchTermReporter.new(output_dir))
         reporter = yield(CMT::Csv::BatchReporter.new(output_dir: output_dir, fields: row.headers, term_reporter: term_reporter))
 
-        writer = yield(CMT::Xml::FileWriter.new(output_dir: output_dir, namer: namer, reporter: reporter))
-        
+        writer = yield(CMT::Xml::FileWriter.new(
+          output_dir: output_dir,
+          action_checker: action_checker,
+          namer: namer,
+          reporter: reporter))
 
         validator = yield(CMT::Csv::RowValidator.new(handler))
         row_mapper = yield(CMT::Csv::RowMapper.new(handler))

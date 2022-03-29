@@ -12,7 +12,7 @@ module CollectionspaceMigrationTools
       def initialize(output_dir:, fields:, term_reporter:)
         puts "Setting up #{self.class.name}..."
         @path = "#{output_dir}/mapper_report.csv"
-        @fields = [fields, 'CMT_outcome', 'CMT_warnings', 'CMT_errors'].flatten
+        @fields = [fields, 'CMT_rec_status', 'CMT_outcome', 'CMT_warnings', 'CMT_errors'].flatten
         @term_reporter = term_reporter
         CSV.open(path, 'wb'){ |csv| csv << @fields }
       end
@@ -20,6 +20,7 @@ module CollectionspaceMigrationTools
       def report_failure(result, source)
         response = get_response(result, source)
         data = response.orig_data
+        data['CMT_rec_status'] = response.record_status
         data['CMT_outcome'] = 'failure'
         data['CMT_warnings'] = compile_warnings(response)
         write_row(add_errors(result, data, source))
@@ -27,6 +28,7 @@ module CollectionspaceMigrationTools
 
       def report_success(result)
         data = result.orig_data
+        data['CMT_rec_status'] = result.record_status
         data['CMT_outcome'] = 'success'
         data['CMT_warnings'] = compile_warnings(result)
         write_row(data)
@@ -62,6 +64,8 @@ module CollectionspaceMigrationTools
           data['CMT_errors'] = "An XML record with identifier #{response.identifier} has already been written. Check for duplicates"
         elsif error == :error_on_write
           data['CMT_errors'] = "Attempt to write XML to file raised error: #{result[2]}"
+        elsif error == :cannot_delete_new_record
+          data['CMT_errors'] = "Cannot delete new record"
         else
           data['CMT_errors'] = 'Unable to write file for unknown reason.'
         end

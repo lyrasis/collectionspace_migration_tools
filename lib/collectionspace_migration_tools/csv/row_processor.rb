@@ -42,7 +42,7 @@ module CollectionspaceMigrationTools
       def map_row(row)
         validated = yield(validator.call(row))
         mapped = yield(mapper.call(validated))
-        
+
         Success(mapped)
       end
     end

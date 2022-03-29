@@ -32,7 +32,7 @@ module CollectionspaceMigrationTools
       def map(row)
         result = handler.process(row)
       rescue StandardError => err
-        Failure(CMT::Failure.new(context: "Handler.process", message: err.message))
+        Failure(CMT::Failure.new(context: "Handler.process", message: err))
       else
         Success(result)
       end

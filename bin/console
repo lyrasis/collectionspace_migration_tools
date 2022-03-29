@@ -13,7 +13,7 @@ end
 
 
 def bpp
-  CMT::Csv::BatchProcessorPreparer.new(csv_path: '/Users/kristina/data/CSWS/cs/collectionobject.csv', rectype: 'collectionobject', action: 'create')
+  CMT::Csv::BatchProcessorPreparer.new(csv_path: '/Users/kristina/data/CSWS/cs/collectionobject.csv', rectype: 'collectionobject', action: 'delete')
 end
 
 def bp

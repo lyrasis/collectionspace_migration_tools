@@ -11,7 +11,7 @@ module CollectionspaceMigrationTools
           end
           
           def signature(row)
-            [reltype(row), row['subjectcsid'], row['objectcsid'], row[cache_type]]
+            [reltype(row), row['subjectcsid'], row['objectcsid'], row[cache_type.to_s]]
           end
 
           private

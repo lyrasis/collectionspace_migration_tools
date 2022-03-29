@@ -10,9 +10,10 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:write)
 
-      def initialize(output_dir:, namer:, reporter:)
+      def initialize(output_dir:, action_checker:, namer:, reporter:)
         puts "Setting up #{self.class.name}..."
         @output_dir = output_dir
+        @action_checker = action_checker
         @namer = namer
         @reporter = reporter
       end
@@ -31,24 +32,17 @@ module CollectionspaceMigrationTools
       
       private
 
-      attr_reader :output_dir, :namer, :reporter
+      attr_reader :output_dir, :action_checker, :namer, :reporter
 
       def check_existence(path, response)
         return Failure([:file_already_exists, response]) if File.exist?(path)
         
         Success(response)
       end
-      
-      def get_file_name(response)
-        result = namer.call(response.identifier)
-      rescue StandardError => err
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: err))
-      else
-        Success(result)
-      end
 
       def write(response)
-        file_name = yield(get_file_name(response))
+        action = yield(action_checker.call(response))
+        file_name = yield(namer.call(response, action))
         path = "#{output_dir}/#{file_name}"
         _checked = yield(check_existence(path, response))
         _written = yield(write_file(path, response))
@@ -59,7 +53,7 @@ module CollectionspaceMigrationTools
       def write_file(path, response)
         File.open(path, 'wb'){ |file| file << response.doc }
       rescue StandardError => err
-        Failure([:error_on_write, response, err.message])
+        Failure([:error_on_write, response, err])
       else
        File.exist?(path) ? Success(response) : Failure([:file_not_written, response])
       end

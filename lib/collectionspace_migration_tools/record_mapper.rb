@@ -17,6 +17,30 @@ module CollectionspaceMigrationTools
       config['service_type'] == 'authority'
     end
 
+    def existence_check_method
+      if object?
+        :object_exists?
+      elsif procedure?
+        :procedure_exists?
+      elsif authority?
+        :auth_term_exists?
+      elsif relation?
+        :relation_exists?
+      end
+    end
+
+    def object?
+      config['service_type'] == 'procedure'
+    end
+
+    def procedure?
+      config['service_type'] == 'object'
+    end
+
+    def relation?
+      config['service_type'] == 'relation'
+    end
+    
     def type
       authority? ? config['authority_type'] : service_path
     end

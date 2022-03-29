@@ -12,16 +12,19 @@ module CollectionspaceMigrationTools
       SEPARATOR = '|'
       
       # @param svc_path [String]
-      # @param action [String<'CREATE', 'UPDATE', 'DELETE'>]
-      def initialize(svc_path:, action:)
+      def initialize(svc_path:)
         puts "Setting up #{self.class.name}..."
         @svc_path = svc_path
-        @action = action
       end
 
-      # @param id [String]
-      def call(id)
-        Base64.urlsafe_encode64([svc_path, id, action].join(SEPARATOR))
+      # @param response [CollectionSpace::Mapper::Response]
+      def call(response, action)
+        id = response.identifier
+        result = Base64.urlsafe_encode64([svc_path, id, action].join(SEPARATOR))
+      rescue
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: err))
+      else
+        Success(result)
       end
 
       def to_monad
@@ -30,8 +33,7 @@ module CollectionspaceMigrationTools
       
       private
       
-      attr_reader :svc_path, :action
-
+      attr_reader :svc_path
     end
   end
 end

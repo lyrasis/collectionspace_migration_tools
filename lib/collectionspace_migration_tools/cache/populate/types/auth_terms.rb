@@ -10,7 +10,7 @@ module CollectionspaceMigrationTools
           end
           
           def signature(row)
-            [row['type'], row['subtype'], row['term'], row[cache_type]]
+            [row['type'], row['subtype'], row['term'], row[cache_type.to_s]]
           end
         end
       end
