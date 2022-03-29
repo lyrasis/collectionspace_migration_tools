@@ -20,6 +20,7 @@ module CollectionspaceMigrationTools
         optional(:batch_config_path).maybe(:string)
         required(:csv_delimiter).filled(:string)
         required(:s3_bucket).filled(:string)
+        required(:s3_region).filled(:string)
         required(:s3_key).filled(:string)
         required(:s3_secret).filled(:string)
         required(:s3_delimiter).filled(:string)
