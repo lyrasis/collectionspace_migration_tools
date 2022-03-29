@@ -46,7 +46,7 @@ module CollectionspaceMigrationTools
         _checked = yield(check_existence(path, response))
         _written = yield(write_file(path, response))
 
-        Success(response)
+        Success([response, file_name])
       end
       
       def write_file(path, response)
