@@ -9,18 +9,17 @@ module CollectionspaceMigrationTools
     class FileNamer
       include Dry::Monads[:result]
       
-      SEPARATOR = '|'
-      
       # @param svc_path [String]
       def initialize(svc_path:)
         puts "Setting up #{self.class.name}..."
         @svc_path = svc_path
+        @separator = CMT.config.client.s3_delimiter
       end
 
       # @param response [CollectionSpace::Mapper::Response]
       def call(response, action)
         id = response.identifier
-        result = Base64.urlsafe_encode64([svc_path, id, action].join(SEPARATOR))
+        result = Base64.urlsafe_encode64([svc_path, id, action].join(separator))
       rescue
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: err))
       else
@@ -33,7 +32,7 @@ module CollectionspaceMigrationTools
       
       private
       
-      attr_reader :svc_path
+      attr_reader :svc_path, :separator
     end
   end
 end

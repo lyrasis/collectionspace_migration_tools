@@ -47,10 +47,17 @@ client:
   # This is optional and only needed if you need to tweak the mapper options.
   # `status_check_method` is automatically set to `cache` when using this application to create CSXML.
   # If you are NOT providing a custom config, comment out the following line.
-  # batch_config_path: 
+  # batch_config_path: ~/code/cs/migration_tools/spec/support/fixtures/client_batch_config.json
 
   # column/field delimiter for input "CSV" files
   csv_delimiter: ","
+
+  # AWS S3 Bucket settings - required for using this tool to transfer records to the client instance
+  # One S3 Bucket per instance must be set up -- Credentials are in LastPass entry `S3 IMPORT BUCKETS`
+  s3_bucket: "bucket_name"
+  s3_key: "value_of_bucket_key"
+  s3_secret: "value_of_secret_for_bucket_key"
+  s3_delimiter: "|"
 database:
   port: 5432
   db_password: dbpassword
