@@ -5,6 +5,7 @@ ruby File.read('.ruby-version').strip
 source 'https://rubygems.org'
 git_source(:github){ |repo_name| "https://github.com/#{repo_name}" }
 
+gem 'aws-sdk-s3', '~> 1'
 gem 'benchmark-memory', '~> 0.2'
 #gem 'collectionspace-client', tag: 'v0.13.4', git: 'https://github.com/collectionspace/collectionspace-client.git'
 gem 'collectionspace-client', branch: 'migration-tooling', git: 'https://github.com/collectionspace/collectionspace-client.git'
