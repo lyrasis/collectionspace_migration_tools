@@ -11,7 +11,6 @@ module CollectionspaceMigrationTools
       include Dry::Monads::Do.for(:write)
 
       def initialize(output_dir:, action_checker:, namer:, reporter:)
-        puts "Setting up #{self.class.name}..."
         @output_dir = output_dir
         @action_checker = action_checker
         @namer = namer

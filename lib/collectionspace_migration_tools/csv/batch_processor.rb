@@ -17,20 +17,25 @@ module CollectionspaceMigrationTools
       # @param first_row [CSV::Row]
       # @param row_processor [CMT::Csv::RowProcessor]
       # @param term_reporter [CMT::Csv::BatchTermReporter]
-      def initialize(csv_path:, handler:, first_row:, row_processor:, term_reporter:)
+      def initialize(csv_path:, handler:, first_row:, row_processor:, term_reporter:, output_dir:)
         @csv_path = csv_path
         @handler = handler
         @first_row = first_row
         @row_processor = row_processor
         @term_reporter = term_reporter
+        @output_dir = output_dir
       end
 
       def call
         _preprocessed = yield(preprocess)
+
         start_time = Time.now
         _processed = yield(process)
         elap = Time.now - start_time
         puts "Processing time: #{elap}"
+        puts "INFO: Results written to: #{output_dir}"
+        
+        _deduplicated = yield(term_reporter.deduplicate)
         
         Success()
       end
@@ -49,6 +54,8 @@ module CollectionspaceMigrationTools
       end
       
       def process
+        puts "Mapping CSV rows to CS XML..."
+
         Parallel.map(chunks, in_processes: CMT.config.system.max_threads) do |chunk|
           worker(chunk)
         end
@@ -56,7 +63,6 @@ module CollectionspaceMigrationTools
         msg = "#{err.message} IN #{err.backtrace[0]}"
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
       else
-        term_reporter.deduplicate
         Success()
       end
 
@@ -74,7 +80,7 @@ module CollectionspaceMigrationTools
 
       private
       
-      attr_reader :csv_path, :handler, :first_row, :row_processor, :term_reporter
+      attr_reader :csv_path, :handler, :first_row, :row_processor, :term_reporter, :output_dir
     end
   end
 end

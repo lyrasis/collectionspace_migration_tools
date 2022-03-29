@@ -23,7 +23,6 @@ module CollectionspaceMigrationTools
       end
 
       def call
-        puts "Setting up #{self.class.name}..."
         _rec_type = yield(validate_rectype)
         json = yield(read_json)
         hash = yield(parse(json))

@@ -34,6 +34,8 @@ module CollectionspaceMigrationTools
       end
 
       def call
+        puts "Setting up for batch processing..."
+        
         mapper = yield(CMT::Parse::RecordMapper.call(rectype))
         batch_config = yield(CMT::Parse::BatchConfig.call)
         handler = yield(CMT::Build::DataHandler.call(mapper, batch_config))
@@ -69,16 +71,16 @@ module CollectionspaceMigrationTools
           handler: handler,
           first_row: row,
           row_processor: row_processor,
-          term_reporter: term_reporter
+          term_reporter: term_reporter,
+          output_dir: output_dir
         ))
 
         Success(processor)
       end
 
       private
+
       attr_reader :csv_path, :rectype, :action
-
-
     end
   end
 end

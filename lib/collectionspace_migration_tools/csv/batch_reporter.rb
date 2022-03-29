@@ -10,7 +10,6 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
 
       def initialize(output_dir:, fields:, term_reporter:)
-        puts "Setting up #{self.class.name}..."
         @path = "#{output_dir}/mapper_report.csv"
         @fields = [fields, 'CMT_rec_status', 'CMT_outcome', 'CMT_warnings', 'CMT_errors'].flatten
         @term_reporter = term_reporter

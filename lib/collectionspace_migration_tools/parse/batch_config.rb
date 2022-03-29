@@ -22,7 +22,6 @@ module CollectionspaceMigrationTools
       end
 
       def call
-        puts "Setting up #{self.class.name}..."
         string = yield(read)
         hash = yield(parse(string))
 

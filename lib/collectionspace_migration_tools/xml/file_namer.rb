@@ -11,7 +11,6 @@ module CollectionspaceMigrationTools
       
       # @param svc_path [String]
       def initialize(svc_path:)
-        puts "Setting up #{self.class.name}..."
         @svc_path = svc_path
         @separator = CMT.config.client.s3_delimiter
       end

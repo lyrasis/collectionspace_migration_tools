@@ -22,7 +22,6 @@ module CollectionspaceMigrationTools
       end
 
       def call
-        puts "Setting up #{self.class.name}..."
         result = CollectionSpace::Mapper::DataHandler.new(
           record_mapper: record_mapper.to_h,
           client: CMT.client,

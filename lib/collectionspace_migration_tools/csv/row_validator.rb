@@ -9,7 +9,6 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
 
       def initialize(handler)
-        puts "Setting up #{self.class.name}..."
         @handler = handler
       end
 

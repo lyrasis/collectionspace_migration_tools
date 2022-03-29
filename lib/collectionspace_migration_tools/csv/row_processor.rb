@@ -16,7 +16,6 @@ module CollectionspaceMigrationTools
       # @param reporter [CollectionSpace::Mapper::BatchReporter]
       # @param writer [CollectionSpace::XML::FileWriter]
       def initialize(validator:, mapper:, reporter:, writer:)
-        puts "Setting up #{self.class.name}..."
         @validator = validator
         @mapper = mapper
         @reporter = reporter

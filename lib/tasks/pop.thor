@@ -12,12 +12,16 @@ class Pop < Thor
 
   desc 'all', 'populate caches with everything'
   def all
+    start_time = Time.now
+    
     invoke 'caches:clear'
     query_and_populate(*authority_args(authorities))
     query_and_populate(*vocab_args)
     query_and_populate(*object_args)
     query_and_populate(*procedure_args(procedures))
     query_and_populate(*relation_args('all'))
+
+    puts "Total time: #{Time.now - start_time}"
   end
 
   desc 'obj', 'populate csid cache with objects'

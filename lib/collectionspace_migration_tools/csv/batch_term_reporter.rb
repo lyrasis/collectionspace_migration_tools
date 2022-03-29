@@ -13,7 +13,6 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
 
       def initialize(output_dir)
-        puts "Setting up #{self.class.name}..."
         @path = "#{output_dir}/missing_terms_full.csv"
         @final_path = "#{output_dir}/missing_terms.csv"
         CSV.open(path, 'wb'){ |csv| csv << ['type', 'subtype', 'vocabulary', 'term', 'fingerprint'] }
@@ -44,9 +43,14 @@ module CollectionspaceMigrationTools
             
             csv << [row[:type], row[:subtype], row[:vocabulary], row[:term]]
           end
-        end
+        end        
 
         FileUtils.rm(path)
+      rescue StandardError => err
+        msg = "#{err.message} IN #{err.backtrace[0]}"
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+      else
+        Success()
       end
       
       def to_monad
@@ -60,7 +64,7 @@ module CollectionspaceMigrationTools
       def convert_to_rows(errs)
         errs.map{ |err| [err[:type], err[:subtype], vocabulary(err), err[:value], "#{vocabulary(err)}: #{err[:value]}"] }
       end
-      
+
       def extract_missing_terms(response)
         errs = response.errors
         return [] if errs.empty?
