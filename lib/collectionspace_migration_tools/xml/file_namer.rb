@@ -18,7 +18,8 @@ module CollectionspaceMigrationTools
       # @param response [CollectionSpace::Mapper::Response]
       def call(response, action)
         id = response.identifier
-        result = Base64.urlsafe_encode64([svc_path, id, action].join(separator))
+        path = action == 'CREATE' ? svc_path : "#{svc_path}/#{response.csid}"
+        result = Base64.urlsafe_encode64([path, id, action].join(separator))
       rescue
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: err))
       else
