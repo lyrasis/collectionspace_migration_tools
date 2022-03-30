@@ -11,6 +11,26 @@ def reload!(print = true)
   load("#{Bundler.root}/lib/collectionspace_migration_tools.rb")
 end
 
+require "aws-sdk-s3"
+
+def s3client
+  CMT::Build::S3Client.call.value!
+end
+
+def upload(client)
+  path = "/collectionobjects"
+  id = "manual_add"
+  action = "CREATE"
+  delim = "|"
+  key = Base64.urlsafe_encode64([path, id, action].join(delim))
+  filepath = "#{CMT.config.client.xml_dir}/#{id}.xml"
+  resp = client.put_object({
+    body: File.read(filepath),
+    bucket: CMT.config.client.s3_bucket,
+    key: key
+  })
+end
+
 IRB.conf[:BACK_TRACE_LIMIT]=10
 IRB.conf[:INSPECT_MODE]=nil
 IRB.start(__FILE__)
