@@ -12,26 +12,55 @@ class Map < Thor
   option :csv, required: true, type: :string
   option :rectype, required: true, type: :string
   option :action, required: true, type: :string
+  option :involved, required: false, type: :array
   def csv
-    ENV['RUBY_DEBUG_FORK_MODE'] = 'parent'
-    start_time = Time.now
-    
-    processor = CMT::Csv::BatchProcessorPreparer.new(
-      csv_path: options[:csv],
-      rectype: options[:rectype],
-      action: options[:action]
-    ).call
+    rectype = options[:rectype]
+    unless options[:involved]
+      require_involved(rectype) if rectype == 'authorityhierarchy' || rectype == 'nonhierarchicalrelationship'
+    end
+    process(options[:csv], rectype, options[:action])
+  end
 
-    if processor.failure?
-      puts processor.failure
-      exit
-    else
-    processor.value!.call.either(
-      ->(processor){ puts "Mapping completed." },
-      ->(processor){ puts "PROCESSING FAILED: #{processor.context}: #{processor.message}"; exit } 
-    )
+  no_commands do
+    def cacheable
+    end
+    
+    def process(csv, rectype, action)
+      start_time = Time.now
+      
+      processor = CMT::Csv::BatchProcessorPreparer.new(
+        csv_path: csv,
+        rectype: rectype,
+        action: action
+      ).call
+
+      if processor.failure?
+        puts processor.failure
+        exit
+      else
+        processor.value!.call.either(
+          ->(processor){ puts "Mapping completed." },
+          ->(processor){ puts "PROCESSING FAILED: #{processor.to_s}"; exit } 
+        )
+      end
+
+      puts "Total elapsed time: #{Time.now - start_time}"
     end
 
-    puts "Total elapsed time: #{Time.now - start_time}"
+    def require_involved(rectype)
+      if rectype == 'authorityhierarchy'
+        instruction = 'Enter one of the following:'
+        values = CMT::RecordTypes.authority
+      else
+        instruction = 'From the following values, list all types involved in the relationships:'
+        procedures = CMT::RecordTypes.procedures
+        values = [procedures.keys, procedures.values, 'obj'].flatten.sort.uniq
+      end
+
+      puts "To map #{rectype}, you must also specify `--involved` option"
+      puts instruction
+      puts values.join(', ')
+      exit
+    end
   end
 end

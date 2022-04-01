@@ -11,7 +11,7 @@ module CollectionspaceMigrationTools
 
       def initialize(output_dir:, fields:, term_reporter:)
         @path = "#{output_dir}/mapper_report.csv"
-        @fields = [fields, 'CMT_rec_status', 'CMT_outcome', 'CMT_output_file', 'CMT_warnings', 'CMT_errors'].flatten
+        @fields = [fields, 'CMT_rec_status', 'CMT_outcome', 'CMT_output_file', 'CMT_S3_key', 'CMT_warnings', 'CMT_errors'].flatten
         @term_reporter = term_reporter
         CSV.open(path, 'wb'){ |csv| csv << @fields }
       end
@@ -30,6 +30,7 @@ module CollectionspaceMigrationTools
         data = response.orig_data
         data['CMT_rec_status'] = response.record_status
         data['CMT_output_file'] = result[1]
+        data['CMT_S3_key'] = result[2]
         data['CMT_outcome'] = 'success'
         data['CMT_warnings'] = compile_warnings(response)
         write_row(data)

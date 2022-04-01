@@ -23,7 +23,9 @@ RSpec.describe CollectionspaceMigrationTools::Csv::FileChecker do
       
       it 'is Success', :aggregate_failures do
         expect(result).to be_a(Dry::Monads::Success)
-        expect(result.value!).to be
+        success = result.value!
+        expect(success[0]).to eq(csv_path)
+        expect(success[1]).to be_a(CSV::Row)
       end
     end
 

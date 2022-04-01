@@ -12,8 +12,8 @@ module CollectionspaceMigrationTools
 
       
       class << self
-        def call(csv_path:, rectype:, action:)
-          self.new(csv_path: csv_path, rectype: rectype, action: action).call
+        def call(file_dir:)
+          self.new(file_dir: file_dir).call
         end
       end
 
@@ -23,46 +23,32 @@ module CollectionspaceMigrationTools
 
       def call
         puts "Setting up for batch uploading..."
-        
+
+        # Make sure mapper_report CSV is present and ok since we are using it to power our uploads
+        report_path = "#{file_dir}/mapper_report.csv"
+        row_getter = yield(CMT::Csv::FirstRowGetter.new(report_path))
+        checker = yield(CMT::Csv::FileChecker.call(report_path, row_getter))
+        headers = checker[1].headers
+
+        # Verifiy our credentials/config work to create an S3 client and send a verifying command
+        #   via the client to our bucket
         client = yield(CMT::Build::S3Client.call)
-        queue = yield(CMT::S3::Queue.call(file_dir))
 
-        row_getter = yield(CMT::Csv::FirstRowGetter.new(csv_path))
-        row = yield(CMT::Csv::FileChecker.call(csv_path, row_getter))
+        reporter = yield(CMT::S3::UploadReporter.new(output_dir: file_dir, fields: headers))
 
-        services_path = yield(CMT::Xml::ServicesApiPathGetter.call(mapper))
-        action_checker = yield(CMT::Xml::ServicesApiActionChecker.new(action))
-        namer = yield(CMT::Xml::FileNamer.new(svc_path: services_path))
-        output_dir = yield(CMT::Xml::DirPathGetter.call(mapper))
-        term_reporter = yield(CMT::Csv::BatchTermReporter.new(output_dir))
-        reporter = yield(CMT::Csv::BatchReporter.new(output_dir: output_dir, fields: row.headers, term_reporter: term_reporter))
-
-        writer = yield(CMT::Xml::FileWriter.new(
-          output_dir: output_dir,
-          action_checker: action_checker,
-          namer: namer,
-          reporter: reporter))
-
-        validator = yield(CMT::Csv::RowValidator.new(handler))
-        row_mapper = yield(CMT::Csv::RowMapper.new(handler))
-        
-        row_processor = yield(CMT::Csv::RowProcessor.new(
-          validator: validator,
-          mapper: row_mapper,
-          reporter: reporter,
-          writer: writer
+        uploader = yield(CMT::S3::ItemUploader.new(
+          file_dir: file_dir,
+          client: client,
+          reporter: reporter
         ))
 
-        processor = yield(CMT::Csv::BatchProcessor.new(
-          csv_path: csv_path,
-          handler: handler,
-          first_row: row,
-          row_processor: row_processor,
-          term_reporter: term_reporter,
-          output_dir: output_dir
+        batch_uploader = yield(CMT::S3::BatchUploader.new(
+          csv_path: report_path,
+          uploader: uploader,
+          reporter: reporter
         ))
 
-        Success(processor)
+        Success(batch_uploader)
       end
 
       private

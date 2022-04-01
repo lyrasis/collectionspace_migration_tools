@@ -41,19 +41,23 @@ module CollectionspaceMigrationTools
         handler = yield(CMT::Build::DataHandler.call(mapper, batch_config))
 
         row_getter = yield(CMT::Csv::FirstRowGetter.new(csv_path))
-        row = yield(CMT::Csv::FileChecker.call(csv_path, row_getter))
+        checker = yield(CMT::Csv::FileChecker.call(csv_path, row_getter))
+        row = checker[1]
 
         services_path = yield(CMT::Xml::ServicesApiPathGetter.call(mapper))
         action_checker = yield(CMT::Xml::ServicesApiActionChecker.new(action))
-        namer = yield(CMT::Xml::FileNamer.new(svc_path: services_path))
+        obj_key_creator = yield(CMT::S3::ObjectKeyCreator.new(svc_path: services_path))
+        namer = yield(CMT::Xml::FileNamer.new)
         output_dir = yield(CMT::Xml::DirPathGetter.call(mapper))
         term_reporter = yield(CMT::Csv::BatchTermReporter.new(output_dir))
-        reporter = yield(CMT::Csv::BatchReporter.new(output_dir: output_dir, fields: row.headers, term_reporter: term_reporter))
+        headers = row.headers.map(&:downcase)
+        reporter = yield(CMT::Csv::BatchReporter.new(output_dir: output_dir, fields: headers, term_reporter: term_reporter))
 
         writer = yield(CMT::Xml::FileWriter.new(
           output_dir: output_dir,
           action_checker: action_checker,
           namer: namer,
+          s3_key_creator: obj_key_creator,
           reporter: reporter))
 
         validator = yield(CMT::Csv::RowValidator.new(handler))

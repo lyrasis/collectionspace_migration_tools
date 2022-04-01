@@ -19,16 +19,20 @@ end
 
 def upload_manual
   path = "/collectionobjects"
-  id = "manual_add"
-  action = "CREATE"
+  id = "MH20220401_1"
+  action = "UPDATE"
   delim = "|"
-  key = Base64.urlsafe_encode64([path, id, action].join(delim))
+  #key = Base64.urlsafe_encode64([path, id, action].join(delim))
+  key = 'L21lZGlhP2Jsb2JVcmk9aHR0cHM6Ly91cGxvYWQud2lraW1lZGlhLm9yZy93aWtpcGVkaWEvY29tbW9ucy90aHVtYi9lL2ViL051bWlkYV9tZWxlYWdyaXNfLU5nb3Jvbmdvcm8lMkNfVGFuemFuaWFfLXNpZGUtOC5qcGcvMTAyNHB4LU51bWlkYV9tZWxlYWdyaXNfLU5nb3Jvbmdvcm8lMkNfVGFuemFuaWFfLXNpZGUtOC5qcGd8TUgyMDIyMDQwMV8xfENSRUFURQ=='
   filepath = "#{CMT.config.client.xml_dir}/#{id}.xml"
   resp = s3client.put_object({
     body: File.read(filepath),
     bucket: CMT.config.client.s3_bucket,
     key: key
   })
+end
+
+def upload
 end
 
 def upload_produced(dir, key)

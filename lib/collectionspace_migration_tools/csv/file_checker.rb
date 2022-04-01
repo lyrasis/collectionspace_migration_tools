@@ -25,7 +25,7 @@ module CollectionspaceMigrationTools
         _csv = yield(check_file)
         row = yield(row_getter.call)
         
-        Success(row)
+        Success([path, row])
       end
       
       private

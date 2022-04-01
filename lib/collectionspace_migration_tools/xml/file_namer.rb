@@ -2,28 +2,27 @@
 
 require 'base64'
 require 'dry/monads'
+require 'dry/monads/do'
 
 module CollectionspaceMigrationTools
   module Xml
-    # Base 64 hashed filenames for payloads to be transferred via S3
+    # Generates safe filename from a Base64 hash of the record identifier. We use a hashed value because:
+    #   - record ids can contain characters not allowed in filenames
+    #   - we don't want false duplicate IDs reported because we stripped some data from the IDs out or changed it
     class FileNamer
       include Dry::Monads[:result]
+      include Dry::Monads::Do.for(:call)
       
       # @param svc_path [String]
-      def initialize(svc_path:)
-        @svc_path = svc_path
-        @separator = CMT.config.client.s3_delimiter
+      def initialize
       end
 
       # @param response [CollectionSpace::Mapper::Response]
-      def call(response, action)
-        id = response.identifier
-        path = action == 'CREATE' ? svc_path : "#{svc_path}/#{response.csid}"
-        result = Base64.urlsafe_encode64([path, id, action].join(separator))
-      rescue
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: err))
-      else
-        Success(result)
+      def call(response)
+        id = yield(get_id(response))
+        hashed = yield(encode(id))
+
+        Success("#{hashed}.xml")
       end
 
       def to_monad
@@ -31,8 +30,21 @@ module CollectionspaceMigrationTools
       end
       
       private
+
+      def encode(id)
+        hashed = Base64.urlsafe_encode64(id)
+      rescue StandardError => err
+        return Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: err))
+      else
+        Success(hashed)
+      end
       
-      attr_reader :svc_path, :separator
+      def get_id(response)
+        id = response.identifier
+        return Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: 'no id found for record')) if id.blank?
+
+        Success(id)
+      end
     end
   end
 end

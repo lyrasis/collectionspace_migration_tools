@@ -10,10 +10,11 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:write)
 
-      def initialize(output_dir:, action_checker:, namer:, reporter:)
+      def initialize(output_dir:, action_checker:, namer:, s3_key_creator:, reporter:)
         @output_dir = output_dir
         @action_checker = action_checker
         @namer = namer
+        @s3_key_creator = s3_key_creator
         @reporter = reporter
       end
 
@@ -31,7 +32,7 @@ module CollectionspaceMigrationTools
       
       private
 
-      attr_reader :output_dir, :action_checker, :namer, :reporter
+      attr_reader :output_dir, :action_checker, :namer, :s3_key_creator, :reporter
 
       def check_existence(path, response)
         return Failure([:file_already_exists, response]) if File.exist?(path)
@@ -41,12 +42,13 @@ module CollectionspaceMigrationTools
 
       def write(response)
         action = yield(action_checker.call(response))
-        file_name = yield(namer.call(response, action))
+        file_name = yield(namer.call(response))
         path = "#{output_dir}/#{file_name}"
+        key = yield(s3_key_creator.call(response, action))
         _checked = yield(check_existence(path, response))
         _written = yield(write_file(path, response))
 
-        Success([response, file_name])
+        Success([response, file_name, key])
       end
       
       def write_file(path, response)
