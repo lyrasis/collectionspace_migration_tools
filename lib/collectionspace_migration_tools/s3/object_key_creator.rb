@@ -39,7 +39,7 @@ module CollectionspaceMigrationTools
         media_uri = response.orig_data['mediafileuri']
         return base_path if media_uri.blank?
 
-        "#{base_path}?blobUri=#{media_uri}"
+        "#{base_path}?blobUri=#{URI(media_uri)}"
       end
     end
   end

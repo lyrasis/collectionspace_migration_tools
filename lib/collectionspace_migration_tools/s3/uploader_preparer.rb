@@ -28,7 +28,7 @@ module CollectionspaceMigrationTools
         report_path = "#{file_dir}/mapper_report.csv"
         row_getter = yield(CMT::Csv::FirstRowGetter.new(report_path))
         checker = yield(CMT::Csv::FileChecker.call(report_path, row_getter))
-        headers = checker[1].headers
+        headers = checker[1].headers.map(&:downcase)
 
         # Verifiy our credentials/config work to create an S3 client and send a verifying command
         #   via the client to our bucket

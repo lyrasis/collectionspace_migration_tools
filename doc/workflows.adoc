@@ -38,3 +38,11 @@ toc::[]
 
 === Process
 === Transfer
+==== Media Handling
+
+You can transfer media and import files by including a URI in `mediaFileURI` column of your CSV. This works for:
+
+* new media records created
+* existing media records updated **if they do not already have blobs attached**
+
+If existing media records have blobs attached they will not transfer
