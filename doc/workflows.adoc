@@ -21,28 +21,31 @@ toc::[]
 ====
 
 == Steps under the hood
-=== Preprocess
-==== `CMT::Csv::FirstRowValidator`
-* Report whether required field is missing
-** Outputs error, system exit. Don't waste time creating records that can't be imported!
-* Are any columns lacking a header?
-** You will receive warning. Processing can continue, but will throw out any values from fields lacking header
-* Report count of known/processable fields, and list of unknown/unprocessable fields
-** You will receive warning. Processing can continue, but will ignore any values in unknown fields
+=== map:csv
+==== preprocess step
+This happens invisibly to you and verifies the following:
 
-==== `CMT::Csv::Row::RequiredFieldValueChecker`
-* Check whether each row has required field value(s). If not:
-** Tags row as failure
-** Processing of any successful rows can continue
-* Reports number of failures and successes
+* The given CSV exists
+* The first row can be parsed from the given CSV
+* There are no headerless fields
+* Header for required field is present
 
-=== Process
-=== Transfer
+If any of the above are not true, the process will stop and you are informed of the problem.
+
+Also:
+
+* checks all fields/headers and
+** prints count and list of known fields that can be mapped
+** prints a warning listing any unknown fields that will be ignored (this may indicate a misnamed column)
+
+==== process step
+This step is batched (using SmarterCSV to read your CSV data in chunks) and multi-process. Each chunk is passed to a forked process, which sequentially processes each row in the chunk.
+
+We use multiple processes rather than threads because this work is more CPU-bound than IO-bound.  
+=== Upload
 ==== Media Handling
 
 You can transfer media and import files by including a URI in `mediaFileURI` column of your CSV. This works for:
 
 * new media records created
-* existing media records updated **if they do not already have blobs attached**
-
-If existing media records have blobs attached they will not transfer
+* existing media records updated -- If existing media records have blobs attached they will be unattached and replaced by the new blob given.
