@@ -24,6 +24,17 @@ module CollectionspaceMigrationTools
         end
       end
 
+      def do_population(poptype, rows, cache_type)
+        ct = result_count(rows)
+        return if ct == 0
+
+        if cache_type
+          populate_single_cache(poptype, rows, cache_type)
+        else
+          populate_caches(poptype, rows)
+        end
+      end
+      
       def procedures
         CMT::RecordTypes.procedures.keys
       end
@@ -69,16 +80,11 @@ module CollectionspaceMigrationTools
 
       def query_and_populate(rectypes, queries, poptype, cache_type = nil)
         rectypes.each_with_index do |rectype, i|
-          get_query_results(rectype, queries[i]).bind do |rows|
-            ct = result_count(rows)
-            next if ct == 0
 
-            if cache_type
-              populate_single_cache(poptype, rows, cache_type)
-            else
-              populate_caches(poptype, rows)
-            end
-          end
+          get_query_results(rectype, queries[i]).either(
+            ->(rows){ do_population(poptype, rows, cache_type) },
+            ->(failure){ puts "QUERY FAILED: #{failure.to_s}" }
+          )
         end
       end
 
