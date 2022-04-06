@@ -21,7 +21,7 @@ class Upload < Thor
       else
         uploader.value!.call.either(
           ->(uploader){ puts "Uploading completed. Remember this does NOT mean all files successfully uploaded, OR that all uploaded files were successfully ingested" },
-          ->(processor){ puts "UPLOADING FAILED: #{uploader.to_s}"; exit } 
+          ->(uploader){ puts "UPLOADING FAILED: #{uploader.to_s}"; exit } 
         )
       end
   end
