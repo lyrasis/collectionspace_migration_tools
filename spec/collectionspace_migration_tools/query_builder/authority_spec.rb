@@ -16,12 +16,24 @@ RSpec.describe CollectionspaceMigrationTools::QueryBuilder::Authority do
   end
 
   describe '#call' do
-    let(:result){ described_class.new(rectype).call }
+    let(:result){ described_class.new(rectype, vocab).call }
     let(:rectype){ 'citation' }
+    context 'when no vocab specified' do
+      let(:vocab){ nil }
+      
+      it 'returns expected sql' do
+        expected = "with auth_vocab_csid as (\nselect acv.id, h.name as csid, acv.shortidentifier from citationauthorities_common acv\ninner join hierarchy h on acv.id = h.id\n\n),\nterms as (\nselect h.parentid as id, tg.termdisplayname from hierarchy h\ninner join citations_common ac on ac.id = h.parentid and h.name like '%TermGroupList' and pos = 0\ninner join citationtermgroup tg on h.id = tg.id\n)\n\nselect 'citationauthorities' as type, acv.shortidentifier as subtype, t.termdisplayname as term, ac.refname, h.name as csid\nfrom citations_common ac\ninner join misc on ac.id = misc.id and misc.lifecyclestate != 'deleted'\ninner join auth_vocab_csid acv on ac.inauthority = acv.csid\ninner join terms t on ac.id = t.id\ninner join hierarchy h on ac.id = h.id\n"
+        expect(result).to eq(expected)
+      end
+    end
 
-    it 'returns expected sql' do
-      expected = "with auth_vocab_csid as (\nselect acv.id, h.name as csid, acv.shortidentifier from citationauthorities_common acv\ninner join hierarchy h on acv.id = h.id\n),\nterms as (\nselect h.parentid as id, tg.termdisplayname from hierarchy h\ninner join citations_common ac on ac.id = h.parentid and h.name like '%TermGroupList' and pos = 0\ninner join citationtermgroup tg on h.id = tg.id\n)\n\nselect 'citationauthorities' as type, acv.shortidentifier as subtype, t.termdisplayname as term, ac.refname, h.name as csid\nfrom citations_common ac\ninner join misc on ac.id = misc.id and misc.lifecyclestate != 'deleted'\ninner join auth_vocab_csid acv on ac.inauthority = acv.csid\ninner join terms t on ac.id = t.id\ninner join hierarchy h on ac.id = h.id\n"
-      expect(result).to eq(expected)
+    context 'when vocab specified' do
+      let(:vocab){ 'citation' }
+      
+      it 'returns expected sql', skip: "Not sure how to set up database-dependent tests" do
+        expected = "with auth_vocab_csid as (\nselect acv.id, h.name as csid, acv.shortidentifier from citationauthorities_common acv\ninner join hierarchy h on acv.id = h.id\nwhere acv.shortidentifier = 'citation'\n),\nterms as (\nselect h.parentid as id, tg.termdisplayname from hierarchy h\ninner join citations_common ac on ac.id = h.parentid and h.name like '%TermGroupList' and pos = 0\ninner join citationtermgroup tg on h.id = tg.id\n)\n\nselect 'citationauthorities' as type, acv.shortidentifier as subtype, t.termdisplayname as term, ac.refname, h.name as csid\nfrom citations_common ac\ninner join misc on ac.id = misc.id and misc.lifecyclestate != 'deleted'\ninner join auth_vocab_csid acv on ac.inauthority = acv.csid\ninner join terms t on ac.id = t.id\ninner join hierarchy h on ac.id = h.id\n"
+        expect(result).to eq(expected)
+      end
     end
   end
   

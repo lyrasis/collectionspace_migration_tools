@@ -15,7 +15,7 @@ RSpec.describe CollectionspaceMigrationTools::Csv::UnknownFieldsCheck do
       let(:csv_name){ 'unknown_header.csv' }
       
       it 'is Success and warn to STDOUT', :aggregate_failures do
-        msg = 'WARNING: 1 unknown fields in data will be ignored: miscfield'
+        msg = "\nWARNING: 1 unknown fields in data will be ignored: miscfield"
         expect(klass).to receive(:warn).with(msg)
         expect(called).to be_a(Dry::Monads::Success)
       end

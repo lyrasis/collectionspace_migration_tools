@@ -9,7 +9,7 @@ RSpec.describe CollectionspaceMigrationTools::Xml::DirPathGetter do
     CMT.config.client.xml_dir = File.join(Bundler.root, 'tmp')
   end
 
-  let(:timestamp){ '2022-03-07_17:22' }
+  let(:timestamp){ '2022-03-07_17_22' }
   let(:path){ File.join(CMT.config.client.xml_dir, "#{timestamp}_#{rectype_segment}") }
   let(:mapper){ CMT::RecordMapper.new(mapper_hash)}
   
