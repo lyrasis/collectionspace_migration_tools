@@ -9,10 +9,10 @@ class Upload < Thor
   include CMT::CliHelpers::Map
   
   desc 'dir', 'uploads files in mapper output directory to S3 bucket for ingest'
-  option :batchdir, required: true, type: :string
+  option :dir, required: true, type: :string
   def dir
     uploader = CMT::S3::UploaderPreparer.new(
-      file_dir: options[:batchdir]
+      file_dir: options[:dir]
       ).call
 
       if uploader.failure?
