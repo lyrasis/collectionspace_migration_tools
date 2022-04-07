@@ -30,10 +30,11 @@ module CollectionspaceMigrationTools
 
     attr_reader :client_path, :system_path, :redis_path
 
-    def add_batch_config_path_option_to_client(result)
-      return if result[:client].key?(:batch_config_path)
+    # Manipulate the config hash before converting to Structs
+    def add_option_to_section(confighash, section, key, value)
+      return if confighash[section].key?(key)
 
-      result[:client][:batch_config_path] = nil
+      confighash[section][key] = value
     end
     
     def bad_config_exit(result)
@@ -45,7 +46,10 @@ module CollectionspaceMigrationTools
     end
 
     def build_config(result)
-      add_batch_config_path_option_to_client(result)
+      add_option_to_section(result, :client, :batch_config_path, nil)
+      
+      base = File.expand_path(result[:client][:base_dir])
+      add_option_to_section(result, :client, :batch_csv, File.join(base, 'batches.csv'))
       
       result.each do |section, config_data|
         instance_variable_set("@#{section}".to_sym, section_struct(config_data))
@@ -63,9 +67,20 @@ module CollectionspaceMigrationTools
       expanded = File.expand_path(client.base_dir).delete_suffix('/')
       client.base_dir = expanded
     end
-    
+
+    def expand_other_paths
+      %i[batch_csv batch_config_path].each do |key|
+        val = client.send(key)
+        next unless val
+
+        meth = "#{key}=".to_sym
+        client.send(meth, File.expand_path(val))
+      end
+    end
+
     def fix_config_paths
       expand_base_dir
+      expand_other_paths
       handle_subdirs
     end
 

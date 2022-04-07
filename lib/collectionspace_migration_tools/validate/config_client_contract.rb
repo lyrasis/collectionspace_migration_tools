@@ -14,6 +14,7 @@ module CollectionspaceMigrationTools
         required(:profile).filled(:string)
         required(:profile_version).filled(:string)
         required(:base_dir).filled(:string)
+        optional(:batch_csv).maybe(:string)
         required(:mapper_dir).filled(:string)
         required(:xml_dir).filled(:string)
         required(:redis_db_number).filled(:integer)
@@ -38,7 +39,7 @@ module CollectionspaceMigrationTools
       end
 
       rule(:batch_config_path) do
-        if value        
+        if key?
           full = File.expand_path(value)
           unless File.exist?(full)
             key.failure("#{full} does not exist")

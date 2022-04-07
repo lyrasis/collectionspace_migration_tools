@@ -32,14 +32,7 @@ client:
   # This directory must already exist on your system.
   base_dir: ~/code/cs/migration_tools/data
 
-  # Batches are configured in a CSV file. As you move through the steps of a batch (mapping, upload,
-  #   checking ingest status, verifying lack of duplicates), information will get added to the CSV
-  #   by the application to assist you in keeping track of things. This is the path for this CSV
-  # If you do not specify another location for this file, `batches.csv` will be created in your
-  #   base_dir.
-  # NOTE: It is very important that this path be different for each client/instance you are working on
-  #batch_csv: ~/code/cs/migration_tools/data/batches.csv
-  
+  batch_csv: ~/code/cs/migration_tools/data/batch_tracker.csv
   # You can enter a subdirectory relative to base_dir OR a full path to an existing directory anywhere on
   #   your system. If the value as given expands to an existing directory on your machine, that's what
   #   will be used. If not, it'll used subdir value appended to base_dir. The subdirectory will be created
@@ -55,7 +48,7 @@ client:
   # This is optional and only needed if you need to tweak the mapper options.
   # `status_check_method` is automatically set to `cache` when using this application to create CSXML.
   # If you are NOT providing a custom config, comment out the following line.
-  # batch_config_path: ~/code/cs/migration_tools/spec/support/fixtures/client_batch_config.json
+  batch_config_path: ~/code/cs/migration_tools/spec/support/fixtures/client_batch_config.json
 
   # column/field delimiter for input "CSV" files
   csv_delimiter: ","
