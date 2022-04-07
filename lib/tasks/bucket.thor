@@ -10,8 +10,18 @@ class Bucket < Thor
   desc 'list', 'returns keys of objects in bucket'
   def list
     CMT::S3::BucketLister.call.either(
-      ->(list){ list.empty? ? puts "Empty bucket" : puts list },
+      ->(list){ handle_list(list) },
       ->(failure){ puts failure.to_s; exit }
     )
+  end
+
+  no_commands do
+    def handle_list(list)
+      if list.empty?
+        puts "Empty bucket"
+      else
+        puts list
+      end
+    end
   end
 end
