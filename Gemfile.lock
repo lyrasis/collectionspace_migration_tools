@@ -283,6 +283,7 @@ DEPENDENCIES
   mock_redis (~> 0.29)
   parallel (~> 1.22)
   pg (~> 1.3)
+  pry (~> 0.14)
   rake (~> 13.0)
   redis (~> 4.2.1)
   reek (~> 6.1)

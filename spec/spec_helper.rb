@@ -8,6 +8,7 @@ SimpleCov.start{ enable_coverage :branch }
 
 require 'collectionspace/mapper'
 require 'collectionspace_migration_tools'
+require 'pry'
 require_relative './helpers'
 require 'refinements'
 

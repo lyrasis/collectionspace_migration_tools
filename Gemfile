@@ -57,3 +57,5 @@ group :tools do
   gem 'amazing_print', '~> 1.4'
   gem 'debug', '~> 1.4'
 end
+
+gem "pry", "~> 0.14", :groups => [:development, :test]
