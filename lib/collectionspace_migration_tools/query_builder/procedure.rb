@@ -6,8 +6,14 @@ module CollectionspaceMigrationTools
   module QueryBuilder
     class Procedure
 
-      def self.call(rectype)
-        self.new(rectype).call
+      class << self
+        def call(rectype)
+          self.new(rectype).call
+        end
+
+        def duplicates(rectype)
+          self.new(rectype).duplicates
+        end
       end
       
       def initialize(rectype)
@@ -29,6 +35,16 @@ module CollectionspaceMigrationTools
             inner join misc on oap.id = misc.id and misc.lifecyclestate != 'deleted'
             inner join hierarchy h on oap.id = h.id
             inner join collectionspace_core cc on oap.id = cc.id
+          SQL
+      end
+
+      def duplicates
+          <<~SQL
+            select oap.#{field} from #{table} oap
+            left join misc on oap.#{field} = misc.id
+            where misc.lifecyclestate != 'deleted'
+            group by oap.#{field}
+            having count(oap.#{field})>1
           SQL
       end
 

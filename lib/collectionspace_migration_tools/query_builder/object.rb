@@ -15,6 +15,16 @@ module CollectionspaceMigrationTools
           inner join collectionspace_core cc on obj.id = cc.id
         SQL
       end
+
+      def self.duplicates
+        <<~SQL
+          select cc.objectnumber from collectionobjects_common cc
+          left join misc on cc.id = misc.id
+          where misc.lifecyclestate != 'deleted'
+          group by cc.objectnumber
+          having count(cc.objectnumber)>1
+        SQL
+      end
     end
   end
 end
