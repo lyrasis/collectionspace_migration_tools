@@ -4,8 +4,10 @@ require 'collectionspace/client'
 
 module CollectionspaceMigrationTools
   module QueryBuilder
+    # @note There is no `duplicate` method for relation because I have been unable to populate an instance
+    #   with any duplicate relations to test such a query. The API seems to be pretty thorough at returning
+    #   409 error instead of creating duplicate relations.
     class Relation
-
       def self.call(rectype)
         self.new(rectype).call
       end

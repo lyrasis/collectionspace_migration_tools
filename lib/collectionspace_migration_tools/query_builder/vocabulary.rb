@@ -4,8 +4,11 @@ require 'collectionspace/client'
 
 module CollectionspaceMigrationTools
   module QueryBuilder
+    # @note There is no `duplicate` method for vocabulary terms at this point because:
+    #   - we are not batch uploading them yet, so there is no opportunity for duplicates to be
+    #     introduced by the S3/Lambda ingest process
+    #   - generally vocabularies are small enough we can take care of any duplicates manually
     class Vocabulary
-
       def self.call
         <<~SQL
           with vocab_csids as (
