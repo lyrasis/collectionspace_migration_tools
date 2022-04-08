@@ -7,6 +7,23 @@
 [link=https://www.alchemists.io/projects/code_quality]
 image::https://img.shields.io/badge/code_style-alchemists-brightgreen.svg[Alchemists Style Guide]
 
+[IMPORTANT]
+====
+Neither CollectionSpace (the organization) nor LYRASIS offers support for `collectionspace_migration_tools`.
+
+**This application is created and maintained for internal LYRASIS staff use only.** Many of its design decisions are based on:
+
+* our CS hosting architecture
+* the assumption that it will be used by data migration experts on migration projects where the target CS instance is not in active use
+
+This means:
+
+* it is *highly unlikely* anyone outside LYRASIS will be able to clone this repository and use the tool as-is
+* using this tool on a CS instance in active use is **dangerous to the data integrity of that instance**
+
+However, we have made this code available in the spirit of open-source and transparency, in case any of it might be informative for CS institutions/users who wish to build their own tooling for working with CS data at scale.
+====
+
 toc::[]
 
 See doc/decisions.adoc for more info/background on some of the decisions made
