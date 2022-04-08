@@ -4,9 +4,6 @@
 
 = Collectionspace Migration Tools
 
-[link=https://www.alchemists.io/projects/code_quality]
-image::https://img.shields.io/badge/code_style-alchemists-brightgreen.svg[Alchemists Style Guide]
-
 [IMPORTANT]
 ====
 Neither CollectionSpace (the organization) nor LYRASIS offers support for `collectionspace_migration_tools`.
