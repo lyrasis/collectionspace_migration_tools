@@ -20,6 +20,39 @@ toc::[]
 `csvlint` is not Ruby 3-ready yet, so is not incorporated. I don't have time now to investigate integration of other potential CSV validation stuff. **If you get errors about your CSV not being readable or parseable, you'll need to look into it yourself.**
 ====
 
+== Workflow overview
+NOTE: strike-through formatting indicates the option/command is not yet implemented
+
+* Produce CSV of record data using format of appropriate https://github.com/collectionspace/cspace-config-untangler/tree/main/data/templates[CSV template]
+* Add batch to migration tool
+** `thor batch:add --id obj12 --csv ~/path/to/source_data.csv --rectype collectionobject --action create`; OR
+** +++<s>+++Manually add a new row to the batches CSV, populating `id`, `source_csv`, `mappable_rectype`, and `action` columns. Then run `thor batches:update_base_info` to have the `cacheable_type`, `cacheable_subtype`, and `rec_ct` columns populated by the tool.+++</s>+++
+* Map batch to CS XML
+** `thor batch:map --id obj12`
+* Upload resulting CS XML to S3 bucket
+** `thor batch:upload --id obj12`
+* Verify ingest is complete (see step details on this for more info/options)
+* Run ingest verification report
+** `thor batch:verify --id obj12`
+* If any records failed to ingest, run `batch:cb` (cb = clear bucket)
+* If there were any duplicates added, run `batch:dd` (dd = delete duplicates. See important notes on this in step details below)
+
+The batches CSV isn't really intended as a permanent record of all work done in a given instance. It can be useful to keep some completed batches with errors or warnings in the batches CSV as a reminder to check/handle the records that didn't work as expected the first time. But, once you are done with a batch and tasks related to it, it is best to move it out of the batches CSV.
+
+There are two options for moving completed batches out of the batches CSV:
+
+delete:: Deletes batch directory and deletes row for batch from batches CSV
+archive:: Zips batch directory and moves it to `batch_data/archives` directory. Moves row for batch from batches CSV to `batch_data/archives/archived_batches.csv`
+
+The `delete` and `archive` commands can both be run:
+
+* for a single batch (`thor batch:delete --id obj12`); OR
+* on all completed batches (`thor batches:archive`)
+
+== Batches
+The "batch" is a core concept of the tool.
+
+In the context of this tool, "batch" means a set of records derived from a given CSV file, mapped to CS XML, and uploaded to S3 for CS ingest. All records are of one mappable record type (e.g. collectionobject, person-local, nonhierarchicalrelationship). It includes the records and reports generated at various steps of the batch workflow, all of which are written into a batch-specific directory.
 == Steps under the hood
 === map:csv
 ==== preprocess step
