@@ -27,7 +27,7 @@ class Batch < Thor
     csv = yield(CMT::Batch::Csv.new)
     batch = yield(CMT::Batch::Batch.new(csv, options[:id]))
 
-    invoke 'map:csv', [], csv: batch.source_csv, rectype: batch.mappable_rectype, action: batch.action
+    invoke 'map:csv', [], csv: batch.source_csv, rectype: batch.mappable_rectype, action: batch.action, batch: batch.id
 
     Success()
   end
