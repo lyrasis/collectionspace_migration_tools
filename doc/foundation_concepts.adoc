@@ -16,7 +16,11 @@ toc::[]
 
 == General overview of ecosystem for getting data into CollectionSpace
 
-The data wrangling stack for CollectionSpace is pretty complex at this point. The following applications may be involved:
+The data wrangling stack for CollectionSpace is pretty complex at this point.
+
+Almost all of the tooling for working with CS data outside the actual application or API is written in Ruby.
+
+The following applications may be involved:
 
 === collectionspace-client
 
@@ -85,7 +89,7 @@ Neither CollectionSpace (the organization) nor LYRASIS offers support for `colle
 
 **This application is created and maintained for internal LYRASIS staff use only.** Many of its design decisions are based on:
 
-* our CS hosting architecture
+* our CS hosting/deployment infrastructure
 * the assumption that it will be used by data migration experts on migration projects where the target CS instance is not in active use
 
 This means:
@@ -111,4 +115,12 @@ Given the above assumptions, for the mapping process, it:
 - instructs `collectionspace-mapper` to determine record status via cache rather than API call
 
 For the record transfer process, the assumption that no one is working in an instance means we do not have to be mindful of performance implications of hammering the services API.
+
+== Application concepts
+batch:: A set of records derived from a given CSV file, mapped to CS XML, and uploaded to S3 for CS ingest. All records in a batch are of one mappable record type (e.g. collectionobject, person-local, nonhierarchicalrelationship). A batch includes the records and reports generated at various steps of the batch workflow, all of which are written into a batch-specific directory.
+batches csv:: The CSV file recording all active batches. By default, written to `base_dir/batches.csv`
+cacheable record type/subtype:: form of record type name that matches what is needed in database queries to get the info to be cached
+mappable record type::  form of record type name corresponding to record mapper instructions and service api path for transferring records of that type
+
+
 

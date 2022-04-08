@@ -28,13 +28,19 @@ See doc/decisions.adoc for more info/background on some of the decisions made
 
 == Requirements
 
-. link:https://www.ruby-lang.org[Ruby] 3.1.0.
-. Docker and docker-compose. Running the required docker-compose command will by default set up two instances of Redis on ports 6380 and 6381
+* link:https://www.ruby-lang.org[Ruby] 3.1.0.
+* Docker and docker-compose.
+** Running the required docker-compose command will by default set up two instances of Redis on ports 6380 and 6381. The port numbers used are configurable as https://github.com/lyrasis/collectionspace_migration_tools#redis-config[described below]
+* For each CS instance this tool will be used to manipulate:
+** The user of this tool must be able to connect directly to the CollectionSpace database and perform read-only/select queries
+** There must be an AWS S3 bucket set up for ingesting into the instance, and the user of this tool must have permission to add and delete objects to that bucket, as well as list objects in the bucket.
+** There is an AWS Lambda set up to perform a Services API call for each object added to the S3 bucket
 
 == One-time setup
-=== Add `bin` to PATH
+=== Add `bin` to PATH (optional)
+To avoid having to prepend `thor`, `rspec` and other commands with `bundle exec`, add this repo's `./bin` to your PATH.
 
-To avoid having to prepend `thor`, `rspec` and other commands with `bundle exec`, add this repo's `./bin` to your PATH. 
+If you do not do this step, and running a command you see in the documentation fails, try prepending `bundle exec ` to the command.
 
 === Redis config
 This should "just work" without you having to do anything, but you might want to change it if the ports being used for Redis conflict with something you use for other work.
@@ -56,6 +62,8 @@ The application reads in `client_config.yml` to set up everything.
 [TIP]
 ====
 Save multiple .yml configs in the `./config` directory. Name them for the instances you are working with. The contents of this folder are not tracked by git, so secure details will not inadvertently end up in Github. To switch instances/projects, `cp config/my_instance.yml client_config.yml`
+
+There are some useful commands that can run over all your existing client configs if they are stored in this directory, like: `thor config:redis_dbs`, which will show you which Redis db numbers are already in use.
 ====
 
 === Batch config
@@ -81,7 +89,7 @@ Ensure desired config is in place (See Configuration section above)
 
 `thor list` (to see available commands)
 
-Run available commands as necessary
+Run available commands as necessary. See https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/workflows.adoc#workflow-overview[workflow overview documentation] for the most common commands.
 
 `docker-compose down` (Stops and closes Redis containers. The Redis volumes are NOT removed, so your cached data should still be available next time you run `docker-compose up -d`.)
 
@@ -94,6 +102,8 @@ You can also use the IRB console for direct access to all objects:
 bin/console
 ----
 
+TIP: If you make changes to code while you are in the console, running `CMT.reload!` will reload the application without you needing to exit and restart console. This doesn't always work to pick up all changes, but saves a lot of time anyway.
+
 == Tests
 
 To test, run:
@@ -102,6 +112,8 @@ To test, run:
 ----
 rspec
 ----
+
+At least initially, a lot of the functionality around database connections, querying, and anything that relies on a database call is not covered in automated tests. This is mainly because I did not have time to figure out how to test that stuff in a meaningful way without exposing data that needs to be kept private.
 
 == Notes
 
@@ -122,5 +134,5 @@ Because this is meant to be used only by migration specialists who know exactly 
 
 == Credits
 
-* Built with link:https://www.alchemists.io/projects/rubysmith[Rubysmith].
-* Engineered by link:https://github.com/kspurgin[Kristina Spurgin].
+* Built by link:https://github.com/kspurgin[Kristina Spurgin] with design/infrastructure input from https://github.com/mark-cooper[Mark Cooper]
+* Project scaffold built with  link:https://www.alchemists.io/projects/rubysmith[Rubysmith].
