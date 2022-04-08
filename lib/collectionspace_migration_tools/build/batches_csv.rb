@@ -16,7 +16,8 @@ module CollectionspaceMigrationTools
 
         def headers
           %w[
-             id source_csv rectype action rec_ct
+             id source_csv mappable_rectype action
+             cacheable_type cacheable_subtype rec_ct
              mapped? dir map_errs map_oks map_warns
              uploaded? upload_errs upload_oks
              batch_prefix
@@ -29,6 +30,7 @@ module CollectionspaceMigrationTools
 
       def initialize
         @path = CMT.config.client.batch_csv
+        @headers = self.class.headers
       end
 
       def call
@@ -49,11 +51,12 @@ module CollectionspaceMigrationTools
       attr_reader :path, :headers
 
       def build_batches_csv
-        CSV.open(path, 'w', headers: headers, write_headers: true)
+        CSV.open(path, 'wb'){ |csv| csv << headers }
       rescue StandardError => err
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: err))
+        msg = "#{err.message} IN #{err.backtrace[0]}"
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
       else
-        Success()
+        File.exists?(path) ? Success() : Failure()
       end
 
       def headers_match?
