@@ -15,7 +15,6 @@ module CollectionspaceMigrationTools
       def initialize(data = File.read(CMT.config.client.batch_csv)) 
         @table = CSV.parse(data, headers: true)
         @ids = table.by_col['id']
-        ensure_id_uniqueness
       end
 
       def find_batch(bid)
@@ -23,6 +22,14 @@ module CollectionspaceMigrationTools
         return Failure("No batch with id: #{bid}") if result.empty?
 
         Success(result[0])
+      end
+
+      def to_monad
+        ensure_id_uniqueness
+      rescue DuplicateBatchIdError => err
+        Failure('Batch ids are not unique. Please manually edit and save CSV where info about batches is recorded.')
+      else
+        Success(self)
       end
       
       private

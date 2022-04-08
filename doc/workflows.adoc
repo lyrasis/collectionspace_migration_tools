@@ -28,7 +28,7 @@ NOTE: strike-through formatting indicates the option/command is not yet implemen
 ** `thor batch:add --id obj12 --csv ~/path/to/source_data.csv --rectype collectionobject --action create`; OR
 ** +++<s>+++Manually add a new row to the batches CSV, populating `id`, `source_csv`, `mappable_rectype`, and `action` columns. Then run `thor batches:update_base_info` to have the `cacheable_type`, `cacheable_subtype`, and `rec_ct` columns populated by the tool.+++</s>+++
 * Map batch to CS XML
-** +++<s>+++`thor batch:map --id obj12`+++</s>+++
+** `thor batch:map --id obj12`
 * Upload resulting CS XML to S3 bucket
 ** +++<s>+++`thor batch:upload --id obj12`+++</s>+++
 * Verify ingest is complete (see step details on this for more info/options)

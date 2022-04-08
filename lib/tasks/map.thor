@@ -18,7 +18,10 @@ class Map < Thor
     unless options[:involved]
       require_involved(rectype) if rectype == 'authorityhierarchy' || rectype == 'nonhierarchicalrelationship'
     end
-    process(options[:csv], rectype, options[:action])
+    process(options[:csv], rectype, options[:action]).either(
+      ->(success){ puts 'Processing complete' },
+      ->(failure){ puts failure.to_s; exit }
+    )
   end
 
   no_commands do
@@ -35,16 +38,13 @@ class Map < Thor
       ).call
 
       if processor.failure?
-        puts processor.failure
-        exit
+        result = processor.failure
       else
-        processor.value!.call.either(
-          ->(processor){ puts "Mapping completed." },
-          ->(processor){ puts "PROCESSING FAILED: #{processor.to_s}"; exit } 
-        )
+        result = processor.value!.call
       end
 
-      puts "Total elapsed time: #{Time.now - start_time}"
+      puts "Total time: #{Time.now - start_time}"
+      result
     end
 
     def require_involved(rectype)

@@ -32,7 +32,7 @@ module CollectionspaceMigrationTools
         start_time = Time.now
         _processed = yield(process)
         elap = Time.now - start_time
-        puts "Processing time: #{elap}"
+        puts "Mapping time: #{elap}"
         puts "INFO: Results written to: #{output_dir}"
         
         _deduplicated = yield(term_reporter.deduplicate)
