@@ -12,8 +12,8 @@ module CollectionspaceMigrationTools
       include Dry::Monads::Do.for(:call)
 
       class << self
-        def call(path)
-          self.new(path).call
+        def call(path, field = nil)
+          self.new(path).call(field)
         end
       end
       
@@ -22,8 +22,9 @@ module CollectionspaceMigrationTools
         @counts = []
       end
 
-      def call
-        _processed = yield(process)
+      # If given a field, count of rows where that field is populated will be returned
+      def call(field = nil)
+        _processed = yield(process(field))
         Success(counts.sum)
       end
       
@@ -35,12 +36,18 @@ module CollectionspaceMigrationTools
         @counts << ct
       end
 
-      def process
+      def process(field)
         SmarterCSV.process(path, {
-            chunk_size: CMT.config.system.csv_chunk_size,
-            convert_values_to_numeric: false,
-            strings_as_keys: true
-          }){ |chunk| add_count(chunk.length) }
+          chunk_size: CMT.config.system.csv_chunk_size,
+          convert_values_to_numeric: false,
+          strings_as_keys: true
+        }) do |chunk|
+          if field
+            add_count(chunk.select{ |row| row.key?(field) }.length)
+          else
+            add_count(chunk.length)
+          end
+        end
       rescue StandardError => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))

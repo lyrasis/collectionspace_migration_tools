@@ -16,5 +16,10 @@ class Batches < Thor
       ->(failure){ FileUtils.rm(path) if File.exists?(path); puts failure.to_s }
     )
   end
+
+  desc 'list', 'Brief listing of batch ids and info'
+  def list
+    CMT::Batch::Csv.new.list
+  end
 end
 

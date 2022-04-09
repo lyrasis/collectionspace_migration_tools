@@ -12,8 +12,9 @@ module CollectionspaceMigrationTools
 
       attr_reader :ids
         
-      def initialize(data = File.read(CMT.config.client.batch_csv)) 
+      def initialize(data = File.read(CMT.config.client.batch_csv), rewriter = CMT::Batch::CsvRewriter.new) 
         @table = CSV.parse(data, headers: true)
+        @rewriter = rewriter
         @ids = table.by_col['id']
       end
 
@@ -24,6 +25,19 @@ module CollectionspaceMigrationTools
         Success(result[0])
       end
 
+      def list
+        table.each do |row|
+          info = [
+            row['id'],
+            row['action'],
+            row['rec_ct'],
+            row['mappable_rectype'],
+            File.basename(row['source_csv'])
+          ]
+          puts info.join("\t")
+        end
+      end
+      
       def to_monad
         ensure_id_uniqueness
       rescue DuplicateBatchIdError => err
@@ -31,10 +45,14 @@ module CollectionspaceMigrationTools
       else
         Success(self)
       end
+
+      def rewrite
+        rewriter.call(table)
+      end
       
       private
 
-      attr_reader :table
+      attr_reader :table, :rewriter
 
       def ensure_id_uniqueness
         uniq_ids = ids.uniq

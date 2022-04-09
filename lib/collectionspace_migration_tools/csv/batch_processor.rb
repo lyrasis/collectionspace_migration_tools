@@ -37,7 +37,7 @@ module CollectionspaceMigrationTools
         
         _deduplicated = yield(term_reporter.deduplicate)
         
-        Success()
+        Success(output_dir)
       end
       
       def preprocess

@@ -12,25 +12,40 @@ module CollectionspaceMigrationTools
       def initialize(csv, id)
         @csv = csv
         @id = id
-        @data = csv.find_batch(id)
+        get_batch_data
       end
 
       def to_monad
-        data.success? ? Success(self) : Failure(data)
+        data ? Success(self) : Failure("No batch with id: #{id}")
       end
 
       def method_missing(meth, *args)
         str_meth = meth.to_s
-        dataval = data.value!
-        return dataval[str_meth] if dataval.key?(str_meth)
+        return data[str_meth] if data.key?(str_meth)
 
         message = "You called #{str_meth} with #{args}. This method doesn't exist."
         raise NoMethodError, message
+      end
+
+      def populate_field(key, value)
+        return Failure("#{key} is not a valid field") unless data.key?(key)
+        return Failure("#{key} is already populated") unless data[key].nil? || data[key].empty?
+
+        data[key] = value
+        Success(data)
+      end
+
+      def rewrite
+        csv.rewrite
       end
       
       private
 
       attr_reader :csv, :id, :data
+
+      def get_batch_data
+        csv.find_batch(id).fmap{ |row| @data = row }
+      end
 
     end
   end

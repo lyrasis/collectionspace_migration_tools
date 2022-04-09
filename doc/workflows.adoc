@@ -120,7 +120,14 @@ IMPORTANT: You can continue to the next step if individual records fail. Those r
 
 ===== `missing_terms.csv`
 
+==== `batches.csv`
+Populates the following columns:
 
+* `mapped?` - timestamp entered
+* `dir` - batch directory
+* `map_errs` - the number of records with mapping errors
+* `map_oks` - the number of records successfully mapped
+* `map_warns` - the number of successfully mapped records with warnings
 
 === Upload
 ==== Media Handling
