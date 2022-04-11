@@ -8,11 +8,10 @@ class Upload < Thor
   include Dry::Monads[:result]
   include CMT::CliHelpers::Map
   
-  desc 'dir', 'uploads files in mapper output directory to S3 bucket for ingest'
-  option :dir, required: true, type: :string
-  def dir
+  desc 'dir DIRNAME', 'uploads files in mapper output directory to S3 bucket for ingest'
+  def dir(dirname)
     uploader = CMT::S3::UploaderPreparer.new(
-      file_dir: options[:dir]
+      file_dir: dirname
     ).call
 
     if uploader.failure?
