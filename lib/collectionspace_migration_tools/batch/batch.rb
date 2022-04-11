@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'base64'
 require 'dry/monads'
 require 'dry/monads/do'
 
@@ -29,6 +30,11 @@ module CollectionspaceMigrationTools
 
         data[key] = value
         Success(data)
+      end
+
+      def prefix
+        str = Base64.urlsafe_encode64("#{id}#{CMT.config.client.s3_delimiter}", padding: false)
+        str[0..-2]
       end
 
       def rewrite
