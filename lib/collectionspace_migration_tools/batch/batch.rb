@@ -15,10 +15,6 @@ module CollectionspaceMigrationTools
         get_batch_data
       end
 
-      def to_monad
-        data ? Success(self) : Failure("No batch with id: #{id}")
-      end
-
       def method_missing(meth, *args)
         str_meth = meth.to_s
         return data[str_meth] if data.key?(str_meth)
@@ -39,6 +35,10 @@ module CollectionspaceMigrationTools
         csv.rewrite
       end
       
+      def to_monad
+        data ? Success(self) : Failure("No batch with id: #{id}")
+      end
+
       private
 
       attr_reader :csv, :id, :data
