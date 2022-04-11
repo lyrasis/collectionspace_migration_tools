@@ -2,10 +2,6 @@
 
 require_relative '../../spec_helper'
 
-# These tests assume the correct action has been assigned by `CMT::XML::ServicesApiActionChecker`
-#   That is, we don't check here for weird edge cases where the response for a DELETE does not
-#   contain a CSID, etc.
-
 RSpec.describe CollectionspaceMigrationTools::Xml::FileNamer do
   let(:klass){ described_class.new }
   let(:response){ double('Response', identifier: rec_id) }
