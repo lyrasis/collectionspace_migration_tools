@@ -9,7 +9,7 @@ module CollectionspaceMigrationTools
   module Batch
     class Add
       include Dry::Monads[:result]
-      include Dry::Monads::Do.for(:call, :validate_csv)
+      include Dry::Monads::Do.for(:call, :validate_csv, :validate_id)
       
       class << self
         def call(...)
@@ -54,6 +54,12 @@ module CollectionspaceMigrationTools
         %w[create update delete]
       end
 
+      def ensure_id_uniqueness(id)
+        return Success(id) unless ids.any?(id)
+
+        Failure("There is already a batch with id: #{id}. Please choose another id")
+      end
+
       def validate_action(action)
         return Success(action) if allowed_actions.any?(action)
 
@@ -68,9 +74,10 @@ module CollectionspaceMigrationTools
       end
 
       def validate_id(id)
-        return Success(id) unless ids.any?(id)
+        _valid = yield(CMT::Batch::Id.new(id).validate)
+        _uniq = yield(ensure_id_uniqueness(id))
 
-        Failure("There is already a batch with id: #{id}. Please choose another id")
+        Success(id)
       end
 
       def write_row(data_hash)

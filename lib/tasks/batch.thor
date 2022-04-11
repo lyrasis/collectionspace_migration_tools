@@ -9,7 +9,7 @@ class Batch < Thor
   include Dry::Monads[:result]
   include Dry::Monads::Do.for(:do_map, :get_batch_dir)
 
-  desc 'add', 'Adds a new batch to batch csv'
+  desc 'add', 'Adds a new batch to batch csv. ID must be <= 6 alphanumeric characters'
   option :id, required: true, type: :string
   option :csv, required: true, type: :string
   option :rectype, required: true, type: :string
