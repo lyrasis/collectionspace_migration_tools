@@ -10,8 +10,9 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
       
       # @param svc_path [String]
-      def initialize(svc_path:)
+      def initialize(svc_path:, batch: nil)
         @svc_path = svc_path
+        @batch = batch.nil? ? 'na' : batch
         @separator = CMT.config.client.s3_delimiter
       end
 
@@ -20,7 +21,7 @@ module CollectionspaceMigrationTools
         id = response.identifier
         base_path = action == 'CREATE' ? svc_path : "#{svc_path}/#{response.csid}"
         final_path = svc_path == '/media' ? media_path(response, base_path) : base_path
-        result = Base64.urlsafe_encode64([final_path, id, action].join(separator))
+        result = Base64.urlsafe_encode64([batch, final_path, id, action].join(separator))
       rescue
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: err))
       else
@@ -33,7 +34,7 @@ module CollectionspaceMigrationTools
       
       private
       
-      attr_reader :svc_path, :separator
+      attr_reader :svc_path, :batch, :separator
 
       def media_path(response, base_path)
         media_uri = response.orig_data['mediafileuri']

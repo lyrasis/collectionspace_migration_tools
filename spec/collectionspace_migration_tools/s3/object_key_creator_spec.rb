@@ -10,11 +10,11 @@ RSpec.describe CollectionspaceMigrationTools::S3::ObjectKeyCreator do
   let(:separator){ CMT.config.client.s3_delimiter }
   let(:svc_path){ '/foo' }
   let(:klass){ described_class.new(svc_path: svc_path) }
-
+  let(:batch){ 'na' }
   let(:path){ svc_path }
   let(:rec_id){ '123' }
   let(:csid){ '456' }
-  let(:hashed){ Base64.urlsafe_encode64([path, rec_id, action].join(separator)) }
+  let(:hashed){ Base64.urlsafe_encode64([batch, path, rec_id, action].join(separator)) }
   
   let(:response_new) do
     response = CollectionSpace::Mapper::Response.new({'objectnumber' => rec_id})
@@ -39,6 +39,15 @@ RSpec.describe CollectionspaceMigrationTools::S3::ObjectKeyCreator do
       it 'returns Success containing expected name', :aggregate_failures do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq(hashed)
+      end
+
+      context 'with batch passed in' do
+        let(:batch){ 'co2' }
+        let(:klass){ described_class.new(svc_path: svc_path, batch: batch) }
+        it 'returns Success containing expected name', :aggregate_failures do
+          expect(result).to be_a(Dry::Monads::Success)
+          expect(result.value!).to eq(hashed)
+        end
       end
     end
 
