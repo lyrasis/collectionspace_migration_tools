@@ -12,8 +12,8 @@ module CollectionspaceMigrationTools
 
       
       class << self
-        def call(csv_path:, rectype:, action:)
-          self.new(csv_path: csv_path, rectype: rectype, action: action).call
+        def call(...)
+          self.new(...).call
         end
       end
 
@@ -22,7 +22,7 @@ module CollectionspaceMigrationTools
       # @param csv [String] path to CSV
       # @param rectype [String] record type for retrieving RecordMapper
       # @param action [String<'CREATE', 'UPDATE', 'DELETE'>]
-      def initialize(csv_path:, rectype:, action:)
+      def initialize(csv_path:, rectype:, action:, batch: nil)
         @csv_path = csv_path
         @rectype = rectype
         if ACTIONS.any?(action)
@@ -31,6 +31,7 @@ module CollectionspaceMigrationTools
           puts "Action must be one of: #{ACTIONS.join(', ')}"
           exit
         end
+        @batch = batch
       end
 
       def call
@@ -46,7 +47,7 @@ module CollectionspaceMigrationTools
 
         services_path = yield(CMT::Xml::ServicesApiPathGetter.call(mapper))
         action_checker = yield(CMT::Xml::ServicesApiActionChecker.new(action))
-        obj_key_creator = yield(CMT::S3::ObjectKeyCreator.new(svc_path: services_path))
+        obj_key_creator = yield(CMT::S3::ObjectKeyCreator.new(svc_path: services_path, batch: batch))
         namer = yield(CMT::Xml::FileNamer.new)
         output_dir = yield(CMT::Xml::DirPathGetter.call(mapper))
         term_reporter = yield(CMT::Csv::BatchTermReporter.new(output_dir))
@@ -84,7 +85,7 @@ module CollectionspaceMigrationTools
 
       private
 
-      attr_reader :csv_path, :rectype, :action
+      attr_reader :csv_path, :rectype, :action, :batch
     end
   end
 end

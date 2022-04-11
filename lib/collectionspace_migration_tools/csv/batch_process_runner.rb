@@ -16,7 +16,8 @@ module CollectionspaceMigrationTools
         end
       end
 
-      def initialize(csv:, rectype:, action:)
+      def initialize(batch:, csv:, rectype:, action:)
+        @batch = batch
         @csv = csv
         @rectype = rectype
         @action = action
@@ -25,7 +26,7 @@ module CollectionspaceMigrationTools
       def call
         start_time = Time.now
 
-        processor = yield(CMT::Csv::BatchProcessorPreparer.new(csv_path: csv, rectype: rectype, action: action).call)
+        processor = yield(CMT::Csv::BatchProcessorPreparer.new(csv_path: csv, rectype: rectype, action: action, batch: batch).call)
         output_dir = yield(processor.call)
         puts "Total time: #{Time.now - start_time}"
 
@@ -34,7 +35,7 @@ module CollectionspaceMigrationTools
       
       private
 
-      attr_reader :csv, :rectype, :action
+      attr_reader :batch, :csv, :rectype, :action
     end
   end
 end
