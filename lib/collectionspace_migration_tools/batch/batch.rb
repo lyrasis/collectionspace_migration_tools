@@ -52,7 +52,6 @@ module CollectionspaceMigrationTools
       def get_batch_data
         csv.find_batch(id).fmap{ |row| @data = row }
       end
-
     end
   end
 end
