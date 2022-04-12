@@ -30,15 +30,18 @@ module CollectionspaceMigrationTools
         valid_action = yield(validate_action(action))
 
         mapper = yield(CMT::Parse::RecordMapper.call(valid_rectype))
-        rec_ct = yield(CMT::Batch::CsvRowCounter.call(valid_csv))
+        rec_ct = yield(CMT::Batch::CsvRowCounter.call(valid_csv[0]))
 
+        refname_cols = yield(CMT::Batch::RefnameCacheDependencyIdentifier.call(headers: valid_csv[1].headers, mapper: mapper))
+        
         data_hash = {
           'id' => valid_id,
-          'source_csv' => valid_csv,
+          'source_csv' => valid_csv[0],
           'mappable_rectype' => valid_rectype,
           'action' => valid_action,
           'cacheable_type' => mapper.type_label,
           'cacheable_subtype' => mapper.subtype,
+          'refname_dependencies' => refname_cols,
           'rec_ct' => rec_ct
         }
         _result = yield(write_row(data_hash))
@@ -70,7 +73,7 @@ module CollectionspaceMigrationTools
         row_getter = yield(CMT::Csv::FirstRowGetter.new(csv))
         checker = yield(CMT::Csv::FileChecker.call(csv, row_getter))
 
-        Success(checker[0])
+        Success(checker)
       end
 
       def validate_id(id)

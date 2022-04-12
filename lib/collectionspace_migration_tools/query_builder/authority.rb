@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+# @todo delete
 require 'collectionspace/client'
 require 'dry/monads'
 

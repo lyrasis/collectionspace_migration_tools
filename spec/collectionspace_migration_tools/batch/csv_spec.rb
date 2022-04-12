@@ -3,22 +3,35 @@
 require_relative '../../spec_helper'
 
 RSpec.describe CollectionspaceMigrationTools::Batch::Csv do
+  let(:klass){ described_class.new(data) }
   let(:data) do
   <<~CSV
 \"id\",\"source_csv\",\"mappable_rectype\",\"action\"\n\"co1\",\"/Users/kristina/data/fast_importer_testing/object_10.csv\",\"collectionobject\",\"create\"\n\"co2\",\"/Users/kristina/data/fast_importer_testing/object_10_2.csv\",\"collectionobject\",\"create\"\n\"co3\",\"/Users/kristina/data/fast_importer_testing/object_10.csv\",\"collectionobject\",\"create\"\n\"co4\",\"/Users/kristina/data/fast_importer_testing/object_10.csv\",\"collectionobject\",\"create\"
     CSV
   end
-  let(:klass){ described_class.new(data) }
+  
+  describe '#to_monad' do
+    let(:result){ klass.to_monad }
+    context 'with no duplicate ids' do
 
-  context 'with duplicate ids in data' do
-    let(:data) do
+      it 'is success', :aggregate_failures do
+        expect(result).to be_a(Dry::Monads::Success)
+        expect(result.value!).to be_a(described_class)
+      end
+    end
+    
+    context 'with duplicate ids in data' do
+      let(:data) do
   <<~CSV
 \"id\",\"source_csv\",\"mappable_rectype\",\"action\"\n\"co1\",\"/Users/kristina/data/fast_importer_testing/object_10.csv\",\"collectionobject\",\"create\"\n\"co1\",\"/Users/kristina/data/fast_importer_testing/object_10_2.csv\",\"collectionobject\",\"create\"\n\"co3\",\"/Users/kristina/data/fast_importer_testing/object_10.csv\",\"collectionobject\",\"create\"\n\"co4\",\"/Users/kristina/data/fast_importer_testing/object_10.csv\",\"collectionobject\",\"create\"
     CSV
-    end
+      end
 
-    it 'raises error' do
-      expect{ klass }.to raise_error(CMT::Batch::Csv::DuplicateBatchIdError)
+      it 'is failure', :aggregate_failures do
+        expect(result).to be_a(Dry::Monads::Failure)
+        msg = 'Batch ids are not unique. Please manually edit and save CSV where info about batches is recorded.'
+        expect(result.failure).to eq(msg)
+      end
     end
   end
   

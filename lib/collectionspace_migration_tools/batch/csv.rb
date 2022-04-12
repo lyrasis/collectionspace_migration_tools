@@ -8,8 +8,6 @@ module CollectionspaceMigrationTools
     class Csv
       include Dry::Monads[:result]
 
-      class DuplicateBatchIdError < CMT::Error; end
-
       attr_reader :ids
         
       def initialize(data = File.read(CMT.config.client.batch_csv), rewriter = CMT::Batch::CsvRewriter.new) 
@@ -39,11 +37,7 @@ module CollectionspaceMigrationTools
       end
       
       def to_monad
-        ensure_id_uniqueness
-      rescue DuplicateBatchIdError => err
-        Failure('Batch ids are not unique. Please manually edit and save CSV where info about batches is recorded.')
-      else
-        Success(self)
+        check_id_uniqueness
       end
 
       def rewrite
@@ -54,11 +48,11 @@ module CollectionspaceMigrationTools
 
       attr_reader :table, :rewriter
 
-      def ensure_id_uniqueness
+      def check_id_uniqueness
         uniq_ids = ids.uniq
-        return if ids == uniq_ids
+        return Success(self) if ids == uniq_ids
 
-        raise DuplicateBatchIdError
+        Failure('Batch ids are not unique. Please manually edit and save CSV where info about batches is recorded.')
       end
     end
   end

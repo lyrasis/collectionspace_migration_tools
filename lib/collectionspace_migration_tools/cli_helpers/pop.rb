@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'collectionspace/client'
-require 'dry/monads'
 
 module CollectionspaceMigrationTools
   module CliHelpers
@@ -9,20 +8,6 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
       
       module_function
-
-      def authorities
-        CMT::RecordTypes.authority
-      end
-      
-      def authority_args(rectypes)
-        [rectypes, authority_queries(rectypes), 'AuthTerms']
-      end
-      
-      def authority_queries(rectypes)
-        rectypes.map do |rectype|
-          CMT::QueryBuilder::Authority.call(rectype)
-        end
-      end
 
       def do_population(poptype, rows, cache_type)
         ct = result_count(rows)
@@ -84,6 +69,17 @@ module CollectionspaceMigrationTools
           get_query_results(rectype, queries[i]).either(
             ->(rows){ do_population(poptype, rows, cache_type) },
             ->(failure){ puts "QUERY FAILED: #{failure.to_s}" }
+          )
+        end
+      end
+
+      def query_and_populate_new(rectypes, cache_type = nil)
+        rectypes.each do |rectype|
+          meth = cache_type.nil? ? :populate_both_caches : "populate_#{cache_type}_cache".to_sym
+          
+          rectype.send(meth).either(
+            ->(success){ puts 'ok' },
+            ->(failure){ puts "QUERY/POPULATE FAILED FOR #{rectype.to_s.upcase}\n#{failure.to_s}" }
           )
         end
       end

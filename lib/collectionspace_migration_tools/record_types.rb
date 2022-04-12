@@ -8,12 +8,19 @@ module CollectionspaceMigrationTools
     
     module_function
 
+    # To be replaced by `authorities`, which is actually based on the available data
     def authority
       %w[citation concept location material organization person place taxon work]
     end
 
-    def is_authority?(mappable)
-      type = mappable.split('-').first
+    def authorities
+      @authorities ||= mappable.map{ |str| CMT::Authority.from_str(str) }
+        .reject{ |auth| auth.status.failure? }
+    end
+    
+
+    def is_authority?(str)
+      type = str.split('-').first
       authority.any?(type)
     end
     
