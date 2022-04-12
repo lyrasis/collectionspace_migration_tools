@@ -20,7 +20,7 @@ module CollectionspaceMigrationTools
 
     def base_namespace
       config['ns_uri'].keys
-        .select{ |ns| ns.end_with?('_common') && ns[type_label] }
+        .select{ |ns| ns.end_with?('_common') && ( ns[type_label] || ns[service_path] ) }
         .first
     end
 
@@ -44,6 +44,10 @@ module CollectionspaceMigrationTools
       end
     end
 
+    def name
+      config['mapper_name']
+    end
+
     def object?
       config['service_type'] == 'procedure'
     end
@@ -52,6 +56,10 @@ module CollectionspaceMigrationTools
       config['service_type'] == 'object'
     end
 
+    def id_field
+      config['identifier_field']
+    end
+    
     def refname_columns
       mappings.select{ |mapping| requires_refname?(mapping) }
     end

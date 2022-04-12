@@ -3,12 +3,13 @@
 module CollectionspaceMigrationTools
   class Authority
     include CMT::Cache::Populatable
+    include CMT::Mappable
     include Dry::Monads[:result]
 
     class << self
       def from_str(str)
         arr = str['/'] ? str.split('/') : str.split('-')
-        self.new(type: arr[0], subtype: arr[1])
+        self.new(type: arr.shift, subtype: arr.join('-'))
       end
     end
 
@@ -20,14 +21,6 @@ module CollectionspaceMigrationTools
       get_mapper
     end
 
-    def to_monad
-      status
-    end
-
-    def to_s
-      mappable_rectype
-    end
-    
     private
     
     attr_reader :mapper
@@ -104,14 +97,7 @@ module CollectionspaceMigrationTools
       "#{cacheable_type}_common"
     end
 
-    def get_mapper
-      CMT::Parse::RecordMapper.call(mappable_rectype).either(
-        ->(mapper){ @mapper = mapper; @status = Success(mapper) },
-        ->(failure){ @status = Failure(failure) }
-      )
-    end
-
-    def mappable_rectype
+    def name
       "#{type}-#{subtype}"
     end
 

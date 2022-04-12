@@ -26,14 +26,23 @@ module CollectionspaceMigrationTools
         _rec_type = yield(validate_rectype)
         json = yield(read_json)
         hash = yield(parse(json))
-        mapper = yield(CMT::RecordMapper.new(hash))
-
+        named = yield(insert_name(hash))
+        mapper = yield(CMT::RecordMapper.new(named))
+        
         Success(mapper)
       end
       
       private
 
       attr_reader :rectype
+
+      def insert_name(hash)
+        hash['config']['mapper_name'] = rectype
+      rescue StandardError => err
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: err))
+      else
+        Success(hash)
+      end
 
       def mapper_path
         filename = "#{CMT.config.client.profile}_#{CMT.config.client.profile_version}_#{rectype}.json"

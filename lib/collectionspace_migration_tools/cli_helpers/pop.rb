@@ -10,7 +10,7 @@ module CollectionspaceMigrationTools
       module_function
 
       def authorities
-        CMT::RecordTypes.authorities
+        CMT::RecordTypes.authorities.map{ |str| CMT::Authority.from_str(str) }
       end
       
       def do_population(poptype, rows, cache_type)
@@ -25,19 +25,9 @@ module CollectionspaceMigrationTools
       end
       
       def procedures
-        CMT::RecordTypes.procedures.keys
+        CMT::RecordTypes.procedures.map{ |str| CMT::Procedure.new(str) }
       end
       
-      def procedure_args(rectypes)
-        [rectypes, procedure_queries(rectypes), 'Procedures']
-      end
-      
-      def procedure_queries(rectypes)
-        rectypes.map do |rectype|
-          CMT::QueryBuilder::Procedure.call(rectype)
-        end
-      end
-
       def object_args
         [['object'], [CMT::QueryBuilder::Object.call], 'Objects', :csid]
       end

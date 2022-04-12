@@ -8,22 +8,10 @@ module CollectionspaceMigrationTools
     
     module_function
 
-    # To be replaced by `authorities`, which is actually based on the available data
-    def authority
-      %w[citation concept location material organization person place taxon work]
-    end
-
     def authorities
-      @authorities ||= mappable.map{ |str| CMT::Authority.from_str(str) }
-        .reject{ |auth| auth.status.failure? }
+      mappable.select{ |rectype| rectype['-'] }
     end
-    
 
-    def is_authority?(str)
-      type = str.split('-').first
-      authority.any?(type)
-    end
-    
     def mappable
       @mappable ||= Dir.new(CMT.config.client.mapper_dir)
         .children
@@ -32,29 +20,17 @@ module CollectionspaceMigrationTools
         .sort
     end
 
+    def object
+      'collectionobject'
+    end
+
+    def relations
+      %w[authorityhierarchy nonhierarchicalrelationship objecthierarchy].select{ |name| mappable.any?(name) }
+    end
     
     def procedures
-      {
-        'acq' => 'acquisitions',
-        'claim' => 'claims',
-        'cc' => 'conditionchecks',
-        'cons' => 'conservation',
-        'exh' => 'exhibitions',
-        'group' => 'groups',
-        'ins' => 'insurances',
-        'intake' => 'intakes',
-        'lin' => 'loansin',
-        'lout' => 'loansout',
-        'media' => 'media',
-        'lmi' => 'movements',
-        'exit' => 'objectexit',
-        'osteo' => 'osteology',
-        'pot' => 'pottags',
-        'prop' => 'propagations',
-        'tran' => 'transports',
-        'uoc' => 'uoc',
-        'val' => 'valuationcontrols'
-      }
+      mappable.reject{ |name| name['-'] || name == object }
+        .reject{ |name| relations.any?(name) }
     end
 
     def valid_mappable?(rectype)

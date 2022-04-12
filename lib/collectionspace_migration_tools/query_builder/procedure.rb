@@ -17,14 +17,9 @@ module CollectionspaceMigrationTools
       end
       
       def initialize(rectype)
-        @name = rectype if CMT::RecordTypes.procedures.values.any?(rectype)
+        @name = rectype if CMT::RecordTypes.procedures.any?(rectype)
         return if name
         
-        if CMT::RecordTypes.procedures.keys.any?(rectype)
-          @name = CMT::RecordTypes.procedures[rectype]
-        end
-        return if name
-
         raise(CMT::QB::UnknownTypeError, "Unknown record type: #{rectype}")
       end
 

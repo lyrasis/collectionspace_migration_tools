@@ -16,9 +16,9 @@ class Pop < Thor
     
     invoke 'caches:clear'
     query_and_populate_new(authorities)
-    query_and_populate(*vocab_args)
+    query_and_populate_new([CMT::Vocabulary.new])
     query_and_populate(*object_args)
-    query_and_populate(*procedure_args(procedures))
+    query_and_populate_new(procedures)
     query_and_populate(*relation_args('all'))
 
     puts "Total time: #{Time.now - start_time}"
