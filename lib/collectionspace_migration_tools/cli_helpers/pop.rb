@@ -28,10 +28,6 @@ module CollectionspaceMigrationTools
         CMT::RecordTypes.procedures.map{ |str| CMT::Procedure.new(str) }
       end
       
-      def object_args
-        [['object'], [CMT::QueryBuilder::Object.call], 'Objects', :csid]
-      end
-
       def relation_args(reltype)
         [["#{reltype} rels"], [CMT::QueryBuilder::Relation.call(reltype)], 'Relations', :csid]
       end
