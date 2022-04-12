@@ -15,7 +15,7 @@ class Pop < Thor
     start_time = Time.now
     
     invoke 'caches:clear'
-    query_and_populate(*authority_args(authorities))
+    query_and_populate_new(authorities)
     query_and_populate(*vocab_args)
     query_and_populate(*object_args)
     query_and_populate(*procedure_args(procedures))
@@ -31,12 +31,12 @@ class Pop < Thor
   
   desc 'terms', 'populate caches with all authority and vocabulary terms'
   def terms
-    query_and_populate(*authority_args(authorities))
-    query_and_populate(*vocab_args)
+    query_and_populate_new(authorities)
+    query_and_populate_new([CMT::Vocabulary.new])
   end
 
   desc 'vocabs', 'populate caches with all vocabulary terms'
   def vocabs
-    query_and_populate(*vocab_args)
+    query_and_populate_new([CMT::Vocabulary.new])
   end
 end

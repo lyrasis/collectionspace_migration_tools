@@ -9,6 +9,10 @@ module CollectionspaceMigrationTools
       
       module_function
 
+      def authorities
+        CMT::RecordTypes.authorities
+      end
+      
       def do_population(poptype, rows, cache_type)
         ct = result_count(rows)
         return if ct == 0
@@ -40,10 +44,6 @@ module CollectionspaceMigrationTools
 
       def relation_args(reltype)
         [["#{reltype} rels"], [CMT::QueryBuilder::Relation.call(reltype)], 'Relations', :csid]
-      end
-
-      def vocab_args
-        [['vocab'], [CMT::QueryBuilder::Vocabulary.call], 'VocabTerms']
       end
 
       def get_query_results(rectype, query)

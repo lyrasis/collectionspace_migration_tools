@@ -7,6 +7,7 @@ module CollectionspaceMigrationTools
     # Classes mixing this in need to have the following methods:
     #   - cacheable_data_query
     #   - rectype_mixin
+    #   - to_monad
     #   - to_s
     module Populatable
       include Dry::Monads[:result]
