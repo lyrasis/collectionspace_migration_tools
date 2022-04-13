@@ -50,6 +50,8 @@ client:
   # If you are NOT providing a custom config, comment out the following line.
   batch_config_path: ~/code/cs/migration_tools/spec/support/fixtures/client_batch_config.json
 
+  auto_refresh_cache_before_mapping: true
+  
   # column/field delimiter for input "CSV" files
   csv_delimiter: ","
 

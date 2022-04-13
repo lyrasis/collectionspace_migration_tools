@@ -5,7 +5,7 @@ require 'dry/validation'
 module CollectionspaceMigrationTools
   module Validate
     class ConfigClientContract < CMT::Validate::ApplicationContract
-      params do
+      schema do
         required(:base_uri).filled(:string)
         required(:username).filled(:string)
         required(:password).filled(:string)
@@ -19,6 +19,7 @@ module CollectionspaceMigrationTools
         required(:batch_dir).filled(:string)
         required(:redis_db_number).filled(:integer)
         optional(:batch_config_path).maybe(:string)
+        optional(:auto_refresh_cache_before_mapping).filled(:bool)
         required(:csv_delimiter).filled(:string)
         required(:s3_bucket).filled(:string)
         required(:s3_region).filled(:string)

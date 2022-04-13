@@ -47,6 +47,7 @@ module CollectionspaceMigrationTools
 
     def build_config(result)
       add_option_to_section(result, :client, :batch_config_path, nil)
+      add_option_to_section(result, :client, :auto_refresh_cache_before_mapping, false)
       
       base = File.expand_path(result[:client][:base_dir])
       add_option_to_section(result, :client, :batch_csv, File.join(base, 'batches.csv'))
