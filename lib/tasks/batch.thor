@@ -53,7 +53,7 @@ class Batch < Thor
       csv = yield(CMT::Batch::Csv.new)
       batch = yield(CMT::Batch::Batch.new(csv, id))
       plan = yield(CMT::Batch::CachingPlanner.call(batch)) if autocache
-      unless plan.empty?
+      if autocache && !plan.empty?
         _cc = yield(clear_caches) if autocache && clearcache
         _ac = yield(CMT::Batch::AutoCacher.call(plan)) if autocache
       end
