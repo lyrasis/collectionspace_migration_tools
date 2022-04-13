@@ -3,7 +3,7 @@
 require 'fileutils'
 require_relative '../../spec_helper'
 
-RSpec.describe CollectionspaceMigrationTools::Xml::DirPathGetter do
+RSpec.describe CollectionspaceMigrationTools::Batch::DirPathGetter do
   before do
     allow(Time).to receive(:now).and_return(Time.new(2022, 3, 7, 17, 22, 33))
     CMT.config.client.batch_dir = File.join(Bundler.root, 'tmp')
