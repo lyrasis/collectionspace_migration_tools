@@ -51,6 +51,7 @@ client:
   batch_config_path: ~/code/cs/migration_tools/spec/support/fixtures/client_batch_config.json
 
   auto_refresh_cache_before_mapping: true
+  clear_cache_before_refresh: true
   
   # column/field delimiter for input "CSV" files
   csv_delimiter: ","

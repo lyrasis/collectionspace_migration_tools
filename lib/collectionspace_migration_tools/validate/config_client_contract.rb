@@ -20,6 +20,7 @@ module CollectionspaceMigrationTools
         required(:redis_db_number).filled(:integer)
         optional(:batch_config_path).maybe(:string)
         optional(:auto_refresh_cache_before_mapping).filled(:bool)
+        optional(:clear_cache_before_refresh).filled(:bool)
         required(:csv_delimiter).filled(:string)
         required(:s3_bucket).filled(:string)
         required(:s3_region).filled(:string)

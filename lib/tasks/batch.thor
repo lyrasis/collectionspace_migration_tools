@@ -23,6 +23,7 @@ class Batch < Thor
 
   desc 'map BATCHID', "Maps a batch's source CSV data to CS XML files"
   option :autocache, required: false, type: :boolean, default: CMT.config.client.auto_refresh_cache_before_mapping
+  option :clearcache, required: false, type: :boolean, default: CMT.config.client.clear_cache_before_refresh
   def map(id)
     do_map(id, options[:autocache]).either(
       ->(success){  },
@@ -42,6 +43,7 @@ class Batch < Thor
     def do_map(id, autocache)
       csv = yield(CMT::Batch::Csv.new)
       batch = yield(CMT::Batch::Batch.new(csv, id))
+      _ac = yield(CMT::Batch::AutoCacher.call(batch)) if autocache
       output = yield(CMT::Csv::BatchProcessRunner.call(
                        csv: batch.source_csv, rectype: batch.mappable_rectype, action: batch.action, batch: id
                      ))

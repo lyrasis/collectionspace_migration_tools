@@ -57,9 +57,8 @@ client:
   # If you are NOT providing a custom config, comment out the following line.
   # batch_config_path: ~/code/cs/migration_tools/spec/support/fixtures/client_batch_config.json
 
-  # If true, when you run `thor batch:map`, the first thing that will happen is your caches will be cleared. Then,
-  #   fresh data for record types required by the type and data you are mapping will be pulled from the database
-  #   and cached.
+  # If true, when you run `thor batch:map`, the first thing that will happen is fresh data for record types required by the
+  #   type and data you are mapping will be pulled from the database and cached.
   # If commented out or set to false, caches will NOT be cleared and refreshed prior to data mapping when called when
   #   `thor batch:map` is called. This may be preferable if the scale of the instance is very large, so it takes a long
   #   time to refresh cache data
@@ -67,6 +66,16 @@ client:
   #   The default value of this option is whatever you have set here.
   auto_refresh_cache_before_mapping: true
 
+  # If true, caches will be cleared before they are auto refreshed. This is the safest option, as it will ensure
+  #   deleted items are not still in the cache, and the correct values are cached for any duplicates since cleaned
+  #   up.
+  # If you know only additions/updates have been made, you can set to false to save a bit of time.
+  # This has no effect if auto_refresh_cache_before_mapping = false
+  # Note that you can control whether this happens per-batch via the `--clearcache` option on the `thor map:batch` command.
+  #   The default value of this option is whatever you have set here.
+  clear_cache_before_refresh: true
+
+  
   # column/field delimiter for input "CSV" files
   csv_delimiter: ","
 
