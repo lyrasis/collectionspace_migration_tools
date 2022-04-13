@@ -41,7 +41,7 @@ class Batch < Thor
   
   no_commands do
     def clear_caches
-      invoke 'caches:clear'
+      invoke 'caches:clear', []
     rescue StandardError => err
       msg = "#{err.message} IN #{err.backtrace[0]}"
       Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
@@ -53,8 +53,10 @@ class Batch < Thor
       csv = yield(CMT::Batch::Csv.new)
       batch = yield(CMT::Batch::Batch.new(csv, id))
       plan = yield(CMT::Batch::CachingPlanner.call(batch)) if autocache
-      _cc = yield(clear_caches) if autocache && clearcache
-      _ac = yield(CMT::Batch::AutoCacher.call(batch)) if autocache
+      unless plan.empty?
+        _cc = yield(clear_caches) if autocache && clearcache
+        _ac = yield(CMT::Batch::AutoCacher.call(plan)) if autocache
+      end
       output = yield(CMT::Csv::BatchProcessRunner.call(
                        csv: batch.source_csv, rectype: batch.mappable_rectype, action: batch.action, batch: id
                      ))

@@ -24,11 +24,12 @@ module CollectionspaceMigrationTools
       end
 
       def call
+        puts "\n\nMAPPING"
         start_time = Time.now
 
         processor = yield(CMT::Csv::BatchProcessorPreparer.new(csv_path: csv, rectype: rectype, action: action, batch: batch).call)
         output_dir = yield(processor.call)
-        puts "Total time: #{Time.now - start_time}"
+        puts "Elapsed time for mapping: #{Time.now - start_time}"
 
         Success(output_dir)
       end

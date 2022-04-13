@@ -1,41 +1,57 @@
 # frozen_string_literal: true
 
+# @todo speed up by threading single cache population calls
 module CollectionspaceMigrationTools
   module Batch
     # Populates cache(s) based on instructions in CachingPlanner output
     class AutoCacher
       include Dry::Monads[:result]
-      include Dry::Monads::Do.for(:to_monad)
+      include Dry::Monads::Do.for(:do_caching)
 
-      def initialize(str)
-        @str = str
-      end
-
-      def to_monad
-        _length = yield(check_length)
-        _chars = yield(check_chars)
-
-        Success(str)
-      end
-
-      def validate
-        to_monad
+      class << self
+        def call(...)
+          self.new(...).call
+        end
       end
       
+      def initialize(plan)
+        @plan = plan
+        @results = []
+      end
+
+      def call
+        puts "\n\nAUTO-CACHING"
+        starttime = Time.now
+        
+        plan.each{ |meth, list| do_command(meth, list) }
+
+        CMT.connection.close
+        CMT.tunnel.close
+
+        puts "Elapsed time for caching: #{Time.now - starttime}"
+        return Success() unless @results.any?(:failure?)
+        
+        Failure("#{self.class.name} ERROR: Unable to cache some necessary values")
+      end
+      
+      def to_monad
+      end
+
       private
 
-      attr_reader :str
+      attr_reader :plan
 
-      def check_chars
-        return Success() if str.match?(/^[A-Za-z0-9]+$/)
+      def do_caching(rectype, meth)
+        obj = yield(CMT::RecordTypes.to_obj(rectype))
+        _result = yield(obj.send(meth))
 
-        Failure('Batch ID must consist of only letters and numbers')
+        Success()
       end
-      
-      def check_length
-        return Success() if str.length <= 6
 
-        Failure('Batch ID must be 6 or fewer characters')
+      def do_command(meth, list)
+        list.each do |rectype|
+          @results << do_caching(rectype, meth)
+        end
       end
     end
   end

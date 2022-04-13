@@ -17,7 +17,7 @@ module CollectionspaceMigrationTools
         _status = yield(self)
         query = yield(cacheable_data_query)
 
-        puts "\n\nQuerying cacheable data for #{to_s}..."
+        puts "\nQuerying cacheable data for #{to_s}..."
         rows = yield(CMT::Database::ExecuteQuery.call(query))
 
         ct = result_count(rows)
@@ -44,7 +44,7 @@ module CollectionspaceMigrationTools
         _status = yield(self)
         query = yield(cacheable_data_query)
 
-        puts "Querying cacheable data for #{to_s}..."
+        puts "\nQuerying cacheable data for #{to_s}..."
         rows = yield(CMT::Database::ExecuteQuery.call(query))
 
         ct = result_count(rows)
