@@ -17,7 +17,7 @@ module CollectionspaceMigrationTools
       end
 
       # @param record_mapper [Hash] parsed JSON record mapper
-      def initialize(mapper, batch)
+      def initialize(mapper, batch = nil)
         @mapper = mapper
         @batch = batch
         @batch_dir = File.expand_path(CMT.config.client.batch_dir)
