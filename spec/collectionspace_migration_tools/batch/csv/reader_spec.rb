@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../../spec_helper'
+require_relative '../../../spec_helper'
 
-RSpec.describe CollectionspaceMigrationTools::Batch::Csv do
+RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Reader do
   let(:klass){ described_class.new(data) }
   let(:data) do
   <<~CSV

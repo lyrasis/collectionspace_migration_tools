@@ -80,7 +80,7 @@ class Batch < Thor
     end
 
     def get_batch(id)
-      csv = yield(CMT::Batch::Csv.new)
+      csv = yield(CMT::Batch::Csv::Reader.new)
       batch = yield(CMT::Batch::Batch.new(csv, id))
 
       Success(batch)

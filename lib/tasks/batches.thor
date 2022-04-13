@@ -11,7 +11,7 @@ class Batches < Thor
   desc 'init_csv', 'Creates new batch-tracking CSV if one does not exist. Checks existing has up-to-date format'
   def init_csv
     path = CMT.config.client.batch_csv
-    CMT::Build::BatchesCsv.call.either(
+    CMT::Batch::Csv::Creator.call.either(
       ->(success){ puts "Wrote new file at #{path}" },
       ->(failure){ FileUtils.rm(path) if File.exists?(path); puts failure.to_s }
     )
@@ -19,7 +19,7 @@ class Batches < Thor
 
   desc 'list', 'Brief listing of batch ids and info'
   def list
-    CMT::Batch::Csv.new.list
+    CMT::Batch::Csv::Reader.new.list
   end
 end
 
