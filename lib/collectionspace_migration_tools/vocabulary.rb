@@ -11,6 +11,10 @@ module CollectionspaceMigrationTools
     def initialize
     end
 
+    def status
+      to_monad
+    end
+
     def to_monad
       Success()
     end

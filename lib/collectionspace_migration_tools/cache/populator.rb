@@ -24,8 +24,8 @@ module CollectionspaceMigrationTools
       def call(data)
         before_report(data)
         do_population(data).either(
-          ->(result){ after_report },
-          ->(result){ problem_report(result) }
+          ->(result){ after_report; Success() },
+          ->(result){ problem_report(result); Failure(result) }
         )
       end
 

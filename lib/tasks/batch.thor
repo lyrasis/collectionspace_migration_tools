@@ -25,7 +25,7 @@ class Batch < Thor
   option :autocache, required: false, type: :boolean, default: CMT.config.client.auto_refresh_cache_before_mapping
   option :clearcache, required: false, type: :boolean, default: CMT.config.client.clear_cache_before_refresh
   def map(id)
-    do_map(id, options[:autocache]).either(
+    do_map(id, options[:autocache], options[:clearcache]).either(
       ->(success){  },
       ->(failure){ puts failure.to_s }
     )
@@ -40,9 +40,20 @@ class Batch < Thor
   end
   
   no_commands do
-    def do_map(id, autocache)
+    def clear_caches
+      invoke 'caches:clear'
+    rescue StandardError => err
+      msg = "#{err.message} IN #{err.backtrace[0]}"
+      Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+    else
+      Success()
+    end
+    
+    def do_map(id, autocache, clearcache)
       csv = yield(CMT::Batch::Csv.new)
       batch = yield(CMT::Batch::Batch.new(csv, id))
+      plan = yield(CMT::Batch::CachingPlanner.call(batch)) if autocache
+      _cc = yield(clear_caches) if autocache && clearcache
       _ac = yield(CMT::Batch::AutoCacher.call(batch)) if autocache
       output = yield(CMT::Csv::BatchProcessRunner.call(
                        csv: batch.source_csv, rectype: batch.mappable_rectype, action: batch.action, batch: id

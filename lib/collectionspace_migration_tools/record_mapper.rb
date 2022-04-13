@@ -112,7 +112,7 @@ module CollectionspaceMigrationTools
       return {} unless authority?
 
       res = {}
-      config['authority_subtypes'].each{ |pair| res[pair['subtype']] = pair['name'].downcase }
+      config['authority_subtypes'].each{ |pair| res[pair['subtype']] = pair['name'].downcase.gsub(' ', '-') }
       res
     end
     

@@ -8,11 +8,36 @@ module CollectionspaceMigrationTools
     
     module_function
 
+    def alt_auth_rectype_form(rectype)
+      splitdata = rectype.split('-')
+      type = splitdata.shift
+      subtype = splitdata.join('-')
+
+      if service_path_to_mappable_type_mapping.key?(type)
+        newtype = service_path_to_mappable_type_mapping[type]
+      else
+        newtype = type
+      end
+
+      if authority_subtype_machine_to_human_label_mapping.key?(subtype)
+        newsubtype = authority_subtype_machine_to_human_label_mapping[subtype]
+      else
+        newsubtype = subtype
+      end
+
+      result = [newtype, newsubtype].join('-')
+      mappable.any?(result) ? Success(result) : Failure("Cannot derive valid rectype from #{rectype}")
+    end
+    
     def authorities
       mappable.select{ |rectype| rectype['-'] }
     end
 
     def authority_subtype_machine_to_human_label_mapping
+      @authority_subtype_machine_to_human_label_mapping ||= get_authority_subtype_machine_to_human_label_mapping
+    end
+    
+    def get_authority_subtype_machine_to_human_label_mapping
       # since each authority vocabulary record mapper lists all vocabs for that authority,
       #   we just take one per authority
       authorities.map{ |rectype| [rectype.split('-').first, rectype]}
@@ -22,7 +47,11 @@ module CollectionspaceMigrationTools
         .inject({}, :merge)
     end
     
-
+    def get_service_path_to_mappable_type_mapping
+      mappable.map{ |rectype| CMT::Parse::RecordMapper.call(rectype).value!.service_path_to_mappable }
+        .inject({}, :merge)
+    end
+    
     def mappable
       @mappable ||= Dir.new(CMT.config.client.mapper_dir)
         .children
@@ -45,8 +74,21 @@ module CollectionspaceMigrationTools
     end
 
     def service_path_to_mappable_type_mapping
-      mappable.map{ |rectype| CMT::Parse::RecordMapper.call(rectype).value!.service_path_to_mappable }
-        .inject({}, :merge)
+      @service_path_to_mappable_type_mapping ||= get_service_path_to_mappable_type_mapping
+    end
+
+    def to_obj(rectype)
+      return Success(CMT::Vocabulary.new) if rectype == 'vocabulary'
+      return Success(CMT::Collectionobject.new) if rectype == 'collectionobject'
+      return Success(CMT::Relation.new(rectype)) if relations.any?(rectype)
+      return Success(CMT::Procedure.new(rectype)) if procedures.any?(rectype)
+      return Success(CMT::Authority.from_str(rectype)) if authorities.any?(rectype)
+
+      alt_auth_rectype_form(rectype).bind do |alt_form|
+        return Success(CMT::Authority.from_str(alt_form)) if authorities.any?(alt_form)
+      end
+
+      Failure("#{rectype} cannot be converted to a CMT CS Entity object")
     end
 
     def valid_mappable?(rectype)
