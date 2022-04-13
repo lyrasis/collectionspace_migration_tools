@@ -2,46 +2,48 @@
   "config": {
     "profile_basename": "anthro",
     "version": "5-0-0",
-    "recordtype": "person",
-    "document_name": "persons",
-    "service_name": "Persons",
-    "service_path": "personauthorities",
+    "recordtype": "organization",
+    "document_name": "organizations",
+    "service_name": "Organizations",
+    "service_path": "orgauthorities",
     "service_type": "authority",
-    "object_name": "Person",
+    "object_name": "Organization",
     "ns_uri": {
-      "persons_common": "http://collectionspace.org/services/person",
+      "organizations_common": "http://collectionspace.org/services/organization",
       "contacts_common": "http://collectionspace.org/services/contact"
     },
     "identifier_field": "shortIdentifier",
-    "search_field": "personTermGroupList/0/termDisplayName",
+    "search_field": "organizationTermGroupList/0/termDisplayName",
     "authority_subtypes": [
       {
         "name": "Local",
-        "subtype": "person"
+        "subtype": "organization"
       },
       {
         "name": "ULAN",
-        "subtype": "ulan_pa"
+        "subtype": "ulan_oa"
       }
     ],
-    "authority_type": "personauthorities",
-    "authority_subtype": "person"
+    "authority_type": "orgauthorities",
+    "authority_subtype": "ulan_oa"
   },
   "docstructure": {
-    "persons_common": {
-      "personTermGroupList": {
-        "personTermGroup": {
+    "organizations_common": {
+      "orgTermGroupList": {
+        "orgTermGroup": {
         }
       },
-      "personRecordTypes": {
-      },
-      "occupations": {
-      },
-      "schoolsOrStyles": {
+      "organizationRecordTypes": {
       },
       "groups": {
       },
-      "nationalities": {
+      "functions": {
+      },
+      "historyNotes": {
+      },
+      "contactGroupList": {
+        "contactGroup": {
+        }
       }
     },
     "contacts_common": {
@@ -74,10 +76,10 @@
       },
       "source_type": "na",
       "source_name": null,
-      "namespace": "persons_common",
+      "namespace": "organizations_common",
       "xpath": [
-        "personTermGroupList",
-        "personTermGroup"
+        "orgTermGroupList",
+        "orgTermGroup"
       ],
       "data_type": "string",
       "repeats": "n",
@@ -94,10 +96,10 @@
       },
       "source_type": "na",
       "source_name": null,
-      "namespace": "persons_common",
+      "namespace": "organizations_common",
       "xpath": [
-        "personTermGroupList",
-        "personTermGroup"
+        "orgTermGroupList",
+        "orgTermGroup"
       ],
       "data_type": "string",
       "repeats": "n",
@@ -114,10 +116,10 @@
       },
       "source_type": "na",
       "source_name": null,
-      "namespace": "persons_common",
+      "namespace": "organizations_common",
       "xpath": [
-        "personTermGroupList",
-        "personTermGroup"
+        "orgTermGroupList",
+        "orgTermGroup"
       ],
       "data_type": "string",
       "repeats": "n",
@@ -133,11 +135,11 @@
       "transforms": {
       },
       "source_type": "optionlist",
-      "source_name": "personTermStatuses",
-      "namespace": "persons_common",
+      "source_name": "orgTermStatuses",
+      "namespace": "organizations_common",
       "xpath": [
-        "personTermGroupList",
-        "personTermGroup"
+        "orgTermGroupList",
+        "orgTermGroup"
       ],
       "data_type": "string",
       "repeats": "n",
@@ -156,11 +158,11 @@
       "transforms": {
       },
       "source_type": "optionlist",
-      "source_name": "personTermTypes",
-      "namespace": "persons_common",
+      "source_name": "orgTermTypes",
+      "namespace": "organizations_common",
       "xpath": [
-        "personTermGroupList",
-        "personTermGroup"
+        "orgTermGroupList",
+        "orgTermGroup"
       ],
       "data_type": "string",
       "repeats": "n",
@@ -176,14 +178,14 @@
     {
       "fieldname": "termFlag",
       "transforms": {
-        "vocabulary": "persontermflag"
+        "vocabulary": "orgtermflag"
       },
       "source_type": "vocabulary",
-      "source_name": "persontermflag",
-      "namespace": "persons_common",
+      "source_name": "orgtermflag",
+      "namespace": "organizations_common",
       "xpath": [
-        "personTermGroupList",
-        "personTermGroup"
+        "orgTermGroupList",
+        "orgTermGroup"
       ],
       "data_type": "string",
       "repeats": "n",
@@ -199,11 +201,11 @@
       "transforms": {
       },
       "source_type": "vocabulary",
-      "source_name": "persontermflag",
-      "namespace": "persons_common",
+      "source_name": "orgtermflag",
+      "namespace": "organizations_common",
       "xpath": [
-        "personTermGroupList",
-        "personTermGroup"
+        "orgTermGroupList",
+        "orgTermGroup"
       ],
       "data_type": "csrefname",
       "repeats": "n",
@@ -221,10 +223,10 @@
       },
       "source_type": "vocabulary",
       "source_name": "languages",
-      "namespace": "persons_common",
+      "namespace": "organizations_common",
       "xpath": [
-        "personTermGroupList",
-        "personTermGroup"
+        "orgTermGroupList",
+        "orgTermGroup"
       ],
       "data_type": "string",
       "repeats": "n",
@@ -241,10 +243,10 @@
       },
       "source_type": "vocabulary",
       "source_name": "languages",
-      "namespace": "persons_common",
+      "namespace": "organizations_common",
       "xpath": [
-        "personTermGroupList",
-        "personTermGroup"
+        "orgTermGroupList",
+        "orgTermGroup"
       ],
       "data_type": "csrefname",
       "repeats": "n",
@@ -264,10 +266,10 @@
       },
       "source_type": "na",
       "source_name": null,
-      "namespace": "persons_common",
+      "namespace": "organizations_common",
       "xpath": [
-        "personTermGroupList",
-        "personTermGroup"
+        "orgTermGroupList",
+        "orgTermGroup"
       ],
       "data_type": "boolean",
       "repeats": "n",
@@ -279,84 +281,15 @@
       "required": "n"
     },
     {
-      "fieldname": "salutation",
-      "transforms": {
-      },
-      "source_type": "optionlist",
-      "source_name": "salutations",
-      "namespace": "persons_common",
-      "xpath": [
-        "personTermGroupList",
-        "personTermGroup"
-      ],
-      "data_type": "string",
-      "repeats": "n",
-      "in_repeating_group": "y",
-      "opt_list_values": [
-        "dear",
-        "hello",
-        "to"
-      ],
-      "datacolumn": "salutation",
-      "required": "n"
-    },
-    {
-      "fieldname": "title",
-      "transforms": {
-      },
-      "source_type": "optionlist",
-      "source_name": "personTitles",
-      "namespace": "persons_common",
-      "xpath": [
-        "personTermGroupList",
-        "personTermGroup"
-      ],
-      "data_type": "string",
-      "repeats": "n",
-      "in_repeating_group": "y",
-      "opt_list_values": [
-        "Admiral",
-        "Baron",
-        "Baroness",
-        "Captain",
-        "Commander",
-        "Commodore",
-        "Count",
-        "Countess",
-        "Dame",
-        "Dr",
-        "General",
-        "Governor",
-        "Honorable",
-        "Judge",
-        "King",
-        "Lady",
-        "Lord",
-        "Miss",
-        "Mr",
-        "Mrs",
-        "Ms",
-        "Prince",
-        "Princess",
-        "Professor",
-        "Queen",
-        "Reverend",
-        "Saint",
-        "Sir"
-      ],
-      "datacolumn": "title",
-      "required": "n"
-    },
-    {
-      "fieldname": "foreName",
+      "fieldname": "mainBodyName",
       "transforms": {
       },
       "source_type": "na",
       "source_name": null,
-      "namespace": "persons_common",
+      "namespace": "organizations_common",
       "xpath": [
-        "personTermGroupList",
-        "personTermGroup"
+        "orgTermGroupList",
+        "orgTermGroup"
       ],
       "data_type": "string",
       "repeats": "n",
@@ -364,19 +297,19 @@
       "opt_list_values": [
 
       ],
-      "datacolumn": "foreName",
+      "datacolumn": "mainBodyName",
       "required": "n"
     },
     {
-      "fieldname": "middleName",
+      "fieldname": "additionsToName",
       "transforms": {
       },
       "source_type": "na",
       "source_name": null,
-      "namespace": "persons_common",
+      "namespace": "organizations_common",
       "xpath": [
-        "personTermGroupList",
-        "personTermGroup"
+        "orgTermGroupList",
+        "orgTermGroup"
       ],
       "data_type": "string",
       "repeats": "n",
@@ -384,67 +317,7 @@
       "opt_list_values": [
 
       ],
-      "datacolumn": "middleName",
-      "required": "n"
-    },
-    {
-      "fieldname": "surName",
-      "transforms": {
-      },
-      "source_type": "na",
-      "source_name": null,
-      "namespace": "persons_common",
-      "xpath": [
-        "personTermGroupList",
-        "personTermGroup"
-      ],
-      "data_type": "string",
-      "repeats": "n",
-      "in_repeating_group": "y",
-      "opt_list_values": [
-
-      ],
-      "datacolumn": "surName",
-      "required": "n"
-    },
-    {
-      "fieldname": "nameAdditions",
-      "transforms": {
-      },
-      "source_type": "na",
-      "source_name": null,
-      "namespace": "persons_common",
-      "xpath": [
-        "personTermGroupList",
-        "personTermGroup"
-      ],
-      "data_type": "string",
-      "repeats": "n",
-      "in_repeating_group": "y",
-      "opt_list_values": [
-
-      ],
-      "datacolumn": "nameAdditions",
-      "required": "n"
-    },
-    {
-      "fieldname": "initials",
-      "transforms": {
-      },
-      "source_type": "na",
-      "source_name": null,
-      "namespace": "persons_common",
-      "xpath": [
-        "personTermGroupList",
-        "personTermGroup"
-      ],
-      "data_type": "string",
-      "repeats": "n",
-      "in_repeating_group": "y",
-      "opt_list_values": [
-
-      ],
-      "datacolumn": "initials",
+      "datacolumn": "additionsToName",
       "required": "n"
     },
     {
@@ -457,10 +330,10 @@
       },
       "source_type": "authority",
       "source_name": "citation/local",
-      "namespace": "persons_common",
+      "namespace": "organizations_common",
       "xpath": [
-        "personTermGroupList",
-        "personTermGroup"
+        "orgTermGroupList",
+        "orgTermGroup"
       ],
       "data_type": "string",
       "repeats": "n",
@@ -481,10 +354,10 @@
       },
       "source_type": "authority",
       "source_name": "citation/worldcat",
-      "namespace": "persons_common",
+      "namespace": "organizations_common",
       "xpath": [
-        "personTermGroupList",
-        "personTermGroup"
+        "orgTermGroupList",
+        "orgTermGroup"
       ],
       "data_type": "string",
       "repeats": "n",
@@ -501,10 +374,10 @@
       },
       "source_type": "authority",
       "source_name": "citation/local; citation/worldcat",
-      "namespace": "persons_common",
+      "namespace": "organizations_common",
       "xpath": [
-        "personTermGroupList",
-        "personTermGroup"
+        "orgTermGroupList",
+        "orgTermGroup"
       ],
       "data_type": "csrefname",
       "repeats": "n",
@@ -521,10 +394,10 @@
       },
       "source_type": "na",
       "source_name": null,
-      "namespace": "persons_common",
+      "namespace": "organizations_common",
       "xpath": [
-        "personTermGroupList",
-        "personTermGroup"
+        "orgTermGroupList",
+        "orgTermGroup"
       ],
       "data_type": "string",
       "repeats": "n",
@@ -541,10 +414,10 @@
       },
       "source_type": "na",
       "source_name": null,
-      "namespace": "persons_common",
+      "namespace": "organizations_common",
       "xpath": [
-        "personTermGroupList",
-        "personTermGroup"
+        "orgTermGroupList",
+        "orgTermGroup"
       ],
       "data_type": "string",
       "repeats": "n",
@@ -561,10 +434,10 @@
       },
       "source_type": "na",
       "source_name": null,
-      "namespace": "persons_common",
+      "namespace": "organizations_common",
       "xpath": [
-        "personTermGroupList",
-        "personTermGroup"
+        "orgTermGroupList",
+        "orgTermGroup"
       ],
       "data_type": "string",
       "repeats": "n",
@@ -576,15 +449,15 @@
       "required": "n"
     },
     {
-      "fieldname": "personRecordType",
+      "fieldname": "organizationRecordType",
       "transforms": {
-        "vocabulary": "persontermtype"
+        "vocabulary": "organizationtype"
       },
       "source_type": "vocabulary",
-      "source_name": "persontermtype",
-      "namespace": "persons_common",
+      "source_name": "organizationtype",
+      "namespace": "organizations_common",
       "xpath": [
-        "personRecordTypes"
+        "organizationRecordTypes"
       ],
       "data_type": "string",
       "repeats": "y",
@@ -592,18 +465,18 @@
       "opt_list_values": [
 
       ],
-      "datacolumn": "personRecordType",
+      "datacolumn": "organizationRecordType",
       "required": "n"
     },
     {
-      "fieldname": "personRecordType",
+      "fieldname": "organizationRecordType",
       "transforms": {
       },
       "source_type": "vocabulary",
-      "source_name": "persontermtype",
-      "namespace": "persons_common",
+      "source_name": "organizationtype",
+      "namespace": "organizations_common",
       "xpath": [
-        "personRecordTypes"
+        "organizationRecordTypes"
       ],
       "data_type": "csrefname",
       "repeats": "y",
@@ -611,16 +484,35 @@
       "opt_list_values": [
 
       ],
-      "datacolumn": "personRecordTypeRefname",
+      "datacolumn": "organizationRecordTypeRefname",
       "required": "n"
     },
     {
-      "fieldname": "gender",
+      "fieldname": "foundingDateGroup",
       "transforms": {
       },
-      "source_type": "optionlist",
-      "source_name": "genders",
-      "namespace": "persons_common",
+      "source_type": "na",
+      "source_name": null,
+      "namespace": "organizations_common",
+      "xpath": [
+
+      ],
+      "data_type": "structured date group",
+      "repeats": "n",
+      "in_repeating_group": "n/a",
+      "opt_list_values": [
+
+      ],
+      "datacolumn": "foundingDateGroup",
+      "required": "n"
+    },
+    {
+      "fieldname": "foundingPlace",
+      "transforms": {
+      },
+      "source_type": "na",
+      "source_name": null,
+      "namespace": "organizations_common",
       "xpath": [
 
       ],
@@ -628,64 +520,28 @@
       "repeats": "n",
       "in_repeating_group": "n/a",
       "opt_list_values": [
-        "agender",
-        "bigender",
-        "dyadic",
-        "female",
-        "feminine",
-        "gender-fluid",
-        "gender-neutral",
-        "gender-non-binary",
-        "genderqueer",
-        "intersex",
-        "male",
-        "masculine",
-        "pansexual",
-        "polygender",
-        "questioning",
-        "transgender",
-        "transsexual",
-        "two-spirit"
+
       ],
-      "datacolumn": "gender",
+      "datacolumn": "foundingPlace",
       "required": "n"
     },
     {
-      "fieldname": "occupation",
+      "fieldname": "dissolutionDateGroup",
       "transforms": {
       },
       "source_type": "na",
       "source_name": null,
-      "namespace": "persons_common",
+      "namespace": "organizations_common",
       "xpath": [
-        "occupations"
+
       ],
-      "data_type": "string",
-      "repeats": "y",
-      "in_repeating_group": "n",
+      "data_type": "structured date group",
+      "repeats": "n",
+      "in_repeating_group": "n/a",
       "opt_list_values": [
 
       ],
-      "datacolumn": "occupation",
-      "required": "n"
-    },
-    {
-      "fieldname": "schoolOrStyle",
-      "transforms": {
-      },
-      "source_type": "na",
-      "source_name": null,
-      "namespace": "persons_common",
-      "xpath": [
-        "schoolsOrStyles"
-      ],
-      "data_type": "string",
-      "repeats": "y",
-      "in_repeating_group": "n",
-      "opt_list_values": [
-
-      ],
-      "datacolumn": "schoolOrStyle",
+      "datacolumn": "dissolutionDateGroup",
       "required": "n"
     },
     {
@@ -694,7 +550,7 @@
       },
       "source_type": "na",
       "source_name": null,
-      "namespace": "persons_common",
+      "namespace": "organizations_common",
       "xpath": [
         "groups"
       ],
@@ -708,14 +564,14 @@
       "required": "n"
     },
     {
-      "fieldname": "nationality",
+      "fieldname": "function",
       "transforms": {
       },
       "source_type": "na",
       "source_name": null,
-      "namespace": "persons_common",
+      "namespace": "organizations_common",
       "xpath": [
-        "nationalities"
+        "functions"
       ],
       "data_type": "string",
       "repeats": "y",
@@ -723,121 +579,192 @@
       "opt_list_values": [
 
       ],
-      "datacolumn": "nationality",
+      "datacolumn": "function",
       "required": "n"
     },
     {
-      "fieldname": "nameNote",
+      "fieldname": "historyNote",
       "transforms": {
       },
       "source_type": "na",
       "source_name": null,
-      "namespace": "persons_common",
+      "namespace": "organizations_common",
       "xpath": [
-
+        "historyNotes"
       ],
       "data_type": "string",
-      "repeats": "n",
-      "in_repeating_group": "n/a",
+      "repeats": "y",
+      "in_repeating_group": "n",
       "opt_list_values": [
 
       ],
-      "datacolumn": "nameNote",
+      "datacolumn": "historyNote",
       "required": "n"
     },
     {
-      "fieldname": "birthDateGroup",
+      "fieldname": "contactName",
+      "transforms": {
+        "authority": [
+          "personauthorities",
+          "person"
+        ]
+      },
+      "source_type": "authority",
+      "source_name": "person/local",
+      "namespace": "organizations_common",
+      "xpath": [
+        "contactGroupList",
+        "contactGroup"
+      ],
+      "data_type": "string",
+      "repeats": "n",
+      "in_repeating_group": "y",
+      "opt_list_values": [
+
+      ],
+      "datacolumn": "contactName",
+      "required": "n"
+    },
+    {
+      "fieldname": "contactName",
+      "transforms": {
+      },
+      "source_type": "authority",
+      "source_name": "person/local",
+      "namespace": "organizations_common",
+      "xpath": [
+        "contactGroupList",
+        "contactGroup"
+      ],
+      "data_type": "csrefname",
+      "repeats": "n",
+      "in_repeating_group": "y",
+      "opt_list_values": [
+
+      ],
+      "datacolumn": "contactNameRefname",
+      "required": "n"
+    },
+    {
+      "fieldname": "contactRole",
+      "transforms": {
+        "vocabulary": "contactrole"
+      },
+      "source_type": "vocabulary",
+      "source_name": "contactrole",
+      "namespace": "organizations_common",
+      "xpath": [
+        "contactGroupList",
+        "contactGroup"
+      ],
+      "data_type": "string",
+      "repeats": "n",
+      "in_repeating_group": "y",
+      "opt_list_values": [
+
+      ],
+      "datacolumn": "contactRole",
+      "required": "n"
+    },
+    {
+      "fieldname": "contactRole",
+      "transforms": {
+      },
+      "source_type": "vocabulary",
+      "source_name": "contactrole",
+      "namespace": "organizations_common",
+      "xpath": [
+        "contactGroupList",
+        "contactGroup"
+      ],
+      "data_type": "csrefname",
+      "repeats": "n",
+      "in_repeating_group": "y",
+      "opt_list_values": [
+
+      ],
+      "datacolumn": "contactRoleRefname",
+      "required": "n"
+    },
+    {
+      "fieldname": "contactDateGroup",
       "transforms": {
       },
       "source_type": "na",
       "source_name": null,
-      "namespace": "persons_common",
+      "namespace": "organizations_common",
       "xpath": [
-
+        "contactGroupList",
+        "contactGroup"
       ],
       "data_type": "structured date group",
       "repeats": "n",
-      "in_repeating_group": "n/a",
+      "in_repeating_group": "y",
       "opt_list_values": [
 
       ],
-      "datacolumn": "birthDateGroup",
+      "datacolumn": "contactDateGroup",
       "required": "n"
     },
     {
-      "fieldname": "birthPlace",
+      "fieldname": "contactEndDateGroup",
       "transforms": {
       },
       "source_type": "na",
       "source_name": null,
-      "namespace": "persons_common",
+      "namespace": "organizations_common",
       "xpath": [
-
-      ],
-      "data_type": "string",
-      "repeats": "n",
-      "in_repeating_group": "n/a",
-      "opt_list_values": [
-
-      ],
-      "datacolumn": "birthPlace",
-      "required": "n"
-    },
-    {
-      "fieldname": "deathDateGroup",
-      "transforms": {
-      },
-      "source_type": "na",
-      "source_name": null,
-      "namespace": "persons_common",
-      "xpath": [
-
+        "contactGroupList",
+        "contactGroup"
       ],
       "data_type": "structured date group",
       "repeats": "n",
-      "in_repeating_group": "n/a",
+      "in_repeating_group": "y",
       "opt_list_values": [
 
       ],
-      "datacolumn": "deathDateGroup",
+      "datacolumn": "contactEndDateGroup",
       "required": "n"
     },
     {
-      "fieldname": "deathPlace",
+      "fieldname": "contactStatus",
       "transforms": {
+        "vocabulary": "contactstatus"
       },
-      "source_type": "na",
-      "source_name": null,
-      "namespace": "persons_common",
+      "source_type": "vocabulary",
+      "source_name": "contactstatus",
+      "namespace": "organizations_common",
       "xpath": [
-
+        "contactGroupList",
+        "contactGroup"
       ],
       "data_type": "string",
       "repeats": "n",
-      "in_repeating_group": "n/a",
+      "in_repeating_group": "y",
       "opt_list_values": [
 
       ],
-      "datacolumn": "deathPlace",
+      "datacolumn": "contactStatus",
       "required": "n"
     },
     {
-      "fieldname": "bioNote",
+      "fieldname": "contactStatus",
       "transforms": {
       },
-      "source_type": "na",
-      "source_name": null,
-      "namespace": "persons_common",
+      "source_type": "vocabulary",
+      "source_name": "contactstatus",
+      "namespace": "organizations_common",
       "xpath": [
-
+        "contactGroupList",
+        "contactGroup"
       ],
-      "data_type": "string",
+      "data_type": "csrefname",
       "repeats": "n",
-      "in_repeating_group": "n/a",
+      "in_repeating_group": "y",
       "opt_list_values": [
 
       ],
-      "datacolumn": "bioNote",
+      "datacolumn": "contactStatusRefname",
       "required": "n"
     },
     {

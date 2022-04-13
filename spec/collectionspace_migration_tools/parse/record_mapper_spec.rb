@@ -9,7 +9,7 @@ RSpec.describe CollectionspaceMigrationTools::Parse::RecordMapper do
     let(:result){ described_class.call(rectype) }
 
     context 'when no mapper for given rectype' do
-      let(:rectype){ 'movement' }
+      let(:rectype){ 'movements' }
 
       it 'is Failure', :aggregate_failures do
         expect(result).to be_a(Dry::Monads::Failure)
