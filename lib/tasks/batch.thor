@@ -7,7 +7,7 @@ require 'thor'
 # tasks targeting a single batch
 class Batch < Thor
   include Dry::Monads[:result]
-  include Dry::Monads::Do.for(:do_map, :get_batch_dir)
+  include Dry::Monads::Do.for(:do_delete, :do_map, :get_batch, :get_batch_dir)
 
   desc 'add', 'Adds a new batch to batch csv. ID must be <= 6 alphanumeric characters'
   option :id, required: true, type: :string
@@ -17,6 +17,14 @@ class Batch < Thor
   def add
     CMT::Batch::Add.call(id: options[:id], csv: options[:csv], rectype: options[:rectype], action: options[:action]).either(
       ->(success){ put_added(success) },
+      ->(failure){ puts failure.to_s }
+    )
+  end
+
+  desc 'delete', 'Removes batch row from batches CSV and deletes batch directory'
+  def delete(id)
+    do_delete(id).either(
+      ->(success){  },
       ->(failure){ puts failure.to_s }
     )
   end
@@ -48,10 +56,16 @@ class Batch < Thor
     else
       Success()
     end
+
+    def do_delete(id)
+      batch = yield(get_batch(id))
+      _deleted = yield(batch.delete)
+
+      Success()
+    end
     
     def do_map(id, autocache, clearcache)
-      csv = yield(CMT::Batch::Csv.new)
-      batch = yield(CMT::Batch::Batch.new(csv, id))
+      batch = yield(get_batch(id))
       plan = yield(CMT::Batch::CachingPlanner.call(batch)) if autocache
       if autocache && !plan.empty?
         _cc = yield(clear_caches) if autocache && clearcache
@@ -65,9 +79,15 @@ class Batch < Thor
       Success(report)
     end
 
-    def get_batch_dir(id)
+    def get_batch(id)
       csv = yield(CMT::Batch::Csv.new)
       batch = yield(CMT::Batch::Batch.new(csv, id))
+
+      Success(batch)
+    end
+
+    def get_batch_dir(id)
+      batch = yield(get_batch(id))
 
       Success(batch.dir)
     end

@@ -1,19 +1,25 @@
 # frozen_string_literal: true
 
 require 'base64'
-require 'dry/monads'
-require 'dry/monads/do'
+require 'fileutils'
 
 module CollectionspaceMigrationTools
   module Batch
     class Batch
       include Dry::Monads[:result]
-      include Dry::Monads::Do.for(:call, :validate_csv)
+      include Dry::Monads::Do.for(:call, :validate_csv, :delete)
       
       def initialize(csv, id)
         @csv = csv
         @id = id
         get_batch_data
+      end
+
+      def delete
+        _del_dir = yield(delete_batch_dir)
+        _del_row = yield(csv.delete_batch(id))
+
+        Success()
       end
 
       def method_missing(meth, *args)
@@ -48,6 +54,16 @@ module CollectionspaceMigrationTools
       private
 
       attr_reader :csv, :id, :data
+
+      def delete_batch_dir
+        dirpath = "#{CMT.config.client.batch_dir}/#{dir}"
+        FileUtils.rm_rf(dirpath) if Dir.exists?(dirpath)
+      rescue StandardError => err
+        msg = "#{err.message} IN #{err.backtrace[0]}"
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+      else
+        Success()
+      end
 
       def get_batch_data
         csv.find_batch(id).fmap{ |row| @data = row }

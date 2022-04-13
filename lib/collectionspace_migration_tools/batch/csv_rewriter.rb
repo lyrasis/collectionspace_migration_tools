@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
-require 'dry/monads/do'
 require 'fileutils'
 
 module CollectionspaceMigrationTools
@@ -16,9 +14,9 @@ module CollectionspaceMigrationTools
           self.new.call(table)
         end
       end
+
+      attr_reader :status
       
-
-
       def initialize
         @current = CMT.config.client.batch_csv
         @backup = "#{current}.bak"
@@ -39,7 +37,7 @@ module CollectionspaceMigrationTools
       
       private
 
-      attr_reader :table, :current, :backup, :status
+      attr_reader :table, :current, :backup
 
       def backup_old
         FileUtils.cp(current, backup)

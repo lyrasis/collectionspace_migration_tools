@@ -7,7 +7,8 @@ module CollectionspaceMigrationTools
   module Batch
     class Csv
       include Dry::Monads[:result]
-
+      include Dry::Monads::Do.for(:do_delete)
+      
       attr_reader :ids
         
       def initialize(data = File.read(CMT.config.client.batch_csv), rewriter = CMT::Batch::CsvRewriter.new) 
@@ -16,6 +17,12 @@ module CollectionspaceMigrationTools
         @ids = table.by_col['id']
       end
 
+      def delete_batch(bid)
+        return Failure("No batch with id: #{bid}. Cannot delete") unless ids.any?(bid)
+
+        do_delete(bid)
+      end
+      
       def find_batch(bid)
         result = table.select{ |row| row['id'] == bid }
         return Failure("No batch with id: #{bid}") if result.empty?
@@ -53,6 +60,27 @@ module CollectionspaceMigrationTools
         return Success(self) if ids == uniq_ids
 
         Failure('Batch ids are not unique. Please manually edit and save CSV where info about batches is recorded.')
+      end
+
+      def delete_from_table(bid)
+        table.by_row!
+        table.delete_if{ |row| row['id'] == bid }
+      rescue StandardError => err
+        msg = "#{err.message} IN #{err.backtrace[0]}"
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+      else
+        Success()
+      end
+      
+      
+      def do_delete(bid)
+        _removed = yield(delete_from_table(bid))
+        _rewritten = yield(rewrite)
+
+        puts "Batch #{bid} deleted.\nRemaining batches:"
+        list
+
+        Success()
       end
     end
   end

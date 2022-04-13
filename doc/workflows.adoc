@@ -38,14 +38,13 @@ NOTE: strike-through formatting indicates the option/command is not yet implemen
 * If there were any duplicates added, run +++<s>+++`batch:dd`+++</s>+++ (dd = delete duplicates. See important notes on this in step details below)
 
 === Managing batches
-WARNING: Commands below are not yet implemented!
 
 The batches CSV isn't really intended as a permanent record of all work done in a given instance. It can be useful to keep some completed batches with errors or warnings in the batches CSV as a reminder to check/handle the records that didn't work as expected the first time. But, once you are done with a batch and tasks related to it, it is best to move it out of the batches CSV.
 
 There are two options for moving completed batches out of the batches CSV:
 
 delete:: Deletes batch directory and deletes row for batch from batches CSV
-archive:: Zips batch directory and moves it to `batch_data/archives` directory. Moves row for batch from batches CSV to `batch_data/archives/archived_batches.csv`
++++<s>+++archive+++</s>+++:: Zips batch directory and moves it to `batch_data/archives` directory. Moves row for batch from batches CSV to `batch_data/archives/archived_batches.csv`
 
 The `delete` and `archive` commands can both be run:
 
