@@ -6,8 +6,9 @@ module CollectionspaceMigrationTools
   module Batch
     module Csv
       class Reader
+        include CMT::Batch::Csv::Headers
         include Dry::Monads[:result]
-        include Dry::Monads::Do.for(:do_delete)
+        include Dry::Monads::Do.for(:do_delete, :to_monad)
         
         attr_reader :ids
         
@@ -44,7 +45,10 @@ module CollectionspaceMigrationTools
         end
         
         def to_monad
-          check_id_uniqueness
+          _hdrs = yield(check_headers)
+          _uniq = yield(check_id_uniqueness)
+
+          Success(self)
         end
 
         def rewrite
@@ -55,6 +59,12 @@ module CollectionspaceMigrationTools
 
         attr_reader :table, :rewriter
 
+        def check_headers
+          return Success() if table.headers == all_headers
+
+          Failure('Batch CSV headers are not up-to-date, so batch workflows may fail unexpectedly. Run `thor batches:fix_csv` to fix')
+        end
+        
         def check_id_uniqueness
           uniq_ids = ids.uniq
           return Success(self) if ids == uniq_ids

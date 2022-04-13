@@ -12,9 +12,9 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Creator do
   describe '#call' do
     let(:result){ klass.call }
     
-    context 'when file already exists and headers match' do
+    context 'when file already exists' do
       before(:all) do
-        headers = described_class.headers
+        headers = CMT::Batch::Csv::Headers.all_headers
         CSV.open(CMT.config.client.batch_csv, 'w') do |csv|
           csv << headers
           csv << ['co1', 'foo', 'bar', 'create', 10]
@@ -23,23 +23,6 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Creator do
       after(:all){ FileUtils.rm(CMT.config.client.batch_csv) if File.exists?(CMT.config.client.batch_csv)}
 
       it 'notifies of existence and does not change file', :aggregate_failures do
-        expect{ result }.to output("#{path} already exists; leaving it alone\n").to_stdout
-        expect(result).to be_a(Dry::Monads::Success)
-      end
-    end
-
-    context 'when file already exists and headers do not match' do
-      before(:all) do
-        headers = %w[id source_csv rectype action rec_ct]
-        CSV.open(CMT.config.client.batch_csv, 'w', headers: headers, write_headers: true) do |csv|
-          csv << ['co1', 'foo', 'bar', 'create', 10]
-        end
-      end
-      after(:all){ FileUtils.rm(CMT.config.client.batch_csv) if File.exists?(CMT.config.client.batch_csv)}
-
-      it 'notifies of existence and warns of out of date headers', :aggregate_failures do
-        msg = 'WARNING: Batch CSV headers are not up-to-date. Run `thor batches:update_csv` to fix'
-        expect(klass).to receive(:warn).with(msg)
         expect{ result }.to output("#{path} already exists; leaving it alone\n").to_stdout
         expect(result).to be_a(Dry::Monads::Success)
       end
