@@ -49,7 +49,7 @@ module CollectionspaceMigrationTools
         action_checker = yield(CMT::Xml::ServicesApiActionChecker.new(action))
         obj_key_creator = yield(CMT::S3::ObjectKeyCreator.new(svc_path: services_path, batch: batch))
         namer = yield(CMT::Xml::FileNamer.new)
-        output_dir = yield(CMT::Xml::DirPathGetter.call(mapper))
+        output_dir = yield(CMT::Xml::DirPathGetter.call(mapper, batch))
         term_reporter = yield(CMT::Csv::BatchTermReporter.new(output_dir))
         headers = row.headers.map(&:downcase)
         reporter = yield(CMT::Csv::BatchReporter.new(output_dir: output_dir, fields: headers, term_reporter: term_reporter))
