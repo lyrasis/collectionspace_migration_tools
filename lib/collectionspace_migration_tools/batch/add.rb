@@ -33,7 +33,7 @@ module CollectionspaceMigrationTools
         rec_ct = yield(CMT::Batch::CsvRowCounter.call(valid_csv[0]))
 
         refname_deps = yield(CMT::Batch::RefnameCacheDependencyIdentifier.call(headers: valid_csv[1].headers, mapper: mapper))
-        csid_deps = yield(CMT::Batch::CsidCacheDependencyIdentifier.call(path: valid_csv[0].headers, mapper: mapper))
+        csid_deps = yield(CMT::Batch::CsidCacheDependencyIdentifier.call(path: valid_csv[0], mapper: mapper))
         
         data_hash = {
           'id' => valid_id,
