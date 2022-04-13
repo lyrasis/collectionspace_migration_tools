@@ -71,7 +71,7 @@ class Batch < Thor
         _cc = yield(clear_caches) if autocache && clearcache
         _ac = yield(CMT::Batch::AutoCacher.call(plan)) if autocache
       end
-      output = yield(CMT::Csv::BatchProcessRunner.call(
+      output = yield(CMT::Batch::MapRunner.call(
                        csv: batch.source_csv, rectype: batch.mappable_rectype, action: batch.action, batch: id
                      ))
       report = yield(CMT::Batch::PostMapReporter.new(batch: batch, dir: output).call)

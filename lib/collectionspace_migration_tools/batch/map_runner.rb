@@ -4,9 +4,9 @@ require 'dry/monads'
 require 'dry/monads/do'
 
 module CollectionspaceMigrationTools
-  module Csv
+  module Batch
     # Wraps building and calling of processor with any dependencies
-    class BatchProcessRunner
+    class MapRunner
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)
 

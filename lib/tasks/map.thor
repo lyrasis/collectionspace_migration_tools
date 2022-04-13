@@ -16,7 +16,7 @@ class Map < Thor
 #  option :involved, required: false, type: :array
   def csv
     rectype = options[:rectype]
-    CMT::Csv::BatchProcessRunner.call(csv: options[:csv], rectype: rectype, action: options[:action]).either(
+    CMT::Batch::MapRunner.call(csv: options[:csv], rectype: rectype, action: options[:action]).either(
       ->(success){ puts 'Processing complete' },
       ->(failure){ puts failure.to_s; exit }
     )
