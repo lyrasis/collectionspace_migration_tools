@@ -58,7 +58,7 @@ module CollectionspaceMigrationTools
     end
 
     def handle_subdirs
-      %i[mapper_dir xml_dir].each do |subdir|
+      %i[mapper_dir batch_dir].each do |subdir|
         CMT::ConfigSubdirectoryHandler.call(config: client, setting: subdir)
       end
     end

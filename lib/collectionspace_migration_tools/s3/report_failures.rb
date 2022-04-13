@@ -17,7 +17,7 @@ module CollectionspaceMigrationTools
       end
 
       def initialize(file_dir:)
-        @file_dir = "#{CMT.config.client.xml_dir}/#{file_dir}"
+        @file_dir = "#{CMT.config.client.batch_dir}/#{file_dir}"
       end
 
       def call

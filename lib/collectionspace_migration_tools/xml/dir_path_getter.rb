@@ -19,7 +19,7 @@ module CollectionspaceMigrationTools
       # @param record_mapper [Hash] parsed JSON record mapper
       def initialize(mapper)
         @mapper = mapper
-        @xml_dir = File.expand_path(CMT.config.client.xml_dir)
+        @batch_dir = File.expand_path(CMT.config.client.batch_dir)
       end
 
       def call
@@ -30,10 +30,10 @@ module CollectionspaceMigrationTools
       
       private
 
-      attr_reader :mapper, :xml_dir, :path
+      attr_reader :mapper, :batch_dir, :path
 
       def construct_path
-        result = "#{xml_dir}/#{timestamp}_#{mapper.type_subtype}"
+        result = "#{batch_dir}/#{timestamp}_#{mapper.type_subtype}"
       rescue StandardError => err
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: err))
       else

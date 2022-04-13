@@ -46,9 +46,9 @@ client:
   #   if it does not exist.
   mapper_dir: record_mappers
 
-  # directory in which to store generated xml
-  # a sub-directory will be created in this for each csv that you convert to CS XML
-  xml_dir: xml
+  # directory in which to store generated xml and reports for each batch
+  # a sub-directory will be created within this directory for each batch
+  batch_dir: batch_data
 
   # path to valid JSON batch config for mapping CSV to CSXML
   # See https://github.com/collectionspace/collectionspace-mapper/blob/migration-tooling/doc/batch_configuration.adoc for options

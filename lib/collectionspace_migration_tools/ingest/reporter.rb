@@ -25,9 +25,9 @@ module CollectionspaceMigrationTools
         @bucket_list = bucket_list
         return if bucket_list.empty?
 
-        xmldir = CMT.config.client.xml_dir
-        @path = File.join(xmldir, output_dir, 'ingest_report.csv')
-        @source = File.join(xmldir, output_dir, 'upload_report.csv')
+        batchdir = CMT.config.client.batch_dir
+        @path = File.join(batchdir, output_dir, 'ingest_report.csv')
+        @source = File.join(batchdir, output_dir, 'upload_report.csv')
         CMT::Csv::FirstRowGetter.call(source).bind do |row|
           @fields = [row.headers, 'CMT_ingest_status', 'CMT_ingest_message'].flatten
         end

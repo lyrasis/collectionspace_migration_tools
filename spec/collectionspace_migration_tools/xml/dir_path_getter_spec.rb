@@ -6,11 +6,11 @@ require_relative '../../spec_helper'
 RSpec.describe CollectionspaceMigrationTools::Xml::DirPathGetter do
   before do
     allow(Time).to receive(:now).and_return(Time.new(2022, 3, 7, 17, 22, 33))
-    CMT.config.client.xml_dir = File.join(Bundler.root, 'tmp')
+    CMT.config.client.batch_dir = File.join(Bundler.root, 'tmp')
   end
 
   let(:timestamp){ '2022-03-07_17_22' }
-  let(:path){ File.join(CMT.config.client.xml_dir, "#{timestamp}_#{rectype_segment}") }
+  let(:path){ File.join(CMT.config.client.batch_dir, "#{timestamp}_#{rectype_segment}") }
   let(:mapper){ CMT::RecordMapper.new(mapper_hash)}
   
   describe '#call' do

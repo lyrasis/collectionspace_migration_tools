@@ -16,7 +16,7 @@ module CollectionspaceMigrationTools
         required(:base_dir).filled(:string)
         optional(:batch_csv).maybe(:string)
         required(:mapper_dir).filled(:string)
-        required(:xml_dir).filled(:string)
+        required(:batch_dir).filled(:string)
         required(:redis_db_number).filled(:integer)
         optional(:batch_config_path).maybe(:string)
         required(:csv_delimiter).filled(:string)

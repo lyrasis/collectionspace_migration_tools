@@ -40,7 +40,7 @@ client:
 
   # directory in which to store generated xml
   # a sub-directory will be created in this for each csv that you convert to CS XML
-  xml_dir: xml
+  batch_dir: batch_data
 
   # path to valid JSON batch config for mapping CSV to CSXML
   # See https://github.com/collectionspace/collectionspace-mapper/blob/migration-tooling/doc/batch_configuration.adoc for options
