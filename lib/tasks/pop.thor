@@ -15,28 +15,28 @@ class Pop < Thor
     start_time = Time.now
     
     invoke 'caches:clear'
-    query_and_populate_new(authorities)
-    query_and_populate_new([CMT::Vocabulary.new])
-    query_and_populate_new([CMT::Collectionobject.new])
-    query_and_populate_new(procedures)
-    query_and_populate(*relation_args('all'))
+    query_and_populate(authorities)
+    query_and_populate([CMT::Vocabulary.new])
+    query_and_populate([CMT::Collectionobject.new])
+    query_and_populate(procedures)
+    query_and_populate(relations, :csid)
 
     puts "Total time: #{Time.now - start_time}"
   end
 
   desc 'obj', 'populate csid cache with objects'
   def obj
-    query_and_populate_new([CMT::Collectionobject.new])
+    query_and_populate([CMT::Collectionobject.new])
   end
   
   desc 'terms', 'populate caches with all authority and vocabulary terms'
   def terms
-    query_and_populate_new(authorities)
-    query_and_populate_new([CMT::Vocabulary.new])
+    query_and_populate(authorities)
+    query_and_populate([CMT::Vocabulary.new])
   end
 
   desc 'vocabs', 'populate caches with all vocabulary terms'
   def vocabs
-    query_and_populate_new([CMT::Vocabulary.new])
+    query_and_populate([CMT::Vocabulary.new])
   end
 end

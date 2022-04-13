@@ -34,7 +34,7 @@ RSpec.describe CollectionspaceMigrationTools::Authority do
       it 'constructs as expected', :aggregate_failures do
         expect(result).to be_a(described_class)
         expect(result.type).to eq('person')
-        expect(result.subtype).to be_nil
+        expect(result.subtype).to eq('')
         expect(result.status.failure?).to be true
       end
     end

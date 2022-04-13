@@ -11,19 +11,24 @@ class Relation < Thor
   class_option :debug, desc: 'Sets up debug mode', aliases: ['-d'], type: :boolean
   class_around :safe_db
 
-  desc 'hier', 'populate CSID cache with hierarchical relations'
-  def hier
-    query_and_populate(*relation_args('hier'))
+  desc 'ah', 'populate CSID cache with authorityhierarchy relations'
+  def ah
+    query_and_populate([CMT::Relation.new('authorityhierarchy')], :csid)
   end
 
   desc 'nhr', 'populate CSID cache with non-hierarchical relations'
   def nhr
-    query_and_populate(*relation_args('nhr'))
+    query_and_populate([CMT::Relation.new('nonhierarchicalrelationship')], :csid)
+  end
+
+  desc 'oh', 'populate CSID cache with objecthierarchy relations'
+  def oh
+    query_and_populate([CMT::Relation.new('objecthierarchy')], :csid)
   end
 
   desc 'all', 'populate CSID cache with all relations'
   def all
-    query_and_populate(*relation_args('all'))
+    query_and_populate(relations, :csid)
   end
 end
 

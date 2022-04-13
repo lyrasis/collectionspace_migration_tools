@@ -105,7 +105,6 @@ module CollectionspaceMigrationTools
       'AuthTerms'
     end
     
-    # i.e. service_type in QueryBuilder::Authorities
     def service_path
       return status if status.failure?
 

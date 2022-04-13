@@ -1,0 +1,5 @@
+"item1_type","item1_id","item2_type","item2_id"
+"collectionobjects",123,"groups",456
+"acquisitions",765,"collectionobjects",123
+"exhibitions",1,"collectionobjects",999
+"loansin",555,"exhibitions",1

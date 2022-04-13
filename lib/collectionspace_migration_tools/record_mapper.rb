@@ -15,7 +15,7 @@ module CollectionspaceMigrationTools
     end
 
     def authority?
-      config['service_type'] == 'authority'
+      service_type == 'authority'
     end
 
     def base_namespace
@@ -49,11 +49,11 @@ module CollectionspaceMigrationTools
     end
 
     def object?
-      config['service_type'] == 'procedure'
+      service_type == 'procedure'
     end
 
     def procedure?
-      config['service_type'] == 'object'
+      service_type == 'object'
     end
 
     def id_field
@@ -65,7 +65,7 @@ module CollectionspaceMigrationTools
     end
 
     def relation?
-      config['service_type'] == 'relation'
+      service_type == 'relation'
     end
     
     def type
@@ -92,12 +92,28 @@ module CollectionspaceMigrationTools
       config['service_path']
     end
 
+    def service_path_to_mappable
+      {service_path => config['recordtype']}
+    end
+    
+    def service_type
+      config['service_type']
+    end
+
     def to_monad
       Success(self)
     end
 
     def to_s
       "<##{self.class}:#{self.object_id.to_s(8)} #{config}>"
+    end
+
+    def vocabs
+      return {} unless authority?
+
+      res = {}
+      config['authority_subtypes'].each{ |pair| res[pair['subtype']] = pair['name'].downcase }
+      res
     end
     
     private

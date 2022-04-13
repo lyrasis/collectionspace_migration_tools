@@ -12,6 +12,17 @@ module CollectionspaceMigrationTools
       mappable.select{ |rectype| rectype['-'] }
     end
 
+    def authority_subtype_machine_to_human_label_mapping
+      # since each authority vocabulary record mapper lists all vocabs for that authority,
+      #   we just take one per authority
+      authorities.map{ |rectype| [rectype.split('-').first, rectype]}
+        .to_h
+        .values
+        .map{ |rectype| CMT::Parse::RecordMapper.call(rectype).value!.vocabs }
+        .inject({}, :merge)
+    end
+    
+
     def mappable
       @mappable ||= Dir.new(CMT.config.client.mapper_dir)
         .children
@@ -31,6 +42,11 @@ module CollectionspaceMigrationTools
     def procedures
       mappable.reject{ |name| name['-'] || name == object }
         .reject{ |name| relations.any?(name) }
+    end
+
+    def service_path_to_mappable_type_mapping
+      mappable.map{ |rectype| CMT::Parse::RecordMapper.call(rectype).value!.service_path_to_mappable }
+        .inject({}, :merge)
     end
 
     def valid_mappable?(rectype)

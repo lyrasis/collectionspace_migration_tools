@@ -17,8 +17,7 @@ module CollectionspaceMigrationTools
         def headers
           %w[
              id source_csv mappable_rectype action
-             cacheable_type cacheable_subtype
-             refname_dependencies
+             refname_dependencies csid_dependencies
              rec_ct
              mapped? dir map_errs map_oks map_warns
              uploaded? upload_errs upload_oks
