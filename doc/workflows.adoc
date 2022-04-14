@@ -26,7 +26,7 @@ NOTE: strike-through formatting indicates the option/command is not yet implemen
 * Produce CSV of record data using format of appropriate https://github.com/collectionspace/cspace-config-untangler/tree/main/data/templates[CSV template]
 * Add batch to migration tool
 ** `thor batch:add --id obj12 --csv ~/path/to/source_data.csv --rectype collectionobject --action create`; OR
-** +++<s>+++Manually add a new row to the batches CSV, populating `id`, `source_csv`, `mappable_rectype`, and `action` columns. Then run `thor batches:update_base_info` to have the `cacheable_type`, `cacheable_subtype`, and `rec_ct` columns populated by the tool.+++</s>+++
+** Manually add a new row to the batches CSV, populating `id`, `source_csv`, `mappable_rectype`, and `action` columns. Then run `thor batches:fix_csv` to have the ``rec_ct` column populated by the tool.
 * Map batch to CS XML
 ** `thor batch:map --id obj12`
 * Upload resulting CS XML to S3 bucket
