@@ -45,7 +45,7 @@ module CollectionspaceMigrationTools
         end
         
         def to_monad
-          _hdrs = yield(check_headers)
+          _hdrs = yield(header_check)
           _uniq = yield(check_id_uniqueness)
 
           Success(self)
@@ -75,7 +75,16 @@ module CollectionspaceMigrationTools
         else
           Success()
         end
-        
+
+        def header_check
+          problem = 'Batch CSV headers are not up-to-date, so batch workflows may fail unexpectedly.'
+          fix = 'Run `thor batches:fix_csv` to fix'
+
+          check_headers.either(
+            ->(ok){ Success() },
+            ->(failure){ Failure("#{problem} #{fix}") }
+          )
+        end
         
         def do_delete(bid)
           _removed = yield(delete_from_table(bid))

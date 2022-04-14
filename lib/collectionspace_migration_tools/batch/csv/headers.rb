@@ -51,9 +51,7 @@ module CollectionspaceMigrationTools
         def check_headers
           return Success() if table.headers == all_headers
 
-          problem = 'Batch CSV headers are not up-to-date, so batch workflows may fail unexpectedly.'
-          fix = 'Run `thor batches:fix_csv` to fix'
-          Failure("#{problem} #{fix}")
+          Failure("Headers do not match")
         end
       end
     end
