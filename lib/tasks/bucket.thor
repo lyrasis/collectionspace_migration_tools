@@ -7,8 +7,8 @@ require 'thor'
 class Bucket < Thor
   include Dry::Monads[:result]
   
-  desc 'list', 'returns keys of objects in bucket'
-  def list
+  desc 'objs', 'returns keys of objects in bucket'
+  def objs
     CMT::S3::BucketLister.call.either(
       ->(list){ handle_list(list) },
       ->(failure){ puts failure.to_s; exit }

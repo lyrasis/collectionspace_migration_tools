@@ -25,8 +25,8 @@ class Batches < Thor
     )
   end
   
-  desc 'list', 'Brief listing of batch ids and info'
-  def list
+  desc 'show', 'Brief listing of batch ids and info'
+  def show
     CMT::Batch::Csv::Reader.new.list
   end
 end
