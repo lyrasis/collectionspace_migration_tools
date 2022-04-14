@@ -17,7 +17,7 @@ module CollectionspaceMigrationTools
       
       def initialize
         @path = CMT.config.client.batch_csv
-        @headers = CMT::Batch::Csv::Headers.call
+        @headers = CMT::Batch::Csv::Headers.all_headers
         @ids = CMT::Batch::Csv::Reader.new.ids
       end
 
