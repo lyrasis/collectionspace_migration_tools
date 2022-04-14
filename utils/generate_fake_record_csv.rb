@@ -1,8 +1,16 @@
 require 'bundler/inline'
 
+gemfile do
+  gem 'faker', :git => 'https://github.com/faker-ruby/faker.git', :branch => 'master'
+  gem 'pry'
+end
+
+
 require 'csv'
+require 'faker'
 require 'optparse'
-require 'debug'
+require 'pry'
+
 
 options = {}
 OptionParser.new{ |opts|
@@ -18,57 +26,149 @@ OptionParser.new{ |opts|
   opts.on('-t', '--type STRING', 'record type to create'){ |t|
     options[:type] = t
   }
+  opts.on('-c', '--complexity STRING', 'complexity of records to create: low, high'){ |c|
+    options[:complexity] = c
+  }
+
   opts.on('-h', '--help', 'Prints this help'){
     puts opts
     exit
   }
 }.parse!
 
-def random_value(min: 6, max: 6)
-  size = rand(min...max+1)
-  chars = %q{ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
-               a b c d e f g h i j k l m n o p q r s t u v w x y z
-               0 1 2 3 4 5 6 7 8 9 . - : /}
-    .gsub(/\n +/, ' ')
-    .split(' ')
-  spaces = '. . . . . . . . . . . . . . . '
-    .split('.')
-  charset = [chars, spaces].flatten
+class BaseRow
+  def initialize(suffix)
+    @suffix = suffix
+  end
 
-  (0...size).map{ charset.to_a[rand(charset.size)] }.join
-end
-
-case options[:type]
-when 'object'
-  CSV.open(options[:output], 'w') do |csv|
-    csv << %w{objectnumber title}
-    options[:num].times do
-      objnum = "#{random_value(min: 6, max: 10)} #{options[:suffix]}"
-      csv << [objnum, random_value(min: 12, max: 50)]
+  def call
+    if suffix
+      data = row
+      id = "#{data.shift}#{suffix}"
+      [id, data].flatten
+    else
+      row
     end
   end
-when 'authority'
-  CSV.open(options[:output], 'w') do |csv|
-    csv << %w{termdisplayname}
-    options[:num].times do
-      term = "#{random_value(min: 6, max: 10)} #{options[:suffix]}"
-      csv << [term]
-    end
+
+  def header_row
+    headers
   end
-when 'media'
-  uris = [
-    'https://boston-media.s3.us-west-2.amazonaws.com/pc070256.jpg',
-    'https://boston-media.s3.us-west-2.amazonaws.com/r2011.1.jpg',
-    'https://boston-media.s3.us-west-2.amazonaws.com/r2011.10-1.jpg',
-    'https://boston-media.s3.us-west-2.amazonaws.com/r2011.10-2.jpg',
-    'https://boston-media.s3.us-west-2.amazonaws.com/r2011.10-3.jpg',
+  
+  private
+
+  attr_reader :suffix
+  
+  def date
+    formats = [
+      '%Y', #2021
+      '%D', #02/03/21
+      '%F', #2021-02-03
+      "%-m/%-d/%Y", #2/3/2021
+      "%B %-d, %Y", #February 3, 2021 
+      "%b %-d, %Y", #Feb 3, 2021 
+      "%b %d %Y", #Feb 03 2021
     ]
-  CSV.open(options[:output], 'w') do |csv|
-    csv << %w{identificationnumber title mediafileuri}
-    options[:num].times do
-      id = "#{random_value(min: 6, max: 10)} #{options[:suffix]}"
-      title = "#{random_value(min: 12, max: 50)} #{options[:suffix]}"
-      csv << [id, title, uris.sample]
+    Faker::Date.backward.strftime(formats.sample)
+  end
+
+  def language
+    opts = %w[English French German Spanish]
+    opts.random
+  end
+
+  def role
+    roles = [Faker::Cosmere.knight_radiant, Faker::Cosmere.allomancer, Faker::Cosmere.feruchemist]
+    roles.sample
+  end
+  
+end
+
+class ObjectLow < BaseRow
+  private
+
+  def headers
+    %w[objectnumber title]
+  end
+  
+  def row
+    [
+      Faker::Code.unique.isbn, #objectnumber
+      Faker::Book.title #title
+    ]
+  end  
+end
+
+class PersonLow < BaseRow
+  private
+
+  def headers
+    %w[termdisplayname]
+  end
+
+  def row
+    [
+      Faker::Name.name
+    ]
+  end  
+end
+
+class MediaHigh < BaseRow
+  private
+  
+  def headers
+    %w[identificationnumber title mediafileuri contributororganizationlocal creatorpersonlocal language publisherorganizationlocal copyrightstatement coverage dategroup relation source subject rightsholderpersonlocal description alttext
+      ]
+  end
+
+  def row
+    [
+      Faker::Code.unique.isbn, #objectnumber
+      Faker::Book.title, #title
+      Faker::Placeholdit.image(format: 'jpg'), #mediafileuri
+      Faker::Company.name, #contributororganizationlocal
+      Faker::Name.name, #creatorpersonlocal
+      language,
+      Faker::Book.publisher, #publisherorganizationlocal
+      Faker::Lorem.sentence, #copyrightstatement
+      date, #dategroup
+      role, #relation
+      Faker::Commerce.department, #source
+      Faker::Name, #rightsholderpersonlocal
+      Faker::Commerce.product_name #alttext
+    ]
+  end  
+end
+
+
+
+
+class Creator
+  def initialize(type:, complexity:, suffix:, path:, num:)
+    @suffix = suffix
+    @klass = Object.const_get("#{type.capitalize}#{complexity.capitalize}").new(suffix)
+    @path = path
+    @num = num
+  end
+
+  def call
+    CSV.open(path, 'w') do |csv|
+      csv << klass.header_row
+      num.times{ csv << klass.call }
     end
   end
+
+  private
+
+  attr_reader :klass, :suffix, :path, :num
 end
+
+creator = Creator.new(
+  type: options[:type],
+  complexity: options[:complexity],
+  suffix: options[:suffix],
+  path: options[:output],
+  num: options[:num]
+)
+creator.call
+
