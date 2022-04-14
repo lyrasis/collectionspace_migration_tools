@@ -16,6 +16,7 @@ module CollectionspaceMigrationTools
         @path = "#{output_dir}/missing_terms_full.csv"
         @final_path = "#{output_dir}/missing_terms.csv"
         CSV.open(path, 'wb'){ |csv| csv << ['type', 'subtype', 'vocabulary', 'term', 'fingerprint'] }
+        @status = :created
       end
 
       # @param response [CollectionSpace::Mapper::Response]
@@ -28,7 +29,29 @@ module CollectionspaceMigrationTools
         end
       end
 
+      def any_terms?
+        readable = File.open(path)
+        csv = CSV.new(readable, headers: true)
+        result = csv.shift.nil? ? false : true
+        readable.close
+        result
+      end
+
+      def delete
+        return Failure('Cannot delete report containing terms') if any_terms?
+
+        FileUtils.rm(path) if File.exists?(path)
+        if File.exists?(path)
+          Failure('Empty report was not deleted')
+        else
+          @status = :deleted
+          Success()
+        end
+      end
+      
       def deduplicate
+        return Success('No need to deduplicate empty report') if status == :deleted
+        
         puts "Deduplicating missing term report for batch..."
 
         deduper = {}
@@ -59,7 +82,7 @@ module CollectionspaceMigrationTools
       
       private
       
-      attr_reader :path, :final_path
+      attr_reader :path, :final_path, :status
 
       def convert_to_rows(errs)
         errs.map{ |err| [err[:type], err[:subtype], vocabulary(err), err[:value], "#{vocabulary(err)}: #{err[:value]}"] }

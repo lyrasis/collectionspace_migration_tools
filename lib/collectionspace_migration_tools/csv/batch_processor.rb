@@ -34,8 +34,12 @@ module CollectionspaceMigrationTools
         elap = Time.now - start_time
         puts "Mapping time: #{elap}"
         puts "INFO: Results written to: #{output_dir}"
-        
-        _deduplicated = yield(term_reporter.deduplicate)
+
+        if term_reporter.any_terms?
+          _deduplicated = yield(term_reporter.deduplicate)
+        else
+          _delete_tr = yield(term_reporter.delete)
+        end
         
         Success(output_dir)
       end
