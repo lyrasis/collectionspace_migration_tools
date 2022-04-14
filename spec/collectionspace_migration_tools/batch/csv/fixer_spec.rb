@@ -10,36 +10,9 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Fixer do
     bcsv = CMT.config.client.batch_csv
     FileUtils.rm(bcsv) if File.exists?(bcsv)
   end
-  
-  before(:all) do
-    module CollectionspaceMigrationTools
-      module Batch
-        module Csv
-          module Headers
-            define_method(:orig_headers){ all_headers.dup }
-            undef_method(:all_headers)
-            define_method(:all_headers){ %w[id source_csv new_col rec_ct] }
-          end
-        end
-      end
-    end
-  end
 
-  after(:all) do
-    module CollectionspaceMigrationTools
-      module Batch
-        module Csv
-          module Headers
-            undef_method(:all_headers)
-            define_method(:all_headers){ orig_headers.dup }
-            undef_method(:orig_headers)
-          end
-        end
-      end
-    end
-  end
-  
-  let(:klass){ described_class.new(data) }
+  let(:headers){ %w[id source_csv new_col rec_ct] }
+  let(:klass){ described_class.new(data: data, headers: headers) }
   let(:ok_data) do
     <<~CSV
 id,source_csv,new_col,rec_ct

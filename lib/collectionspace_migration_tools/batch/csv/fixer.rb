@@ -6,7 +6,6 @@ module CollectionspaceMigrationTools
   module Batch
     module Csv
       class Fixer
-        include CMT::Batch::Csv::Headers
         include Dry::Monads[:result]
         include Dry::Monads::Do.for(:call)
 
@@ -17,11 +16,15 @@ module CollectionspaceMigrationTools
         end
         
         def initialize(
-          data = File.read(CMT.config.client.batch_csv),
-          rewriter = CMT::Batch::Csv::Rewriter.new
+          data: File.read(CMT.config.client.batch_csv),
+          rewriter: CMT::Batch::Csv::Rewriter.new,
+          headers: CMT::Batch::Csv::Headers.all_headers,
+          derived_headers: CMT::Batch::Csv::Headers.derived_headers
         ) 
           @table = CSV.parse(data, headers: true)
           @rewriter = rewriter
+          @headers = headers
+          @derived_headers = derived_headers
         end
 
         def call
@@ -36,7 +39,13 @@ module CollectionspaceMigrationTools
         
         private
 
-        attr_reader :table, :rewriter, :status
+        attr_reader :table, :rewriter, :headers, :derived_headers
+
+        def check_headers
+          return Success() if table.headers == headers
+
+          Failure([:update_csv_columns])
+        end
 
         def compile_to_fix
           to_do = [check_headers, derived_populated].select{ |chk| chk.failure? }
@@ -111,9 +120,9 @@ module CollectionspaceMigrationTools
         end
         
         def update_csv_columns
-          new_table = CSV::Table.new([], headers: all_headers)
-          data = table.values_at(*all_headers)
-          mapped = data.map{ |rowdata| CSV::Row.new(all_headers, rowdata)}
+          new_table = CSV::Table.new([], headers: headers)
+          data = table.values_at(*headers)
+          mapped = data.map{ |rowdata| CSV::Row.new(headers, rowdata)}
           mapped.each{ |row| new_table << row }
           @table = new_table
         rescue StandardError => err

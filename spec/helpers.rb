@@ -13,7 +13,7 @@ end
 
 module Helpers  
   module_function
-
+  
   # returns valid config parsed as hash
   def valid_config
     CMT::Configuration.new(client: valid_config_path)
