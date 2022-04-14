@@ -12,10 +12,9 @@ module CollectionspaceMigrationTools
         end
       end
       
-      def initialize(batch)
-        @batch = batch
-        @refname_deps = batch.refname_dependencies.split('|')
-        @csid_deps = batch.csid_dependencies.split('|')
+      def initialize(refname:, csid:)
+        @refname_deps = refname.split('|')
+        @csid_deps = csid.split('|')
       end
 
       def call
@@ -36,7 +35,7 @@ module CollectionspaceMigrationTools
       
       private
 
-      attr_reader :batch, :refname_deps, :csid_deps
+      attr_reader :refname_deps, :csid_deps
     end
   end
 end

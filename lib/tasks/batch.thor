@@ -66,11 +66,12 @@ class Batch < Thor
     
     def do_map(id, autocache, clearcache)
       batch = yield(get_batch(id))
-      plan = yield(CMT::Batch::CachingPlanner.call(batch)) if autocache
-      if autocache && !plan.empty?
-        _cc = yield(clear_caches) if autocache && clearcache
-        _ac = yield(CMT::Batch::AutoCacher.call(plan)) if autocache
+      
+      if autocache
+        _cc = yield(clear_caches) if clearcache
+        _ac = yield(CMT::Batch::AutocacheRunner.call(batch))
       end
+      
       output = yield(CMT::Batch::MapRunner.call(
                        csv: batch.source_csv, rectype: batch.mappable_rectype, action: batch.action, batch: id
                      ))

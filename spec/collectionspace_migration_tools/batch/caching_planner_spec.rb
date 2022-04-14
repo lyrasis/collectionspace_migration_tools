@@ -3,8 +3,7 @@
 require_relative '../../spec_helper'
 
 RSpec.describe CollectionspaceMigrationTools::Batch::CachingPlanner do
-  let(:batch){ double('Batch', csid_dependencies: csiddep, refname_dependencies: rndep) }
-  let(:klass){ described_class.new(batch) }
+  let(:klass){ described_class.new(refname: rndep, csid: csiddep) }
 
   describe '#call' do
     let(:result){ klass.call }
