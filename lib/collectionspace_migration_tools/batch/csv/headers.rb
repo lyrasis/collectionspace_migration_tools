@@ -46,6 +46,15 @@ module CollectionspaceMigrationTools
             final_headers
           ].flatten
         end
+
+        # requires class mixing this in to have `table` method defined
+        def check_headers
+          return Success() if table.headers == all_headers
+
+          problem = 'Batch CSV headers are not up-to-date, so batch workflows may fail unexpectedly.'
+          fix = 'Run `thor batches:fix_csv` to fix'
+          Failure("#{problem} #{fix}")
+        end
       end
     end
   end

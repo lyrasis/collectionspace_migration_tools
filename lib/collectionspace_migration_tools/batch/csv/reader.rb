@@ -59,12 +59,6 @@ module CollectionspaceMigrationTools
 
         attr_reader :table, :rewriter
 
-        def check_headers
-          return Success() if table.headers == all_headers
-
-          Failure('Batch CSV headers are not up-to-date, so batch workflows may fail unexpectedly. Run `thor batches:fix_csv` to fix')
-        end
-        
         def check_id_uniqueness
           uniq_ids = ids.uniq
           return Success(self) if ids == uniq_ids
