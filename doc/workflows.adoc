@@ -30,7 +30,7 @@ NOTE: strike-through formatting indicates the option/command is not yet implemen
 * Map batch to CS XML
 ** `thor batch:map --id obj12`
 * Upload resulting CS XML to S3 bucket
-** +++<s>+++`thor batch:upload --id obj12`+++</s>+++
+** `thor batch:upload --id obj12`
 * Verify ingest is complete (see step details on this for more info/options)
 * Run ingest verification report
 ** +++<s>+++`thor batch:verify --id obj12`+++</s>+++
@@ -113,6 +113,9 @@ For testing/standalone work: `thor map:csv --csv ~/path/to/source_data.csv --rec
 If part of batch workflow, batch directory name is the batch id.
 
 Otherwise batch directory is named with timestamp+rectype.
+
+==== Autocaches (if configured to do so)
+See <<autocaching>>
 
 ==== Preprocesses data
 Verifies the following:
