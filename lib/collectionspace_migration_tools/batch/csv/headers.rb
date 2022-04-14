@@ -11,10 +11,17 @@ module CollectionspaceMigrationTools
           %w[id source_csv mappable_rectype action]
         end
 
-        def add_headers
+        def derived_at_add_headers
           %w[rec_ct]
         end
 
+        # currently superfluous, but useful in case we ever add new derived header groups
+        def derived_headers
+          [
+            derived_at_add_headers
+          ].flatten
+        end
+        
         def map_headers
           %w[mapped? dir map_errs map_oks map_warns]
         end
@@ -38,7 +45,7 @@ module CollectionspaceMigrationTools
         def all_headers
           [
             supplied_headers,
-            add_headers,
+            derived_at_add_headers,
             map_headers,
             upload_headers,
             ingest_headers,
@@ -51,7 +58,7 @@ module CollectionspaceMigrationTools
         def check_headers
           return Success() if table.headers == all_headers
 
-          Failure("Headers do not match")
+          Failure([:update_csv_columns])
         end
       end
     end

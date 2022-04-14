@@ -22,26 +22,94 @@ module CollectionspaceMigrationTools
         ) 
           @table = CSV.parse(data, headers: true)
           @rewriter = rewriter
-          @to_do = []
-          @tracker = []
         end
 
         def call
-          _list = yield(generate_to_do_list)
-          _handled = yield(handle_to_dos)
+          todos = yield(compile_to_fix)
+          return Success('Nothing to fix!') if todos.empty?
+
+          fixed = yield(do_fixes(todos))
           _written = yield(rewriter.call(table))
 
-          Success(status.value!)
+          Success(fixed.map(&:value!).join('; '))
         end
         
-        def to_monad
-          status
+        private
+
+        attr_reader :table, :rewriter, :status
+
+        def compile_to_fix
+          to_do = [check_headers, derived_populated].select{ |chk| chk.failure? }
+        rescue StandardError => err
+          msg = "#{err.message} IN #{err.backtrace[0]}"
+          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+        else
+          Success(to_do)
+        end
+
+        def derive_rec_ct(rows)
+          cts = rows.map{ |row| CMT::Batch::CsvRowCounter.call(row['source_csv']) }
+          if cts.any?(&:failure)
+            failed_ids = []
+            cts.each_with_index do |result, idx|
+              next if result.success?
+
+              failed_ids << rows[idx]['id']
+            end
+            Failure("rec_ct could not be derived for: #{failed_ids.join(', ')}")
+          else
+            rows.each_with_index{ |row, idx| row['rec_ct'] = cts[idx].value! }
+            Success('Derived values provided for rec_ct')
+          end
         end
         
-        #        private
+        def derived_columns_missing_values
+          need_population = []
+          derived_headers.each do |hdr|
+            vals = table.values_at(hdr)
+              .flatten
+              .select{ |val| val.nil? || val.empty? }
+            need_population << hdr unless vals.empty?
+          end
+          need_population
+        end
+        
+        def derived_populated
+          fix_cols = derived_columns_missing_values
+          return Success() if fix_cols.empty?
 
-        attr_reader :table, :rewriter, :to_do, :status, :tracker
+          Failure([:populate_derived, fix_cols])
+        end
+        
+        def do_fixes(todos)
+          results = todos.map do |todo|
+            task = todo.failure
+            meth = task.shift
+            task.empty? ? self.send(meth) : self.send(meth, *task)
+          end
 
+          if results.any?(&:failure?)
+            Failure(results.select(&:failure?).map(&:failure).join('; '))
+          else
+            Success(results)
+          end
+        end
+
+        def populate_derived(cols)
+          results = cols.map{ |col| self.send("derive_#{col}".to_sym, rows_needing_population(col)) }
+
+          if results.any?(&:failure?)
+            Failure(results.select(&:failure?).map(&:failure).join('; '))
+          else
+            Success('Populated missing derived data')
+            
+          end
+        end
+
+        def rows_needing_population(col)
+          table.select{ |row| row[col].nil? || row[col].empty? }
+        end
+        
         def update_csv_columns
           new_table = CSV::Table.new([], headers: all_headers)
           data = table.values_at(*all_headers)
@@ -54,17 +122,6 @@ module CollectionspaceMigrationTools
         else
           Success("Updated CSV columns")
         end
-
-        def generate_to_do_list
-          update_csv_columns if check_headers.failure?
-        rescue StandardError => err
-          msg = "#{err.message} IN #{err.backtrace[0]}"
-          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
-        else
-          Success()
-        end
-
-        
       end
     end
   end
