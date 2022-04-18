@@ -46,7 +46,15 @@ module CollectionspaceMigrationTools
       def rewrite
         csv.rewrite
       end
-      
+
+      def show_info
+        data.each do |key, value|
+          next if value.nil? || value.empty?
+
+          puts "#{key}: #{value}"
+        end
+      end
+
       def to_monad
         data ? Success(self) : Failure("No batch with id: #{id}")
       end

@@ -36,6 +36,14 @@ class Batch < Thor
     )
   end
 
+  desc 'show BATCHID', 'Shows batch data currently in batches CSV'
+  def show(id)
+    CMT::Batch.find(id).either(
+      ->(batch){ batch.show_info },
+      ->(failure){ puts failure.to_s}
+    )
+  end
+
   desc 'upload BATCHID', "Uploads a batch's CS XML to S3 bucket"
   def upload(id)
     CMT::Batch.dir(id).either(
