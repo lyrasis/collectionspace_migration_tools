@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
-require 'dry/monads/do'
 require 'thor'
 
 # tasks targeting a single batch
 class Batch < Thor
   include Dry::Monads[:result]
-  include Dry::Monads::Do.for(:do_delete, :do_map, :get_batch, :get_batch_dir)
 
   desc 'add', 'Adds a new batch to batch csv. ID must be <= 6 alphanumeric characters'
   option :id, required: true, type: :string
@@ -23,7 +20,7 @@ class Batch < Thor
 
   desc 'delete', 'Removes batch row from batches CSV and deletes batch directory'
   def delete(id)
-    do_delete(id).either(
+    CMT::Batch.delete(id).either(
       ->(success){  },
       ->(failure){ puts failure.to_s }
     )
@@ -33,7 +30,7 @@ class Batch < Thor
   option :autocache, required: false, type: :boolean, default: CMT.config.client.auto_refresh_cache_before_mapping
   option :clearcache, required: false, type: :boolean, default: CMT.config.client.clear_cache_before_refresh
   def map(id)
-    do_map(id, options[:autocache], options[:clearcache]).either(
+    CMT::Batch.map(id, options[:autocache], options[:clearcache]).either(
       ->(success){  },
       ->(failure){ puts failure.to_s }
     )
@@ -41,49 +38,16 @@ class Batch < Thor
 
   desc 'upload BATCHID', "Uploads a batch's CS XML to S3 bucket"
   def upload(id)
-    get_batch_dir(id).either(
+    CMT::Batch.dir(id).either(
       ->(dir){ invoke 'upload:dir', [dir] },
       ->(failure){ puts failure.to_s }
     )
   end
   
   no_commands do
-    def do_delete(id)
-      batch = yield(get_batch(id))
-      _deleted = yield(batch.delete)
-
-      Success()
-    end
-    
-    def do_map(id, autocache, clearcache)
-      batch = yield(get_batch(id))
-      
-      _run = yield(CMT::Batch::MapRunner.call(
-                       batch: batch, autocache: autocache, clearcache: clearcache
-                     ))
-      
-      Success()
-    end
-
-    def get_batch(id)
-      csv = yield(CMT::Batch::Csv::Reader.new)
-      batch = yield(CMT::Batch::Batch.new(csv, id))
-
-      Success(batch)
-    end
-
-    def get_batch_dir(id)
-      batch = yield(get_batch(id))
-
-      Success(batch.dir)
-    end
-
     def put_added(success)
       puts "Successfully added batch with the following info:"
       success.each{ |key, val| puts "  #{key}: #{val}" }
-    end
-
-    def show_reported(success)
     end
   end
 end
