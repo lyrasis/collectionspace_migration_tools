@@ -13,7 +13,7 @@ module CollectionspaceMigrationTools
       end
       
       def initialize(refname:, csid:)
-        @refname_deps = refname.split('|')
+        @refname_deps = refname.sub('vocabularies', 'vocabulary').split('|')
         @csid_deps = csid.split('|')
       end
 
