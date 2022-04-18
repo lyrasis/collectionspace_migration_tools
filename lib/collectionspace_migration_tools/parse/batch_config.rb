@@ -25,7 +25,7 @@ module CollectionspaceMigrationTools
         string = yield(read)
         hash = yield(parse(string))
 
-        Success(hash.merge({'status_check_method' => 'cache'}))
+        Success(hash.merge({'status_check_method' => 'cache', 'search_if_not_cached' => false}))
       end
       
       private
