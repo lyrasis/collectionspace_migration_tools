@@ -57,7 +57,7 @@ module CollectionspaceMigrationTools
         end
 
         def derive_rec_ct(rows)
-          cts = rows.map{ |row| CMT::Batch::CsvRowCounter.call(row['source_csv']) }
+          cts = rows.map{ |row| CMT::Batch::CsvRowCounter.call(path: row['source_csv']) }
           if cts.any?(&:failure)
             failed_ids = []
             cts.each_with_index do |result, idx|

@@ -30,7 +30,7 @@ module CollectionspaceMigrationTools
         mapper = yield(CMT::Parse::RecordMapper.call(valid_rectype))
         entity_type = mapper.service_type
         
-        rec_ct = yield(CMT::Batch::CsvRowCounter.call(valid_csv[0]))
+        rec_ct = yield(CMT::Batch::CsvRowCounter.call(path: valid_csv[0]))
 
         data_hash = {
           'id' => valid_id,

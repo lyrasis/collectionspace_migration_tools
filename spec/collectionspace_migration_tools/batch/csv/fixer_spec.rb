@@ -95,7 +95,7 @@ id,source_csv,rec_ct
 
       context 'when derivation of data is success' do
         it 'returns as expected', :aggregate_failures do
-          allow(CMT::Batch::CsvRowCounter).to receive(:call).with('csv').and_return(Dry::Monads::Success(10))
+          allow(CMT::Batch::CsvRowCounter).to receive(:call).with(path: 'csv').and_return(Dry::Monads::Success(10))
           expect(result).to be_a(Dry::Monads::Success)
           expect(result.value!).to eq('Populated missing derived data')
           expect(result_data_compare).to be true
@@ -104,7 +104,7 @@ id,source_csv,rec_ct
 
       context 'when derivation of data is failure' do
         it 'returns as expected', :aggregate_failures do
-          allow(CMT::Batch::CsvRowCounter).to receive(:call).with('csv').and_return(Dry::Monads::Failure(:foo))
+          allow(CMT::Batch::CsvRowCounter).to receive(:call).with(path: 'csv').and_return(Dry::Monads::Failure(:foo))
           expect(result).to be_a(Dry::Monads::Failure)
          expect(result.failure).to eq('rec_ct could not be derived for: 1')
          expect(result_data_compare).to be false
@@ -116,7 +116,7 @@ id,source_csv,rec_ct
       let(:data){ missing_header_and_derived_data }
 
       it 'returns as expected', :aggregate_failures do
-        allow(CMT::Batch::CsvRowCounter).to receive(:call).with('csv').and_return(Dry::Monads::Success(10))
+        allow(CMT::Batch::CsvRowCounter).to receive(:call).with(path: 'csv').and_return(Dry::Monads::Success(10))
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq('Updated CSV columns; Populated missing derived data')
         expect(result_data_compare).to be true

@@ -52,7 +52,7 @@ module CollectionspaceMigrationTools
         total = batch.rec_ct.to_i
         failures = total - successes
         _failures = yield(report('map_errs', failures))
-        warns = yield(CMT::Batch::CsvRowCounter.call(report_path, 'cmt_warnings'))
+        warns = yield(CMT::Batch::CsvRowCounter.call(path: report_path, field: 'cmt_warnings'))
         _warns = yield(report('map_warns', warns))
 
         @status = 'Reporting completed'

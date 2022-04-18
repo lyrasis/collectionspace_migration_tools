@@ -12,6 +12,7 @@ d,,e
 h,,i
 j,k,
 l,,m
+n,k,q
 CSV
     File.open(@test_csv, 'w'){ |file| file << data }
   end
@@ -24,15 +25,31 @@ CSV
       let(:result){ klass.call }
       it 'returns Success containing total row count', :aggregate_failures do
         expect(result).to be_a(Dry::Monads::Success)
-        expect(result.value!).to eq(5)
+        expect(result.value!).to eq(6)
       end
     end
 
     context 'with field given' do
-      let(:result){ klass.call('b') }
+      let(:result){ klass.call(field: 'b') }
       it 'returns Success containing count of rows where field is populated', :aggregate_failures do
         expect(result).to be_a(Dry::Monads::Success)
+        expect(result.value!).to eq(3)
+      end
+    end
+
+    context 'with field and value given' do
+      let(:result){ klass.call(field: 'b', value: 'k') }
+      it 'returns Success containing count of rows where field is populated with given value', :aggregate_failures do
+        expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq(2)
+      end
+    end
+
+    context 'with value given without field' do
+      let(:result){ klass.call(value: 'k') }
+      it 'returns Failure', :aggregate_failures do
+        expect(result).to be_a(Dry::Monads::Failure)
+        expect(result.failure).to eq('CsvRowCounter: you must specify field if you specify value')
       end
     end
   end

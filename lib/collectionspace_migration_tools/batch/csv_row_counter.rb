@@ -12,8 +12,8 @@ module CollectionspaceMigrationTools
       include Dry::Monads::Do.for(:call)
 
       class << self
-        def call(path, field = nil)
-          self.new(path).call(field)
+        def call(path:, field: nil, value: nil)
+          self.new(path).call(field: field, value: value)
         end
       end
       
@@ -21,10 +21,13 @@ module CollectionspaceMigrationTools
         @path = path
         @counts = []
       end
-
+      
+      # If given a field and a value, count of rows where that field is populated with that value will be returned
       # If given a field, count of rows where that field is populated will be returned
-      def call(field = nil)
-        _processed = yield(process(field))
+      def call(field: nil, value: nil)
+        return Failure('CsvRowCounter: you must specify field if you specify value') if value && !field
+        
+        _processed = yield(process(field, value))
         Success(counts.sum)
       end
       
@@ -36,13 +39,15 @@ module CollectionspaceMigrationTools
         @counts << ct
       end
 
-      def process(field)
+      def process(field, value)
         SmarterCSV.process(path, {
           chunk_size: CMT.config.system.csv_chunk_size,
           convert_values_to_numeric: false,
           strings_as_keys: true
         }) do |chunk|
-          if field
+          if field && value
+            add_count(chunk.select{ |row| row.key?(field) && row[field] == value }.length)
+          elsif field
             add_count(chunk.select{ |row| row.key?(field) }.length)
           else
             add_count(chunk.length)
