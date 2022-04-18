@@ -8,3 +8,5 @@ data
 !/data/.keep
 doc/yard
 tmp
+
+.DS_Store
