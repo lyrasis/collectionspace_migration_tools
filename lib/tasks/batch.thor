@@ -48,15 +48,6 @@ class Batch < Thor
   end
   
   no_commands do
-    def clear_caches
-      invoke 'caches:clear', []
-    rescue StandardError => err
-      msg = "#{err.message} IN #{err.backtrace[0]}"
-      Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
-    else
-      Success()
-    end
-
     def do_delete(id)
       batch = yield(get_batch(id))
       _deleted = yield(batch.delete)
@@ -67,17 +58,11 @@ class Batch < Thor
     def do_map(id, autocache, clearcache)
       batch = yield(get_batch(id))
       
-      if autocache
-        _cc = yield(clear_caches) if clearcache
-        _ac = yield(CMT::Batch::AutocacheRunner.call(batch))
-      end
-      
-      output = yield(CMT::Batch::MapRunner.call(
-                       csv: batch.source_csv, rectype: batch.mappable_rectype, action: batch.action, batch: id
+      _run = yield(CMT::Batch::MapRunner.call(
+                       batch: batch, autocache: autocache, clearcache: clearcache
                      ))
-      report = yield(CMT::Batch::PostMapReporter.new(batch: batch, dir: output).call)
       
-      Success(report)
+      Success()
     end
 
     def get_batch(id)

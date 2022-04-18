@@ -16,27 +16,35 @@ module CollectionspaceMigrationTools
         end
       end
 
-      def initialize(batch:, csv:, rectype:, action:)
+      def initialize(batch:, autocache:, clearcache:)
         @batch = batch
-        @csv = csv
-        @rectype = rectype
-        @action = action
+        @autocache = autocache
+        @clearcache = clearcache
       end
 
       def call
-        puts "\n\nMAPPING"
+      if autocache
+        _cc = yield(CMT::Caches::Clearer.call) if clearcache
+        _ac = yield(CMT::Batch::AutocacheRunner.call(batch))
+      end
+
+      puts "\n\nMAPPING"
         start_time = Time.now
 
-        processor = yield(CMT::Csv::BatchProcessorPreparer.new(csv_path: csv, rectype: rectype, action: action, batch: batch).call)
+        processor = yield(CMT::Csv::BatchProcessorPreparer.new(
+          csv_path: batch.source_csv, rectype: batch.mappable_rectype, action: batch.action, batch: batch.id
+        ).call)
         output_dir = yield(processor.call)
         puts "Elapsed time for mapping: #{Time.now - start_time}"
 
-        Success(output_dir)
+        report = yield(CMT::Batch::PostMapReporter.new(batch: batch, dir: output_dir).call)
+
+        Success(report)
       end
       
       private
 
-      attr_reader :batch, :csv, :rectype, :action
+      attr_reader :batch, :autocache, :clearcache
     end
   end
 end
