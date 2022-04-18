@@ -29,6 +29,7 @@ module CollectionspaceMigrationTools
         batch = yield(find(id))
         _run = yield(CMT::Batch::MapRunner.call(
           batch: batch, autocache: autocache, clearcache: clearcache
+          batch: id, autocache: autocache, clearcache: clearcache
         ))
         
         Success()

@@ -16,19 +16,21 @@ module CollectionspaceMigrationTools
         end
       end
 
-      def initialize(batch:, autocache:, clearcache:)
-        @batch = batch
+      def initialize(batch_id:, autocache:, clearcache:)
+        @batch_id = batch_id
         @autocache = autocache
         @clearcache = clearcache
       end
 
       def call
-      if autocache
-        _cc = yield(CMT::Caches::Clearer.call) if clearcache
-        _ac = yield(CMT::Batch::AutocacheRunner.call(batch))
-      end
+        batch = yield(CMT::Batch.find(batch_id))
+        
+        if autocache
+          _cc = yield(CMT::Caches::Clearer.call) if clearcache
+          _ac = yield(CMT::Batch::AutocacheRunner.call(batch))
+        end
 
-      puts "\n\nMAPPING"
+        puts "\n\nMAPPING"
         start_time = Time.now
 
         processor = yield(CMT::Csv::BatchProcessorPreparer.new(
@@ -44,7 +46,7 @@ module CollectionspaceMigrationTools
       
       private
 
-      attr_reader :batch, :autocache, :clearcache
+      attr_reader :batch_id, :autocache, :clearcache
     end
   end
 end
