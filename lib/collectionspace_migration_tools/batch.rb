@@ -19,16 +19,14 @@ module CollectionspaceMigrationTools
       end
 
       def find(id)
-          csv = yield(CMT::Batch::Csv::Reader.new)
-          batch = yield(CMT::Batch::Batch.new(csv, id))
+        csv = yield(CMT::Batch::Csv::Reader.new)
+        batch = yield(CMT::Batch::Batch.new(csv, id))
 
-          Success(batch)
+        Success(batch)
       end
 
       def map(id, autocache, clearcache)
-        batch = yield(find(id))
         _run = yield(CMT::Batch::MapRunner.call(
-          batch: batch, autocache: autocache, clearcache: clearcache
           batch: id, autocache: autocache, clearcache: clearcache
         ))
         
