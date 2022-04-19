@@ -10,7 +10,6 @@ module CollectionspaceMigrationTools
   ::CMT = CollectionspaceMigrationTools
 
   class << self
-
     def loader
       @loader ||= setup_loader
     end
@@ -104,4 +103,3 @@ module CollectionspaceMigrationTools
 end
 
 CMT.loader
-
