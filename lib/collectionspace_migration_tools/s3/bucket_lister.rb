@@ -1,43 +1,78 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
-require 'dry/monads/do'
-
 module CollectionspaceMigrationTools
   module S3
     class BucketLister
       include Dry::Monads[:result]
-      include Dry::Monads::Do.for(:call)
+      include Dry::Monads::Do.for(:call, :continuation, :process)
 
       
       class << self
-        def call
-          self.new.call
+        def call(...)
+          self.new(...).call
         end
       end
 
-      def initialize
+      def initialize(client:, prefix: nil)
+        @client = client
+        @prefix = prefix
         @bucket = CMT.config.client.s3_bucket
+        @opts = set_opts
+        @objects = []
       end
 
       def call
-        client = yield(CMT::Build::S3Client.call)
-        list = yield(get_list(client))
+        response = yield(get_response)
+        _processed = yield(process(response))
 
-        Success(list)
+        Success(objects)
+      end
+
+      def objects
+        @objects.flatten
       end
       
       private
 
-      attr_reader :bucket
+      attr_reader :client, :prefix, :bucket, :opts
 
-      def get_list(client)
-        response = client.list_objects_v2({bucket: bucket})
+      def compile(response)
+        @objects << response.contents.map(&:key)
       rescue StandardError => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
       else
-        Success(response.contents.map(&:key))
+        Success()
+      end
+
+      def continuation(token)
+        c_opts = opts.merge({continuation_token: token})
+        response = yield(get_response(c_opts))
+        _processed = yield(process(response))
+
+        Success()
+      end
+      
+      def get_response(args = opts)
+        response = client.list_objects_v2(**args)
+      rescue StandardError => err
+        msg = "#{err.message} IN #{err.backtrace[0]}"
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+      else
+        Success(response)
+      end
+
+      def process(response)
+        yield(compile(response))
+        yield(continuation(response.next_continuation_token)) if response.is_truncated
+
+        Success()
+      end
+      
+      def set_opts
+        return {bucket: bucket, max_keys: 2} unless prefix
+
+        {bucket: bucket, max_keys: 2, prefix: prefix}
       end
     end
   end
