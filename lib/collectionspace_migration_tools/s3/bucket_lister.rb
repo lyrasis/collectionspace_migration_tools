@@ -6,22 +6,23 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call, :continuation, :process)
 
-      
       class << self
         def call(...)
           self.new(...).call
         end
       end
 
-      def initialize(client:, prefix: nil)
+      def initialize(client:, prefix: nil, max: 1000)
         @client = client
         @prefix = prefix
         @bucket = CMT.config.client.s3_bucket
+        @max = max
         @opts = set_opts
         @objects = []
       end
 
       def call
+        reset
         response = yield(get_response)
         _processed = yield(process(response))
 
@@ -31,10 +32,18 @@ module CollectionspaceMigrationTools
       def objects
         @objects.flatten
       end
+
+      def reset
+        @objects = []
+      end
+
+      def size
+        objects.length
+      end
       
       private
 
-      attr_reader :client, :prefix, :bucket, :opts
+      attr_reader :client, :prefix, :bucket, :max, :opts
 
       def compile(response)
         @objects << response.contents.map(&:key)
@@ -70,9 +79,9 @@ module CollectionspaceMigrationTools
       end
       
       def set_opts
-        return {bucket: bucket, max_keys: 2} unless prefix
+        return {bucket: bucket, max_keys: max} unless prefix
 
-        {bucket: bucket, max_keys: 2, prefix: prefix}
+        {bucket: bucket, max_keys: max, prefix: prefix}
       end
     end
   end
