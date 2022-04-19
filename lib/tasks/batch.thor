@@ -26,6 +26,14 @@ class Batch < Thor
     )
   end
 
+  option :sleep, required: false, type: :numeric, default: 1.5
+  option :checks, required: false, type: :numeric, default: 1
+  option :rechecks, required: false, type: :numeric, default: 1
+  desc 'ingstat BATCHID', 'Checks ingest status, plus...'
+  long_desc(File.read(File.join(Bundler.root, 'lib', 'tasks', 'batch_ingstat.txt')))
+  def ingstat(id)
+  end
+  
   desc 'map BATCHID', "Maps a batch's source CSV data to CS XML files"
   option :autocache, required: false, type: :boolean, default: CMT.config.client.auto_refresh_cache_before_mapping
   option :clearcache, required: false, type: :boolean, default: CMT.config.client.clear_cache_before_refresh

@@ -1,0 +1,50 @@
+Checks how many objects with the batch prefix exist in the S3 bucket. Objects that are not ingested successfully should remain in the bucket.
+
+If none, ingest is considered complete and post-ingest reporting is compiled.
+
+If there are any objects remaining in the bucket, what happens next depends on the options you have passed in, if any.
+
+--sleep : how long to sleep
+
+--checks : how many times to conduct sleep/check resulting in different number of objects before reporting ingest is still in progress and exiting
+
+--rechecks : if a sleep/check finds no change in number of objects (ingest is tentatively complete), how many times should it repeat to verify the number isn't changing?
+
+If any check finds the number of remaining objects to be 0, ingest is considered complete and post-ingest reporting is compiled.
+
+After considering the ingest tentatively complete (2 checks found the same number of objects) and switching to doing rechecks, if the number of objects changes, reports ingest is still in progress and exits.
+
+POST-INGEST REPORTING
+
+If no objects remain, ingest-related columns for the batch are populated in batches CSV.
+
+If objects remain, ingest-related columns for the batch are populated in batches CSV and ingest_report.csv is generated, allowing you to identify which records did not ingest as expected.
+
+EXAMPLES:
+
+> thor batch:ingstat bid
+
+With no options passed in, notes how many were in the the bucket on the first query, sleeps for 1.5 seconds and then rechecks number of objects.
+
+If the number of objects has changed, it reports the ingest is still in progress and exits.
+
+If the number of objects has not changed, it considers the ingest tentatively complete, sleeps for 1.5 seconds again, and conducts the recheck. If the number of objects still has not changed, it reports the ingest is complete, but has errors. Post-ingest reporting is compiled.
+
+> thor batch:ingstat bid --sleep 5
+
+Passing in a sleep option changes how long it sleeps before rechecking.
+
+> thor batch:ingstat bid --checks 999
+
+Passing in a rechecks option changes how many times it will sleep/recheck for changes.
+
+This will do the initial object count check, then sleep/check up to 999 times assuming each check returns a different number of objects.
+
+If it does this 999 times and the number of objects on the 999th check is different than the 998th, it reports the ingest is still in progress and exits.
+
+If any check finds the number of objects has not changed, it considers the ingest tentatively complete, sleeps for 1.5 seconds again, and conducts the recheck. If the number of objects still has not changed, it reports the ingest is complete, but has errors. Post-ingest reporting is compiled.
+
+> thor batch:ingstat bid --sleep 1 --checks 999 --rechecks 3
+
+As in the previous example, but the sleep time is now shorter. This increases the risk of one of the initial checks reporting tentative completion before the ingest is really done, so we have increased the number of rechecks requiring no change.
+
