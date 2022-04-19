@@ -36,6 +36,22 @@ class Batch < Thor
     )
   end
 
+  desc 'rollback_map BATCHID', "Clears the mapping-related columns for the batch in batches CSV and deletes mapping reports"
+  def rollback_map(id)
+    CMT::Batch.rollback_map(id).either(
+      ->(success){ puts success },
+      ->(failure){ puts failure.to_s}
+    )
+  end
+
+  desc 'rollback_upload BATCHID', "Clears the upload-related columns for the batch in batches CSV and deletes upload report. NOTE this does NOT undo any ingest operations triggered by successfully uploaded records"
+  def rollback_upload(id)
+    CMT::Batch.rollback_upload(id).either(
+      ->(success){ puts success },
+      ->(failure){ puts failure.to_s}
+    )
+  end
+  
   desc 'show BATCHID', 'Shows batch data currently in batches CSV'
   def show(id)
     CMT::Batch.find(id).either(

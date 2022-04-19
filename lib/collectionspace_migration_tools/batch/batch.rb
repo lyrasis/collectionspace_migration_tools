@@ -7,12 +7,15 @@ module CollectionspaceMigrationTools
   module Batch
     class Batch
       include Dry::Monads[:result]
-      include Dry::Monads::Do.for(:call, :validate_csv, :delete)
+      include Dry::Monads::Do.for(:call, :validate_csv, :delete, :get_batch_data)
+      include CMT::Batch::Mappable
+      include CMT::Batch::Uploadable
       
       def initialize(csv, id)
         @csv = csv
         @id = id
         get_batch_data
+        @dirpath = "#{CMT.config.client.batch_dir}/#{dir}" if dir
       end
 
       def delete
@@ -22,6 +25,7 @@ module CollectionspaceMigrationTools
         Success()
       end
 
+      # Each header from batches CSV becomes a method name returning the value for this batch
       def method_missing(meth, *args)
         str_meth = meth.to_s
         return data[str_meth] if data.key?(str_meth)
@@ -61,10 +65,11 @@ module CollectionspaceMigrationTools
 
       private
 
-      attr_reader :csv, :id, :data
+      attr_reader :csv, :id, :data, :dirpath
 
       def delete_batch_dir
-        dirpath = "#{CMT.config.client.batch_dir}/#{dir}"
+        return Failure("Batch directory for #{id} does not exist") unless dirpath
+        
         FileUtils.rm_rf(dirpath) if Dir.exists?(dirpath)
       rescue StandardError => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
@@ -74,7 +79,10 @@ module CollectionspaceMigrationTools
       end
 
       def get_batch_data
-        csv.find_batch(id).fmap{ |row| @data = row }
+        row = yield(csv.find_batch(id))
+        @data = row
+
+        Success()
       end
     end
   end
