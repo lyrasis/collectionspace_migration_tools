@@ -27,7 +27,7 @@ module CollectionspaceMigrationTools
 
       def map(id, autocache, clearcache)
         _run = yield(CMT::Batch::MapRunner.call(
-          batch: id, autocache: autocache, clearcache: clearcache
+          batch_id: id, autocache: autocache, clearcache: clearcache
         ))
         
         Success()

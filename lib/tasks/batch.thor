@@ -62,8 +62,8 @@ class Batch < Thor
 
   desc 'upload BATCHID', "Uploads a batch's CS XML to S3 bucket"
   def upload(id)
-    CMT::Batch.dir(id).either(
-      ->(dir){ invoke 'upload:dir', [dir] },
+    CMT::Batch::UploadRunner.call(batch_id: id).either(
+      ->(success){ },
       ->(failure){ puts failure.to_s }
     )
   end

@@ -25,9 +25,9 @@ module CollectionspaceMigrationTools
         puts "Setting up for batch uploading..."
 
         # Make sure mapper_report CSV is present and ok since we are using it to power our uploads
-        report_path = "#{file_dir}/mapper_report.csv"
-        row_getter = yield(CMT::Csv::FirstRowGetter.new(report_path))
-        checker = yield(CMT::Csv::FileChecker.call(report_path, row_getter))
+        source_report_path = "#{file_dir}/mapper_report.csv"
+        row_getter = yield(CMT::Csv::FirstRowGetter.new(source_report_path))
+        checker = yield(CMT::Csv::FileChecker.call(source_report_path, row_getter))
         headers = checker[1].headers.map(&:downcase)
 
         # Verifiy our credentials/config work to create an S3 client and send a verifying command
@@ -43,7 +43,7 @@ module CollectionspaceMigrationTools
         ))
 
         batch_uploader = yield(CMT::S3::BatchUploader.new(
-          csv_path: report_path,
+          csv_path: source_report_path,
           uploader: uploader,
           reporter: reporter
         ))

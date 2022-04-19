@@ -51,7 +51,6 @@ module CollectionspaceMigrationTools
       
       def process
         puts "Uploading CS XML to S3..."
-
         Parallel.map(chunks, in_threads: CMT.config.system.max_threads) do |chunk|
           worker(chunk)
         end
