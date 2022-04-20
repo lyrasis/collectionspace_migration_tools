@@ -16,7 +16,11 @@ module CollectionspaceMigrationTools
         end
       end
 
-      def initialize(batch_id:, autocache:, clearcache:)
+      def initialize(
+        batch_id:,
+        autocache: CMT.config.client.auto_refresh_cache_before_mapping,
+        clearcache: CMT.config.client.clear_cache_before_refresh
+      )
         @batch_id = batch_id
         @autocache = autocache
         @clearcache = clearcache
