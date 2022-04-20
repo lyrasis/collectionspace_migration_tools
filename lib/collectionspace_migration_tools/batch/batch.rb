@@ -16,10 +16,11 @@ module CollectionspaceMigrationTools
         @csv = csv
         @id = id
         get_batch_data
-        @dirpath = "#{CMT.config.client.batch_dir}/#{dir}" if dir
+        @dirpath = "#{CMT.config.client.batch_dir}/#{dir}" if data && dir
       end
 
       def delete
+        _status = yield(to_monad)
         _del_dir = yield(delete_batch_dir)
         _del_row = yield(csv.delete_batch(id))
 
@@ -82,7 +83,7 @@ module CollectionspaceMigrationTools
       attr_reader :csv, :id, :data, :dirpath
 
       def delete_batch_dir
-        return Failure("Batch directory for #{id} does not exist") unless dirpath
+        return Success() unless dirpath
         
         FileUtils.rm_rf(dirpath) if Dir.exists?(dirpath)
       rescue StandardError => err
