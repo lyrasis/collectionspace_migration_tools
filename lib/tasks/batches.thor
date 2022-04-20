@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
 require 'fileutils'
 require 'thor'
 
 # tasks targeting batches and batch csv
 class Batches < Thor
   include Dry::Monads[:result]
-
+  
   desc 'fix_csv', 'Updates batch-tracking CSV to add missing headers and derive automatically generated values'
   def fix_csv
     CMT::Batch::Csv::Fixer.call.either(
@@ -27,6 +26,13 @@ class Batches < Thor
 
   desc 'delete_done', 'Delete completed batches'
   def delete_done
+    done_batches = CMT::Batch::Csv::Reader.new.find_status(:is_done?)
+    puts done_batches.failure.to_s if done_batches.failure?
+
+    done_batches.value!.each do |batch|
+      del = batch.delete
+      puts del.failure.to_s if del.failure?
+    end
   end
     
 
@@ -65,7 +71,7 @@ class Batches < Thor
 
   no_commands do
     def batch_lister(status)
-      l = CMT::Batch::Csv::Reader.new.find_status(status).either(
+      CMT::Batch::Csv::Reader.new.find_status(status).either(
         ->(success){ success.each{ |batch| puts batch.printable_row } },
         ->(failure){ puts failure.to_s }
       )
