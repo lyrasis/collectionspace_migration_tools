@@ -31,7 +31,7 @@ module CollectionspaceMigrationTools
         end
 
         def ingest_headers
-          %w[ingest_checked? ingest_errs ingest_oks]
+          %w[ingest_done? ingest_errs ingest_oks]
         end
 
         def duplicates_headers

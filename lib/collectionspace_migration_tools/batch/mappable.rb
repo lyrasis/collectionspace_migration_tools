@@ -25,7 +25,7 @@ module CollectionspaceMigrationTools
       end
 
       def map_next_step
-        'uploaded?'
+        CMT::Batch::Csv::Headers.upload_headers.first
       end
     end
   end

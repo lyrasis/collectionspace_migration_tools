@@ -24,7 +24,7 @@ module CollectionspaceMigrationTools
       end
 
       def upload_next_step
-        'ingest_checked?'
+        CMT::Batch::Csv::Headers.ingest_headers.first
       end
     end
   end
