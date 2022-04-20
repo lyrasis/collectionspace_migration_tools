@@ -10,7 +10,7 @@ GIT
 
 GIT
   remote: https://github.com/collectionspace/collectionspace-mapper.git
-  revision: f30b834ba72cfe5721f8d2593de15d8af14de33a
+  revision: eff41712a222e79f3727cbc9643600a510bcd818
   branch: migration-tooling
   specs:
     collectionspace-mapper (3.0.0)
@@ -60,7 +60,7 @@ GEM
       thor (>= 0.18, < 2)
     chronic (0.10.2)
     coderay (1.1.3)
-    concurrent-ruby (1.1.9)
+    concurrent-ruby (1.1.10)
     dead_end (3.1.1)
     debug (1.4.0)
       irb (>= 1.3.6)
@@ -164,7 +164,7 @@ GEM
       ruby2_keywords
     multi_xml (0.6.0)
     nenv (0.3.0)
-    nokogiri (1.13.3-x86_64-darwin)
+    nokogiri (1.13.4-x86_64-darwin)
       racc (~> 1.4)
     notiffany (0.1.3)
       nenv (~> 0.1)
