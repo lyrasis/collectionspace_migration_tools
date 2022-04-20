@@ -29,6 +29,45 @@ id,source_csv
   let(:data){ ok_data }
 
   
+  describe '#find_batch' do
+    let(:result){ klass.find_batch(id) }
+    let(:id){ '2' }
+    
+    context 'when single batch found' do
+      it 'returns Success containing batch row', :aggregate_failures do
+        expect(result).to be_a(Dry::Monads::Success)
+        expect(result.value!).to be_a(CSV::Row)
+      end
+    end
+
+    context 'when no batch found' do
+      let(:id){ 'co99' }
+
+      it 'returns failure', :aggregate_failures do
+        expect(result).to be_a(Dry::Monads::Failure)
+        expect(result.failure).to eq("No batch with id: #{id}")
+      end
+    end
+  end
+  
+  describe '#ids' do
+    let(:result){ klass.ids }
+
+    it 'returns Array of ids' do
+      expect(result).to eq(['1', '2'])
+    end
+  end
+
+  describe '#rewrite' do
+    let(:rewriter){ double('Rewriter') }
+    let(:klass){ described_class.new(data: data, headers: headers, rewriter: rewriter) }
+
+    it 'calls rewriter as expected' do
+      expect(rewriter).to receive(:call).with(klass.instance_variable_get(:@table))
+      klass.rewrite
+    end
+  end
+  
   describe '#to_monad' do
     let(:result){ klass.to_monad }
     
@@ -57,35 +96,6 @@ id,source_csv
         msg = 'Batch CSV headers are not up-to-date, so batch workflows may fail unexpectedly. Run `thor batches:fix_csv` to fix'
         expect(result.failure).to eq(msg)
       end
-    end
-  end
-  
-  describe '#find_batch' do
-    let(:result){ klass.find_batch(id) }
-    let(:id){ '2' }
-    
-    context 'when single batch found' do
-      it 'returns Success containing batch row', :aggregate_failures do
-        expect(result).to be_a(Dry::Monads::Success)
-        expect(result.value!).to be_a(CSV::Row)
-      end
-    end
-
-    context 'when no batch found' do
-      let(:id){ 'co99' }
-
-      it 'returns failure', :aggregate_failures do
-        expect(result).to be_a(Dry::Monads::Failure)
-        expect(result.failure).to eq("No batch with id: #{id}")
-      end
-    end
-  end
-  
-  describe '#ids' do
-    let(:result){ klass.ids }
-
-    it 'returns Array of ids' do
-      expect(result).to eq(['1', '2'])
     end
   end
 end
