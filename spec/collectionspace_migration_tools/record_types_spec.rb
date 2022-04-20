@@ -47,7 +47,7 @@ RSpec.describe CollectionspaceMigrationTools::RecordTypes do
       let(:rectype){ 'vocabulary' }
       it 'returns expected' do
         expect(result).to be_a(Dry::Monads::Success)
-        expect(result.value!).to be_a(CMT::Vocabulary)
+        expect(result.value!).to be_a(CMT::Entity::Vocabulary)
         expect(result.value!.status.success?).to be true
       end
     end
@@ -56,7 +56,7 @@ RSpec.describe CollectionspaceMigrationTools::RecordTypes do
       let(:rectype){ 'collectionobject' }
       it 'returns expected' do
         expect(result).to be_a(Dry::Monads::Success)
-        expect(result.value!).to be_a(CMT::Collectionobject)
+        expect(result.value!).to be_a(CMT::Entity::Collectionobject)
         expect(result.value!.status.success?).to be true
       end
     end
@@ -65,7 +65,7 @@ RSpec.describe CollectionspaceMigrationTools::RecordTypes do
       let(:rectype){ 'authorityhierarchy' }
       it 'returns expected' do
         expect(result).to be_a(Dry::Monads::Success)
-        expect(result.value!).to be_a(CMT::Relation)
+        expect(result.value!).to be_a(CMT::Entity::Relation)
         expect(result.value!.status.success?).to be true
       end
     end
@@ -74,7 +74,7 @@ RSpec.describe CollectionspaceMigrationTools::RecordTypes do
       let(:rectype){ 'group' }
       it 'returns expected' do
         expect(result).to be_a(Dry::Monads::Success)
-        expect(result.value!).to be_a(CMT::Procedure)
+        expect(result.value!).to be_a(CMT::Entity::Procedure)
         expect(result.value!.status.success?).to be true
       end
     end
@@ -83,7 +83,7 @@ RSpec.describe CollectionspaceMigrationTools::RecordTypes do
       let(:rectype){ 'person-local' }
       it 'returns expected' do
         expect(result).to be_a(Dry::Monads::Success)
-        expect(result.value!).to be_a(CMT::Authority)
+        expect(result.value!).to be_a(CMT::Entity::Authority)
         expect(result.value!.status.success?).to be true
       end
     end
@@ -92,7 +92,7 @@ RSpec.describe CollectionspaceMigrationTools::RecordTypes do
       let(:rectype){ 'concept-ethculture' }
       it 'returns expected' do
         expect(result).to be_a(Dry::Monads::Success)
-        expect(result.value!).to be_a(CMT::Authority)
+        expect(result.value!).to be_a(CMT::Entity::Authority)
         expect(result.value!.status.success?).to be true
       end
     end

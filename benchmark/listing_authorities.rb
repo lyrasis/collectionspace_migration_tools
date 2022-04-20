@@ -25,7 +25,7 @@ If a procedure with a hyphen in its mapper name ever happens, then c breaks, tho
 b was a fair amount faster than a when repeated a small number of times.
 
     def authorities_a
-      mappable.map{ |str| CMT::Authority.from_str(str) }
+      mappable.map{ |str| CMT::Entity::Authority.from_str(str) }
         .reject{ |auth| auth.status.failure? }
     end
 
@@ -33,11 +33,11 @@ b was a fair amount faster than a when repeated a small number of times.
       mappable.map{ |str| CMT::Parse::RecordMapper.new(str).call }
         .reject{ |mapper| mapper.failure? }
         .select{ |mapper| mapper.value!.authority? }
-        .map{ |mapper| CMT::Authority.from_str(mapper.value!.name) }
+        .map{ |mapper| CMT::Entity::Authority.from_str(mapper.value!.name) }
     end
 
     def authorities_c
       mappable.select{ |rectype| rectype['-'] }
-      .map{ |rectype| CMT::Authority.from_str(rectype) }
+      .map{ |rectype| CMT::Entity::Authority.from_str(rectype) }
     end
 

@@ -16,8 +16,8 @@ class Pop < Thor
     
     invoke 'caches:clear'
     query_and_populate(authorities)
-    query_and_populate([CMT::Vocabulary.new])
-    query_and_populate([CMT::Collectionobject.new])
+    query_and_populate([CMT::Entity::Vocabulary.new])
+    query_and_populate([CMT::Entity::Collectionobject.new])
     query_and_populate(procedures)
     query_and_populate(relations, :csid)
 
@@ -26,17 +26,17 @@ class Pop < Thor
 
   desc 'obj', 'populate csid cache with objects'
   def obj
-    query_and_populate([CMT::Collectionobject.new])
+    query_and_populate([CMT::Entity::Collectionobject.new])
   end
   
   desc 'terms', 'populate caches with all authority and vocabulary terms'
   def terms
     query_and_populate(authorities)
-    query_and_populate([CMT::Vocabulary.new])
+    query_and_populate([CMT::Entity::Vocabulary.new])
   end
 
   desc 'vocabs', 'populate caches with all vocabulary terms'
   def vocabs
-    query_and_populate([CMT::Vocabulary.new])
+    query_and_populate([CMT::Entity::Vocabulary.new])
   end
 end

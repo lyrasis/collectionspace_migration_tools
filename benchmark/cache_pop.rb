@@ -5,7 +5,7 @@ require_relative '../lib/collectionspace_migration_tools'
 require 'benchmark'
 require 'debug'
 
-query = CMT::Authority.from_str('person-local').cacheable_data_query.value!
+query = CMT::Entity::Authority.from_str('person-local').cacheable_data_query.value!
 result = CMT::Database::ExecuteQuery.call(query)
 data = result.success? ? result.value! : nil
 CMT.connection.close

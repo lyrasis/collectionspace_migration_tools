@@ -78,14 +78,14 @@ module CollectionspaceMigrationTools
     end
 
     def to_obj(rectype)
-      return Success(CMT::Vocabulary.new) if rectype == 'vocabulary'
-      return Success(CMT::Collectionobject.new) if rectype == 'collectionobject'
-      return Success(CMT::Relation.new(rectype)) if relations.any?(rectype)
-      return Success(CMT::Procedure.new(rectype)) if procedures.any?(rectype)
-      return Success(CMT::Authority.from_str(rectype)) if authorities.any?(rectype)
+      return Success(CMT::Entity::Vocabulary.new) if rectype == 'vocabulary'
+      return Success(CMT::Entity::Collectionobject.new) if rectype == 'collectionobject'
+      return Success(CMT::Entity::Relation.new(rectype)) if relations.any?(rectype)
+      return Success(CMT::Entity::Procedure.new(rectype)) if procedures.any?(rectype)
+      return Success(CMT::Entity::Authority.from_str(rectype)) if authorities.any?(rectype)
 
       alt_auth_rectype_form(rectype).bind do |alt_form|
-        return Success(CMT::Authority.from_str(alt_form)) if authorities.any?(alt_form)
+        return Success(CMT::Entity::Authority.from_str(alt_form)) if authorities.any?(alt_form)
       end
 
       Failure("#{rectype} cannot be converted to a CMT CS Entity object")

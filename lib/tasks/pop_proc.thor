@@ -13,13 +13,13 @@ class Procedure < Thor
 
   desc 'one RECTYPE', 'populate CSID cache for ONE procedure record type'
   def one(rectype)
-    query_and_populate([CMT::Procedure.new(rectype)])
+    query_and_populate([CMT::Entity::Procedure.new(rectype)])
   end
 
   option :rectypes, :type => :array
   desc 'list --rectypes acquisition loanin', 'populate CSID cache with for list of procedure record types'
   def list
-    rectypes = options[:rectypes].map{ |rectype| CMT::Procedure.new(rectype) }
+    rectypes = options[:rectypes].map{ |rectype| CMT::Entity::Procedure.new(rectype) }
     query_and_populate(rectypes)
   end
 

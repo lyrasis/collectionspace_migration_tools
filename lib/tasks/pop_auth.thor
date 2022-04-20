@@ -13,13 +13,13 @@ class Auth < Thor
 
   desc 'one RECTYPE', 'populate caches with refnames and csids for ONE authority record type'
   def one(rectype)
-    query_and_populate([CMT::Authority.from_str(rectype)])
+    query_and_populate([CMT::Entity::Authority.from_str(rectype)])
   end
 
   option :rectypes, :type => :array
   desc 'list --rectypes place-local work-cona', 'populate caches with refnames and csids for list of authority record types'
   def list
-    rectypes = options[:rectypes].map{ |rectype| CMT::Authority.from_str(rectype) }
+    rectypes = options[:rectypes].map{ |rectype| CMT::Entity::Authority.from_str(rectype) }
     query_and_populate(rectypes)
   end
 

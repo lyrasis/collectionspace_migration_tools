@@ -10,15 +10,15 @@ module CollectionspaceMigrationTools
       module_function
 
       def authorities
-        CMT::RecordTypes.authorities.map{ |str| CMT::Authority.from_str(str) }
+        CMT::RecordTypes.authorities.map{ |str| CMT::Entity::Authority.from_str(str) }
       end
             
       def procedures
-        CMT::RecordTypes.procedures.map{ |str| CMT::Procedure.new(str) }
+        CMT::RecordTypes.procedures.map{ |str| CMT::Entity::Procedure.new(str) }
       end
 
       def relations
-        CMT::RecordTypes.relations.map{ |str| CMT::Relation.new(str) }
+        CMT::RecordTypes.relations.map{ |str| CMT::Entity::Relation.new(str) }
       end
 
       def query_and_populate(rectypes, cache_type = nil)

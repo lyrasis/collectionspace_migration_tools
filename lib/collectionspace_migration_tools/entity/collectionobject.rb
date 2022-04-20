@@ -1,28 +1,27 @@
 # frozen_string_literal: true
 
 module CollectionspaceMigrationTools
-  class Collectionobject
-    include CMT::Cache::Populatable
+  module Entity
+    class Collectionobject
+      include CMT::Cache::Populatable
+      include CMT::Duplicate::Checkable
+      
+      def status
+        to_monad
+      end
 
-    def initialize
-    end
+      def to_monad
+        Success()
+      end
 
-    def status
-      to_monad
-    end
-
-    def to_monad
-      Success()
-    end
-
-    def to_s
-      'collectionobject'
-    end
-    
-    private
-    
-    def cacheable_data_query
-      query = <<~SQL
+      def to_s
+        'collectionobject'
+      end
+      
+      private
+      
+      def cacheable_data_query
+        query = <<~SQL
           select obj.objectnumber as id, cc.refname, h.name as csid
           from collectionobjects_common obj
           inner join misc on obj.id = misc.id and misc.lifecyclestate != 'deleted'
@@ -30,11 +29,11 @@ module CollectionspaceMigrationTools
           inner join collectionspace_core cc on obj.id = cc.id
           SQL
 
-      Success(query)
-    end
+        Success(query)
+      end
 
-    def duplicates_query
-      query = <<~SQL
+      def duplicates_query
+        query = <<~SQL
           select cc.objectnumber from collectionobjects_common cc
           left join misc on cc.id = misc.id
           where misc.lifecyclestate != 'deleted'
@@ -42,11 +41,12 @@ module CollectionspaceMigrationTools
           having count(cc.objectnumber)>1
           SQL
 
-      Success(query)
-    end
+        Success(query)
+      end
 
-    def rectype_mixin
-      'Objects'
+      def rectype_mixin
+        'Objects'
+      end
     end
   end
 end

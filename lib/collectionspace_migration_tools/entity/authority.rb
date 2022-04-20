@@ -1,34 +1,36 @@
 # frozen_string_literal: true
 
 module CollectionspaceMigrationTools
-  class Authority
-    include CMT::Cache::Populatable
-    include CMT::Mappable
-    include Dry::Monads[:result]
+  module Entity
+    class Authority
+      include CMT::Cache::Populatable
+      include CMT::Duplicate::Checkable
+      include CMT::Mappable
+      include Dry::Monads[:result]
 
-    class << self
-      def from_str(str)
-        arr = str['/'] ? str.split('/') : str.split('-')
-        self.new(type: arr.shift, subtype: arr.join('-'))
+      class << self
+        def from_str(str)
+          arr = str['/'] ? str.split('/') : str.split('-')
+          self.new(type: arr.shift, subtype: arr.join('-'))
+        end
       end
-    end
 
-    attr_reader :type, :subtype, :status
-    
-    def initialize(type:, subtype:)
-      @type = type
-      @subtype = subtype
-      get_mapper
-    end
-
-    private
-    
-    attr_reader :mapper
-
-    def cacheable_data_query
-      return status if status.failure?
+      attr_reader :type, :subtype, :status
       
-      query =    <<~SQL
+      def initialize(type:, subtype:)
+        @type = type
+        @subtype = subtype
+        get_mapper
+      end
+
+      private
+      
+      attr_reader :mapper
+
+      def cacheable_data_query
+        return status if status.failure?
+        
+        query =    <<~SQL
             with auth_vocab_csid as (
             select acv.id, h.name as csid, acv.shortidentifier from #{db_vocab_table} acv
             inner join hierarchy h on acv.id = h.id
@@ -48,26 +50,26 @@ module CollectionspaceMigrationTools
             inner join hierarchy h on ac.id = h.id
           SQL
 
-      Success(query)
-    end
-    
-    # i.e. personauthorities, orgauthorities
-    def cacheable_type
-      return status if status.failure?
-
-      mapper.type
-    end
-
-    def db_term_table
-      return status if status.failure?
-
-      "#{mapper.document_name}_common"
-    end
-
-    def duplicates_query
-      return status if status.failure?
+        Success(query)
+      end
       
-      query = <<~SQL
+      # i.e. personauthorities, orgauthorities
+      def cacheable_type
+        return status if status.failure?
+
+        mapper.type
+      end
+
+      def db_term_table
+        return status if status.failure?
+
+        "#{mapper.document_name}_common"
+      end
+
+      def duplicates_query
+        return status if status.failure?
+        
+        query = <<~SQL
             with auth_vocab_csid as (
             select acv.id, h.name as csid, acv.shortidentifier from #{db_vocab_table} acv
             inner join hierarchy h on acv.id = h.id
@@ -88,28 +90,28 @@ module CollectionspaceMigrationTools
             having count(t.termdisplayname)>1
         SQL
 
-      Success(query)
-    end
-    
-    def db_vocab_table
-      return status if status.failure?
+        Success(query)
+      end
+      
+      def db_vocab_table
+        return status if status.failure?
 
-      "#{cacheable_type}_common"
-    end
+        "#{cacheable_type}_common"
+      end
 
-    def name
-      "#{type}-#{subtype}"
-    end
+      def name
+        "#{type}-#{subtype}"
+      end
 
-    def rectype_mixin
-      'AuthTerms'
-    end
-    
-    def service_path
-      return status if status.failure?
+      def rectype_mixin
+        'AuthTerms'
+      end
+      
+      def service_path
+        return status if status.failure?
 
-      mapper.service_path
+        mapper.service_path
+      end
     end
   end
 end
-

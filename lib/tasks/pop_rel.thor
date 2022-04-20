@@ -13,17 +13,17 @@ class Relation < Thor
 
   desc 'ah', 'populate CSID cache with authorityhierarchy relations'
   def ah
-    query_and_populate([CMT::Relation.new('authorityhierarchy')], :csid)
+    query_and_populate([CMT::Entity::Relation.new('authorityhierarchy')], :csid)
   end
 
   desc 'nhr', 'populate CSID cache with non-hierarchical relations'
   def nhr
-    query_and_populate([CMT::Relation.new('nonhierarchicalrelationship')], :csid)
+    query_and_populate([CMT::Entity::Relation.new('nonhierarchicalrelationship')], :csid)
   end
 
   desc 'oh', 'populate CSID cache with objecthierarchy relations'
   def oh
-    query_and_populate([CMT::Relation.new('objecthierarchy')], :csid)
+    query_and_populate([CMT::Entity::Relation.new('objecthierarchy')], :csid)
   end
 
   desc 'all', 'populate CSID cache with all relations'
