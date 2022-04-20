@@ -15,18 +15,18 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:report)
 
-      def call_and_report
-        wrapped = call_wrapper
+      def call_and_report(report_method = :do_reporting)
+        wrapped = call_wrapper(report_method)
         puts status
         show_summary
         wrapped
       end
       
-      def call_wrapper
+      def call_wrapper(report_method)
         puts "\nUpdating batches CSV with #{process_type} results..."
         start_reporting = Time.now
 
-        result = do_reporting
+        result = send(report_method)
 
         elapsed = Time.now - start_reporting
         puts "Elapsed reporting time: #{elapsed}"

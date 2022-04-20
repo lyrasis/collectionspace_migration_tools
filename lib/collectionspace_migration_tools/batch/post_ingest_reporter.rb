@@ -43,7 +43,7 @@ module CollectionspaceMigrationTools
 
         if failures > 0
           rpt = yield(reporter.call)
-          puts "Wrote item level ingest report to: #{rpt.path}"
+          puts "Wrote item level ingest report to: #{report_path}"
         end
         
         @status = 'Ingest reporting completed'

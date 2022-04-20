@@ -29,6 +29,7 @@ class Batch < Thor
   option :sleep, required: false, type: :numeric, default: 1.5
   option :checks, required: false, type: :numeric, default: 1
   option :rechecks, required: false, type: :numeric, default: 1
+  option :dupedelete, required: false, type: :boolean, default: false
   desc 'ingstat BATCHID', 'Checks ingest status, plus. Do `thor help batch:ingstat` for details'
   long_desc(File.read(File.join(Bundler.root, 'lib', 'tasks', 'batch_ingstat.txt')))
   def ingstat(id)
@@ -36,7 +37,8 @@ class Batch < Thor
       batch_id: id,
       wait: options[:sleep],
       checks: options[:checks],
-      rechecks: options[:rechecks]
+      rechecks: options[:rechecks],
+      autodelete: options[:dupedelete]
     ).either(
       ->(success){  },
       ->(failure){ puts failure.to_s }

@@ -13,43 +13,66 @@ module CollectionspaceMigrationTools
       end
 
       # @param batch_id [String] batch id
-      def initialize(batch_id:, wait: 1.5, checks: 1, rechecks: 1)
+      def initialize(batch_id:, wait: 1.5, checks: 1, rechecks: 1, autodelete: false)
         @id = batch_id
         @wait = wait
         @checks = checks
         @rechecks = rechecks
+        @autodelete = autodelete
       end
 
       def call
         batch = yield(CMT::Batch.find(id))
         _up = yield(uploaded?(batch))
-        prefix = yield(prefix(batch))
+        prefix = yield(get_batch_data(batch, 'prefix'))
         client = yield(CMT::Build::S3Client.call)
         lister = yield(CMT::S3::BucketLister.new(client: client, prefix: prefix))
         listable = yield(CMT::Batch::IngestStatusChecker.call(lister: lister, wait: wait, checks: checks, rechecks: rechecks))
-        batchdir = yield(dir(batch))
-        reporter = yield(CMT::Ingest::Reporter.new(output_dir: batchdir, bucket_list: listable.objects))
-        report = yield(CMT::Batch::PostIngestReporter.call(batch: batch, list: listable.objects, reporter: reporter))
+        batchdir = yield(get_batch_data(batch, 'dir'))
+        ingest_item_reporter = yield(CMT::Ingest::Reporter.new(output_dir: batchdir, bucket_list: listable.objects))
+        ingest_report = yield(CMT::Batch::PostIngestReporter.call(
+          batch: batch,
+          list: listable.objects,
+          reporter: ingest_item_reporter
+        ))
 
-        Success(report)
+        rectype = yield(get_batch_data(batch, 'mappable_rectype'))
+        action = yield(get_batch_data(batch, 'action'))
+        
+        unless dupe_checkable?(rectype, action)
+          _dupe_reporter = yield(CMT::Batch::DuplicateReporter.call(batch: batch))
+          return Success()
+        end
+        
+        obj = yield(CMT::RecordTypes.to_obj(rectype))
+        dupes = yield(obj.duplicates)
+        _dupe_reporter = yield(CMT::Batch::DuplicateReporter.call(batch: batch, data: dupes))
+
+        dupe_ct = dupes.num_tuples
+        
+        Success()
       end
       
       private
 
-      attr_reader :id, :wait, :checks, :rechecks
+      attr_reader :id, :wait, :checks, :rechecks, :autodelete
 
-      def dir(batch)
-        dir = batch.dir
-        return Failure("No batch dir found for batch #{id}") if dir.nil? || dir.empty?
+      def dupe_checkable?(rectype, action)
+        return false unless action == 'create'
+        return false if uncheckable_rectypes.any?(rectype)
 
-        Success(dir)
+        true
       end
 
-      def prefix(batch)
-        prefix = batch.batch_prefix
-        return Failure("No batch prefix found for batch #{id}") if prefix.nil? || prefix.empty?
+      def get_batch_data(batch, field)
+        val = batch.send(field.to_sym)
+        return Failure("No #{field} found for batch #{id}") if val.nil? || val.empty?
 
-        Success(prefix)
+        Success(val)
+      end
+
+      def uncheckable_rectypes
+        %w[authorityhierarchy nonhierarchicalrelationship objecthierarchy]
       end
       
       def uploaded?(batch)

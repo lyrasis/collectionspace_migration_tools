@@ -1,24 +1,22 @@
 Checks how many objects with the batch prefix exist in the S3 bucket. Objects that are not ingested successfully should remain in the bucket.
 
-If none, ingest is considered complete and post-ingest reporting is compiled.
+If ingest is determined to be complete, post-ingest reporting is compiled and duplicates are handled as specified.
 
-If there are any objects remaining in the bucket, what happens next depends on the options you have passed in, if any.
+OPTIONS
 
---sleep : how long to sleep
+--sleep : how long to sleep between checking number of batch objects remaining in bucket
 
---checks : how many times to conduct sleep/check resulting in different number of objects before reporting ingest is still in progress and exiting
+--checks : how many times to conduct check resulting in different number of objects before reporting that the ingest is still in progress and exiting
 
 --rechecks : if a sleep/check finds no change in number of objects (ingest is tentatively complete), how many times should it repeat to verify the number isn't changing?
 
+--dupedelete : whether to automatically delete duplicate records if any are found for the batch's mappable_rectype post-ingest
+
+CHECKING FOR INGEST COMPLETION
+
 If any check finds the number of remaining objects to be 0, ingest is considered complete and post-ingest reporting is compiled.
 
-After considering the ingest tentatively complete (2 checks found the same number of objects) and switching to doing rechecks, if the number of objects changes, reports ingest is still in progress and exits.
-
-POST-INGEST REPORTING
-
-If no objects remain, ingest-related columns for the batch are populated in batches CSV.
-
-If objects remain, ingest-related columns for the batch are populated in batches CSV and ingest_report.csv is generated, allowing you to identify which records did not ingest as expected.
+After considering the ingest tentatively complete (i.e. 2 checks found the same number of objects) and switching to doing rechecks, if the number of objects changes to 0, reports ingest is still in progress and exits.
 
 EXAMPLES:
 
@@ -48,3 +46,35 @@ If any check finds the number of objects has not changed, it considers the inges
 
 As in the previous example, but the sleep time is now shorter. This increases the risk of one of the initial checks reporting tentative completion before the ingest is really done, so we have increased the number of rechecks requiring no change.
 
+POST-INGEST REPORTING
+
+Post-ingest reporting is done if the checks determine the ingest is complete.
+
+If no objects remain, ingest-related columns for the batch are populated in batches CSV.
+
+If objects remain, ingest-related columns for the batch are populated in batches CSV and ingest_report.csv is generated, allowing you to identify which records did not ingest as expected.
+
+DUPLICATE HANDLING
+
+Reports the number of duplicate records for the mappable_rectype of the specified batch via a database query.
+
+Writes duplicate_report_#{timestamp}.csv to batch directory if any duplicates are found. Optionally, automatically runs process to delete one of each set of records sharing an identifier field value. Repeats the duplicate check and re-runs deletion process until no duplicates are found.
+
+
+DUPLICATES: DEFINITIONS
+
+Duplicate record = two or more records of the same mappable_rectype which have the same value in their identifier field ().
+
+Identifier field = The human editable/viewable field containing a value serving as a record identifier. `objectnumber` for collection object, `termdisplayname` (initial) for authorities, `acquisitionreferencenumber` for acquisitions, etc. For each mappable_rectype, the `identifier_field` is specified in the `config` section of the JSON record mapper.
+
+Note: CS allows duplicate values in identifier fields, and, for some record types the identifier field is not required. For the purposes of migration work and other batch operations via this tool and the CSV Importer, we need unique identifier field values, and to 'faux require' identifier fields in record types without required fields.
+
+Note: The CS Services API does not permit the creation of duplicate relation records, so batches for relations will be marked as `n/a` for the duplicate columns in batches CSV.
+
+DUPLICATES: BACKGROUND
+
+Due to AWS architecture, the AWS S3/Lambda ingest process can introduce race conditions leading to the same message about an S3 object being processed more than once. For batches with `create` action, this means that duplicate records may be created.
+
+The duplicate check and delete process is intended to be run soon after a create batch, to catch and remove any such duplicates.
+
+One assumption of this process is that there will not be any intentional duplicates (i.e. records of the same type having the same object number, acquisition reference number, initial term display name, etc.). While CS allows this type of duplicate, it is generally bad practice and will lead to complications in the migration and working with batch updating data in the future. 
