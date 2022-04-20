@@ -40,6 +40,10 @@ module CollectionspaceMigrationTools
       def size
         objects.length
       end
+
+      def to_monad
+        Success(self)
+      end
       
       private
 

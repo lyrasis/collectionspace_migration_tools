@@ -29,9 +29,18 @@ class Batch < Thor
   option :sleep, required: false, type: :numeric, default: 1.5
   option :checks, required: false, type: :numeric, default: 1
   option :rechecks, required: false, type: :numeric, default: 1
-  desc 'ingstat BATCHID', 'Checks ingest status, plus...'
+  desc 'ingstat BATCHID', 'Checks ingest status, plus. Do `thor help batch:ingstat` for details'
   long_desc(File.read(File.join(Bundler.root, 'lib', 'tasks', 'batch_ingstat.txt')))
   def ingstat(id)
+    CMT::Batch::IngestCheckRunner.call(
+      batch_id: id,
+      wait: options[:sleep],
+      checks: options[:checks],
+      rechecks: options[:rechecks]
+    ).either(
+      ->(success){  },
+      ->(failure){ puts failure.to_s }
+    )
   end
   
   desc 'map BATCHID', "Maps a batch's source CSV data to CS XML files"
@@ -41,6 +50,14 @@ class Batch < Thor
     CMT::Batch.map(id, options[:autocache], options[:clearcache]).either(
       ->(success){  },
       ->(failure){ puts failure.to_s }
+    )
+  end
+
+  desc 'rb_ingest BATCHID', "Clears the ingest-related columns for the batch in batches CSV and deletes any ingest reports"
+  def rb_ingest(id)
+    CMT::Batch.rollback_ingest(id).either(
+      ->(success){ puts success },
+      ->(failure){ puts failure.to_s}
     )
   end
 

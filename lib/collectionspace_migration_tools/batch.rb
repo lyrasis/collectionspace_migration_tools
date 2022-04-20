@@ -33,6 +33,13 @@ module CollectionspaceMigrationTools
         Success()
       end
 
+      def rollback_ingest(id)
+        batch = yield(find(id))
+        rolled_back = yield(batch.rollback_ingest)
+
+        Success(rolled_back)
+      end
+
       def rollback_map(id)
         batch = yield(find(id))
         rolled_back = yield(batch.rollback_map)

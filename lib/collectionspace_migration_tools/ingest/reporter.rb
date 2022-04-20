@@ -18,6 +18,8 @@ module CollectionspaceMigrationTools
           self.new(output_dir: output_dir, bucket_list: bucket_list).call
         end
       end
+
+      attr_reader :path
       
       # @param output_dir [String] directory for batch
       # @param bucket_list [Array<String>] keys of objects still in S3 bucket
@@ -40,7 +42,7 @@ module CollectionspaceMigrationTools
         elsif fields
           report
         else
-          Failure("Could not get headers from source file: #{source}")
+          Failure("#{self.class.name} could not get headers from source file: #{source}")
         end
       end
       
@@ -50,7 +52,7 @@ module CollectionspaceMigrationTools
       
       private
       
-      attr_reader :fields, :bucket_list, :path, :source
+      attr_reader :fields, :bucket_list, :source
 
       def report_and_stop
         puts "No ingest failures. Skipping writing a report."

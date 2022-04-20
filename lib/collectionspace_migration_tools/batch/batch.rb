@@ -10,6 +10,7 @@ module CollectionspaceMigrationTools
       include Dry::Monads::Do.for(:call, :validate_csv, :delete, :get_batch_data)
       include CMT::Batch::Mappable
       include CMT::Batch::Uploadable
+      include CMT::Batch::Ingestable
       
       def initialize(csv, id)
         @csv = csv
