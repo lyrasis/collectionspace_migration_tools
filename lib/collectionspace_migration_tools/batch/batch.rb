@@ -26,6 +26,15 @@ module CollectionspaceMigrationTools
         Success()
       end
 
+      def is_done?
+        return true if done? == 'y'
+        
+        missing_vals = CMT::Batch::Csv::Headers.populated_if_done_headers
+          .map{ |field| send(field.to_sym) }
+          .select{ |val| val.nil? || val.empty? }
+        missing_vals.empty? ? true : false
+      end
+
       # Each header from batches CSV becomes a method name returning the value for this batch
       def method_missing(meth, *args)
         str_meth = meth.to_s

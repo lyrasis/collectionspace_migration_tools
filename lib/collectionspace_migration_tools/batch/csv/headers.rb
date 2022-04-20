@@ -40,6 +40,10 @@ module CollectionspaceMigrationTools
         end
 
         def ingest_headers
+          [ingest_check_headers, duplicates_headers].flatten
+        end
+
+        def ingest_check_headers
           %w[ingest_done? ingest_errs ingest_oks]
         end
 
@@ -58,11 +62,14 @@ module CollectionspaceMigrationTools
             map_headers,
             upload_headers,
             ingest_headers,
-            duplicates_headers,
             final_headers
           ].flatten
         end
 
+        def populated_if_done_headers
+          [map_headers.first, upload_headers.first, ingest_check_headers.first, duplicates_headers.first]
+        end
+        
         # requires class mixing this in to have `table` method defined
         def check_headers
           return Success() if table.headers == all_headers

@@ -9,7 +9,7 @@ module CollectionspaceMigrationTools
         include Dry::Monads[:result]
         include Dry::Monads::Do.for(:do_delete, :to_monad)
         
-        attr_reader :ids
+        attr_reader :ids, :table
         
         def initialize(
           data: File.read(CMT.config.client.batch_csv),
@@ -40,9 +40,9 @@ module CollectionspaceMigrationTools
           result = table.map{ |row| CMT::Batch::Batch.new(self, row['id']) }
             .select(&status)
           if result.empty?
-            puts "No #{status.to_s.delete_suffix('?')} batches"
+            Failure("No #{status.to_s.delete_suffix('?')} batches")
           else
-            result.each{ |b| puts b.printable_row }
+            Success(result)
           end
         end
         
@@ -61,6 +61,10 @@ module CollectionspaceMigrationTools
             File.basename(row['source_csv'])
           ].join("\t")
         end
+
+        def rewrite
+          rewriter.call(table)
+        end
         
         def to_monad
           _hdrs = yield(header_check)
@@ -71,7 +75,7 @@ module CollectionspaceMigrationTools
 
         private
 
-        attr_reader :table, :rewriter, :headers
+        attr_reader :rewriter, :headers
 
         def check_id_uniqueness
           uniq_ids = ids.uniq

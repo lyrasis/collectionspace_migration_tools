@@ -24,6 +24,24 @@ class Batches < Thor
       ->(failure){ FileUtils.rm(path) if File.exists?(path); puts failure.to_s }
     )
   end
+
+  desc 'delete_done', 'Delete completed batches'
+  def delete_done
+  end
+    
+
+  desc 'mark_done', 'Mark done any batches with all steps completed'
+  def mark_done
+    CMT::Batch::Csv::DoneMarker.call.either(
+      ->(success){ puts "Batches marked done: #{success.join(', ')}" },
+      ->(failure){ puts failure.to_s }
+    )
+  end
+
+  desc 'done', 'Brief listing of batches that are done'
+  def done
+    batch_lister(:is_done?)
+  end
   
   desc 'show', 'Brief listing of batch ids and info'
   def show
@@ -32,17 +50,26 @@ class Batches < Thor
 
   desc 'to_ingcheck', 'Brief listing of batches uploaded and needing ingest check'
   def to_ingcheck
-    CMT::Batch::Csv::Reader.new.find_status(:ingestable?)
+    batch_lister(:ingestable?)
   end
 
   desc 'to_map', 'Brief listing of batches ready to map'
   def to_map
-    CMT::Batch::Csv::Reader.new.find_status(:mappable?)
+    batch_lister(:mappable?)
   end
 
   desc 'to_upload', 'Brief listing of batches ready to upload'
   def to_upload
-    CMT::Batch::Csv::Reader.new.find_status(:uploadable?)
+    batch_lister(:uploadable?)
+  end
+
+  no_commands do
+    def batch_lister(status)
+      l = CMT::Batch::Csv::Reader.new.find_status(status).either(
+        ->(success){ success.each{ |batch| puts batch.printable_row } },
+        ->(failure){ puts failure.to_s }
+      )
+    end
   end
 end
 
