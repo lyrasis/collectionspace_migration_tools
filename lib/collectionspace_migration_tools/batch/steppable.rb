@@ -39,7 +39,7 @@ module CollectionspaceMigrationTools
 
         true
       end
-      private dependency_present?
+      private :dependency_present?
       
       def not_yet_done?(steptype)
         meth = "#{steptype}_step_headers".to_sym
@@ -49,7 +49,7 @@ module CollectionspaceMigrationTools
 
         false
       end
-      private not_yet_done?
+      private :not_yet_done?
       
       def clear_step_fields(steptype)
         meth = "#{steptype}_step_headers".to_sym
