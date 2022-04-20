@@ -100,6 +100,9 @@ module CollectionspaceMigrationTools
       @tunnel = tunnel_obj
     end
   end
+
+  # to identify CMT processes in `top`, `ps`, etc.
+  Process.setproctitle('CMT')
 end
 
 CMT.loader
