@@ -26,6 +26,10 @@ module CollectionspaceMigrationTools
       def upload_next_step
         CMT::Batch::Csv::Headers.ingest_headers.first
       end
+
+      def uploadable?
+        check_status('upload')
+      end
     end
   end
 end

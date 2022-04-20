@@ -25,6 +25,31 @@ module CollectionspaceMigrationTools
       end
 
       ## private methods
+      def check_status(steptype)
+        not_yet_done?(steptype) && dependency_present?(steptype)
+      end
+      private :check_status
+
+      def dependency_present?(steptype)
+        field = CMT::Batch::Csv::Headers.dependency_value_lookup(steptype)
+        return false if field.nil?
+
+        val = send(field.to_sym)
+        return false if val.nil? || val.empty? || val == '0'
+
+        true
+      end
+      private dependency_present?
+      
+      def not_yet_done?(steptype)
+        meth = "#{steptype}_step_headers".to_sym
+        to_chk = send(meth).first
+        val = send(to_chk)
+        return true if val.nil? || val.empty?
+
+        false
+      end
+      private not_yet_done?
       
       def clear_step_fields(steptype)
         meth = "#{steptype}_step_headers".to_sym
@@ -59,6 +84,7 @@ module CollectionspaceMigrationTools
 
         Failure("#{next_step} is not blank. Cannot rollback #{steptype}")
       end
+      private :rollbackable?
     end
   end
 end

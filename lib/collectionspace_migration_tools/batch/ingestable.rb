@@ -24,6 +24,10 @@ module CollectionspaceMigrationTools
       def ingest_next_step
         CMT::Batch::Csv::Headers.duplicates_headers.first
       end
+
+      def ingestable?
+        check_status('ingest')
+      end
     end
   end
 end

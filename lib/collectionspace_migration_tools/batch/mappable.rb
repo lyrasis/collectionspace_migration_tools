@@ -27,6 +27,10 @@ module CollectionspaceMigrationTools
       def map_next_step
         CMT::Batch::Csv::Headers.upload_headers.first
       end
+
+      def mappable?
+        check_status('map')
+      end
     end
   end
 end

@@ -35,17 +35,31 @@ module CollectionspaceMigrationTools
           Success(result[0])
         end
 
+        # @param status [Symbol] eg. :mappable?, :uploadable?
+        def find_status(status)
+          result = table.map{ |row| CMT::Batch::Batch.new(self, row['id']) }
+            .select(&status)
+          if result.empty?
+            puts "No #{status.to_s.delete_suffix('?')} batches"
+          else
+            result.each{ |b| puts b.printable_row }
+          end
+        end
+        
         def list
           table.each do |row|
-            info = [
-              row['id'],
-              row['action'],
-              row['rec_ct'],
-              row['mappable_rectype'],
-              File.basename(row['source_csv'])
-            ]
-            puts info.join("\t")
+            puts printable_row(row)
           end
+        end
+
+        def printable_row(row)
+          [
+            row['id'],
+            row['action'],
+            row['rec_ct'],
+            row['mappable_rectype'],
+            File.basename(row['source_csv'])
+          ].join("\t")
         end
         
         def to_monad
@@ -55,10 +69,6 @@ module CollectionspaceMigrationTools
           Success(self)
         end
 
-        def rewrite
-          rewriter.call(table)
-        end
-        
         private
 
         attr_reader :table, :rewriter, :headers

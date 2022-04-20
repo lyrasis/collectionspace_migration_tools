@@ -11,6 +11,15 @@ module CollectionspaceMigrationTools
           %w[id source_csv mappable_rectype action]
         end
 
+        def dependency_value_lookup(steptype)
+          h = {
+            'map' => 'rec_ct',
+            'upload' => 'map_oks',
+            'ingest' => 'upload_oks'
+          }
+          h[steptype]
+        end
+        
         def derived_at_add_headers
           %w[rec_ct]
         end

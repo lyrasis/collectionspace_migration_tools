@@ -48,6 +48,10 @@ module CollectionspaceMigrationTools
         str[0..-2]
       end
 
+      def printable_row
+        [id, action, rec_ct, mappable_rectype, File.basename(source_csv)].join("\t")
+      end
+
       def rewrite
         csv.rewrite
       end
