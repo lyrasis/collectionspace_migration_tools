@@ -17,7 +17,6 @@ module CollectionspaceMigrationTools
 
       def call_and_report(report_method = :do_reporting)
         wrapped = call_wrapper(report_method)
-        puts status
         show_summary
         wrapped
       end
