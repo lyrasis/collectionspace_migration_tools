@@ -18,7 +18,7 @@ class Batch < Thor
     )
   end
 
-  desc 'delete', 'Removes batch row from batches CSV and deletes batch directory'
+  desc 'delete BATCHID', 'Removes batch row from batches CSV and deletes batch directory'
   def delete(id)
     CMT::Batch.delete(id).either(
       ->(success){  },
