@@ -22,7 +22,7 @@ module CollectionspaceMigrationTools
       end
 
       def ingest_next_step
-        CMT::Batch::Csv::Headers.duplicates_headers.first
+        CMT::Batch::Csv::Headers.final_headers.first
       end
 
       def ingestable?
