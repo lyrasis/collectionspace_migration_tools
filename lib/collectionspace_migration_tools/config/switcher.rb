@@ -13,9 +13,11 @@ module CollectionspaceMigrationTools
         end
       end
       
-      def initialize(config_name)
-        @target_path = File.join(Bundler.root, 'client_config.yml')
-        @source_path = File.join(Bundler.root, 'config', "#{config_name}.yml")
+      def initialize(target_path: File.join(Bundler.root, 'client_config.yml'),
+                     config_dir: File.join(Bundler.root, 'config'),
+                     config_name:)
+        @target_path = target_path
+        @source_path = File.join(config_dir, "#{config_name}.yml")
       end
 
       def call
