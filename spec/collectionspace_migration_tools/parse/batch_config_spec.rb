@@ -3,7 +3,7 @@
 require_relative '../../spec_helper'
 
 RSpec.describe CollectionspaceMigrationTools::Parse::BatchConfig do
-  let(:base_config){ {'status_check_method'=>'cache'} }
+  let(:base_config){ {'status_check_method'=>'cache', 'search_if_not_cached'=>false} }
 
   describe '#call' do
     let(:result){ described_class.call }

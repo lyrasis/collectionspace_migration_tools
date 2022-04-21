@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../spec_helper'
+require_relative '../../spec_helper'
 
-RSpec.describe CollectionspaceMigrationTools::Authority do
+RSpec.describe CollectionspaceMigrationTools::Entity::Authority do
   describe '.from_str' do
     let(:result){ described_class.from_str(str) }
 
