@@ -48,7 +48,9 @@ module CollectionspaceMigrationTools
         dupes = yield(obj.duplicates)
         _dupe_reporter = yield(CMT::Batch::DuplicateReporter.call(batch: batch, data: dupes))
 
-        dupe_ct = dupes.num_tuples
+        if autodelete && dupes.num_tuples > 0
+          _deleter = yield(CMT::Duplicate::Deleter.call(rectype: rectype, batchdir: batchdir))
+        end
         
         Success()
       end
