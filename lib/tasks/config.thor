@@ -4,20 +4,6 @@ require 'fileutils'
 
 # tasks targeting Config
 class Config < Thor
-  
-  desc 'show', 'print active config to screen'
-  def show
-    pp(CMT.config)
-  end
-
-  desc 'switch CONFIG_NAME_WITHOUT_EXTENSION', 'Copies specified .yml file from `repo_dir/config` to client_config.yml'
-  def switch(name)
-    CMT::Config::Switcher.call(name).either(
-      ->(success){ puts "NOW USING CONFIG:"; pp(CMT.config) },
-      ->(failure){ puts failure.to_s }
-    )
-  end
-  
   desc 'redis_dbs', 'for each file in config dir, shows you the base_uri and redis db number'
   def redis_dbs
     vals = {}
