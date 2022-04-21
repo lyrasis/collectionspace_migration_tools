@@ -14,8 +14,8 @@ module CollectionspaceMigrationTools
       end
 
       # @param type [Symbol] allowed values: :filename, :basename, :path
-      def initialize
-        @config_dir = File.join(Bundler.root, 'config')
+      def initialize(config_dir: File.join(Bundler.root, 'config'))
+        @config_dir = config_dir
       end
 
       def call(type: :filename)
