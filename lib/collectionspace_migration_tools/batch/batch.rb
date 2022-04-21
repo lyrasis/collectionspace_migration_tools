@@ -36,6 +36,11 @@ module CollectionspaceMigrationTools
         missing_vals.empty? ? true : false
       end
 
+      def mark_done
+        data['done?'] = 'y'
+        rewrite
+      end
+
       # Each header from batches CSV becomes a method name returning the value for this batch
       def method_missing(meth, *args)
         str_meth = meth.to_s

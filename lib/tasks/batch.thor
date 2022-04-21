@@ -26,6 +26,14 @@ class Batch < Thor
     )
   end
 
+  desc 'done BATCHID', 'Mark this batch as done. No special workflow status checks are done'
+  def done(id)
+    CMT::Batch.done(id).either(
+      ->(success){ puts "Done batches:"; invoke('batches:done', []) },
+      ->(failure){ puts failure.to_s }
+    )
+  end
+
   option :sleep, required: false, type: :numeric, default: 1.5
   option :checks, required: false, type: :numeric, default: 1
   option :rechecks, required: false, type: :numeric, default: 1
