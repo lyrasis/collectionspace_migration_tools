@@ -6,7 +6,8 @@ client:
   
   # The redis_db_number should be unique per config. This allows you to quickly clear the caches
   #  for one instance, without affecting the caches for other instances.
-  # It's on you to ensure these numbers are unique across your configs. The app doesn't check this
+  # It's on you to ensure these numbers are unique across your configs. The app doesn't check this.
+  # Run `thor config:redis_dbs` to see what db numbers are in use by existing configs
   redis_db_number: 3
 
   # The next three settings are used to grab required record mapping instructions from
@@ -32,18 +33,26 @@ client:
   # This directory must already exist on your system.
   base_dir: ~/code/cs/migration_tools/data
 
-  # Batches are configured in a CSV file. As you move through the steps of a batch (mapping, upload,
-  #   checking ingest status, verifying lack of duplicates), information will get added to the CSV
-  #   by the application to assist you in keeping track of things. This is the path for this CSV
-  # If you do not specify another location for this file, `batches.csv` will be created in your
+  # The path for the "batch CSV"
+  # This is the CSV used to track the status of all batches for a given instance, not a CSV associated with
+  #   an individual batch.
+  # If you do not specify a location for this file, `batches.csv` will be created in your
   #   base_dir.
   # NOTE: It is very important that this path be different for each client/instance you are working on
   #batch_csv: ~/code/cs/migration_tools/data/batches.csv
-  
-  # You can enter a subdirectory relative to base_dir OR a full path to an existing directory anywhere on
-  #   your system. If the value as given expands to an existing directory on your machine, that's what
-  #   will be used. If not, it'll used subdir value appended to base_dir. The subdirectory will be created
-  #   if it does not exist.
+
+  # For the next two "dir" settings, you can enter either:
+  #   - a directory relative to the `base_dir` given above; or
+  #   - the full path to any directory accessible to the application
+  # For example:
+  #   - entering `mappers` will set this to: `~/code/cs/migration_tools/data/mappers` (the mappers subdirectory will be
+  #     created if it doesn't exist)
+  #   - entering `~/code/cs/untangler/data/mappers/community_profiles/release_7_0/anthro` will set this to that
+  #     directory (this directory must exist when the application is run)
+
+  # Location of JSON record mappers produced by cspace-config-untangler.
+  # It is recommended you clone https://github.com/collectionspace/cspace-config-untangler/ and use the path
+  #   for the appropriate profile within that repository
   mapper_dir: record_mappers
 
   # directory in which to store generated xml and reports for each batch
@@ -53,7 +62,9 @@ client:
   # path to valid JSON batch config for mapping CSV to CSXML
   # See https://github.com/collectionspace/collectionspace-mapper/blob/migration-tooling/doc/batch_configuration.adoc for options
   # This is optional and only needed if you need to tweak the mapper options.
-  # `status_check_method` is automatically set to `cache` when using this application to create CSXML.
+  # When using this application to create CSXML, the following batch config options are always sent to the mapper: 
+  #   - `status_check_method` = `cache`
+  #   - `search_if_not_cached` = `false`
   # If you are NOT providing a custom config, comment out the following line.
   # batch_config_path: ~/code/cs/migration_tools/spec/support/fixtures/client_batch_config.json
 

@@ -50,38 +50,17 @@ If you want to change the Redis ports, you need to update them in the `./docker-
 Nothing in `./redis.yml` is sensitive, as it's all just on your local machine.
 
 == Per-instance setup
-=== Client config
-Copy `sample_client_config.yml` to `client_config.yml` and edit `client_config.yml` to reflect the CS instance you will be working on.
 
-`sample_client_config.yml` is self-documenting.
+You will need to:
 
-The application reads in `client_config.yml` to set up everything.
+* have admin-level credentials to the CS instance
+* have login info for connecting to the database for the CS instance
+* request an ingest S3 bucket be set up for the CS instance (currently Mark has to do this)
 
-**Make very sure you do not commit `./client_config.yml` to version control, as it will contain sensitive/secure information.** `./gitignore` is set up to ignore `./client_config.yml` and everything in the `./config` directory. But if you rename `./client_config.yml` in the root directory or change the name of `./config`, do not accidentally add these "untracked files" to git!
-
-[TIP]
-====
-Save multiple .yml configs in the `./config` directory. Name them for the instances you are working with. The contents of this folder are not tracked by git, so secure details will not inadvertently end up in Github. To switch instances/projects, `cp config/my_instance.yml client_config.yml`
-
-There are some useful commands that can run over all your existing client configs if they are stored in this directory, like: `thor config:redis_dbs`, which will show you which Redis db numbers are already in use.
-====
-
-=== Batch config
-If you wish to provide https://github.com/collectionspace/collectionspace-mapper/blob/main/doc/batch_configuration.adoc[configuration options] for `collectionspace-mapper`, put them in `./client_batch_config.json`.
-
-If this file is not provided, `collectionspace-mapper` defaults will be used.
-
-=== Provide record mappers
-Initially this needs to be done manually per client. Eventually it'd be nice to make the tool automatically grab these from Github. 
-
-Clone https://github.com/collectionspace/cspace-config-untangler/
-
-In `cspace-config-untangler/data/mappers`, find the directory containing the mappers for the profile/version the client is using.
-
-This is the directory path to use as `mapper_dir` in your `client_config`.
+See https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/client_config_management.adoc[client config management documentation]
 
 == Usage
-Ensure desired config is in place (See Configuration section above)
+Ensure desired config is in place (See <<one-time-setup>> and <<per-instance-setup>> sections above)
 
 `cd` into repository root
 
@@ -89,7 +68,10 @@ Ensure desired config is in place (See Configuration section above)
 
 `thor list` (to see available commands)
 
-Run available commands as necessary. See https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/workflows.adoc#workflow-overview[workflow overview documentation] for the most common commands.
+Run available commands as necessary.
+
+IMPORTANT: Most of the commands for routine workflow usage are under `thor batch` and `thor batches`. See https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/workflows.adoc#workflow-overview[workflow overview documentation] for details.
+
 
 `docker-compose down` (Stops and closes Redis containers. The Redis volumes are NOT removed, so your cached data should still be available next time you run `docker-compose up -d`.)
 

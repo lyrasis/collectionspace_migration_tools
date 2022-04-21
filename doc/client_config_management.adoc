@@ -1,0 +1,42 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+= Client config management
+
+toc::[]
+
+TIP: Do `thor list config` to see all config-related commands
+
+== Active config
+Whatever is in `./client_config.yml` is the instance any commands will be run against.
+
+Because we typically need to work with multiple instances, we manage our client configs in the `./config` directory and use the `thor config:switch` command to control which is the active config.
+
+WARNING: `./client_config.yml` and the contents of `./config` are excluded from version control tracking. **If you do any thing to change the naming conventions or locations of these files make CERTAIN they do not get committed, as they contain sensitive information.**
+
+TIP: Aside from the security concerns associated with deviating from the set conventions on config location/naming, none of the built-in config management stuff will work. So, really just follow the pattern given.
+
+== Creating a new client config
+For each CS instance you need to work with, you need to create a client config .yml file inside `./config`.
+
+Copy `sample_client_config.yml` into `./config` with a name clearly identifying your instance (e.g. anthro_dev.yml, clientname_staging.yml, clientname_prod.yml) and edit it.
+
+`sample_client_config.yml` is self-documenting.
+
+If you want to start working with this config, run `thor config:switch clientname_staging`
+
+== Updating a client config
+IMPORTANT: Always edit the .yml files inside the `./config` directory.
+
+If you updated the config that is currently active, run `thor config:switch active_config_name` to refresh the active config with the updated file.
+
+The `config:switch` command doesn't know what the source of the current active config was, so it just re-copies whatever config you specify to `./client_config.yml` and reloads the app configuration based on the new copy.
