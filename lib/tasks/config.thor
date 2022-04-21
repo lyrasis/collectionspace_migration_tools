@@ -4,6 +4,14 @@ require 'fileutils'
 
 # tasks targeting Config
 class Config < Thor
+  desc 'all', 'shows names of all configs in `repo_dir/config`'
+  def all
+    CMT::Config::Lister.call(type: :basename).either(
+      ->(success){ success.each{ |cfg| puts cfg} },
+      ->(failure){ puts failure.to_s }
+    )    
+  end
+  
   desc 'redis_dbs', 'for each file in config dir, shows you the base_uri and redis db number'
   def redis_dbs
     vals = {}
