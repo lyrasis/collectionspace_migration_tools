@@ -14,21 +14,28 @@ module CollectionspaceMigrationTools
     def initialize(
       client: File.join(Bundler.root, 'client_config.yml'),
       system: File.join(Bundler.root, 'system_config.yml'),
-      redis: File.join(Bundler.root, 'redis.yml')
+      redis: File.join(Bundler.root, 'redis.yml'),
+      check: false
     )
       @client_path = client
       @system_path = system
       @redis_path = redis
+      @check = check
+      @status = Success()
       
       validated_config_data.either(
         ->(result){ build_config(result) },
-        ->(result){ bad_config_exit(result) }
+        ->(result){ handle_failure(result) }
       )
+    end
+
+    def to_monad
+      status
     end
 
     private
 
-    attr_reader :client_path, :system_path, :redis_path
+    attr_reader :client_path, :system_path, :redis_path, :check, :status
 
     # Manipulate the config hash before converting to Structs
     def add_option_to_section(confighash, section, key, value)
@@ -59,6 +66,14 @@ module CollectionspaceMigrationTools
       fix_config_paths
     end
 
+    def handle_failure(failure)
+      if check
+        @status = Failure(failure)
+      else
+        bad_config_exit(failure)
+      end
+    end
+    
     def handle_subdirs
       %i[mapper_dir batch_dir].each do |subdir|
         CMT::ConfigSubdirectoryHandler.call(config: client, setting: subdir)
