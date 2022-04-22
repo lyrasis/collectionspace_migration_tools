@@ -21,7 +21,7 @@ module CollectionspaceMigrationTools
       Success(ids)
     end
 
-    def ingest(wait: 1.5, checks: 1, rechecks: 1, autodelete: false)
+    def ingstat(wait: 1.5, checks: 1, rechecks: 1, autodelete: false)
       ids = yield(ids_by_status(:ingestable?))
       results = ids.map{ |id| CMT::Batch::IngestCheckRunner.call(
         batch_id: id,

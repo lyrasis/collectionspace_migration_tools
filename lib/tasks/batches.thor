@@ -100,6 +100,14 @@ class Batches < Thor
     batch_lister(:uploadable?)
   end
 
+  desc 'upload', "Uploads all mapped batches' CS XML to S3 bucket"
+  def upload
+    CMT::Batches::upload.either(
+      ->(success){ exit(0) },
+      ->(failure){ puts failure.to_s; exit(1) }
+    )
+  end
+
   no_commands do
     def batch_lister(status)
       CMT::Batch::Csv::Reader.new.find_status(status).either(
