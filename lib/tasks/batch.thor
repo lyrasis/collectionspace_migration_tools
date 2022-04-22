@@ -18,6 +18,14 @@ class Batch < Thor
     )
   end
 
+  desc 'cb BATCHID', '(C)lear (b)ucket. Delete objects from this batch from S3 bucket'
+  def cb(id)
+    CMT::S3::Bucket.empty(id).either(
+      ->(success){ puts success.to_s },
+      ->(failure){ puts failure.to_s }
+    )
+  end
+  
   desc 'delete BATCHID', 'Removes batch row from batches CSV and deletes batch directory'
   def delete(id)
     CMT::Batch.delete(id).either(
