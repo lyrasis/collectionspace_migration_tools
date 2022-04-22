@@ -80,11 +80,6 @@ class Batches < Thor
     )
   end
 
-  desc 'done', 'Brief listing of batches that are done'
-  def done
-    batch_lister(:is_done?)
-  end
-  
   desc 'show', 'Brief listing of batch ids and info'
   def show
     CMT::Batch::Csv::Reader.new.list
