@@ -23,7 +23,7 @@ module CollectionspaceMigrationTools
 
         def initialize(
           batch_id:,
-          target_dir: CMT.config.client.batch_dir
+          target_dir: CMT.config.client.base_dir
         )
           @batch_id = batch_id
           @target_dir = target_dir
@@ -33,9 +33,10 @@ module CollectionspaceMigrationTools
           batch = yield(CMT::Batch.find(batch_id))
           term_ct = yield(batch.get('missing_terms'))
           return Success('No missing terms to split') if term_ct == 0
-          
+
+          batches_dir = CMT.config.client.batch_dir
           batch_dir = yield(batch.get('dir'))
-          source = "#{target_dir}/#{batch_dir}/missing_terms.csv"
+          source = "#{batches_dir}/#{batch_dir}/missing_terms.csv"
           prephash = yield(prepare_by_authority(source))
           written = yield(write(prephash))
           paths = yield(check_write(written))
