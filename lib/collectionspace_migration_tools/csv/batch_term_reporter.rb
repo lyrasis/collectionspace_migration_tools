@@ -96,7 +96,7 @@ module CollectionspaceMigrationTools
       end
 
       def vocabulary(err)
-        "#{err[:type]}/#{err[:subtype]}"
+        "#{err[:type]}-#{err[:subtype]}"
       end
 
       def write_rows(csv, rows)
