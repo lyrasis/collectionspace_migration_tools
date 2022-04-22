@@ -12,9 +12,9 @@ module CollectionspaceMigrationTools
         end
       end
 
-      def initialize(rectype:, batchdir:)
+      def initialize(rectype:, batchdir: nil)
         @rectype = rectype
-        @dupe_csv = File.join(CMT.config.client.batch_dir, batchdir, 'duplicate_report.csv')
+        @dupe_csv = batchdir.nil? ? nil : File.join(CMT.config.client.batch_dir, batchdir, 'duplicate_report.csv')
         @id = 'dd'
         @action = 'delete'
         @iteration = 1
@@ -57,6 +57,12 @@ module CollectionspaceMigrationTools
       
       def run_deletes(source_csv = dupe_csv)
         @iteration += 1
+        if source_csv.nil?
+          initial = yield(duplicates)
+          @remaining = initial if initial.num_tuples > 0
+          source_csv = yield(write_remaining_to_csv)
+        end
+        
         _add = yield(CMT::Batch::Add.call(id: id, csv: source_csv, rectype: rectype, action: action))
         _map = yield(CMT::Batch::MapRunner.call(batch_id: id))
         _upload = yield(CMT::Batch::UploadRunner.call(batch_id: id))
