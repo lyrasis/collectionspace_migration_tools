@@ -36,6 +36,13 @@ module CollectionspaceMigrationTools
         missing_vals.empty? ? true : false
       end
 
+      def get(field)
+        val = send(field.to_sym)
+        return Failure("No value for #{field}") if val.nil? || val.empty?
+
+        Success(val)
+      end
+      
       def mark_done
         data['done?'] = 'y'
         rewrite
