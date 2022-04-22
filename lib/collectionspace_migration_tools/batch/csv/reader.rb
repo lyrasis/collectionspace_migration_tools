@@ -7,15 +7,16 @@ module CollectionspaceMigrationTools
     module Csv
       class Reader
         include Dry::Monads[:result]
-        include Dry::Monads::Do.for(:do_delete, :to_monad)
+        include Dry::Monads::Do.for(:do_delete, :to_monad, :get_data)
         
         attr_reader :ids, :table
         
         def initialize(
-          data: File.read(CMT.config.client.batch_csv),
+          data: nil,
           rewriter: CMT::Batch::Csv::Rewriter.new,
           headers: CMT::Batch::Csv::Headers.all_headers
-        ) 
+        )
+          data = get_data if data.nil?
           @table = CSV.parse(data, headers: true)
           @rewriter = rewriter
           @headers = headers
@@ -84,6 +85,13 @@ module CollectionspaceMigrationTools
           Failure('Batch ids are not unique. Please manually edit and save CSV where info about batches is recorded.')
         end
 
+        def get_data
+          read_batches_csv.either(
+            ->(data){ data },
+            ->(failure){ CMT::Batch::Csv::Creator.call; read_batches_csv.value! }
+          )
+        end
+        
         def delete_from_table(bid)
           table.by_row!
           table.delete_if{ |row| row['id'] == bid }
@@ -110,6 +118,15 @@ module CollectionspaceMigrationTools
           list
 
           Success()
+        end
+
+        def read_batches_csv
+          data = File.read(CMT.config.client.batch_csv)
+        rescue StandardError => err
+          msg = "#{err.message} IN #{err.backtrace[0]}"
+          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+        else
+          Success(data)
         end
       end
     end
