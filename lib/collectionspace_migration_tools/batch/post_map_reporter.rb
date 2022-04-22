@@ -50,10 +50,17 @@ module CollectionspaceMigrationTools
         successes = yield(count_xml_files)
         _successes = yield(report('map_oks', successes))
         total = batch.rec_ct.to_i
-        failures = total - successes
+        failures = yield(CMT::Batch::CsvRowCounter.call(path: report_path, field: 'cmt_outcome', value: 'failure'))
         _failures = yield(report('map_errs', failures))
         warns = yield(CMT::Batch::CsvRowCounter.call(path: report_path, field: 'cmt_warnings'))
         _warns = yield(report('map_warns', warns))
+        missing_term_report = "#{dir}/missing_terms.csv"
+        if File.exists?(missing_term_report)
+          missing_term_ct = yield(CMT::Batch::CsvRowCounter.call(path: missing_term_report))
+        else
+          missing_term_ct = 0
+        end
+        _missing_term = yield(report('missing_terms', missing_term_ct))
 
         @status = 'Reporting completed'
         Success()

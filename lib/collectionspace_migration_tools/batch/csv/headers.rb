@@ -32,7 +32,7 @@ module CollectionspaceMigrationTools
         end
         
         def map_headers
-          %w[mapped? dir map_errs map_oks map_warns]
+          %w[mapped? dir map_errs map_oks map_warns missing_terms]
         end
 
         def upload_headers
