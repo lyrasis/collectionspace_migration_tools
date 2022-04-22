@@ -60,6 +60,10 @@ module CollectionspaceMigrationTools
         .sort
     end
 
+    def mappable?(str)
+      mappable.any?(str)
+    end
+
     def object
       'collectionobject'
     end
