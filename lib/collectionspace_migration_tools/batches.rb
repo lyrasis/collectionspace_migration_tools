@@ -21,6 +21,20 @@ module CollectionspaceMigrationTools
       Success(ids)
     end
 
+    def ingest(wait: 1.5, checks: 1, rechecks: 1, autodelete: false)
+      ids = yield(ids_by_status(:ingestable?))
+      results = ids.map{ |id| CMT::Batch::IngestCheckRunner.call(
+        batch_id: id,
+        wait: wait,
+        checks: checks,
+        rechecks: rechecks,
+        autodelete: autodelete
+      )}
+      _chk = yield(result_check(results))
+
+      Success()
+    end
+
     def map(autocache = CMT.config.client.auto_refresh_cache_before_mapping,
             clearcache = CMT.config.client.clear_cache_before_refresh)
       ids = yield(ids_by_status(:mappable?))
@@ -35,6 +49,15 @@ module CollectionspaceMigrationTools
       return Success() if failures.empty?
 
       Failure(failures)
+    end
+    private :result_check
+
+    def upload
+      ids = yield(ids_by_status(:uploadable?))
+      results = ids.map{ |id| CMT::Batch::UploadRunner.call(batch_id: id) }
+      _chk = yield(result_check(results))
+
+      Success()
     end
   end
 end

@@ -40,6 +40,37 @@ class Batches < Thor
     end
   end
     
+  desc 'done', 'Brief listing of batches that are done'
+  def done
+    batch_lister(:is_done?)
+  end
+
+  desc 'ingstat', 'Checks ingest status of all batches that have been uploaded but not successfully ingest checked'
+  option :sleep, required: false, type: :numeric, default: 1.5
+  option :checks, required: false, type: :numeric, default: 1
+  option :rechecks, required: false, type: :numeric, default: 1
+  option :dupedelete, required: false, type: :boolean, default: false
+  def ingstat
+    CMT::Batches.ingstat(
+      wait: options[:sleep],
+      checks: options[:checks],
+      rechecks: options[:rechecks],
+      autodelete: options[:dupedelete]
+    ).either(
+      ->(success){ exit(0) },
+      ->(failure){ puts failure.to_s; exit(1) }
+    )
+  end
+
+  desc 'map', "Maps all mappable batches to CS XML files"
+  option :autocache, required: false, type: :boolean, default: CMT.config.client.auto_refresh_cache_before_mapping
+  option :clearcache, required: false, type: :boolean, default: CMT.config.client.clear_cache_before_refresh
+  def map
+    CMT::Batches.map(options[:autocache], options[:clearcache]).either(
+      ->(success){ exit(0) },
+      ->(failure){ puts failure.to_s; exit(1) }
+    )
+  end
 
   desc 'mark_done', 'Mark done any batches with all steps completed'
   def mark_done
