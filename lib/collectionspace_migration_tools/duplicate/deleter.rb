@@ -74,6 +74,7 @@ module CollectionspaceMigrationTools
           autodelete: true))
         dupes = yield(duplicates)
         @remaining = dupes if dupes.num_tuples > 0
+        _cleared = yield(CMT::Batch.delete(id))
         
         Success()
       end
