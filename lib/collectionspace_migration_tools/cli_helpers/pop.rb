@@ -26,7 +26,7 @@ module CollectionspaceMigrationTools
           meth = cache_type.nil? ? :populate_both_caches : "populate_#{cache_type}_cache".to_sym
 
           rectype.send(meth).either(
-            ->(success){ puts 'ok' },
+            ->(success){ puts 'Done' },
             ->(failure){ puts "QUERY/POPULATE FAILED FOR #{rectype.to_s.upcase}\n#{failure.to_s}" }
           )
         end
@@ -43,8 +43,10 @@ module CollectionspaceMigrationTools
         raise err if options[:debug]
         STDERR.puts err.message
         db_disconnect
+        exit(1)
       else
         db_disconnect
+        exit(0)
       end
     end
   end

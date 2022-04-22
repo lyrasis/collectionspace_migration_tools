@@ -10,8 +10,8 @@ class Bucket < Thor
   desc 'empty', 'deletes all objects from bucket'
   def empty
     CMT::S3::Bucket.empty.either(
-      ->(success){ puts success.to_s },
-      ->(failure){ puts failure.to_s }
+      ->(success){ puts success.to_s; exit(0) },
+      ->(failure){ puts failure.to_s; exit(1) }
     )
   end
   
@@ -19,7 +19,7 @@ class Bucket < Thor
   def objs
     CMT::S3::Bucket.objects.either(
       ->(list){ handle_list(list) },
-      ->(failure){ puts failure.to_s }
+      ->(failure){ puts failure.to_s, exit(1) }
     )
   end
 
@@ -31,6 +31,7 @@ class Bucket < Thor
         puts list
         puts "Object count: #{list.length}"
       end
+      exit(0)
     end
   end
 end

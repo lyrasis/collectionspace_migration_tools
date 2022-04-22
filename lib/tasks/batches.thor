@@ -10,8 +10,8 @@ class Batches < Thor
   desc 'fix_csv', 'Updates batch-tracking CSV to add missing headers and derive automatically generated values'
   def fix_csv
     CMT::Batch::Csv::Fixer.call.either(
-      ->(ok){ puts ok },
-      ->(failure){ puts "Fix FAILED: #{failure.to_s}" }
+      ->(ok){ puts ok; exit(0) },
+      ->(failure){ puts "Fix FAILED: #{failure.to_s}"; exit(1) }
     )
   end
   
@@ -19,11 +19,16 @@ class Batches < Thor
   def init_csv
     path = CMT.config.client.batch_csv
     CMT::Batch::Csv::Creator.call.either(
-      ->(success){ puts "Wrote new file at #{path}" },
-      ->(failure){ FileUtils.rm(path) if File.exists?(path); puts failure.to_s }
+      ->(success){ puts "Wrote new file at #{path}"; exit(0) },
+      ->(failure) do
+        FileUtils.rm(path) if File.exists?(path)
+        puts failure.to_s
+        exit(1)
+      end
     )
   end
 
+  # @todo fix this so it uses do notation and it cleanly exitable
   desc 'delete_done', 'Delete completed batches'
   def delete_done
     done_batches = CMT::Batch::Csv::Reader.new.find_status(:is_done?)
@@ -39,8 +44,8 @@ class Batches < Thor
   desc 'mark_done', 'Mark done any batches with all steps completed'
   def mark_done
     CMT::Batch::Csv::DoneMarker.call.either(
-      ->(success){ puts "Batches marked done: #{success.join(', ')}" },
-      ->(failure){ puts failure.to_s }
+      ->(success){ puts "Batches marked done: #{success.join(', ')}"; exit(0) },
+      ->(failure){ puts failure.to_s; exit(1) }
     )
   end
 
@@ -72,8 +77,8 @@ class Batches < Thor
   no_commands do
     def batch_lister(status)
       CMT::Batch::Csv::Reader.new.find_status(status).either(
-        ->(success){ success.each{ |batch| puts batch.printable_row } },
-        ->(failure){ puts failure.to_s }
+        ->(success){ success.each{ |batch| puts batch.printable_row }; exit(0) },
+        ->(failure){ puts failure.to_s; exit(1) }
       )
     end
   end

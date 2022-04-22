@@ -13,24 +13,24 @@ class Batch < Thor
   option :action, required: true, type: :string
   def add
     CMT::Batch::Add.call(id: options[:id], csv: options[:csv], rectype: options[:rectype], action: options[:action]).either(
-      ->(success){ put_added(success) },
-      ->(failure){ puts failure.to_s }
+      ->(success){ put_added(success); exit(0) },
+      ->(failure){ puts failure.to_s; exit(1) }
     )
   end
 
   desc 'cb BATCHID', '(C)lear (b)ucket. Delete objects from this batch from S3 bucket'
   def cb(id)
     CMT::S3::Bucket.empty(id).either(
-      ->(success){ puts success.to_s },
-      ->(failure){ puts failure.to_s }
+      ->(success){ puts success.to_s; exit(0) },
+      ->(failure){ puts failure.to_s; exit(1) }
     )
   end
   
   desc 'delete BATCHID', 'Removes batch row from batches CSV and deletes batch directory'
   def delete(id)
     CMT::Batch.delete(id).either(
-      ->(success){  },
-      ->(failure){ puts failure.to_s }
+      ->(success){ exit(0) },
+      ->(failure){ puts failure.to_s; exit(1) }
     )
   end
 
@@ -38,7 +38,7 @@ class Batch < Thor
   def done(id)
     CMT::Batch.done(id).either(
       ->(success){ puts "Done batches:"; invoke('batches:done', []) },
-      ->(failure){ puts failure.to_s }
+      ->(failure){ puts failure.to_s; exit(1) }
     )
   end
 
@@ -56,8 +56,8 @@ class Batch < Thor
       rechecks: options[:rechecks],
       autodelete: options[:dupedelete]
     ).either(
-      ->(success){  },
-      ->(failure){ puts failure.to_s }
+      ->(success){ exit(0) },
+      ->(failure){ puts failure.to_s; exit(1) }
     )
   end
   
@@ -66,48 +66,48 @@ class Batch < Thor
   option :clearcache, required: false, type: :boolean, default: CMT.config.client.clear_cache_before_refresh
   def map(id)
     CMT::Batch.map(id, options[:autocache], options[:clearcache]).either(
-      ->(success){  },
-      ->(failure){ puts failure.to_s }
+      ->(success){ exit(0) },
+      ->(failure){ puts failure.to_s; exit(1) }
     )
   end
 
   desc 'rb_ingest BATCHID', "Clears the ingest-related columns for the batch in batches CSV and deletes any ingest reports"
   def rb_ingest(id)
     CMT::Batch.rollback_ingest(id).either(
-      ->(success){ puts success },
-      ->(failure){ puts failure.to_s}
+      ->(success){ puts success; exit(0) },
+      ->(failure){ puts failure.to_s; exit(1) }
     )
   end
 
   desc 'rb_map BATCHID', "Clears the mapping-related columns for the batch in batches CSV and deletes mapping reports"
   def rb_map(id)
     CMT::Batch.rollback_map(id).either(
-      ->(success){ puts success },
-      ->(failure){ puts failure.to_s}
+      ->(success){ puts success; exit(0) },
+      ->(failure){ puts failure.to_s; exit(1) }
     )
   end
 
   desc 'rb_upload BATCHID', "Clears the upload-related columns for the batch in batches CSV and deletes upload report. NOTE this does NOT undo any ingest operations triggered by successfully uploaded records"
   def rb_upload(id)
     CMT::Batch.rollback_upload(id).either(
-      ->(success){ puts success },
-      ->(failure){ puts failure.to_s}
+      ->(success){ puts success; exit(0) },
+      ->(failure){ puts failure.to_s; exit(1) }
     )
   end
   
   desc 'show BATCHID', 'Shows batch data currently in batches CSV'
   def show(id)
     CMT::Batch.find(id).either(
-      ->(batch){ batch.show_info },
-      ->(failure){ puts failure.to_s}
+      ->(success){ puts success; exit(0) },
+      ->(failure){ puts failure.to_s; exit(1) }
     )
   end
 
   desc 'upload BATCHID', "Uploads a batch's CS XML to S3 bucket"
   def upload(id)
     CMT::Batch::UploadRunner.call(batch_id: id).either(
-      ->(success){ },
-      ->(failure){ puts failure.to_s }
+      ->(success){ exit(0) },
+      ->(failure){ puts failure.to_s; exit(1) }
     )
   end
   
@@ -118,4 +118,3 @@ class Batch < Thor
     end
   end
 end
-

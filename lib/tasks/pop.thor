@@ -14,7 +14,12 @@ class Pop < Thor
   def all
     start_time = Time.now
     
-    invoke 'caches:clear'
+    cleared = CMT::Caches::Clearer.call
+    if cleared.failure?
+      puts cleared.to_s
+      exit(1)
+    end
+
     query_and_populate(authorities)
     query_and_populate([CMT::Entity::Vocabulary.new])
     query_and_populate([CMT::Entity::Collectionobject.new])

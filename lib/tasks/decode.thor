@@ -7,5 +7,6 @@ class Decode < Thor
   desc 'key KEY', 'decodes S3 object key; useful for debugging, etc.'
   def key(key)
     puts Base64.urlsafe_decode64(key)
+    exit(0)
   end
 end

@@ -17,29 +17,8 @@ class Map < Thor
   def csv
     rectype = options[:rectype]
     CMT::Batch::MapRunner.call(csv: options[:csv], rectype: rectype, action: options[:action]).either(
-      ->(success){ puts 'Processing complete' },
-      ->(failure){ puts failure.to_s; exit }
+      ->(success){ puts 'Processing complete'; exit(0) },
+      ->(failure){ puts failure.to_s; exit(1) }
     )
-  end
-
-  no_commands do
-    # def cacheable
-    # end
-
-    # def require_involved(rectype)
-    #   if rectype == 'authorityhierarchy'
-    #     instruction = 'Enter one of the following:'
-    #     values = CMT::RecordTypes.authority
-    #   else
-    #     instruction = 'From the following values, list all types involved in the relationships:'
-    #     procedures = CMT::RecordTypes.procedures
-    #     values = [procedures.keys, procedures.values, 'obj'].flatten.sort.uniq
-    #   end
-
-    #   puts "To map #{rectype}, you must also specify `--involved` option"
-    #   puts instruction
-    #   puts values.join(', ')
-    #   exit
-    # end
   end
 end

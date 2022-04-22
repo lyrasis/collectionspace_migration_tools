@@ -8,5 +8,6 @@ class Cmt < Thor
   method_option aliases: 'v'
   def version
     puts "CollectionspaceMigrationTools #{CMT::VERSION}"
+    exit(0)
   end
 end
