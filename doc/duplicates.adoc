@@ -1,0 +1,48 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+= Workflows
+
+toc::[]
+
+== Definitions
+
+See the entries for https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/foundation_concepts.adoc#duplicate-records[duplicate records] and https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/foundation_concepts.adoc#identifier-field[identifier field].
+
+== Things to be aware of
+
+=== Do not intentionally create duplicate records to hold different data
+One assumption of this process is that there will not be any intentional duplicates (i.e. records of the same type having the same object number, acquisition reference number, initial term display name, etc.). While CS allows this type of duplicate, it is generally bad practice and will lead to complications in the migration and working with batch updating data in the future. 
+
+WARNING: If you load any such intentional duplicates, using this tool to delete duplicates post-ingest will do things you will NOT be happy about.
+
+=== Duplicate checking/deleting is *not* constrained to a batch
+
+You can't have intentional duplicate collectionobjects with different data previously entered, and then use this tool to handle duplicates added by ingest. It will delete duplicate records until every identifer field value in a record type exists in only one record.
+
+You don't get to pick which records will be deleted and retained.
+
+=== The requirements for this tool (and CSV Importer) are more strict than the requirements of the CS application
+
+CS allows duplicate values in identifier fields, and, for some record types the identifier field is not required. For the purposes of migration work and other batch operations via this tool and the CSV Importer, we need unique identifier field values, and to 'faux require' identifier fields in record types without required fields.
+
+
+=== Duplicate relation records are prevented by Services API
+
+The CS Services API does not permit the creation of duplicate relation records, so batches for relations will be marked as `n/a` for the duplicate columns in batches CSV.
+
+== Why does this thing need to handle duplicates?
+
+Due to AWS architecture, the AWS S3/Lambda ingest process can introduce race conditions leading to the same message about an S3 object being processed more than once. For batches with `create` action, this means that duplicate records may be created.
+
+Troubleshooting that kind of thing is inherently complex, and it was comparatively simple to just let random duplicates get created and build a duplicate checker/deleter functionality into this tool to take care of them.
+

@@ -117,10 +117,27 @@ Given the above assumptions, for the mapping process, it:
 For the record transfer process, the assumption that no one is working in an instance means we do not have to be mindful of performance implications of hammering the services API.
 
 == Application concepts
-batch:: A set of records derived from a given CSV file, mapped to CS XML, and uploaded to S3 for CS ingest. All records in a batch are of one mappable record type (e.g. collectionobject, person-local, nonhierarchicalrelationship). A batch includes the records and reports generated at various steps of the batch workflow, all of which are written into a batch-specific directory.
-batches csv:: The CSV file recording all active batches. By default, written to `base_dir/batches.csv`
-cacheable record type/subtype:: form of record type name that matches what is needed in database queries to get the info to be cached
-mappable record type::  form of record type name corresponding to record mapper instructions and service api path for transferring records of that type
+=== batch
+
+A set of records derived from a given CSV file, mapped to CS XML, and uploaded to S3 for CS ingest. All records in a batch are of one mappable record type (e.g. collectionobject, person-local, nonhierarchicalrelationship). A batch includes the records and reports generated at various steps of the batch workflow, all of which are written into a batch-specific directory.
+
+=== batches csv
+
+The CSV file recording all active batches, and used to manage batch workflow. By default, written to `base_dir/batches.csv`
+
+=== duplicate records
+
+Two or more records of the same mappable record type which have the same value in their identifier field
+
+=== identifier field
+
+The human editable/viewable field containing a value serving as a record identifier. `objectnumber` for collection object, `termdisplayname` (initial) for authorities, `acquisitionreferencenumber` for acquisitions, etc. For each mappable_rectype, the `identifier_field` is specified in the `config` section of the JSON record mapper.
+
+=== mappable record type
+
+Form of record type name corresponding to a JSON record mapper and service api path for transferring records of that type
+
+Do `thor list rt` for a list of commands that will show you valid mappable record type values.
 
 
 
