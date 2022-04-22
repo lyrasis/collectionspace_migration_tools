@@ -28,6 +28,7 @@ module CollectionspaceMigrationTools
 
       def call
         batch = yield(CMT::Batch.find(batch_id))
+        return Failure("Batch #{batch_id} is not mappable") unless batch.mappable?
         
         if autocache
           _cc = yield(CMT::Caches::Clearer.call) if clearcache
