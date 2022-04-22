@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 require 'csv'
-require 'dry/monads'
 require 'fileutils'
-require 'set'
 require 'smarter_csv'
 
 module CollectionspaceMigrationTools
@@ -12,10 +10,14 @@ module CollectionspaceMigrationTools
     class BatchTermReporter
       include Dry::Monads[:result]
 
+      def self.headers
+        ['type', 'subtype', 'vocabulary', 'term', 'fingerprint']
+      end
+      
       def initialize(output_dir)
         @path = "#{output_dir}/missing_terms_full.csv"
         @final_path = "#{output_dir}/missing_terms.csv"
-        CSV.open(path, 'wb'){ |csv| csv << ['type', 'subtype', 'vocabulary', 'term', 'fingerprint'] }
+        CSV.open(path, 'wb'){ |csv| csv << self.class.headers }
         @status = :created
       end
 
