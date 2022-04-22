@@ -40,6 +40,13 @@ module CollectionspaceMigrationTools
       Success()
     end
 
+    def prep_missing_terms(id)
+      _split = yield(CMT::Batch::MissingTerms::ReportSplitter.call(batch_id: id))
+      batches = yield(CMT::Batch::MissingTerms::BatchCreator.call(batch_id: id))
+
+      Success(batches)
+    end
+    
     def rollback_ingest(id)
       batch = yield(find(id))
       rolled_back = yield(batch.rollback_ingest)

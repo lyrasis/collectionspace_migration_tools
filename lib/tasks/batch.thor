@@ -71,6 +71,14 @@ class Batch < Thor
     )
   end
 
+  desc 'mtprep BATCHID', 'Splits missing term report into term source specific CSVs and creates batches to add terms'
+  def mtprep(id)
+    CMT::Batch.prep_missing_terms(id).either(
+      ->(success){ puts "Created batches: #{success.join(', ')}"; exit(0) },
+      ->(failure){ puts failure.to_s; exit(1) }
+    )
+  end
+  
   desc 'rb_ingest BATCHID', "Clears the ingest-related columns for the batch in batches CSV and deletes any ingest reports"
   def rb_ingest(id)
     CMT::Batch.rollback_ingest(id).either(

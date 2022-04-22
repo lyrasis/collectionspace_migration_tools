@@ -29,14 +29,17 @@ module CollectionspaceMigrationTools
           return Success('No missing terms batches to create') if paths.empty?
           
           adds = yield(do_adds(paths))
+          @created = adds.select(&:success?)
+            .map{ |res| res.value!['id'] }
+          
           _fails = yield(check_results(adds))
           
-          Success()
+          Success(created)
         end
         
         private
 
-        attr_reader :id, :source_dir, :batch_adder
+        attr_reader :id, :source_dir, :batch_adder, :created
 
         def addable?(path)
           prefix = "#{id}_missing_"
