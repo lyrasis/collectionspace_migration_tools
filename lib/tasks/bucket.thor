@@ -6,12 +6,20 @@ require 'thor'
 # tasks targeting S3 bucket
 class Bucket < Thor
   include Dry::Monads[:result]
+
+  desc 'empty', 'deletes all objects from bucket'
+  def empty
+    CMT::S3::Bucket.empty.either(
+      ->(success){ puts success.to_s },
+      ->(failure){ puts failure.to_s }
+    )
+  end
   
   desc 'objs', 'returns keys of objects in bucket'
   def objs
-    CMT::S3::BucketLister.call.either(
+    CMT::S3::Bucket.objects.either(
       ->(list){ handle_list(list) },
-      ->(failure){ puts failure.to_s; exit }
+      ->(failure){ puts failure.to_s }
     )
   end
 
@@ -21,6 +29,7 @@ class Bucket < Thor
         puts "Empty bucket"
       else
         puts list
+        puts "Object count: #{list.length}"
       end
     end
   end

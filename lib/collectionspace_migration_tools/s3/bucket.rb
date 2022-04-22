@@ -18,9 +18,9 @@ module CollectionspaceMigrationTools
       def empty(batch_id = nil)
         objs = batch_id ? yield(batch_objects(batch_id)) : yield(objects)
         client = yield(CMT::Build::S3Client.call)
-        _emptied = yield(CMT::S3::Emptier.call(client: client, objects: objs))
+        emptied = yield(CMT::S3::Emptier.call(client: client, list: objs))
 
-        Success()
+        Success(emptied)
       end
 
       def objects
