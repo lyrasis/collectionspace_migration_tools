@@ -12,7 +12,7 @@ endif::[]
 
 = Collectionspace Migration Tools
 
-[IMPORTANT]
+[CAUTION]
 ====
 Neither CollectionSpace (the organization) nor LYRASIS offers support for `collectionspace_migration_tools`.
 

@@ -47,7 +47,7 @@ There are two options for moving completed batches out of the batches CSV:
 delete:: Deletes batch directory and deletes row for batch from batches CSV
 +++<s>+++archive+++</s>+++:: Zips batch directory and moves it to `batch_data/archives` directory. Moves row for batch from batches CSV to `batch_data/archives/archived_batches.csv`
 
-The `delete` and +++<s>+++`archive`+++<\s>+++ commands can both be run:
+The `delete` and +++<s>+++`archive`+++</s>+++ commands can both be run:
 
 * for a single batch (`thor batch:delete obj12`); OR
 * on all completed batches (`thor batches:delete_done`). This one assumes you have run `thor batches:mark_done` and/or manually marked batches done in the batches CSV
