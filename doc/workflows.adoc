@@ -38,8 +38,35 @@ NOTE: strike-through formatting indicates the option/command is not yet implemen
 * Mark completed batches as done (`batches:mark_done`)
 * Delete completed batches (`batches:delete_done`)
 
-=== Managing batches
+[TIP]
+====
+You can't run a step on a batch if you have already run that step.
 
+For example, if you get some warnings/errors when mapping batch 1, resolve the issues, and want to map again, you will get an error.
+
+Each step thus has a rollback (rb) command:
+
+* `thor batch:rb_map BATCHID`
+* `thor batch:rb_upload BATCHID`
+* `thor batch:rb_ingstat BATCHID`
+
+These clear any data entered in the batches.csv, and delete any step-specific files.
+====
+
+=== Managing batches
+==== Listing batches in given workflow state
+
+* `thor batches:to_map`
+* `thor batches:to_upload`
+* `thor batches:to_ingcheck`
+
+==== Running `map`, `upload`, or `ingstat` on all batches ready
+
+* `thor batches:map`
+* `thor batches:upload`
+* `thor batches:ingcheck`
+
+==== Cleaning out finished batches
 The batches CSV isn't really intended as a permanent record of all work done in a given instance. It can be useful to keep some completed batches with errors or warnings in the batches CSV as a reminder to check/handle the records that didn't work as expected the first time. But, once you are done with a batch and tasks related to it, it is best to move it out of the batches CSV.
 
 There are two options for moving completed batches out of the batches CSV:
@@ -105,7 +132,7 @@ The tool grabs all unique values from these columns in the batch source CSV and 
 
 ===== objecthierarchy
 
-objecthierarchy and collectionobject
+objecthierarchy and collectionobject CSIDs are cached
 
 
 == Step details
@@ -163,7 +190,7 @@ Includes the following columns:
 * `cmt_outcome`: `success` if XML was created and saved; `failure` if not
 * `cmt_output_file`: name of XML file if created (so you can find a specific record easily for review)
 * `cmt_s3_key`: string that will be used as the AWS S3 object key when XML file is uploaded to bucket. This is a Base64 url-safe encoded string created from:
-** +++<s>+++batch id+++</s>+++
+** batch id
 ** services api path (includes record csid for updates/deletes, includes blobUri for media with files to ingest)
 ** identifier
 ** action (will control what API method is used to transfer record)
@@ -282,7 +309,7 @@ In this step we do our best to determine:
 - whether there were any failures and why
 - whether any duplicates were added due to race conditions in the AWS Lambda processing
 
-This step is a little tricky because the S3/Lambda side of things has no concept of a batch at all. We fake that by the object keys for a batch all starting with the batch id.
+This step is a little tricky because the S3/Lambda side of things has no concept of a batch at all. We fake that by prefixing the object keys with the batch id.
 
 Also, the AWS side of things generates logs but does not report back anything coherent about failures. At last check, the log message containing the actual reason for an ingest failure did not also contain the S3 object key or anything else we can easily use to connect an error message to information on our end.  
 
