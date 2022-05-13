@@ -90,7 +90,7 @@ module CollectionspaceMigrationTools
       def extract_authority_hierarchy_rectypes
         puts "Analyzing authority_hierarchy source CSV for record types to csid-cache..."
         stime = Time.now
-        res = Parallel.map(chunks, in_processes: CMT.config.system.max_threads) do |chunk|
+        res = Parallel.map(chunks, in_processes: CMT.config.system.max_processes) do |chunk|
           authority_hierarchy_worker(chunk)
         end
         elapsed = Time.now - stime
@@ -105,7 +105,7 @@ module CollectionspaceMigrationTools
       def extract_nhr_rectypes
         puts "Analyzing nonhierarchicalrelationship source CSV for record types to csid-cache..."
         stime = Time.now
-        res = Parallel.map(chunks, in_processes: CMT.config.system.max_threads) do |chunk|
+        res = Parallel.map(chunks, in_processes: CMT.config.system.max_processes) do |chunk|
           nhr_worker(chunk)
         end
         elapsed = Time.now - stime

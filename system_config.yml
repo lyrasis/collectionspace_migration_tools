@@ -1,3 +1,4 @@
 system:
-  csv_chunk_size: 5
+  csv_chunk_size: 50
   max_threads: 6
+  max_processes: 6

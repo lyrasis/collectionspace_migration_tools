@@ -60,7 +60,7 @@ module CollectionspaceMigrationTools
       def process
         puts "Mapping CSV rows to CS XML..."
 
-        Parallel.map(chunks, in_processes: CMT.config.system.max_threads) do |chunk|
+        Parallel.map(chunks, in_processes: CMT.config.system.max_processes) do |chunk|
           worker(chunk)
         end
       rescue StandardError => err
