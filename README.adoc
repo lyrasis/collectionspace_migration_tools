@@ -45,9 +45,23 @@ If you do not do this step, and running a command you see in the documentation f
 === Redis config
 This should "just work" without you having to do anything, but you might want to change it if the ports being used for Redis conflict with something you use for other work.
 
-If you want to change the Redis ports, you need to update them in the `./docker-compose.yml` file (which builds the Redis instances and makes them locally accessible via the given ports) and the `./redis.yml` file (which tells the application which port/Redis instance to use for storing RefNames vs. CSIDs).
+If you want to change the Redis ports, you need to update them in two places:
+
+- the `./docker-compose.yml` file (which builds the Redis instances and makes them locally accessible via the given ports)
+- the `./redis.yml` file (which tells the application which port/Redis instance to use for storing RefNames vs. CSIDs)
 
 Nothing in `./redis.yml` is sensitive, as it's all just on your local machine.
+
+=== System config
+You may wish to tweak the settings in `system_config.yml`. These include:
+
+csv_chunk_size:: The use/purpose of reading CSVs in chunks is explained in https://xjlin0.github.io/tech/2015/05/25/faster-parsing-csv-with-parallel-processing/[Faster Parsing CSV With Parallel Processing]. Each chunk is sent to a parallel worker for processing. A chunk with more rows will take longer to process, but I have not investigated the tradeoff between queueing up/passing on more chunks vs. larger chunks.
+max_threads:: Maximum number of threads that will be spun up for a given https://github.com/grosser/parallel[parallel] process run in threads.
+max_processes:: Maximum number of processes that will be spun up for a given https://github.com/grosser/parallel[parallel] process run in processes.
+
+NOTE: At present, I have not done much testing to figure out optimal settings for these. I _assume_ if things are running super slowly, try upping max_threads/max_processes. If your system is too strained, lower max_threads/max_processes.
+
+TIP: You can find what uses threads vs. processes by searching this codebase for `CMT.config.system.max_threads` and `CMT.config.system.max_processes`.
 
 == Per-instance setup
 
@@ -55,9 +69,9 @@ You will need to:
 
 * have admin-level credentials to the CS instance
 * have login info for connecting to the database for the CS instance
-* request an ingest S3 bucket be set up for the CS instance (currently Mark has to do this)
+* have credentials for the ingest S3 bucket be set up for the CS instance (currently we need to request that Mark set this bucket up and put the credentials in LastPass)
 
-See https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/client_config_management.adoc[client config management documentation]
+See https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/client_config_management.adoc[client config management documentation] for more details.
 
 == Usage
 Ensure desired config is in place (See <<one-time-setup>> and <<per-instance-setup>> sections above)
