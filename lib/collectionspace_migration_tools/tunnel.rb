@@ -23,7 +23,8 @@ module CollectionspaceMigrationTools
     def status
       result = `ps -o pid -o ppid -o command`
         .split("\n")
-        .select{ |process| process.start_with?("#{pid} #{Process.pid} ssh -N -L") }
+        .map(&:strip)
+        .select{ |process| process.start_with?(/#{pid} +#{Process.pid} +ssh -N -L/) }
       result.empty? ? :closed : :open
     end
   end
