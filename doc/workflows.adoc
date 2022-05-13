@@ -33,9 +33,10 @@ NOTE: strike-through formatting indicates the option/command is not yet implemen
 ** `thor batch:upload obj12`
 * Run ingest status report - may need to be run repeatedly, if a batch takes a long time to be processed
 ** `thor batch:ingstat obj12`
-* If any records failed to ingest, run +++<s>+++`batch:cb`+++</s>+++ (cb = clear bucket)
-* If there were any duplicates added, run +++<s>+++`batch:dd`+++</s>+++ (dd = delete duplicates. See important notes on this in step details below)
-* Mark completed batches as done
+* If any records failed to ingest, run `batch:cb` (cb = clear bucket)
+* If there were any duplicates added, run `duplicates:delete RECTYPE` (See important notes on this in step details below)
+* Mark completed batches as done (`batches:mark_done`)
+* Delete completed batches (`batches:delete_done`)
 
 === Managing batches
 
