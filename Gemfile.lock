@@ -1,19 +1,19 @@
 GIT
   remote: https://github.com/collectionspace/collectionspace-client.git
-  revision: 79853aa925be92c2f57f5c1621dee51b90a88ff5
-  branch: migration-tooling
+  revision: b1240d71ca95085ece7b3d1f2f067b538ab9eb2f
+  tag: v0.14.1
   specs:
-    collectionspace-client (0.14.0)
+    collectionspace-client (0.14.1)
       httparty
       json
       nokogiri
 
 GIT
   remote: https://github.com/collectionspace/collectionspace-mapper.git
-  revision: eff41712a222e79f3727cbc9643600a510bcd818
-  branch: migration-tooling
+  revision: 2cacce9e6584e90d2773d661574af6aa78670370
+  tag: v4.0.0
   specs:
-    collectionspace-mapper (3.0.0)
+    collectionspace-mapper (4.0.0)
       chronic
       dry-configurable (~> 0.14)
       facets
@@ -24,8 +24,8 @@ GIT
 
 GIT
   remote: https://github.com/collectionspace/collectionspace-refcache.git
-  revision: dd1a2e07aa7609d6d61279faa2ddb1ee6a9c352a
-  branch: migration-tooling
+  revision: ade17428230a7b3d3d05d7384975d71bc866711f
+  tag: v1.0.0
   specs:
     collectionspace-refcache (1.0.0)
       redis (~> 4.2.1)
@@ -167,7 +167,7 @@ GEM
       ruby2_keywords
     multi_xml (0.6.0)
     nenv (0.3.0)
-    nokogiri (1.13.4-x86_64-darwin)
+    nokogiri (1.13.6-x86_64-darwin)
       racc (~> 1.4)
     notiffany (0.1.3)
       nenv (~> 0.1)
