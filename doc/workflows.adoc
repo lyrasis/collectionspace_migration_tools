@@ -64,7 +64,11 @@ There are two options related to this behavior:
 `clear_cache_before_refresh` (in client_config.yml) or `--clearcache` (per `thor batch:map` command):: **If true**, caches will be cleared before they are auto refreshed. This is the safest option, as it will ensure deleted items are not still in the cache, and the correct values are cached for any duplicates since cleaned up. If you know only additions/updates have been made, you can set to false to save a bit of time. This has no effect if `auto_refresh_cache_before_mapping` = `false`.
 
 === How autocaching works
-If autocaching is enabled, the first step of the mapping process determining the refname and csid cache dependencies for the batch, querying the database for that data, and re-caching it. 
+If autocaching is enabled, the first step of the mapping process involves:
+
+* determining the refname and csid cache dependencies for the batch, based on record type and fields populated
+* querying the database for that data
+* re-caching the query results 
 
 ==== For objects, procedures, and authorities
 The JSON record mapper for each record type specifies vocabulary or authority term sources and transformations for each possible field.
