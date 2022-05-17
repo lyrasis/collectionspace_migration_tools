@@ -33,7 +33,7 @@ NOTE: strike-through formatting indicates the option/command is not yet implemen
 ** `thor batch:upload obj12`
 * Run ingest status report - may need to be run repeatedly, if a batch takes a long time to be processed
 ** `thor batch:ingstat obj12`
-* If any records failed to ingest, run `batch:cb` (cb = clear bucket)
+* If any records failed to ingest, run `batch:cb BATCHID` (cb = clear bucket) after doing any troubleshooting/etc
 * If there were any duplicates added, run `duplicates:delete RECTYPE` (See important notes on this in step details below)
 * Mark completed batches as done (`batches:mark_done`)
 * Delete completed batches (`batches:delete_done`)
@@ -51,6 +51,14 @@ Each step thus has a rollback (rb) command:
 * `thor batch:rb_ingstat BATCHID`
 
 These clear any data entered in the batches.csv, and delete any step-specific files.
+====
+
+[TIP]
+====
+I've found that if an ingest initially appears to be complete with errors, if I let it sit there for longer, sometimes the errors have been resolved. I think this is related to delay on re-trying errors in the S3 ingest process. The process for rechecking ingest status would be:
+
+`thor batch:rb_ingstat BATCHID`
+`thor batch:ingstat BATCHID`
 ====
 
 === Managing batches
