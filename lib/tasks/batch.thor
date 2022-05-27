@@ -71,6 +71,15 @@ class Batch < Thor
     )
   end
 
+  desc 'map_warnings BATCHID', "List unique warnings from batch mapper_report.csv"
+  option :with_counts, required: false, type: :boolean, default: false
+  def map_warnings(id)
+    CMT::Batch::MapWarningsReporter.call(batch_id: id).either(
+      ->(warnings){ options[:with_counts] ? report_warnings_with_counts(warnings) : report_warnings(warnings) },
+      ->(failure){ puts failure.to_s; exit(1) }
+    )
+  end
+
   desc 'mtprep BATCHID', 'Splits missing term report into term source specific CSVs and creates batches to add terms'
   def mtprep(id)
     CMT::Batch.prep_missing_terms(id).either(
@@ -123,6 +132,20 @@ class Batch < Thor
     def put_added(success)
       puts "Successfully added batch with the following info:"
       success.each{ |key, val| puts "  #{key}: #{val}" }
+    end
+
+    def report_warnings(warnings)
+      puts warnings.keys.sort
+      exit(0)
+    end
+
+    def report_warnings_with_counts(warnings)
+      max_val_length = warnings.values.map(&:to_s).sort_by{ |val| val.length }.reverse.first.length
+      
+      warnings.sort_by{ |_key, val| val }
+        .reverse
+        .each{ |key, val| puts "#{val.to_s.rjust(max_val_length)} : #{key}" }
+      exit(0)
     end
   end
 end
