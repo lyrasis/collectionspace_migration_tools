@@ -29,6 +29,7 @@ NOTE: strike-through formatting indicates the option/command is not yet implemen
 ** Manually add a new row to the batches CSV, populating `id`, `source_csv`, `mappable_rectype`, and `action` columns. Then run `thor batches:fix_csv` to have the `rec_ct` column populated by the tool.
 * Map batch to CS XML
 ** `thor batch:map obj12`
+** Examine warnings (`thor batch:map_warnings obj12`, thor batch:map_warnings obj12 --with_counts`, or in `mapper_report.csv`)
 * Upload resulting CS XML to S3 bucket
 ** `thor batch:upload obj12`
 * Run ingest status report - may need to be run repeatedly, if a batch takes a long time to be processed
