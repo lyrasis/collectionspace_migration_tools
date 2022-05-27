@@ -88,8 +88,8 @@ class Batch < Thor
     )
   end
   
-  desc 'rb_ingest BATCHID', "Clears the ingest-related columns for the batch in batches CSV and deletes any ingest reports"
-  def rb_ingest(id)
+  desc 'rb_ingstat BATCHID', "Clears the ingest-related columns for the batch in batches CSV and deletes any ingest reports"
+  def rb_ingstat(id)
     CMT::Batch.rollback_ingest(id).either(
       ->(success){ puts success; exit(0) },
       ->(failure){ puts failure.to_s; exit(1) }
