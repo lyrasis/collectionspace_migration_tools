@@ -369,7 +369,7 @@ Populates the following columns:
 
 Also prints this info to the screen at the end of the batch run.
 
-==== Media Handling
+=== Media Handling
 
 You can transfer media and import files by including a URI in `mediaFileURI` column of your CSV. This works for:
 
@@ -378,9 +378,26 @@ You can transfer media and import files by including a URI in `mediaFileURI` col
 
 WARNING: Ingesting records that trigger blob ingests remains flakier than ingesting other records. The speed at which records are ingested via this tool may be more likely to trigger throttling on the image downloading side. There are issues with ingesting blobs and finding/fixing failures even with CSV Importer, so there's still work to do...
 
-==== Upload step followups
+=== Upload step followups / ingest errors
 I have not run into enough problems on this step while developing/testing to see anything that can be systematized.
 
 Clearly you'll need to check out any reported upload errors.
 
 The number of reported ok uploads plus the number of reported upload errors should equal the number of successfully mapped records. There is https://github.com/lyrasis/collectionspace_migration_tools/issues/2[an issue] to add verification of this to the post-upload reporting.
+
+==== Invalid data in a structured date group
+
+The following in XML payload caused ingest error with 400 code:
+
+[source, xml]
+====
+<workDateGroupList>
+  <workDateGroup>
+    <dateDisplayDate>1881-</dateDisplayDate>
+    <scalarValuesComputed>false</scalarValuesComputed>
+    <dateEarliestScalarValue>1881-</dateEarliestScalarValue>
+  </workDateGroup>
+</workDateGroupList>
+====
+
+I believe this is caused by an invalid `dateEarliestScalarValue` value. `collectionspace-mapper` shouldn't be setting that value that way, so I am making an issue there.
