@@ -51,7 +51,12 @@ module CollectionspaceMigrationTools
       mappable.map{ |rectype| CMT::Parse::RecordMapper.call(rectype).value!.service_path_to_mappable }
         .inject({}, :merge)
     end
-    
+
+    def get_mappable_type_to_service_path_mapping
+      mappable.map{ |rectype| CMT::Parse::RecordMapper.call(rectype).value!.mappable_to_service_path }
+        .inject({}, :merge)
+    end
+
     def mappable
       @mappable ||= Dir.new(CMT.config.client.mapper_dir)
         .children
@@ -79,6 +84,10 @@ module CollectionspaceMigrationTools
 
     def service_path_to_mappable_type_mapping
       @service_path_to_mappable_type_mapping ||= get_service_path_to_mappable_type_mapping
+    end
+
+    def mappable_type_to_service_path_mapping
+      @mappable_type_to_service_path_mapping ||= get_mappable_type_to_service_path_mapping
     end
 
     def to_obj(rectype)

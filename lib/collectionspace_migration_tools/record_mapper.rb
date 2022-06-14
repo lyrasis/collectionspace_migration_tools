@@ -59,6 +59,10 @@ module CollectionspaceMigrationTools
     def id_field
       config['identifier_field']
     end
+
+    def mappable_to_service_path
+      {config['recordtype'] => service_path}
+    end
     
     def refname_columns
       mappings.select{ |mapping| requires_refname?(mapping) }
