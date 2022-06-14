@@ -10,7 +10,8 @@ module CollectionspaceMigrationTools
           end
           
           def signature(row)
-            [row['type'], row['id'], row[cache_type.to_s]]
+            type = CMT::RecordTypes.mappable_type_to_service_path_mapping[row['type']]
+            [type, row['id'], row[cache_type.to_s]]
           end
         end
       end

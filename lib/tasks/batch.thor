@@ -115,7 +115,7 @@ class Batch < Thor
   desc 'show BATCHID', 'Shows batch data currently in batches CSV'
   def show(id)
     CMT::Batch.find(id).either(
-      ->(success){ puts success; exit(0) },
+      ->(batch){ puts batch; exit(0) },
       ->(failure){ puts failure.to_s; exit(1) }
     )
   end
