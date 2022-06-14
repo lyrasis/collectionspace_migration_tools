@@ -56,7 +56,7 @@ module CollectionspaceMigrationTools
       rescue StandardError => err
         Failure([:error_on_write, response, err])
       else
-       File.exist?(path) ? Success(response) : Failure([:file_not_written, response])
+        File.exist?(path) ? Success(response) : Failure([:file_not_written, response])
       end
     end
   end
