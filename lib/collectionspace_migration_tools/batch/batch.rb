@@ -90,6 +90,16 @@ module CollectionspaceMigrationTools
         data ? Success(self) : Failure("No batch with id: #{id}")
       end
 
+      def to_s
+        datastr = data.reject{ |_key, val| val.nil? || val.empty? }
+          .map{ |key, val| "  #{key}: #{val}" }
+          .join("\n")
+        <<~OBJ
+        #<#{self.class.name}
+        #{datastr}>
+        OBJ
+      end
+      
       private
 
       attr_reader :csv, :id, :data, :dirpath
