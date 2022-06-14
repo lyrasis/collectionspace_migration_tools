@@ -25,8 +25,8 @@ module CollectionspaceMigrationTools
       # @param row [CSV::Row] with headers
       def call(row)
         map_row(row).either(
-          ->(result){ writer.call(result) },
-          ->(result){ reporter.report_failure(result, self) }
+          ->(successes){ successes.each{ |success| writer.call(success.value!) } },
+          ->(failure){ handle_failure(failure) }
         )
       end
 
@@ -38,6 +38,19 @@ module CollectionspaceMigrationTools
       
       attr_reader :validator, :mapper, :reporter, :writer
 
+      def handle_failure(failure)
+        if failure.is_a?(CMT::Failure)
+          reporter.report_failure(failure, self)
+        else
+          failure.each do |result|
+            result.either(
+              ->(success){ writer.call(success) },
+              ->(failed){ reporter.report_failure(failed, self) }
+            )
+          end
+        end
+      end
+      
       def map_row(row)
         validated = yield(validator.call(row))
         mapped = yield(mapper.call(validated))
