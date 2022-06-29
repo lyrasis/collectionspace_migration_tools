@@ -107,7 +107,7 @@ module CollectionspaceMigrationTools
     def valid_mappable?(rectype)
       return Success(rectype) if mappable.any?(rectype)
       
-      Failure("Invalid rectype: #{rectype}. Do `thor rectypes:map` to see allowed values")
+      Failure("Invalid rectype: #{rectype}. Do `thor rt:all` to see allowed values")
     end
   end
 end
