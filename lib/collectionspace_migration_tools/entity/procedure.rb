@@ -39,7 +39,7 @@ module CollectionspaceMigrationTools
         
         query = <<~SQL
             select oap.#{field} from #{mapper.base_namespace} oap
-            left join misc on oap.#{field} = misc.id
+            left join misc on oap.id = misc.id
             where misc.lifecyclestate != 'deleted'
             group by oap.#{field}
             having count(oap.#{field})>1
