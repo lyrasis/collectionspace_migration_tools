@@ -56,14 +56,14 @@ module CollectionspaceMigrationTools
       end
 
       rule(:profile) do
-        ok = %w[anthro bonsai botgarden core fcart herbarium lhmc materials publicart]
+        ok = %w[anthro bonsai botgarden core fcart herbarium lhmc materials ohc publicart]
         unless ok.any?(value)
           key.failure("must be one of: #{ok.join(', ')}")
         end
       end
 
       rule(:profile_version) do
-        unless /^\d+-\d+-\d+$/.match(value)
+        unless /^(\d+-){2,}\d+$/.match(value)
           key.failure('must follow pattern: number hyphen number hyphen number')
         end
       end
