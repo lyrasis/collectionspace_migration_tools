@@ -28,7 +28,7 @@ These changes are merged into the `main` branch, but have not been released. Aft
 == 0.0.2 (2022-10-18)
 
 === Bugfixes
-* Bumps version of `collectionspace-mapper` used, to get fixes for date processing
+* Bumps version of `collectionspace-mapper` used, to get fixes for date processing (https://github.com/lyrasis/collectionspace_migration_tools/pull/17[PR#17])
 
 === Added
 * `ohc` as valid profile in `config_client_contract` (https://github.com/lyrasis/collectionspace_migration_tools/pull/15[PR#15])
