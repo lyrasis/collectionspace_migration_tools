@@ -10,10 +10,10 @@ GIT
 
 GIT
   remote: https://github.com/collectionspace/collectionspace-mapper.git
-  revision: aea6f318a9b7838dcb04a162b04f626cb2dea9b4
-  tag: v4.0.6
+  revision: 0e8d150ea0939fdd555f4efabc99532359961f0d
+  tag: v4.0.7
   specs:
-    collectionspace-mapper (4.0.6)
+    collectionspace-mapper (4.0.7)
       activesupport (= 6.0.4.7)
       chronic
       dry-configurable (~> 0.14)
@@ -76,14 +76,15 @@ GEM
       reline (>= 0.2.7)
     diff-lcs (1.5.0)
     docile (1.4.0)
-    dry-configurable (0.14.0)
-      concurrent-ruby (~> 1.0)
+    dry-configurable (0.16.1)
       dry-core (~> 0.6)
+      zeitwerk (~> 2.6)
     dry-container (0.9.0)
       concurrent-ruby (~> 1.0)
       dry-configurable (~> 0.13, >= 0.13.0)
-    dry-core (0.7.1)
+    dry-core (0.9.1)
       concurrent-ruby (~> 1.0)
+      zeitwerk (~> 2.6)
     dry-events (0.3.0)
       concurrent-ruby (~> 1.0)
       dry-core (~> 0.5, >= 0.5)
@@ -170,12 +171,12 @@ GEM
     mime-types (3.4.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2021.1115)
-    minitest (5.16.2)
+    minitest (5.16.3)
     mock_redis (0.30.0)
       ruby2_keywords
     multi_xml (0.6.0)
     nenv (0.3.0)
-    nokogiri (1.13.6-x86_64-darwin)
+    nokogiri (1.13.9-x86_64-darwin)
       racc (~> 1.4)
     notiffany (0.1.3)
       nenv (~> 0.1)
@@ -261,18 +262,18 @@ GEM
     thread_safe (0.3.6)
     time_up (0.0.7)
     tty-color (0.6.0)
-    tzinfo (1.2.9)
+    tzinfo (1.2.10)
       thread_safe (~> 0.1)
     unicode-display_width (2.1.0)
     versionaire (10.2.0)
       refinements (~> 9.2)
     webrick (1.7.0)
     xdg (6.3.0)
-    xxhash (0.4.0)
+    xxhash (0.5.0)
     yard (0.9.27)
       webrick (~> 1.7.0)
     zache (0.12.0)
-    zeitwerk (2.5.4)
+    zeitwerk (2.6.1)
 
 PLATFORMS
   x86_64-darwin-20

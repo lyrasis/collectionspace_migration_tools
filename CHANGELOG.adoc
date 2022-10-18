@@ -18,16 +18,23 @@ These changes are merged into the `main` branch, but have not been released. Aft
 === Breaking
 
 === Added
-* `ohc` as valid profile in `config_client_contract` (https://github.com/lyrasis/collectionspace_migration_tools/pull/15[PR#15])
-
-=== Changed
-* upgrade `pg` gem (https://github.com/lyrasis/collectionspace_migration_tools/pull/15[PR#15])
 
 === Bugfixes
 
 === Deleted
 
 === Deprecated/Will break in a future version
+
+== 0.0.2 (2022-10-18)
+
+=== Bugfixes
+* Bumps version of `collectionspace-mapper` used, to get fixes for date processing (https://github.com/lyrasis/collectionspace_migration_tools/pull/17[PR#17])
+
+=== Added
+* `ohc` as valid profile in `config_client_contract` (https://github.com/lyrasis/collectionspace_migration_tools/pull/15[PR#15])
+
+== 0.0.1 (2022-02-11)
+* Added initial working version (skeletal!)
 
 == 0.0.0 (2022-02-01)
 
