@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document name="collectionobjects">
+    <ns2:collectionobjects_common xmlns:ns2="http://collectionspace.org/services/collectionobject"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <objectNumber>2022.1.6</objectNumber>
+        <publishToList>
+            <publishTo>urn:cspace:anthro.collectionspace.org:vocabularies:name(publishto):item:name(cspacepub)'CollectionSpace
+                Public Browser'</publishTo>
+        </publishToList>        
+        <objectProductionDateGroupList>
+            <objectProductionDateGroup>
+                <scalarValuesComputed>true</scalarValuesComputed>
+                <dateEarliestSingleCertainty/>
+                <dateEarliestSingleQualifierUnit/>
+                <dateDisplayDate>1880s</dateDisplayDate>
+                <dateLatestScalarValue>1889-12-31T00:00:00.000Z</dateLatestScalarValue>
+                <dateEarliestSingleQualifierValue/>
+                <datePeriod/>
+                <dateLatestEra>urn:cspace:anthro.collectionspace.org:vocabularies:name(dateera):item:name(ce)'CE'</dateLatestEra>
+                <dateEarliestSingleDay>1</dateEarliestSingleDay>
+                <dateEarliestSingleQualifier/>
+                <dateEarliestSingleYear>1880</dateEarliestSingleYear>
+                <dateLatestCertainty/>
+                <dateAssociation/>
+                <dateLatestDay>31</dateLatestDay>
+                <dateEarliestSingleMonth>1</dateEarliestSingleMonth>
+                <dateEarliestSingleEra>urn:cspace:anthro.collectionspace.org:vocabularies:name(dateera):item:name(ce)'CE'</dateEarliestSingleEra>
+                <dateLatestYear>1889</dateLatestYear>
+                <dateLatestQualifierUnit/>
+                <dateNote/>
+                <dateLatestQualifierValue/>
+                <dateLatestQualifier/>
+                <dateEarliestScalarValue>1880-01-01T00:00:00.000Z</dateEarliestScalarValue>
+                <dateLatestMonth>12</dateLatestMonth>
+            </objectProductionDateGroup>
+        </objectProductionDateGroupList>
+        <objectProductionPersonGroupList>
+            <objectProductionPersonGroup>
+                <objectProductionPerson>urn:cspace:anthro.collectionspace.org:personauthorities:name(person):item:name(JenniferBrown1666363374930)'Jennifer
+                    Brown'</objectProductionPerson>
+                <objectProductionPersonRole/>
+            </objectProductionPersonGroup>
+        </objectProductionPersonGroupList>
+    </ns2:collectionobjects_common>
+</document>
