@@ -19,10 +19,6 @@ module CollectionspaceMigrationTools
       rule(:db_host) do
         key.failure(%(must not contain "-bastion")) if value['-bastion']
       end
-
-      rule(:bastion_host) do
-        key.failure(%(must contain "-bastion")) unless value['-bastion']
-      end
     end
   end
 end
