@@ -10,13 +10,14 @@ GIT
 
 GIT
   remote: https://github.com/collectionspace/collectionspace-mapper.git
-  revision: 0e8d150ea0939fdd555f4efabc99532359961f0d
-  tag: v4.0.7
+  revision: 2ba812b6b4aeab28bb55f5009b9d36dda91b10d7
+  tag: v4.1.0
   specs:
-    collectionspace-mapper (4.0.7)
+    collectionspace-mapper (4.1.0)
       activesupport (= 6.0.4.7)
       chronic
       dry-configurable (~> 0.14)
+      dry-monads (~> 1.4)
       memo_wise (~> 1.1.0)
       nokogiri (~> 1.13.3)
       xxhash (>= 0.4.0)
