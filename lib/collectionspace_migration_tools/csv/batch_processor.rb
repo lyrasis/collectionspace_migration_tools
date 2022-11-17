@@ -40,10 +40,10 @@ module CollectionspaceMigrationTools
         else
           _delete_tr = yield(term_reporter.delete)
         end
-        
+
         Success(output_dir)
       end
-      
+
       def preprocess
         CMT::Csv::BatchPreprocessor.call(handler: handler, first_row: first_row, batch: self)
       end
@@ -56,7 +56,7 @@ module CollectionspaceMigrationTools
             strings_as_keys: true
           })
       end
-      
+
       def process
         puts "Mapping CSV rows to CS XML..."
 
@@ -77,13 +77,13 @@ module CollectionspaceMigrationTools
       def to_monad
         Success(self)
       end
-      
+
       def to_s
         "<##{self.class}:#{self.object_id.to_s(8)} #{csv_path}>"
       end
 
       private
-      
+
       attr_reader :csv_path, :handler, :first_row, :row_processor, :term_reporter, :output_dir
     end
   end
