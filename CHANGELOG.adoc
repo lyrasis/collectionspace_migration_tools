@@ -22,12 +22,20 @@ These changes are merged into the `main` branch, but have not been released. Aft
 === Bugfixes
 
 === Changed
+
+=== Deleted
+
+=== Deprecated/Will break in a future version
+
+== 0.1.0 (2022-11-17)
+=== Added
+* Ability to ingest vocabulary terms. See https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/add_vocabulary_terms.adoc[documentation] (https://github.com/lyrasis/collectionspace_migration_tools/pull/21[PR#21])
+
+=== Changed
 * `bin/console` now uses Pry instead of IRB (https://github.com/lyrasis/collectionspace_migration_tools/pull/20[PR#20])
 
 === Deleted
 * Config validation constraint requiring `bastion-host` value to contain `bastion`. The host for tunneling for a project I am working on does not contain `bastion` (https://github.com/lyrasis/collectionspace_migration_tools/pull/19[PR#19])
-
-=== Deprecated/Will break in a future version
 
 == 0.0.2 (2022-10-18)
 
