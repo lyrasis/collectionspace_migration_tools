@@ -6,8 +6,8 @@ require 'dry/monads/do'
 module CollectionspaceMigrationTools
   module VocabularyTerms
     # All the preparatory stuff to successfully spin up a
-    #   CMT::VocabularyTerms::Adder
-    class AdderPreparer
+    #   CMT::VocabularyTerms::TermsProcessor
+    class TermsProcessorPreparer
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)
 
@@ -38,19 +38,12 @@ module CollectionspaceMigrationTools
             handler: handler,
             reporter: term_reporter
         )
+        processor = yield CMT::VocabularyTerms::TermsProcessor.new(
+          csv_path: csv_path,
+          adder: adder
+        )
 
-        binding.pry
-
-        # processor = yield(CMT::Csv::BatchProcessor.new(
-        #   csv_path: csv_path,
-        #   handler: handler,
-        #   first_row: row,
-        #   row_processor: row_processor,
-        #   term_reporter: term_reporter,
-        #   output_dir: output_dir
-        # ))
-
-        Success()
+        Success(processor)
       end
 
       private
