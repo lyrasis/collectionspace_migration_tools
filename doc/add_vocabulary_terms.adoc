@@ -1,0 +1,56 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+= Adding vocabulary terms
+
+toc::[]
+
+== Ingest CSV format
+
+....
+| vocab                | term        |
+|----------------------+-------------|
+| Annotation Type      | Credit line |
+| annotationType       | Gloss       |
+| annotationtype       | Reminder    |
+| personTermType       | Lender      |
+| Contact Person Roles | CEO         |
+....
+
+To note:
+
+* You can add terms to multiple vocabularies using from one CSV
+* `vocab` value accepts different formats of vocabulary names:
+** Display name, as seen in application > Tools > Term Lists. This is to eventually support end user use via the CSV Importer. **This format is case sensitive.**
+** Under-the-hood vocabulary machine name (or shortIdentifier). **This format is case insensitive**
+
+== Adding the terms
+
+`thor vt:add --csv path/to/ingest.csv`
+
+Progress can be seen as each term and whether its addition was a success or failure is printed to the screen.
+
+== Processing report
+
+A report is written to your project's `batch_data` directory.
+
+Report filename is: `vocab_terms_add_#{timestamp}.csv`
+
+Report format is like:
+
+....
+| vocab          | term               | status  | message                                                             |
+|----------------+--------------------+---------+---------------------------------------------------------------------|
+| persontermtype | Donor: Collections | failure | persontermtype/Donor: Collections already exists                    |
+| persontermtype | Foo                | success | /vocabularies/346cba7d-351f-423a-97e7/items/1cb5a388-46c9-4a14-b9f6 |
+| persontermtype | Bar                | success | /vocabularies/346cba7d-351f-423a-97e7/items/56f35743-fb41-40af-ae24 |
+....
