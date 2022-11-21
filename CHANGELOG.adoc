@@ -27,6 +27,10 @@ These changes are merged into the `main` branch, but have not been released. Aft
 
 === Deprecated/Will break in a future version
 
+== 0.1.1 (2022-11-21)
+=== Bugfixes
+* Use `collectionspace-mapper` v4.1.1 to get scalar date creation bugfix
+
 == 0.1.0 (2022-11-17)
 === Added
 * Ability to ingest vocabulary terms. See https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/add_vocabulary_terms.adoc[documentation] (https://github.com/lyrasis/collectionspace_migration_tools/pull/21[PR#21])

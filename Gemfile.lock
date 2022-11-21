@@ -10,10 +10,10 @@ GIT
 
 GIT
   remote: https://github.com/collectionspace/collectionspace-mapper.git
-  revision: 2ba812b6b4aeab28bb55f5009b9d36dda91b10d7
-  tag: v4.1.0
+  revision: f97f288c7bdaa8b7252b94bda473a3b550553497
+  tag: v4.1.1
   specs:
-    collectionspace-mapper (4.1.0)
+    collectionspace-mapper (4.1.1)
       activesupport (= 6.0.4.7)
       chronic
       dry-configurable (~> 0.14)
@@ -96,9 +96,10 @@ GEM
       dry-core (~> 0.5, >= 0.5)
     dry-matcher (0.9.0)
       dry-core (~> 0.4, >= 0.4.8)
-    dry-monads (1.4.0)
+    dry-monads (1.5.0)
       concurrent-ruby (~> 1.0)
-      dry-core (~> 0.7)
+      dry-core (~> 0.9, >= 0.9)
+      zeitwerk (~> 2.6)
     dry-schema (1.9.1)
       concurrent-ruby (~> 1.0)
       dry-configurable (~> 0.13, >= 0.13.0)
@@ -274,7 +275,7 @@ GEM
     yard (0.9.27)
       webrick (~> 1.7.0)
     zache (0.12.0)
-    zeitwerk (2.6.1)
+    zeitwerk (2.6.6)
 
 PLATFORMS
   x86_64-darwin-20
