@@ -27,6 +27,9 @@ These changes are merged into the `main` branch, but have not been released. Aft
 
 === Deprecated/Will break in a future version
 
+== 0.1.2 (2022-12-02)
+* Use `collectionspace-mapper` v4.1.2 to get error handling bugfix
+
 == 0.1.1 (2022-11-21)
 === Bugfixes
 * Use `collectionspace-mapper` v4.1.1 to get scalar date creation bugfix
