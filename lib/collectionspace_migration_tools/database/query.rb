@@ -8,7 +8,8 @@ module CollectionspaceMigrationTools
 
       def refnames
         %{ SELECT CC.REFNAME FROM PUBLIC.COLLECTIONSPACE_CORE CC
-           INNER JOIN MISC ON CC.ID = MISC.ID AND MISC.LIFECYCLESTATE != 'deleted'
+           INNER JOIN MISC ON CC.ID = MISC.ID
+             AND MISC.LIFECYCLESTATE != 'deleted'
            WHERE CC.URI not like '/contacts%'
            AND CC.URI not like '/relations%'
            AND CC.URI not like '/blobs%'

@@ -2,9 +2,10 @@
 
 require_relative '../../spec_helper'
 
-# These tests assume the correct action has been assigned by `CMT::XML::ServicesApiActionChecker`
-#   That is, we don't check here for weird edge cases where the response for a DELETE does not
-#   contain a CSID, etc.
+# These tests assume the correct action has been assigned by
+#   `CMT::XML::ServicesApiActionChecker`. That is, we don't check here for
+#   weird edge cases where the response for a DELETE does not contain a CSID,
+#   etc.
 
 RSpec.describe CollectionspaceMigrationTools::S3::ObjectKeyCreator do
   let(:separator){ CMT.config.client.s3_delimiter }
@@ -14,8 +15,10 @@ RSpec.describe CollectionspaceMigrationTools::S3::ObjectKeyCreator do
   let(:path){ svc_path }
   let(:rec_id){ '123' }
   let(:csid){ '456' }
-  let(:hashed){ Base64.urlsafe_encode64([batch, path, rec_id, action].join(separator)) }
-  
+  let(:hashed) do
+    Base64.urlsafe_encode64([batch, path, rec_id, action].join(separator))
+  end
+
   let(:response_new) do
     response = CollectionSpace::Mapper::Response.new({'objectnumber' => rec_id})
     response.merge_status_data({status: :new})
@@ -28,8 +31,8 @@ RSpec.describe CollectionspaceMigrationTools::S3::ObjectKeyCreator do
     response.identifier = rec_id
     response
   end
-  
-  
+
+
   describe '#call' do
     let(:result){ klass.call(response, action) }
 

@@ -11,7 +11,7 @@ module CollectionspaceMigrationTools
       include CMT::Batch::Mappable
       include CMT::Batch::Uploadable
       include CMT::Batch::Ingestable
-      
+
       def initialize(csv, id)
         @csv = csv
         @id = id
@@ -29,7 +29,7 @@ module CollectionspaceMigrationTools
 
       def is_done?
         return true if done? == 'y'
-        
+
         missing_vals = CMT::Batch::Csv::Headers.populated_if_done_headers
           .map{ |field| send(field.to_sym) }
           .select{ |val| val.nil? || val.empty? }
@@ -42,7 +42,7 @@ module CollectionspaceMigrationTools
 
         Success(val)
       end
-      
+
       def mark_done
         data['done?'] = 'y'
         rewrite
@@ -99,14 +99,14 @@ module CollectionspaceMigrationTools
         #{datastr}>
         OBJ
       end
-      
+
       private
 
       attr_reader :csv, :id, :data, :dirpath
 
       def delete_batch_dir
         return Success() unless dirpath
-        
+
         FileUtils.rm_rf(dirpath) if Dir.exists?(dirpath)
       rescue StandardError => err
         msg = "#{err.message} IN #{err.backtrace[0]}"

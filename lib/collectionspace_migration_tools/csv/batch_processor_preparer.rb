@@ -10,7 +10,7 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)
 
-      
+
       class << self
         def call(...)
           self.new(...).call
@@ -36,49 +36,58 @@ module CollectionspaceMigrationTools
 
       def call
         puts "Setting up for batch processing..."
-        
-        mapper = yield(CMT::Parse::RecordMapper.call(rectype))
-        batch_config = yield(CMT::Parse::BatchConfig.call)
-        handler = yield(CMT::Build::DataHandler.call(mapper, batch_config))
 
-        row_getter = yield(CMT::Csv::FirstRowGetter.new(csv_path))
-        checker = yield(CMT::Csv::FileChecker.call(csv_path, row_getter))
+        mapper = yield CMT::Parse::RecordMapper.call(rectype)
+        batch_config = yield CMT::Parse::BatchConfig.call
+        handler = yield CMT::Build::DataHandler.call(mapper, batch_config)
+
+        row_getter = yield CMT::Csv::FirstRowGetter.new(csv_path)
+        checker = yield CMT::Csv::FileChecker.call(csv_path, row_getter)
         row = checker[1]
 
-        services_path = yield(CMT::Xml::ServicesApiPathGetter.call(mapper))
-        action_checker = yield(CMT::Xml::ServicesApiActionChecker.new(action))
-        obj_key_creator = yield(CMT::S3::ObjectKeyCreator.new(svc_path: services_path, batch: batch))
-        namer = yield(CMT::Xml::FileNamer.new)
-        output_dir = yield(CMT::Batch::DirPathGetter.call(mapper, batch))
-        term_reporter = yield(CMT::Csv::BatchTermReporter.new(output_dir))
-        headers = row.headers.map(&:downcase)
-        reporter = yield(CMT::Csv::BatchReporter.new(output_dir: output_dir, fields: headers, term_reporter: term_reporter))
+        services_path = yield CMT::Xml::ServicesApiPathGetter.call(mapper)
+        action_checker = yield CMT::Xml::ServicesApiActionChecker.new(action)
+        obj_key_creator = yield CMT::S3::ObjectKeyCreator.new(
+          svc_path: services_path,
+          batch: batch
+        )
 
-        writer = yield(CMT::Xml::FileWriter.new(
+        namer = yield CMT::Xml::FileNamer.new
+        output_dir = yield CMT::Batch::DirPathGetter.call(mapper, batch)
+        term_reporter = yield CMT::Csv::BatchTermReporter.new(output_dir)
+        headers = row.headers.map(&:downcase)
+        reporter = yield CMT::Csv::BatchReporter.new(
+          output_dir: output_dir,
+          fields: headers,
+          term_reporter: term_reporter
+        )
+
+        writer = yield CMT::Xml::FileWriter.new(
           output_dir: output_dir,
           action_checker: action_checker,
           namer: namer,
           s3_key_creator: obj_key_creator,
-          reporter: reporter))
+          reporter: reporter
+        )
 
-        validator = yield(CMT::Csv::RowValidator.new(handler))
-        row_mapper = yield(CMT::Csv::RowMapper.new(handler))
-        
-        row_processor = yield(CMT::Csv::RowProcessor.new(
+        validator = yield CMT::Csv::RowValidator.new(handler)
+        row_mapper = yield CMT::Csv::RowMapper.new(handler)
+
+        row_processor = yield CMT::Csv::RowProcessor.new(
           validator: validator,
           mapper: row_mapper,
           reporter: reporter,
           writer: writer
-        ))
+        )
 
-        processor = yield(CMT::Csv::BatchProcessor.new(
+        processor = yield CMT::Csv::BatchProcessor.new(
           csv_path: csv_path,
           handler: handler,
           first_row: row,
           row_processor: row_processor,
           term_reporter: term_reporter,
           output_dir: output_dir
-        ))
+        )
 
         Success(processor)
       end

@@ -10,7 +10,7 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)
 
-      
+
       class << self
         def call(file_dir:)
           self.new(file_dir: file_dir).call
@@ -24,29 +24,36 @@ module CollectionspaceMigrationTools
       def call
         puts "Setting up for batch uploading..."
 
-        # Make sure mapper_report CSV is present and ok since we are using it to power our uploads
+        # Make sure mapper_report CSV is present and ok since we are using it
+        #   to power our uploads
         source_report_path = "#{file_dir}/mapper_report.csv"
-        row_getter = yield(CMT::Csv::FirstRowGetter.new(source_report_path))
-        checker = yield(CMT::Csv::FileChecker.call(source_report_path, row_getter))
+        row_getter = yield CMT::Csv::FirstRowGetter.new(source_report_path)
+        checker = yield CMT::Csv::FileChecker.call(
+          source_report_path,
+          row_getter
+        )
         headers = checker[1].headers.map(&:downcase)
 
-        # Verifiy our credentials/config work to create an S3 client and send a verifying command
-        #   via the client to our bucket
-        client = yield(CMT::Build::S3Client.call)
+        # Verifiy our credentials/config work to create an S3 client and send
+        #   a verifying command via the client to our bucket
+        client = yield CMT::Build::S3Client.call
 
-        reporter = yield(CMT::S3::UploadReporter.new(output_dir: file_dir, fields: headers))
+        reporter = yield CMT::S3::UploadReporter.new(
+          output_dir: file_dir,
+          fields: headers
+        )
 
-        uploader = yield(CMT::S3::ItemUploader.new(
+        uploader = yield CMT::S3::ItemUploader.new(
           file_dir: file_dir,
           client: client,
           reporter: reporter
-        ))
+        )
 
-        batch_uploader = yield(CMT::S3::BatchUploader.new(
+        batch_uploader = yield CMT::S3::BatchUploader.new(
           csv_path: source_report_path,
           uploader: uploader,
           reporter: reporter
-        ))
+        )
 
         Success(batch_uploader)
       end

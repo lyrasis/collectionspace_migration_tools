@@ -23,7 +23,12 @@ module CollectionspaceMigrationTools
         final_path = svc_path == '/media' ? media_path(response, base_path) : base_path
         result = Base64.urlsafe_encode64([batch, final_path, id, action].join(separator))
       rescue
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: err))
+        Failure(
+          CMT::Failure.new(
+            context: "#{self.class.name}.#{__callee__}",
+            message: err
+          )
+        )
       else
         Success(result)
       end
