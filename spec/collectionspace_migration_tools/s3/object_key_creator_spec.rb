@@ -41,7 +41,7 @@ RSpec.describe CollectionspaceMigrationTools::S3::ObjectKeyCreator do
       let(:response){ response_new }
       it 'returns Success containing expected name', :aggregate_failures do
         expect(result).to be_a(Dry::Monads::Success)
-        expect(result.value!).to eq(hashed)
+        expect(result.value!.value).to eq(hashed)
       end
 
       context 'with batch passed in' do
@@ -49,7 +49,52 @@ RSpec.describe CollectionspaceMigrationTools::S3::ObjectKeyCreator do
         let(:klass){ described_class.new(svc_path: svc_path, batch: batch) }
         it 'returns Success containing expected name', :aggregate_failures do
           expect(result).to be_a(Dry::Monads::Success)
-          expect(result.value!).to eq(hashed)
+          expect(result.value!.value).to eq(hashed)
+        end
+      end
+
+      context 'when media with blob' do
+        let(:svc_path){ '/media' }
+        let(:blob_uri){ 'http://place.io/img.jpg' }
+        let(:response) do
+          response = CollectionSpace::Mapper::Response.new(
+            {'identificationnumber' => rec_id,
+             'mediafileuri' => blob_uri}
+          )
+          response.merge_status_data({status: :new})
+          response.identifier = rec_id
+          response
+        end
+        let(:path){ "#{svc_path}?blobUri=#{blob_uri}" }
+        it 'returns Success containing expected name', :aggregate_failures do
+          expect(result).to be_a(Dry::Monads::Success)
+          expect(result.value!.value).to eq(hashed)
+        end
+
+        context 'with funky mediafileuri' do
+          let(:blob_uri){ 'http://place.io/img (4).jpg' }
+          it 'returns Success containing expected name', :aggregate_failures do
+            expect(result).to be_a(Dry::Monads::Success)
+            res = result.value!
+            expect(res.value).to eq(hashed)
+            expect(res.warnings.length).to eq(1)
+          end
+        end
+      end
+
+      context 'when media without blob' do
+        let(:svc_path){ '/media' }
+        let(:response) do
+          response = CollectionSpace::Mapper::Response.new(
+            {'identificationnumber' => rec_id}
+          )
+          response.merge_status_data({status: :new})
+          response.identifier = rec_id
+          response
+        end
+        it 'returns Success containing expected name', :aggregate_failures do
+          expect(result).to be_a(Dry::Monads::Success)
+          expect(result.value!.value).to eq(hashed)
         end
       end
     end
@@ -60,7 +105,7 @@ RSpec.describe CollectionspaceMigrationTools::S3::ObjectKeyCreator do
       let(:path) { "#{svc_path}/#{csid}" }
       it 'returns Success containing expected name', :aggregate_failures do
         expect(result).to be_a(Dry::Monads::Success)
-        expect(result.value!).to eq(hashed)
+        expect(result.value!.value).to eq(hashed)
       end
     end
 
@@ -70,7 +115,7 @@ RSpec.describe CollectionspaceMigrationTools::S3::ObjectKeyCreator do
       let(:path) { "#{svc_path}/#{csid}" }
       it 'returns Success containing expected name', :aggregate_failures do
         expect(result).to be_a(Dry::Monads::Success)
-        expect(result.value!).to eq(hashed)
+        expect(result.value!.value).to eq(hashed)
       end
     end
 

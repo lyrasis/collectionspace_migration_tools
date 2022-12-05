@@ -35,6 +35,12 @@ module CollectionspaceMigrationTools
 
       attr_reader :output_dir, :action_checker, :namer, :s3_key_creator, :reporter
 
+      def add_key_warnings(key, response)
+        key.warnings.each do |warning|
+          response.add_warning({message: warning})
+        end
+      end
+
       def check_existence(path, response)
         return Failure([:file_already_exists, response]) if File.exist?(path)
 
@@ -46,10 +52,13 @@ module CollectionspaceMigrationTools
         file_name = yield namer.call(response)
         path = "#{output_dir}/#{file_name}"
         key = yield s3_key_creator.call(response, action)
+
+        add_key_warnings(key, response) unless key.warnings.empty?
+
         _checked = yield check_existence(path, response)
         _written = yield write_file(path, response)
 
-        Success([response, file_name, key])
+        Success([response, file_name, key.value])
       end
 
       def write_file(path, response)
