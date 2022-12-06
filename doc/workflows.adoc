@@ -385,6 +385,12 @@ Clearly you'll need to check out any reported upload errors.
 
 The number of reported ok uploads plus the number of reported upload errors should equal the number of successfully mapped records. There is https://github.com/lyrasis/collectionspace_migration_tools/issues/2[an issue] to add verification of this to the post-upload reporting.
 
+==== `thor decode:objects` command
+
+This decodes the S3 object keys of all objects in the S3 bucket and writes them to a CSV.
+
+This can be a shortcut for finding out the human-readable ids (i.e. objectnumber or acquisitionreferencenumber) of records that failed to ingest.
+
 ==== Invalid data in a structured date group
 
 The following in XML payload caused ingest error with 400 code:
