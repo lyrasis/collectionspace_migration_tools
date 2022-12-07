@@ -1,0 +1,105 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+= Media handling procedures with blobs
+
+toc::[]
+
+You can transfer media and import files by including a URI in `mediaFileURI` column of your CSV. This works for:
+
+* new media records created
+* existing media records updated -- If existing media records have blobs attached they will be unattached and replaced by the new blob given.
+
+NOTE: In order to avoid leaving a bunch of orphaned blobs in the system, best practice is to delete existing blobs before adding new ones to media procedures
+
+WARNING: Ingesting records that trigger blob ingests remains flakier than ingesting other records. The speed at which records are ingested via this tool may be more likely to trigger throttling on the image downloading side. There are issues with ingesting blobs and finding/fixing failures even with CSV Importer, so there's still work to do...
+
+== Media-related config
+
+== Commands for blob ingest verification (general)
+=== `thor media:blob_data`
+Queries database to generate a CSV report of all media handling procedures in the system, and the  blobs attached to them.
+
+CSV is written to: `{base_directory}/blob_data.csv`
+
+This report columns:
+
+* Media Handling procedure identification number
+* `blobcsid`
+* Blob filename
+* Blob mimetype
+
+If a procedure does not have an attached blob, the last 3 columns are empty.
+
+=== `thor media:deriv_report`
+Makes API calls to report information on the derivatives generated for each `blobcsid` in the input file.
+
+If no input is specified, `thor media:blob_data` is invoked and its output (i.e. all blobs attached to media procedures) is used as the input.
+
+`thor media:deriv_report`
+
+Any CSV having `blobcsid` and `mimetype` values can be used as input.
+
+`thor media:deriv_report --blob_data ~/data/my_custom_blob_data.csv`
+
+==== Report description
+All columns from input data are included.
+
+===== Rows for blobs with mimetypes for which derivatives are not generated
+
+Since CS only generates derivatives for images, any rows with non-image mimetypes are marked:
+
+* `derivable?` = `n`
+* `check_success?` = `n/a`
+
+No API call is made for these. The remaining columns are blank
+
+Derivative generation is supported only for some image formats. If mimetype indicates a non-supported filetype, the row is treated as above.
+
+===== Rows for blobs with mimetypes for which derivatives should be generated
+
+For rows with mimetypes where derivatives are generated, `derivable?` = `y` and an API call on the `blobcsid` value is made to get derivative info.
+
+If the API returns a successful response, `check_success?` = `y`. Otherwise, `check_success?` = `n` and error info/message is written to `error_msgs` column.
+
+When the API call was successful, the `deriv_ct` = the number of derivatives present for the blob.
+
+There are columns for each expected derivative type. If that type is present, that column = `y`. Otherwise the value is blank.
+
+== Notes on working with media/blobs
+
+There is an unresolved issue in the deprecated CSPACE JIRA project about characters in file ingest paths causing ingest failure:
+https://collectionspace.atlassian.net/browse/CSPACE-6810[CSPACE-6810]
+
+=== Deleting/replacing blobs
+
+You can directly delete blobs by CSID:
+
+`client.delete('/blobs/{csid}')`
+
+That's a hard delete, but it breaks the Media Handling record to which the blob is attached in two ways:
+
+* The File Info section shows no info, but also doesn't let you upload a new file
+* The Media header in the right sidebar shows 1
+
+This is ok if you are immediately coming back and reingesting another blob (as seen in https://github.com/collectionspace/collectionspace-client/blob/34fc9e6a258dd41898570c7591c158228e1d4098/lib/collectionspace/client/helpers.rb#L124-L142[collectionspace-client's `reset-media-blob` helper method)
+
+*Preferred*:
+
+Delete the affected media handling record:
+
+`client.delete('/media/{csid}')`
+
+This gets rid of both the media handling procedure and the blob cleanly. Then you can reload the media handling procedure.
+
+*Avoid orphan blobs*
+You _*can*_ reload an existing media handling procedure with a mediaFileUri value. In the UI and in the procedure's `blobcsid` value, you will see the new blob. BUT the old blob is not deleted.
