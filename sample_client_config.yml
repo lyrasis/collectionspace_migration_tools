@@ -3,7 +3,7 @@ client:
   username: admin@core.collectionspace.org
   password: Administrator
   page_size: 50
-  
+
   # The redis_db_number should be unique per config. This allows you to quickly clear the caches
   #  for one instance, without affecting the caches for other instances.
   # It's on you to ensure these numbers are unique across your configs. The app doesn't check this.
@@ -14,7 +14,7 @@ client:
   #   https://github.com/collectionspace/cspace-config-untangler/tree/main/data/mappers/community_profiles/
   # Refer to how the mappers (i.e. the mapping instructions for each record type) are organized there
   #   to find the proper values to put in here
-  
+
   # The release number for the instance, not the UI version or profile version
   # Replace the period with an underscore
   # This must be in quotes or 7_0 will get interpreted as 70 for some reason.
@@ -62,7 +62,7 @@ client:
   # path to valid JSON batch config for mapping CSV to CSXML
   # See https://github.com/collectionspace/collectionspace-mapper/blob/migration-tooling/doc/batch_configuration.adoc for options
   # This is optional and only needed if you need to tweak the mapper options.
-  # When using this application to create CSXML, the following batch config options are always sent to the mapper: 
+  # When using this application to create CSXML, the following batch config options are always sent to the mapper:
   #   - `status_check_method` = `cache`
   #   - `search_if_not_cached` = `false`
   # If you are NOT providing a custom config, comment out the following line.
@@ -86,7 +86,7 @@ client:
   #   The default value of this option is whatever you have set here.
   clear_cache_before_refresh: true
 
-  
+
   # column/field delimiter for input "CSV" files
   csv_delimiter: ","
 
@@ -97,6 +97,25 @@ client:
   s3_key: "value_of_bucket_key"
   s3_secret: "value_of_secret_for_bucket_key"
   s3_delimiter: "|"
+
+  # Controls pause/sleep time after uploading to S3 each media handling procedure record that has an
+  #   associated mediaFileURI. A pause is required with batches over a certain size to minimize
+  #   file storage and derivative generation failures.
+  # The value is in ms.
+  # The value here is based on CS Services code that waits 500 ms for derivatives to be
+  #   generated:
+  # https://cs.github.com/collectionspace/application/blob/5fb3d0ffc750bfdf19e57057ac3dc65827c01df0/cspi-services/src/main/java/org/collectionspace/chain/csp/persistence/services/BlobStorage.java#L95
+  # If you are still seeing blob file storage and derivative generation errors, increase this delay.
+  #   Uploads to S3 are threaded, so {system_config/max_threads} (default = 6) upload queues are happening
+  #   simultaneously. This may increase the time needed for derivative generation.
+  # The lambda process that grabs records out of the S3 bucket and makes the API calls
+  #   to ingest has some limit of how many records are processed at once, but this defaults to making calls
+  #   far faster than CS/Nuxeo can produce and store derivatives.
+  # If your mediaFileURI values point to downloadable files (the usual case), you may be able to decrease this
+  #   number, as there is delay during the download of each file for ingest. If the mediaFileURIs are to
+  #   local file system locations, this might need to be higher to build in the padding you *aren't* getting
+  #   since the files don't have to be downloaded.
+  media_with_blob_upload_delay: 500
 database:
   port: 5432
   db_password: dbpassword

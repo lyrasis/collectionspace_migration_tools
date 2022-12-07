@@ -25,6 +25,10 @@ WARNING: Ingesting records that trigger blob ingests remains flakier than ingest
 
 == Media-related config
 
+=== `media_with_blob_upload_delay`
+
+This is documented in comments in `sample_client_config.yml`
+
 == Commands for blob ingest verification (general)
 === `thor media:blob_data`
 Queries database to generate a CSV report of all media handling procedures in the system, and the  blobs attached to them.
