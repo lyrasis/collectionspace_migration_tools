@@ -14,9 +14,10 @@ module CollectionspaceMigrationTools
             AND misc.lifecyclestate != 'deleted'
           inner join hierarchy hier on hier.id = bc.id
         )
-        select med.identificationnumber, blobs.*
-          from media_common med
-        inner join misc ON misc.id = med.id
+        select med.identificationnumber, hier.name as mhcsid, blobs.*
+        from media_common med
+        inner join hierarchy hier on med.id = hier.id
+        inner join misc ON misc.id = med.id AND misc.lifecyclestate != 'deleted'
           AND misc.lifecyclestate != 'deleted'
         left outer join blobs on med.blobcsid = blobs.blobcsid }
       end

@@ -38,6 +38,7 @@ CSV is written to: `{base_directory}/blob_data.csv`
 This report columns:
 
 * Media Handling procedure identification number
+* `mhcsid` - CSID of the Media Handling procedure
 * `blobcsid`
 * Blob filename
 * Blob mimetype
