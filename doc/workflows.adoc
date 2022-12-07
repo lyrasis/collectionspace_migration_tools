@@ -104,14 +104,14 @@ If autocaching is enabled, the first step of the mapping process involves:
 
 * determining the refname and csid cache dependencies for the batch, based on record type and fields populated
 * querying the database for that data
-* re-caching the query results 
+* re-caching the query results
 
 ==== For objects, procedures, and authorities
 The JSON record mapper for each record type specifies vocabulary or authority term sources and transformations for each possible field.
 
 These fields will need to be populated with the refnames of existing terms, so the refname cache needs to be populated.
 
-To get the record status of (new or existing) of each record being mapped, we need the csids for the record type of the batch. 
+To get the record status of (new or existing) of each record being mapped, we need the csids for the record type of the batch.
 
 The only csid cache dependency will be the record type of the batch.
 
@@ -216,7 +216,7 @@ If any records failed to map because refnames were not found for authority or vo
 
 This CSV can be sorted by expected term source vocabulary, and the contents used to create source CSVs for necessary authority term ingests.
 
-NOTE: This list includes terms from vocabularies/dynamic term lists,footnote:[Distinct from terms from a specific authority vocabulary, such as person-ulan] but it is not yet possible to batch ingest vocabulary terms. 
+NOTE: This list includes terms from vocabularies/dynamic term lists,footnote:[Distinct from terms from a specific authority vocabulary, such as person-ulan] but it is not yet possible to batch ingest vocabulary terms.
 
 ==== `batches.csv`
 Populates the following columns:
@@ -253,7 +253,7 @@ For testing/standalone work: `thor upload:dir DIRNAME`
 
 If running the testing/standalone command, DIRNAME should be the name of a directory in whatever you have as `batch_dir` in your client config. This directory should contain .xml files and a `mapper_report.csv`.
 
-This is more of an IO-bound, rather than CPU-bound process, so it runs in threads. 
+This is more of an IO-bound, rather than CPU-bound process, so it runs in threads.
 
 It reads in `mapper_report.csv`, ignores any rows where mapping failed, and writes the contents of each `cmt_output_file` to the S3 bucket with the object key in `cmt_s3_key`.
 
@@ -294,12 +294,10 @@ Also prints this info to the screen at the end of the batch run.
 
 ==== Media Handling
 
-You can transfer media and import files by including a URI in `mediaFileURI` column of your CSV. This works for:
+Media Handling procedures without blobs are ingested normally.
 
-* new media records created
-* existing media records updated -- If existing media records have blobs attached they will be unattached and replaced by the new blob given.
+Media Handling procedures with blobs can be ingested, but there are some special config settings and commands to support flakiness around batch ingest of files and derivative generation. These are documented on a https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/media.adoc[separate page].
 
-WARNING: Ingesting records that trigger blob ingests remains flakier than ingesting other records. The speed at which records are ingested via this tool may be more likely to trigger throttling on the image downloading side. There are issues with ingesting blobs and finding/fixing failures even with CSV Importer, so there's still work to do...
 
 ==== Upload step followups
 I have not run into enough problems on this step while developing/testing to see anything that can be systematized.
@@ -310,7 +308,7 @@ The number of reported ok uploads plus the number of reported upload errors shou
 
 === Verify ingest completion and status
 
-NOTE: There is no standalone/test command for this, since the entire functionality of this step depends on the context of a batch. 
+NOTE: There is no standalone/test command for this, since the entire functionality of this step depends on the context of a batch.
 
 In this step we do our best to determine:
 
@@ -320,7 +318,7 @@ In this step we do our best to determine:
 
 This step is a little tricky because the S3/Lambda side of things has no concept of a batch at all. We fake that by prefixing the object keys with the batch id.
 
-Also, the AWS side of things generates logs but does not report back anything coherent about failures. At last check, the log message containing the actual reason for an ingest failure did not also contain the S3 object key or anything else we can easily use to connect an error message to information on our end.  
+Also, the AWS side of things generates logs but does not report back anything coherent about failures. At last check, the log message containing the actual reason for an ingest failure did not also contain the S3 object key or anything else we can easily use to connect an error message to information on our end.
 
 Expectations/assumptions:
 
