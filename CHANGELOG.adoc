@@ -31,11 +31,12 @@ These changes are merged into the `main` branch, but have not been released. Aft
 This is not a breaking change, but reflects this is now being used for CS migrations by more than one person.
 
 === Added
-* When mapping a batch with `rectype=media`, rows with `blob_uri` values that cannot be converted into `URI` objects will get a "media_uri cannot be encoded as valid ingest URI. File ingest may not work as expected" warning.
-* `thor decode objects` that decodes object keys of all objects in S3 bucket, writing the results to a CSV in your base directory
-* `thor media blob_data` command to write report of all media procedures and, if present, their blob details
-* `thor media deriv_report` command to generate report of derivatives present for each `blobcsid` given
-* `:media_with_blob_upload_delay` client config setting, and implemented specified post-item-upload delay for media records with blob mediaFileURI values
+
+* When mapping a batch with `rectype=media`, rows with `blob_uri` values that cannot be converted into `URI` objects will get a "media_uri cannot be encoded as valid ingest URI. File ingest may not work as expected" warning. This is a warning, not an error, since CS can successfully ingest from file paths that do not convert to valid URIs.
+* `thor decode:objects` that decodes object keys of all objects in S3 bucket, writing the results to a CSV in your base directory. This streamlines the process of getting the human-readable record id values for objects left in S3 bucket (assumed to be ingest errors)
+* `thor media:blob_data` command to write report of all media procedures and, if present, their blob details. See https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/media.adoc[media ingest documentation].
+* `thor media:deriv_report` command to generate report of derivatives present for each `blobcsid` given. See https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/media.adoc[media ingest documentation].
+* Optional `:media_with_blob_upload_delay` client config setting. When uploading to S3 bucket for ingest, will wait this long after each media record that has an associated `mediaFileURI` value.
 
 == 0.1.2 (2022-12-02)
 * Use `collectionspace-mapper` v4.1.2 to get error handling bugfix
