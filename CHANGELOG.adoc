@@ -27,7 +27,7 @@ These changes are merged into the `main` branch, but have not been released. Aft
 
 === Deprecated/Will break in a future version
 
-== 1.0.0 (2022-12-06)
+== 1.0.0 (2022-12-08)
 This is not a breaking change, but reflects this is now being used for CS migrations by more than one person.
 
 === Added
