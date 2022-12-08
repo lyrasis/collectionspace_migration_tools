@@ -9,6 +9,10 @@ module CollectionspaceMigrationTools
       @message = message
     end
 
+    def for_csv
+      "ERROR in #{context}: #{message}"
+    end
+
     def to_s
       <<~MSG
          ERROR in #{context}

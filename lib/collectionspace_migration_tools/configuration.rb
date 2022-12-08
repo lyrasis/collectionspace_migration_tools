@@ -10,7 +10,7 @@ module CollectionspaceMigrationTools
     include Dry::Monads::Do.for(:validated_config_data)
 
     attr_reader :client, :database, :system, :redis
-    
+
     def initialize(
       client: File.join(Bundler.root, 'client_config.yml'),
       system: File.join(Bundler.root, 'system_config.yml'),
@@ -22,7 +22,7 @@ module CollectionspaceMigrationTools
       @redis_path = redis
       @check = check
       @status = Success()
-      
+
       validated_config_data.either(
         ->(result){ build_config(result) },
         ->(result){ handle_failure(result) }
@@ -37,13 +37,25 @@ module CollectionspaceMigrationTools
 
     attr_reader :client_path, :system_path, :redis_path, :check, :status
 
+    def add_media_blob_delay(result)
+      key = :media_with_blob_upload_delay
+      if result[:client].key?(key)
+        val = result[:client][key]
+        return if val == 0
+
+        result[:client][key] = Rational("#{val}/1000").to_f
+      else
+        add_option_to_section(result, :client, :media_with_blob_upload_delay, 0)
+      end
+    end
+
     # Manipulate the config hash before converting to Structs
     def add_option_to_section(confighash, section, key, value)
       return if confighash[section].key?(key)
 
       confighash[section][key] = value
     end
-    
+
     def bad_config_exit(result)
       puts('Could not create config.')
       puts("Error occurred in: #{result.context}")
@@ -56,10 +68,12 @@ module CollectionspaceMigrationTools
       add_option_to_section(result, :client, :batch_config_path, nil)
       add_option_to_section(result, :client, :auto_refresh_cache_before_mapping, false)
       add_option_to_section(result, :client, :clear_cache_before_refresh, false)
-      
+
       base = File.expand_path(result[:client][:base_dir])
       add_option_to_section(result, :client, :batch_csv, File.join(base, 'batches.csv'))
-      
+
+      add_media_blob_delay(result)
+
       result.each do |section, config_data|
         instance_variable_set("@#{section}".to_sym, section_struct(config_data))
       end
@@ -73,7 +87,7 @@ module CollectionspaceMigrationTools
         bad_config_exit(failure)
       end
     end
-    
+
     def handle_subdirs
       %i[mapper_dir batch_dir].each do |subdir|
         CMT::ConfigSubdirectoryHandler.call(config: client, setting: subdir)

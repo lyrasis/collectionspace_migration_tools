@@ -24,20 +24,20 @@ module CollectionspaceMigrationTools
         elap = Time.now - start_time
         puts "Upload time: #{elap}"
         puts "INFO: Results written to: #{reporter.path}"
-        
+
         Success()
       end
 
       def to_monad
         Success(self)
       end
-      
+
       def to_s
         "<##{self.class}:#{self.object_id.to_s(8)} #{csv_path}>"
       end
 
       private
-      
+
       attr_reader :csv_path, :uploader, :reporter
 
       def chunks
@@ -48,15 +48,22 @@ module CollectionspaceMigrationTools
             strings_as_keys: true
           })
       end
-      
+
       def process
         puts "Uploading CS XML to S3..."
-        Parallel.map(chunks, in_threads: CMT.config.system.max_threads) do |chunk|
+        Parallel.map(
+          chunks, in_threads: CMT.config.system.max_threads
+        ) do |chunk|
           worker(chunk)
         end
       rescue StandardError => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+        Failure(
+          CMT::Failure.new(
+            context: "#{self.class.name}.#{__callee__}",
+            message: msg
+          )
+        )
       else
         Success()
       end

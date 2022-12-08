@@ -17,26 +17,37 @@ module CollectionspaceMigrationTools
       end
 
       def call
-        batch = yield(CMT::Batch.find(batch_id))
+        batch = yield CMT::Batch.find(batch_id)
+
         mapped = batch.mapped?
         if mapped.nil? || mapped.empty?
-          return Failure("Batch #{batch_id} has not been mapped. You must map before uploading")
+          return Failure(
+            "Batch #{batch_id} is not mapped. You must map before uploading"
+          )
         end
-        
+
         uploadable = batch.map_oks
         if uploadable.nil? || uploadable.empty? || uploadable == '0'
           return Failure("No uploadable records for batch: #{batch_id}")
         end
-        
-        batch_dir = yield(CMT::Batch.dir(batch_id))
-       
+
+        batch_dir = yield CMT::Batch.dir(batch_id)
+
+
         puts "\n\nUPLOADING"
-        uploader = yield(CMT::S3::UploaderPreparer.new(file_dir: batch_dir).call)
-        _uploaded = yield(uploader.call)
-        report = yield(CMT::Batch::PostUploadReporter.new(batch: batch, dir: batch_dir).call)
+        uploader = yield CMT::S3::UploaderPreparer.new(
+          file_dir: batch_dir,
+          rectype: batch.mappable_rectype
+        ).call
+        _uploaded = yield uploader.call
+        report = yield CMT::Batch::PostUploadReporter.new(
+          batch: batch,
+          dir: batch_dir
+        ).call
+
         Success(report)
       end
-      
+
       private
 
       attr_reader :batch_id

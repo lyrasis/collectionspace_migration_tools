@@ -3,7 +3,7 @@ client:
   username: admin@core.collectionspace.org
   password: Administrator
   page_size: 50
-  
+
   # The redis_db_number should be unique per config. This allows you to quickly clear the caches
   #  for one instance, without affecting the caches for other instances.
   # It's on you to ensure these numbers are unique across your configs. The app doesn't check this
@@ -13,7 +13,7 @@ client:
   #   https://github.com/collectionspace/cspace-config-untangler/tree/main/data/mappers/community_profiles/
   # Refer to how the mappers (i.e. the mapping instructions for each record type) are organized there
   #   to find the proper values to put in here
-  
+
   # The release number for the instance, not the UI version or profile version
   # Replace the period with an underscore
   # This must be in quotes or 7_0 will get interpreted as 70 for some reason.

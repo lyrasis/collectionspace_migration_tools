@@ -10,7 +10,8 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:write)
 
-      def initialize(output_dir:, action_checker:, namer:, s3_key_creator:, reporter:)
+      def initialize(output_dir:, action_checker:, namer:, s3_key_creator:,
+                     reporter:)
         @output_dir = output_dir
         @action_checker = action_checker
         @namer = namer
@@ -29,28 +30,37 @@ module CollectionspaceMigrationTools
       def to_monad
         Success(self)
       end
-      
+
       private
 
       attr_reader :output_dir, :action_checker, :namer, :s3_key_creator, :reporter
 
+      def add_key_warnings(key, response)
+        key.warnings.each do |warning|
+          response.add_warning({message: warning})
+        end
+      end
+
       def check_existence(path, response)
         return Failure([:file_already_exists, response]) if File.exist?(path)
-        
+
         Success(response)
       end
 
       def write(response)
-        action = yield(action_checker.call(response))
-        file_name = yield(namer.call(response))
+        action = yield action_checker.call(response)
+        file_name = yield namer.call(response)
         path = "#{output_dir}/#{file_name}"
-        key = yield(s3_key_creator.call(response, action))
-        _checked = yield(check_existence(path, response))
-        _written = yield(write_file(path, response))
+        key = yield s3_key_creator.call(response, action)
 
-        Success([response, file_name, key])
+        add_key_warnings(key, response) unless key.warnings.empty?
+
+        _checked = yield check_existence(path, response)
+        _written = yield write_file(path, response)
+
+        Success([response, file_name, key.value])
       end
-      
+
       def write_file(path, response)
         File.open(path, 'wb'){ |file| file << response.doc }
       rescue StandardError => err

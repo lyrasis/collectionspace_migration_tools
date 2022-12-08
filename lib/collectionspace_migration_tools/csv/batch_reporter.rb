@@ -11,7 +11,9 @@ module CollectionspaceMigrationTools
 
       def initialize(output_dir:, fields:, term_reporter:)
         @path = "#{output_dir}/mapper_report.csv"
-        @fields = [fields, 'CMT_rec_status', 'CMT_outcome', 'CMT_output_file', 'CMT_S3_key', 'CMT_warnings', 'CMT_errors'].flatten
+        @fields = [fields, 'CMT_rec_status', 'CMT_outcome', 'CMT_output_file',
+                   'CMT_S3_key', 'CMT_warnings', 'CMT_errors']
+                     .flatten
         @term_reporter = term_reporter
         CSV.open(path, 'wb'){ |csv| csv << @fields }
       end
@@ -39,9 +41,9 @@ module CollectionspaceMigrationTools
       def to_monad
         Success(self)
       end
-      
+
       private
-      
+
       attr_reader :path, :fields, :term_reporter
 
       def add_errors(result, data, source)
@@ -78,11 +80,11 @@ module CollectionspaceMigrationTools
       def compile_processor_errors(result)
         result.errors.map{ |err| "#{err[:category]}: #{err[:message]}" }.join("; ")
       end
-      
+
       def compile_warnings(result)
         warnings = result.warnings
         return nil if warnings.empty?
-        
+
         result.warnings.map{ |warning| warning[:message] }.join("; ")
       end
 
