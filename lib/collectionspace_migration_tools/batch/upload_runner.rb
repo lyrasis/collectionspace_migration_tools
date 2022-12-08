@@ -18,6 +18,7 @@ module CollectionspaceMigrationTools
 
       def call
         batch = yield CMT::Batch.find(batch_id)
+
         mapped = batch.mapped?
         if mapped.nil? || mapped.empty?
           return Failure(
@@ -32,9 +33,12 @@ module CollectionspaceMigrationTools
 
         batch_dir = yield CMT::Batch.dir(batch_id)
 
+
         puts "\n\nUPLOADING"
-        uploader = yield CMT::S3::UploaderPreparer.new(file_dir: batch_dir)
-          .call
+        uploader = yield CMT::S3::UploaderPreparer.new(
+          file_dir: batch_dir,
+          rectype: batch.mappable_rectype
+        ).call
         _uploaded = yield uploader.call
         report = yield CMT::Batch::PostUploadReporter.new(
           batch: batch,

@@ -12,13 +12,14 @@ module CollectionspaceMigrationTools
 
 
       class << self
-        def call(file_dir:)
-          self.new(file_dir: file_dir).call
+        def call(...)
+          self.new(...).call
         end
       end
 
-      def initialize(file_dir:)
+      def initialize(file_dir:, rectype:)
         @file_dir = "#{CMT.config.client.batch_dir}/#{file_dir}"
+        @rectype = rectype
       end
 
       def call
@@ -45,6 +46,7 @@ module CollectionspaceMigrationTools
 
         uploader = yield CMT::S3::ItemUploader.new(
           file_dir: file_dir,
+          rectype: rectype,
           client: client,
           reporter: reporter
         )
@@ -60,7 +62,7 @@ module CollectionspaceMigrationTools
 
       private
 
-      attr_reader :file_dir
+      attr_reader :file_dir, :rectype
     end
   end
 end
