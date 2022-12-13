@@ -5,7 +5,7 @@ require 'dry/monads'
 module CollectionspaceMigrationTools
   module RecordTypes
     extend Dry::Monads[:result]
-    
+
     module_function
 
     def alt_auth_rectype_form(rectype)
@@ -28,7 +28,7 @@ module CollectionspaceMigrationTools
       result = [newtype, newsubtype].join('-')
       mappable.any?(result) ? Success(result) : Failure("Cannot derive valid rectype from #{rectype}")
     end
-    
+
     def authorities
       mappable.select{ |rectype| rectype['-'] }
     end
@@ -36,7 +36,7 @@ module CollectionspaceMigrationTools
     def authority_subtype_machine_to_human_label_mapping
       @authority_subtype_machine_to_human_label_mapping ||= get_authority_subtype_machine_to_human_label_mapping
     end
-    
+
     def get_authority_subtype_machine_to_human_label_mapping
       # since each authority vocabulary record mapper lists all vocabs for that authority,
       #   we just take one per authority
@@ -46,7 +46,7 @@ module CollectionspaceMigrationTools
         .map{ |rectype| CMT::Parse::RecordMapper.call(rectype).value!.vocabs }
         .inject({}, :merge)
     end
-    
+
     def get_service_path_to_mappable_type_mapping
       mappable.map{ |rectype| CMT::Parse::RecordMapper.call(rectype).value!.service_path_to_mappable }
         .inject({}, :merge)
@@ -55,6 +55,7 @@ module CollectionspaceMigrationTools
     def get_mappable_type_to_service_path_mapping
       mappable.map{ |rectype| CMT::Parse::RecordMapper.call(rectype).value!.mappable_to_service_path }
         .inject({}, :merge)
+        .merge({'blob'=>'blobs'})
     end
 
     def mappable
@@ -76,7 +77,7 @@ module CollectionspaceMigrationTools
     def relations
       %w[authorityhierarchy nonhierarchicalrelationship objecthierarchy].select{ |name| mappable.any?(name) }
     end
-    
+
     def procedures
       mappable.reject{ |name| name['-'] || name == object }
         .reject{ |name| relations.any?(name) }
@@ -84,6 +85,22 @@ module CollectionspaceMigrationTools
 
     def service_path_to_mappable_type_mapping
       @service_path_to_mappable_type_mapping ||= get_service_path_to_mappable_type_mapping
+    end
+
+    def services_api_path(rectype)
+      result = mappable_type_to_service_path_mapping[rectype]
+    rescue StandardError => err
+      msg = "#{err.message} IN #{err.backtrace[0]}"
+      Failure(CMT::Failure.new(
+        context: "#{self.name}.#{__callee__}", message: msg
+      ))
+    else
+      return Success(result) if result
+
+      msg = "No services path found for `#{rectype}`"
+      Failure(CMT::Failure.new(
+        context: "#{self.name}.#{__callee__}", message: msg
+      ))
     end
 
     def mappable_type_to_service_path_mapping
@@ -106,7 +123,7 @@ module CollectionspaceMigrationTools
 
     def valid_mappable?(rectype)
       return Success(rectype) if mappable.any?(rectype)
-      
+
       Failure("Invalid rectype: #{rectype}. Do `thor rt:all` to see allowed values")
     end
   end

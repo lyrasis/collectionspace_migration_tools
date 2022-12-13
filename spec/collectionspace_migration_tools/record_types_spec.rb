@@ -4,7 +4,7 @@ require_relative '../spec_helper'
 
 RSpec.describe CollectionspaceMigrationTools::RecordTypes do
   let(:klass){ described_class }
-  
+
   describe '#alt_auth_rectype_form' do
     let(:result){ klass.alt_auth_rectype_form(rectype) }
 
@@ -36,6 +36,26 @@ RSpec.describe CollectionspaceMigrationTools::RecordTypes do
       let(:rectype){ 'foo-bar' }
       it 'returns expected', :aggregate_failures do
         expect(result).to be_a(Dry::Monads::Failure)
+      end
+    end
+  end
+
+  describe '#services_api_path' do
+    let(:result){ klass.services_api_path(rectype) }
+
+    context 'with known rectype' do
+      let(:rectype){ 'collectionobject' }
+      it 'returns expected' do
+        expect(result).to be_a(Dry::Monads::Success)
+        expect(result.value!).to eq('collectionobjects')
+      end
+    end
+
+    context 'with unknown rectype' do
+      let(:rectype){ 'foo' }
+      it 'returns expected' do
+        expect(result).to be_a(Dry::Monads::Failure)
+        expect(result.failure.message).to eq('No services path found for `foo`')
       end
     end
   end
