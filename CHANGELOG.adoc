@@ -27,14 +27,14 @@ These changes are merged into the `main` branch, but have not been released. Aft
 
 === Deprecated/Will break in a future version
 
-== 1.1.0 (2022-12-13)
+== 1.1.0 (2022-12-14)
 
 === Added
 * `thor csid:delete` command, allowing deletion of records by rectype+CSID. Do `thor csid help delete` for more details.
 
 === Changed
 * Option for passing in custom source for `thor media:deriv_report` changed from `blob_data` to `csv` for better consistency with other commands, and less typing
-* When uploading media with blob to S3, post-upload "sleep post #{identificationnumber}" message written to STDOUT. This is temporary behavior to give some feedback that progress occurring with the expected upload delay, since the upload process now takes ages.
+* When uploading media with blob to S3, post-upload "sleep post #{identificationnumber}" message written to STDOUT. This is temporary behavior to give some feedback that progress is occurring with the expected upload delay, since the upload process now takes ages.
 * Default system config `max_threads` increased to 10
 
 === Bugfixes
