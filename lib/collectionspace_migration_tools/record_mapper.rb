@@ -27,11 +27,11 @@ module CollectionspaceMigrationTools
     def db_term_group_table_name
       term_group_list_key.delete_suffix('List').downcase
     end
-    
+
     def document_name
       config['document_name']
     end
-    
+
     def existence_check_method
       if object?
         :object_exists?
@@ -61,9 +61,14 @@ module CollectionspaceMigrationTools
     end
 
     def mappable_to_service_path
-      {config['recordtype'] => service_path}
+      if authority?
+        path = "#{service_path}/urn:cspace:name(#{subtype})/items"
+        {name => path}
+      else
+        {config['recordtype'] => service_path}
+      end
     end
-    
+
     def refname_columns
       mappings.select{ |mapping| requires_refname?(mapping) }
     end
@@ -71,7 +76,7 @@ module CollectionspaceMigrationTools
     def relation?
       service_type == 'relation'
     end
-    
+
     def type
       authority? ? config['authority_type'] : service_path
     end
@@ -87,7 +92,7 @@ module CollectionspaceMigrationTools
     def search_field
       config['search_field']
     end
-    
+
     def subtype
       config['authority_subtype'] if authority?
     end
@@ -99,7 +104,7 @@ module CollectionspaceMigrationTools
     def service_path_to_mappable
       {service_path => config['recordtype']}
     end
-    
+
     def service_type
       config['service_type']
     end
@@ -119,7 +124,7 @@ module CollectionspaceMigrationTools
       config['authority_subtypes'].each{ |pair| res[pair['subtype']] = pair['name'].downcase.gsub(' ', '-') }
       res
     end
-    
+
     private
 
     attr_reader :config, :mappings
