@@ -54,7 +54,7 @@ If no input is specified, `thor media:blob_data` is invoked and its output (i.e.
 
 Any CSV having `blobcsid` and `mimetype` values can be used as input.
 
-`thor media:deriv_report --blob_data ~/data/my_custom_blob_data.csv`
+`thor media:deriv_report --csv ~/data/my_custom_blob_data.csv`
 
 ==== Report description
 All columns from input data are included.
