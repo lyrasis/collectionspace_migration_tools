@@ -46,7 +46,9 @@ module CollectionspaceMigrationTools
         items = response['list_item']
         return [] unless items
 
-        items.map{ |item| deriv_title(item) }
+        # if there is only one item, it returns item hash, not array
+        [items].flatten
+          .map{ |item| deriv_title(item) }
       end
 
       def translate_type(type)

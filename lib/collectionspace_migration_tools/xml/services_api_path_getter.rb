@@ -10,13 +10,13 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
 
       class << self
-        # @param record_mapper [Hash] parsed JSON record mapper
+        # @param mapper [Hash] parsed JSON record mapper
         def call(mapper)
           self.new(mapper).call
         end
       end
 
-      # @param record_mapper [Hash] parsed JSON record mapper
+      # @param mapper [Hash] parsed JSON record mapper
       def initialize(mapper)
         @mapper = mapper
       end
@@ -26,9 +26,9 @@ module CollectionspaceMigrationTools
           Success("/#{service_hash[:path]}")
         end
       end
-      
+
       private
-      
+
       attr_reader :mapper
 
       def authority_service
@@ -51,7 +51,7 @@ module CollectionspaceMigrationTools
       else
         Success(result)
       end
-      
+
       def service
         return authority_service if mapper.authority?
 
@@ -60,4 +60,3 @@ module CollectionspaceMigrationTools
     end
   end
 end
-
