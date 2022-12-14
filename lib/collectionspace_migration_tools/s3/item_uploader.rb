@@ -104,7 +104,10 @@ module CollectionspaceMigrationTools
         uploaded = yield(do_upload(path, s3key(row)))
 
         if rectype == 'media'
-          sleep(media_delay) if media_blob?(row)
+          if media_blob?(row)
+            puts "sleep post #{row['identificationnumber']}"
+            sleep(media_delay)
+          end
         end
 
         Success(uploaded)
