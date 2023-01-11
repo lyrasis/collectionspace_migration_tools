@@ -21,7 +21,7 @@ module CollectionspaceMigrationTools
         row.to_h.merge(
           {
             status: result.success? ? 'success' : 'failure',
-            errs: result.success? ? nil : result.for_csv
+            errs: result.success? ? nil : result.failure.for_csv
           }
         )
       end
