@@ -18,12 +18,12 @@ These changes are merged into the `main` branch, but have not been released. Aft
 === Breaking
 
 === Added
-* New `media_with_blob_upload_delay` and `max_media_upload_threads` client config settings added
+* New `media_with_blob_upload_delay` and `max_media_upload_threads` client config settings added (PR#27)
 
 === Bugfixes
 
 === Changed
-* A number of client config settings now have defaults set by the tool, and do not need to be included in your config YML files unless you need to override the default values. See `CLIENT_CONFIG_DEFAULTS` in `lib/collectionspace_migration_tools/configuration.rb` for details.
+* A number of client config settings now have defaults set by the tool, and do not need to be included in your config YML files unless you need to override the default values. See `CLIENT_CONFIG_DEFAULTS` in `lib/collectionspace_migration_tools/configuration.rb` for details. (PR#27)
 
 === Deleted
 
