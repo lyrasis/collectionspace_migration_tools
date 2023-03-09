@@ -7,7 +7,29 @@ require 'fileutils'
 module CollectionspaceMigrationTools
   class Configuration
     include Dry::Monads[:result]
-    include Dry::Monads::Do.for(:validated_config_data)
+    include Dry::Monads::Do.for(:validated_config_data,
+                                :get_client_config_hash)
+
+    # If you change default values here, update sample_client_config.yml
+    CLIENT_CONFIG_DEFAULTS = {
+      client: {
+        page_size: 50,
+        cs_version: "7_0",
+        batch_dir: "batch_data",
+        auto_refresh_cache_before_mapping: true,
+        clear_cache_before_refresh: true,
+        csv_delimiter: ',',
+        s3_region: 'us-west-2',
+        s3_delimiter: '|',
+        media_with_blob_upload_delay: 250,
+        max_media_upload_threads: 5
+      },
+      database: {
+        port: 5432,
+        db_user: 'csadmin',
+        db_connect_host: 'localhost'
+      }
+    }
 
     attr_reader :client, :database, :system, :redis
 
@@ -115,6 +137,30 @@ module CollectionspaceMigrationTools
       handle_subdirs
     end
 
+    # @param base [Hash] literal config from YAML file
+    def apply_client_config_defaults(base)
+      [:client, :database].each do |section|
+        CLIENT_CONFIG_DEFAULTS[section].each do |setting, value|
+          next if base[section].key?(setting)
+
+          base[section][setting] = value
+        end
+      end
+    rescue StandardError => err
+      Failure(CMT::Failure.new(
+        context: "#{name}.#{__callee__}", message: err.message
+      ))
+    else
+      Success()
+    end
+
+    def get_client_config_hash
+      base = yield CMT::Parse::YamlConfig.call(client_path)
+      _defaults_applied = yield apply_client_config_defaults(base)
+
+      Success(base)
+    end
+
     def section_struct(config_data)
       keys = config_data.keys
       values = config_data.values
@@ -122,7 +168,7 @@ module CollectionspaceMigrationTools
     end
 
     def validated_config_data
-      client_hash = yield(CMT::Parse::YamlConfig.call(client_path))
+      client_hash = yield(get_client_config_hash)
       system_hash = yield(CMT::Parse::YamlConfig.call(system_path))
       redis_hash = yield(CMT::Parse::YamlConfig.call(redis_path))
       config_hash = client_hash.merge(system_hash).merge(redis_hash)

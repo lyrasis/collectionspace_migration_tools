@@ -14,9 +14,9 @@ RSpec.describe CollectionspaceMigrationTools::Configuration do
       expect(result.client.batch_config_path).to be_nil
       expect(result.client.batch_csv).to eq(File.join(result.client.base_dir, 'batches.csv'))
       expect(result.database.db_name).to eq('cs_cs')
-      expect(result.client.auto_refresh_cache_before_mapping).to be false
-      expect(result.client.clear_cache_before_refresh).to be false
-      expect(result.client.media_with_blob_upload_delay).to eq(0)
+      expect(result.client.auto_refresh_cache_before_mapping).to be true
+      expect(result.client.clear_cache_before_refresh).to be true
+      expect(result.client.media_with_blob_upload_delay).to eq(0.25)
     end
   end
 
@@ -27,8 +27,8 @@ RSpec.describe CollectionspaceMigrationTools::Configuration do
       batch_cfg = File.expand_path('~/code/cs/migration_tools/spec/support/fixtures/client_batch_config.json')
       expect(result.client.batch_config_path).to eq(batch_cfg)
       expect(result.client.batch_csv).to eq(File.join(result.client.base_dir, 'batch_tracker.csv'))
-      expect(result.client.auto_refresh_cache_before_mapping).to be true
-      expect(result.client.clear_cache_before_refresh).to be true
+      expect(result.client.auto_refresh_cache_before_mapping).to be false
+      expect(result.client.clear_cache_before_refresh).to be false
       expect(result.client.media_with_blob_upload_delay).to eq(0.5)
     end
   end
