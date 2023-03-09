@@ -116,6 +116,7 @@ client:
   #   local file system locations, this might need to be higher to build in the padding you *aren't* getting
   #   since the files don't have to be downloaded.
   media_with_blob_upload_delay: 500
+  max_media_upload_threads: 1
 database:
   port: 5432
   db_password: dbpassword

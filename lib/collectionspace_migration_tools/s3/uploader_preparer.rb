@@ -67,7 +67,7 @@ module CollectionspaceMigrationTools
 
       def threads
         if rectype == 'media'
-          CMT.config.system.max_media_upload_threads
+          CMT.config.client.max_media_upload_threads
         else
           CMT.config.system.max_threads
         end

@@ -1,5 +1,4 @@
 system:
   csv_chunk_size: 50
   max_threads: 10
-  max_media_upload_threads: 1
   max_processes: 6
