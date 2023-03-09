@@ -59,6 +59,8 @@ client:
   s3_key: "value_of_bucket_key"
   s3_secret: "value_of_secret_for_bucket_key"
   s3_delimiter: "|"
+  media_with_blob_upload_delay: 250
+  max_media_upload_threads: 5
 database:
   port: 5432
   db_password: dbpassword
