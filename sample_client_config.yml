@@ -2,7 +2,34 @@ client:
   base_uri: https://core.dev.collectionspace.org/cspace-services
   username: admin@core.collectionspace.org
   password: Administrator
-  page_size: 50
+
+  # The following settings are defined in the `CLIENT_CONFIG_DEFAULTS` section of
+  #   lib/collectionspace_migration_tools/configuration.rb
+  #
+  # They are included here for documentation purposes, and to make it easy to override
+  #   the default values as needed. The values shown below are the default values. If you
+  #   want to override them, uncomment the setting and change the value.
+
+  # Controls page size of result sets returned by collectionspace-client
+  # page_size: 50
+
+  # The release number for the instance, not the UI version or profile version. Replace
+  #   the period in the actual version designation with an underscore. This must be in
+  #   quotes or 7_0 will get interpreted as 70 for some reason.
+  #
+  # This is set as a default so that when all hosted clients are upgraded, it can just
+  #   be updated in one place. Override the default if you are working with an instance
+  #   where version is not in sync with our hosted setup
+  # cs_version: "7_0"
+  #
+  # Directory in which to store generated xml and reports for each batch. A directory will be
+  #   created within this directory for each batch you process
+  #
+  # If only a directory name is given, this directory will be created as a sub-directory
+  #   inside your `base_dir`. If you give a full path to a directory, that directory is used
+  #   (and it must already exist)
+  # batch_dir: batch_data
+
 
   # The redis_db_number should be unique per config. This allows you to quickly clear the caches
   #  for one instance, without affecting the caches for other instances.
@@ -14,11 +41,6 @@ client:
   #   https://github.com/collectionspace/cspace-config-untangler/tree/main/data/mappers/community_profiles/
   # Refer to how the mappers (i.e. the mapping instructions for each record type) are organized there
   #   to find the proper values to put in here
-
-  # The release number for the instance, not the UI version or profile version
-  # Replace the period with an underscore
-  # This must be in quotes or 7_0 will get interpreted as 70 for some reason.
-  cs_version: "7_0"
 
   # Should match the directory names that organize mappers per release
   profile: anthro
@@ -33,31 +55,20 @@ client:
   # This directory must already exist on your system.
   base_dir: ~/code/cs/migration_tools/data
 
-  # The path for the "batch CSV"
-  # This is the CSV used to track the status of all batches for a given instance, not a CSV associated with
-  #   an individual batch.
-  # If you do not specify a location for this file, `batches.csv` will be created in your
-  #   base_dir.
-  # NOTE: It is very important that this path be different for each client/instance you are working on
-  #batch_csv: ~/code/cs/migration_tools/data/batches.csv
-
-  # For the next two "dir" settings, you can enter either:
-  #   - a directory relative to the `base_dir` given above; or
-  #   - the full path to any directory accessible to the application
+  # Location of JSON record mappers produced by cspace-config-untangler.
+  #
+  # It is recommended you clone https://github.com/collectionspace/cspace-config-untangler/ and use the path
+  #   for the appropriate profile within that repository
+  #
+  # If only a directory name is given, this directory will be created as a sub-directory
+  #   inside your `base_dir`. If you give a full path to a directory, that directory is used
+  #   (and it must already exist)
   # For example:
   #   - entering `mappers` will set this to: `~/code/cs/migration_tools/data/mappers` (the mappers subdirectory will be
   #     created if it doesn't exist)
   #   - entering `~/code/cs/untangler/data/mappers/community_profiles/release_7_0/anthro` will set this to that
   #     directory (this directory must exist when the application is run)
-
-  # Location of JSON record mappers produced by cspace-config-untangler.
-  # It is recommended you clone https://github.com/collectionspace/cspace-config-untangler/ and use the path
-  #   for the appropriate profile within that repository
   mapper_dir: record_mappers
-
-  # directory in which to store generated xml and reports for each batch
-  # a sub-directory will be created within this directory for each batch
-  batch_dir: batch_data
 
   # path to valid JSON batch config for mapping CSV to CSXML
   # See https://github.com/collectionspace/collectionspace-mapper/blob/migration-tooling/doc/batch_configuration.adoc for options
@@ -116,6 +127,12 @@ client:
   #   local file system locations, this might need to be higher to build in the padding you *aren't* getting
   #   since the files don't have to be downloaded.
   media_with_blob_upload_delay: 500
+  # Maximum number of threads to use when uploading media-with-blob objects to S3 for ingest. It's
+  #   more straightforward to control the speed of media uploads/ingests here than asking for the
+  #   S3 bucket and/or AWS Lambda parameters to be changed.
+  # The value set here will interact with the `media_with_blob_upload_delay` value set above, and it may
+  #   be worth tweaking them to find a good balance that works.
+  max_media_upload_threads: 1
 database:
   port: 5432
   db_password: dbpassword

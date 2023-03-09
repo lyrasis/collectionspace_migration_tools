@@ -23,11 +23,12 @@ NOTE: In order to avoid leaving a bunch of orphaned blobs in the system, best pr
 
 WARNING: Ingesting records that trigger blob ingests remains flakier than ingesting other records. The speed at which records are ingested via this tool may be more likely to trigger throttling on the image downloading side. There are issues with ingesting blobs and finding/fixing failures even with CSV Importer, so there's still work to do...
 
-== Media-related config
+== Media-related client config
 
-=== `media_with_blob_upload_delay`
+These are documented in comments in `sample_client_config.yml`
 
-This is documented in comments in `sample_client_config.yml`
+* `media_with_blob_upload_delay`
+* `max_media_upload_threads`
 
 == Commands for blob ingest verification (general)
 === `thor media:blob_data`
@@ -79,6 +80,17 @@ If the API returns a successful response, `check_success?` = `y`. Otherwise, `ch
 When the API call was successful, the `deriv_ct` = the number of derivatives present for the blob.
 
 There are columns for each expected derivative type. If that type is present, that column = `y`. Otherwise the value is blank.
+
+== Observed failure patterns
+
+=== Duplicate media added until bucket emptied
+
+Looks like:: `batch ingstat` reports the record as an ingest error, but you see many duplicates of the record in CS. AWS S3 ingest do not show ERROR messages for the given object key
+
+Cause:: AWS S3 ingest processor times out after ~30 seconds. For whatever reason, this does NOT report to logs as an ERROR, but the object is not removed from the S3 bucket, so ingest is reattempted. Reattempt times out. Repeat indefinitely. AWS ingest process reporting a timeout does not stop the ingest process that has been initiated in CS, resulting in duplicate records.
+
+Fix:: **Immmediate fix**: `thor bucket empty` will remove the endlessly re-trying object (and everything else) from the bucket. `thor batch cb {batchid}` will remove only objects associated with the given batch id. **Underlying fix:** Request the `batch_timeout` length on the bucket used for import
+
 
 == Notes on working with media/blobs
 

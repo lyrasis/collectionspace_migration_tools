@@ -27,6 +27,7 @@ module CollectionspaceMigrationTools
         required(:s3_key).filled(:string)
         required(:s3_secret).filled(:string)
         required(:s3_delimiter).filled(:string)
+        required(:max_media_upload_threads).filled(:integer)
       end
 
       rule(:base_dir) do
@@ -35,7 +36,7 @@ module CollectionspaceMigrationTools
           key.failure("#{full} does not exist")
         end
       end
-      
+
       rule(:base_uri) do
         key.failure(%(must end with "/cspace-services")) unless value.end_with?('/cspace-services')
       end

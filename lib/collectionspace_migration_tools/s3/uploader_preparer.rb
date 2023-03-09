@@ -53,6 +53,7 @@ module CollectionspaceMigrationTools
 
         batch_uploader = yield CMT::S3::BatchUploader.new(
           csv_path: source_report_path,
+          threads: threads,
           uploader: uploader,
           reporter: reporter
         )
@@ -63,6 +64,14 @@ module CollectionspaceMigrationTools
       private
 
       attr_reader :file_dir, :rectype
+
+      def threads
+        if rectype == 'media'
+          CMT.config.client.max_media_upload_threads
+        else
+          CMT.config.system.max_threads
+        end
+      end
     end
   end
 end

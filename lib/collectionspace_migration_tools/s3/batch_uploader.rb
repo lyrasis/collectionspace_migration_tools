@@ -12,8 +12,13 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)
 
-      def initialize(csv_path:, uploader:, reporter:)
+      # @param csv_path [String] path to mapper report CSV for batch
+      # @param threads [Integer] number of threads for parallel processing
+      # @param uploader [CMT::S3::ItemUploader]
+      # @param reporter [CMT::S3::UploadReporter]
+      def initialize(csv_path:, threads:, uploader:, reporter:)
         @csv_path = csv_path
+        @threads = threads
         @uploader = uploader
         @reporter = reporter
       end
@@ -38,7 +43,7 @@ module CollectionspaceMigrationTools
 
       private
 
-      attr_reader :csv_path, :uploader, :reporter
+      attr_reader :csv_path, :threads, :uploader, :reporter
 
       def chunks
         SmarterCSV.process(
@@ -50,9 +55,9 @@ module CollectionspaceMigrationTools
       end
 
       def process
-        puts "Uploading CS XML to S3..."
+        puts "Uploading CS XML to S3 (#{threads} threads)..."
         Parallel.map(
-          chunks, in_threads: CMT.config.system.max_threads
+          chunks, in_threads: threads
         ) do |chunk|
           worker(chunk)
         end

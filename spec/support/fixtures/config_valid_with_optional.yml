@@ -49,9 +49,8 @@ client:
   # `status_check_method` is automatically set to `cache` when using this application to create CSXML.
   # If you are NOT providing a custom config, comment out the following line.
   batch_config_path: ~/code/cs/migration_tools/spec/support/fixtures/client_batch_config.json
-
-  auto_refresh_cache_before_mapping: true
-  clear_cache_before_refresh: true
+  auto_refresh_cache_before_mapping: false
+  clear_cache_before_refresh: false
 
   # column/field delimiter for input "CSV" files
   csv_delimiter: ","
