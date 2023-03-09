@@ -59,82 +59,24 @@ module CollectionspaceMigrationTools
 
     attr_reader :client_path, :system_path, :redis_path, :check, :status
 
-    def add_media_blob_delay(result)
-      key = :media_with_blob_upload_delay
-      if result[:client].key?(key)
-        val = result[:client][key]
-        return if val == 0
+    # -=-=-=-=-=-=-=-=-=-=-=
+    # VALIDATING CONFIG DATA
+    # -=-=-=-=-=-=-=-=-=-=-=
+    def validated_config_data
+      client_hash = yield(get_client_config_hash)
+      system_hash = yield(CMT::Parse::YamlConfig.call(system_path))
+      redis_hash = yield(CMT::Parse::YamlConfig.call(redis_path))
+      config_data = client_hash.merge(system_hash).merge(redis_hash)
+      validated = yield(CMT::Validate::Config.call(config_data))
 
-        result[:client][key] = Rational("#{val}/1000").to_f
-      else
-        add_option_to_section(result, :client, :media_with_blob_upload_delay, 0)
-      end
+      Success(validated)
     end
 
-    # Manipulate the config hash before converting to Structs
-    def add_option_to_section(confighash, section, key, value)
-      return if confighash[section].key?(key)
+    def get_client_config_hash
+      base = yield CMT::Parse::YamlConfig.call(client_path)
+      _defaults_applied = yield apply_client_config_defaults(base)
 
-      confighash[section][key] = value
-    end
-
-    def bad_config_exit(result)
-      puts('Could not create config.')
-      puts("Error occurred in: #{result.context}")
-      puts("Error message: #{result.message}")
-      puts('Exiting...')
-      exit
-    end
-
-    def build_config(result)
-      add_option_to_section(result, :client, :batch_config_path, nil)
-      add_option_to_section(result, :client, :auto_refresh_cache_before_mapping, false)
-      add_option_to_section(result, :client, :clear_cache_before_refresh, false)
-
-      base = File.expand_path(result[:client][:base_dir])
-      add_option_to_section(result, :client, :batch_csv, File.join(base, 'batches.csv'))
-
-      add_media_blob_delay(result)
-
-      result.each do |section, config_data|
-        instance_variable_set("@#{section}".to_sym, section_struct(config_data))
-      end
-      fix_config_paths
-    end
-
-    def handle_failure(failure)
-      if check
-        @status = Failure(failure)
-      else
-        bad_config_exit(failure)
-      end
-    end
-
-    def handle_subdirs
-      %i[mapper_dir batch_dir].each do |subdir|
-        CMT::ConfigSubdirectoryHandler.call(config: client, setting: subdir)
-      end
-    end
-
-    def expand_base_dir
-      expanded = File.expand_path(client.base_dir).delete_suffix('/')
-      client.base_dir = expanded
-    end
-
-    def expand_other_paths
-      %i[batch_csv batch_config_path].each do |key|
-        val = client.send(key)
-        next unless val
-
-        meth = "#{key}=".to_sym
-        client.send(meth, File.expand_path(val))
-      end
-    end
-
-    def fix_config_paths
-      expand_base_dir
-      expand_other_paths
-      handle_subdirs
+      Success(base)
     end
 
     # @param base [Hash] literal config from YAML file
@@ -154,11 +96,42 @@ module CollectionspaceMigrationTools
       Success()
     end
 
-    def get_client_config_hash
-      base = yield CMT::Parse::YamlConfig.call(client_path)
-      _defaults_applied = yield apply_client_config_defaults(base)
+    # -=-=-=-=-=-=-=-=-=-=-=
+    # BUILDING CONFIG OBJECT
+    # -=-=-=-=-=-=-=-=-=-=-=
+    def build_config(result)
+      add_option_to_section(result, :client, :batch_config_path, nil)
+      add_option_to_section(result, :client, :auto_refresh_cache_before_mapping, false)
+      add_option_to_section(result, :client, :clear_cache_before_refresh, false)
 
-      Success(base)
+      base = File.expand_path(result[:client][:base_dir])
+      add_option_to_section(result, :client, :batch_csv, File.join(base, 'batches.csv'))
+
+      add_media_blob_delay(result)
+
+      result.each do |section, config_data|
+        instance_variable_set("@#{section}".to_sym, section_struct(config_data))
+      end
+      fix_config_paths
+    end
+
+    # Manipulate the config hash before converting to Structs
+    def add_option_to_section(confighash, section, key, value)
+      return if confighash[section].key?(key)
+
+      confighash[section][key] = value
+    end
+
+    def add_media_blob_delay(result)
+      key = :media_with_blob_upload_delay
+      if result[:client].key?(key)
+        val = result[:client][key]
+        return if val == 0
+
+        result[:client][key] = Rational("#{val}/1000").to_f
+      else
+        add_option_to_section(result, :client, :media_with_blob_upload_delay, 0)
+      end
     end
 
     def section_struct(config_data)
@@ -167,14 +140,50 @@ module CollectionspaceMigrationTools
       Struct.new(*keys).new(*values)
     end
 
-    def validated_config_data
-      client_hash = yield(get_client_config_hash)
-      system_hash = yield(CMT::Parse::YamlConfig.call(system_path))
-      redis_hash = yield(CMT::Parse::YamlConfig.call(redis_path))
-      config_hash = client_hash.merge(system_hash).merge(redis_hash)
-      validated = yield(CMT::Validate::Config.call(config_hash))
+    def fix_config_paths
+      expand_base_dir
+      expand_other_paths
+      handle_subdirs
+    end
 
-      Success(validated)
+    def expand_base_dir
+      expanded = File.expand_path(client.base_dir).delete_suffix('/')
+      client.base_dir = expanded
+    end
+
+    def expand_other_paths
+      %i[batch_csv batch_config_path].each do |key|
+        val = client.send(key)
+        next unless val
+
+        meth = "#{key}=".to_sym
+        client.send(meth, File.expand_path(val))
+      end
+    end
+
+    def handle_subdirs
+      %i[mapper_dir batch_dir].each do |subdir|
+        CMT::ConfigSubdirectoryHandler.call(config: client, setting: subdir)
+      end
+    end
+
+    # -=-=-=-=-=-=-=-=-=-=-=
+    # HANDLING FAILURES
+    # -=-=-=-=-=-=-=-=-=-=-=
+    def handle_failure(failure)
+      if check
+        @status = Failure(failure)
+      else
+        bad_config_exit(failure)
+      end
+    end
+
+    def bad_config_exit(result)
+      puts('Could not create config.')
+      puts("Error occurred in: #{result.context}")
+      puts("Error message: #{result.message}")
+      puts('Exiting...')
+      exit
     end
   end
 end
