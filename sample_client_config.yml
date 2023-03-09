@@ -56,6 +56,11 @@ client:
   # column/field delimiter for input "CSV" files
   # csv_delimiter: ","
 
+  # Delimiter used to encode S3 object keys. Must be the same as the delimiter specified
+  #   for the bucket in the S3/AWS Lambda config, as it is needed to decode the object
+  #   name and send the API call to do the object ingest. Currently is always set to "|"
+  #  s3_delimiter: "|"
+
   # Controls pause/sleep time after uploading to S3 each media handling procedure record that has an
   #   associated mediaFileURI. A pause is required with batches over a certain size to minimize
   #   file storage and derivative generation failures.
@@ -133,13 +138,10 @@ client:
   # If you are NOT providing a custom config, comment out the following line.
   # batch_config_path: ~/code/cs/migration_tools/spec/support/fixtures/client_batch_config.json
 
-  # AWS S3 Bucket settings - required for using this tool to transfer records to the client instance
-  # One S3 Bucket per instance must be set up -- Credentials are in LastPass entry `S3 IMPORT BUCKETS`
+  # The name of the "Fast Import" S3 bucket set up for use with this client.
+  # This is the bucket we upload CSXML objects into, which uses AWS Lambda to call ingest for
+  #   each object. It is NOT the bucket where client media files are uploaded.
   s3_bucket: "bucket_name"
-  s3_region: "us-west-2"
-  s3_key: "value_of_bucket_key"
-  s3_secret: "value_of_secret_for_bucket_key"
-  s3_delimiter: "|"
 database:
   port: 5432
   db_password: dbpassword
