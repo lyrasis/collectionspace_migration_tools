@@ -52,12 +52,7 @@ client:
   # column/field delimiter for input "CSV" files
   csv_delimiter: ","
 
-  # AWS S3 Bucket settings - required for using this tool to transfer records to the client instance
-  # One S3 Bucket per instance must be set up -- Credentials are in LastPass entry `S3 IMPORT BUCKETS`
   s3_bucket: "bucket_name"
-  s3_region: "us-west-2"
-  s3_key: "value_of_bucket_key"
-  s3_secret: "value_of_secret_for_bucket_key"
   s3_delimiter: "|"
   media_with_blob_upload_delay: 250
   max_media_upload_threads: 5

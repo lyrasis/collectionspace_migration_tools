@@ -23,11 +23,9 @@ module CollectionspaceMigrationTools
         optional(:clear_cache_before_refresh).filled(:bool)
         required(:csv_delimiter).filled(:string)
         required(:s3_bucket).filled(:string)
-        required(:s3_region).filled(:string)
-        required(:s3_key).filled(:string)
-        required(:s3_secret).filled(:string)
         required(:s3_delimiter).filled(:string)
         required(:max_media_upload_threads).filled(:integer)
+        required(:media_with_blob_upload_delay).filled(:integer)
       end
 
       rule(:base_dir) do
