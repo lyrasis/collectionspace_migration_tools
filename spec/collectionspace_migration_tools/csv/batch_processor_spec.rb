@@ -11,12 +11,11 @@ RSpec.describe CollectionspaceMigrationTools::Csv::BatchProcessor do
 
   describe '#call' do
     let(:result){ klass.call }
-    
     it 'returns Success' do
       expect(result).to be_a(Dry::Monads::Success)
     end
   end
-  
+
   describe '#preprocess' do
     let(:result){ klass.preprocess }
 
@@ -25,4 +24,3 @@ RSpec.describe CollectionspaceMigrationTools::Csv::BatchProcessor do
     end
   end
 end
-

@@ -2,18 +2,15 @@
 
 module CollectionspaceMigrationTools
   module_function
-    def config
-      @config ||= Helpers.valid_config
-    end
 
-    def config=(config_object)
-      @config = config_object
-    end
+  def reset_config
+    @config = Helpers.valid_config
+  end
 end
 
-module Helpers  
+module Helpers
   module_function
-  
+
   # returns valid config parsed as hash
   def valid_config
     CMT::Configuration.new(client: valid_config_path)
@@ -42,7 +39,7 @@ module Helpers
       CMT::Build::DataHandler.call(mapper.value!, config.value!).value!
     end
   end
-  
+
   def setup_mapping
     mapper_dir = File.join(Bundler.root.to_s, 'spec', 'support', 'fixtures', 'record_mappers')
     CMT.config.client.mapper_dir = mapper_dir

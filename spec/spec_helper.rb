@@ -6,14 +6,13 @@ Bundler.require(:tools)
 require 'simplecov'
 SimpleCov.start{ enable_coverage :branch }
 
-require 'collectionspace/mapper'
-require 'collectionspace_migration_tools'
-require 'pry'
 require_relative './helpers'
+require 'collectionspace_migration_tools'
+require 'collectionspace/mapper'
+require 'pry'
+
 require 'refinements'
-
 using Refinements::Pathnames
-
 Pathname.require_tree(__dir__, 'support/shared_contexts/**/*.rb')
 
 RSpec.configure do |config|
