@@ -127,6 +127,11 @@ client:
   #   local file system locations, this might need to be higher to build in the padding you *aren't* getting
   #   since the files don't have to be downloaded.
   media_with_blob_upload_delay: 500
+  # Maximum number of threads to use when uploading media-with-blob objects to S3 for ingest. It's
+  #   more straightforward to control the speed of media uploads/ingests here than asking for the
+  #   S3 bucket and/or AWS Lambda parameters to be changed.
+  # The value set here will interact with the `media_with_blob_upload_delay` value set above, and it may
+  #   be worth tweaking them to find a good balance that works.
   max_media_upload_threads: 1
 database:
   port: 5432

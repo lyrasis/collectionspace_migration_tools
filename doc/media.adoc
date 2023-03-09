@@ -23,11 +23,12 @@ NOTE: In order to avoid leaving a bunch of orphaned blobs in the system, best pr
 
 WARNING: Ingesting records that trigger blob ingests remains flakier than ingesting other records. The speed at which records are ingested via this tool may be more likely to trigger throttling on the image downloading side. There are issues with ingesting blobs and finding/fixing failures even with CSV Importer, so there's still work to do...
 
-== Media-related config
+== Media-related client config
 
-=== `media_with_blob_upload_delay`
+These are documented in comments in `sample_client_config.yml`
 
-This is documented in comments in `sample_client_config.yml`
+* `media_with_blob_upload_delay`
+* `max_media_upload_threads`
 
 == Commands for blob ingest verification (general)
 === `thor media:blob_data`
