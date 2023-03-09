@@ -10,7 +10,7 @@ module CollectionspaceMigrationTools
     class S3Client
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)
-      
+
       class << self
         def call()
           self.new.call
@@ -18,9 +18,7 @@ module CollectionspaceMigrationTools
       end
 
       def initialize
-        @key = CMT.config.client.s3_key
-        @secret = CMT.config.client.s3_secret
-        @region = CMT.config.client.s3_region
+        @profile = CMT.config.system.aws_profile
         @bucket = CMT.config.client.s3_bucket
       end
 
@@ -30,16 +28,14 @@ module CollectionspaceMigrationTools
 
         Success(client)
       end
-      
+
       private
 
-      attr_reader :key, :secret, :region, :bucket
+      attr_reader :profile, :bucket
 
       def create_client
         client = Aws::S3::Client.new(
-          access_key_id: key,
-          secret_access_key: secret,
-          region: region
+          profile: profile
         )
       rescue StandardError => err
         msg = "#{err.message} IN #{err.backtrace[0]}"

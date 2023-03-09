@@ -8,7 +8,7 @@ module CollectionspaceMigrationTools
     class LogClient
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)
-      
+
       class << self
         def call()
           self.new.call
@@ -16,9 +16,7 @@ module CollectionspaceMigrationTools
       end
 
       def initialize
-        @key = CMT.config.client.s3_key
-        @secret = CMT.config.client.s3_secret
-        @region = CMT.config.client.s3_region
+        @profile = CMT.config.system.aws_profile
       end
 
       def call
@@ -27,16 +25,14 @@ module CollectionspaceMigrationTools
 
         Success(client)
       end
-      
+
       private
 
-      attr_reader :key, :secret, :region
+      attr_reader :profile
 
       def create_client
         client = Aws::CloudWatchLogs::Client.new(
-          access_key_id: key,
-          secret_access_key: secret,
-          region: region
+          profile: profile
         )
       rescue StandardError => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
@@ -46,8 +42,7 @@ module CollectionspaceMigrationTools
       end
 
       def try(client)
-        binding.pry
-        result = client.get_bucket_location({bucket: bucket})
+        result = client.describe_log_groups(limit: 5)
       rescue StandardError => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
