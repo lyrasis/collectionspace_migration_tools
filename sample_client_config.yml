@@ -1,14 +1,19 @@
 client:
+  # These are the minimum settings for creating a new instance of
+  #   collectionspace-client
+  # https://github.com/collectionspace/collectionspace-client/blob/master/lib/collectionspace/client/configuration.rb
   base_uri: https://core.dev.collectionspace.org/cspace-services
   username: admin@core.collectionspace.org
   password: Administrator
 
+  # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
   # The following settings are defined in the `CLIENT_CONFIG_DEFAULTS` section of
   #   lib/collectionspace_migration_tools/configuration.rb
   #
   # They are included here for documentation purposes, and to make it easy to override
   #   the default values as needed. The values shown below are the default values. If you
   #   want to override them, uncomment the setting and change the value.
+  # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
   # Controls page size of result sets returned by collectionspace-client
   # page_size: 50
@@ -30,6 +35,55 @@ client:
   #   (and it must already exist)
   # batch_dir: batch_data
 
+  # If true, when you run `thor batch:map`, the first thing that will happen is fresh data for record
+  #   types required by the type and data you are mapping will be pulled from the database and cached.
+  # If commented out or set to false, caches will NOT be cleared and refreshed prior to data mapping
+  #   when called when `thor batch:map` is called. This may be preferable if the scale of the instance
+  #   is very large, so it takes a long time to refresh cache data
+  # Note that you can control whether this happens per-batch via the `--autocache` option on the
+  #   `thor map:batch` command. The default value of this option is whatever you have set here.
+  # auto_refresh_cache_before_mapping: true
+
+  # If true, caches will be cleared before they are auto refreshed. This is the safest option, as it will ensure
+  #   deleted items are not still in the cache, and the correct values are cached for any duplicates since cleaned
+  #   up.
+  # If you know only additions/updates have been made, you can set to false to save a bit of time.
+  # This has no effect if auto_refresh_cache_before_mapping = false
+  # Note that you can control whether this happens per-batch via the `--clearcache` option on the `thor map:batch` command.
+  #   The default value of this option is whatever you have set here.
+  # clear_cache_before_refresh: true
+
+  # column/field delimiter for input "CSV" files
+  # csv_delimiter: ","
+
+  # Controls pause/sleep time after uploading to S3 each media handling procedure record that has an
+  #   associated mediaFileURI. A pause is required with batches over a certain size to minimize
+  #   file storage and derivative generation failures.
+  # The value is in ms.
+  # The value here is based on CS Services code that waits 500 ms for derivatives to be
+  #   generated:
+  # https://cs.github.com/collectionspace/application/blob/5fb3d0ffc750bfdf19e57057ac3dc65827c01df0/cspi-services/src/main/java/org/collectionspace/chain/csp/persistence/services/BlobStorage.java#L95
+  # If you are still seeing blob file storage and derivative generation errors, increase this delay.
+  #   Uploads to S3 are threaded, so {system_config/max_threads} (default = 6) upload queues are happening
+  #   simultaneously. This may increase the time needed for derivative generation.
+  # The lambda process that grabs records out of the S3 bucket and makes the API calls
+  #   to ingest has some limit of how many records are processed at once, but this defaults to making calls
+  #   far faster than CS/Nuxeo can produce and store derivatives.
+  # If your mediaFileURI values point to downloadable files (the usual case), you may be able to decrease this
+  #   number, as there is delay during the download of each file for ingest. If the mediaFileURIs are to
+  #   local file system locations, this might need to be higher to build in the padding you *aren't* getting
+  #   since the files don't have to be downloaded.
+  # media_with_blob_upload_delay: 500
+  # Maximum number of threads to use when uploading media-with-blob objects to S3 for ingest. It's
+  #   more straightforward to control the speed of media uploads/ingests here than asking for the
+  #   S3 bucket and/or AWS Lambda parameters to be changed.
+  # The value set here will interact with the `media_with_blob_upload_delay` value set above, and it may
+  #   be worth tweaking them to find a good balance that works.
+  # max_media_upload_threads: 5
+
+  # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+  # The remaining settings are required per client, and cannot be set by default
+  # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
   # The redis_db_number should be unique per config. This allows you to quickly clear the caches
   #  for one instance, without affecting the caches for other instances.
@@ -79,28 +133,6 @@ client:
   # If you are NOT providing a custom config, comment out the following line.
   # batch_config_path: ~/code/cs/migration_tools/spec/support/fixtures/client_batch_config.json
 
-  # If true, when you run `thor batch:map`, the first thing that will happen is fresh data for record
-  #   types required by the type and data you are mapping will be pulled from the database and cached.
-  # If commented out or set to false, caches will NOT be cleared and refreshed prior to data mapping
-  #   when called when `thor batch:map` is called. This may be preferable if the scale of the instance
-  #   is very large, so it takes a long time to refresh cache data
-  # Note that you can control whether this happens per-batch via the `--autocache` option on the
-  #   `thor map:batch` command. The default value of this option is whatever you have set here.
-  auto_refresh_cache_before_mapping: true
-
-  # If true, caches will be cleared before they are auto refreshed. This is the safest option, as it will ensure
-  #   deleted items are not still in the cache, and the correct values are cached for any duplicates since cleaned
-  #   up.
-  # If you know only additions/updates have been made, you can set to false to save a bit of time.
-  # This has no effect if auto_refresh_cache_before_mapping = false
-  # Note that you can control whether this happens per-batch via the `--clearcache` option on the `thor map:batch` command.
-  #   The default value of this option is whatever you have set here.
-  clear_cache_before_refresh: true
-
-
-  # column/field delimiter for input "CSV" files
-  csv_delimiter: ","
-
   # AWS S3 Bucket settings - required for using this tool to transfer records to the client instance
   # One S3 Bucket per instance must be set up -- Credentials are in LastPass entry `S3 IMPORT BUCKETS`
   s3_bucket: "bucket_name"
@@ -108,31 +140,6 @@ client:
   s3_key: "value_of_bucket_key"
   s3_secret: "value_of_secret_for_bucket_key"
   s3_delimiter: "|"
-
-  # Controls pause/sleep time after uploading to S3 each media handling procedure record that has an
-  #   associated mediaFileURI. A pause is required with batches over a certain size to minimize
-  #   file storage and derivative generation failures.
-  # The value is in ms.
-  # The value here is based on CS Services code that waits 500 ms for derivatives to be
-  #   generated:
-  # https://cs.github.com/collectionspace/application/blob/5fb3d0ffc750bfdf19e57057ac3dc65827c01df0/cspi-services/src/main/java/org/collectionspace/chain/csp/persistence/services/BlobStorage.java#L95
-  # If you are still seeing blob file storage and derivative generation errors, increase this delay.
-  #   Uploads to S3 are threaded, so {system_config/max_threads} (default = 6) upload queues are happening
-  #   simultaneously. This may increase the time needed for derivative generation.
-  # The lambda process that grabs records out of the S3 bucket and makes the API calls
-  #   to ingest has some limit of how many records are processed at once, but this defaults to making calls
-  #   far faster than CS/Nuxeo can produce and store derivatives.
-  # If your mediaFileURI values point to downloadable files (the usual case), you may be able to decrease this
-  #   number, as there is delay during the download of each file for ingest. If the mediaFileURIs are to
-  #   local file system locations, this might need to be higher to build in the padding you *aren't* getting
-  #   since the files don't have to be downloaded.
-  media_with_blob_upload_delay: 500
-  # Maximum number of threads to use when uploading media-with-blob objects to S3 for ingest. It's
-  #   more straightforward to control the speed of media uploads/ingests here than asking for the
-  #   S3 bucket and/or AWS Lambda parameters to be changed.
-  # The value set here will interact with the `media_with_blob_upload_delay` value set above, and it may
-  #   be worth tweaking them to find a good balance that works.
-  max_media_upload_threads: 1
 database:
   port: 5432
   db_password: dbpassword
