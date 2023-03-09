@@ -54,4 +54,18 @@ RSpec.describe CollectionspaceMigrationTools::Validate::Config do
       expect(result.failure.message).to eq(msg)
     end
   end
+
+  context 'when missing system aws_profile' do
+    let(:config_data) do
+      data = valid_config_hash.dup
+        .merge(sys_config_hash)
+      data[:system].delete(:aws_profile)
+      data
+    end
+
+    it 'returns Failure with expected message', :aggregate_failures do
+      expect(result).to be_a(Dry::Monads::Failure)
+      expect(result.failure.message).to eq('aws_profile is missing')
+    end
+  end
 end
