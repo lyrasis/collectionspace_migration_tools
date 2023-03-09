@@ -81,6 +81,8 @@ region = us-west-2
 You can change the profile names in brackets as you wish. Just note that the first profile name is the value of `source_profile` in the second profile.
 
 === System config
+Copy `./sample_system_config.yml` to `./system_config.yml`
+
 You may wish to tweak the settings in `system_config.yml`. These include:
 
 csv_chunk_size:: The use/purpose of reading CSVs in chunks is explained in https://xjlin0.github.io/tech/2015/05/25/faster-parsing-csv-with-parallel-processing/[Faster Parsing CSV With Parallel Processing]. Each chunk is sent to a parallel worker for processing. A chunk with more rows will take longer to process, but I have not investigated the tradeoff between queueing up/passing on more chunks vs. larger chunks.

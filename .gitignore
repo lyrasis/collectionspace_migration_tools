@@ -10,3 +10,4 @@ doc/yard
 tmp
 
 .DS_Store
+system_config.yml
