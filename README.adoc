@@ -60,12 +60,35 @@ If you want to change the Redis ports, you need to update them in two places:
 
 Nothing in `./redis.yml` is sensitive, as it's all just on your local machine.
 
+=== AWS config
+You will need to create an AWS profile that this tool will use to interact with S3 Fast Import Buckets (and eventually CloudWatchLogs).
+
+- You will need personal user credentials to the CollectionSpace AWS account. Mark (or whoever admins that account) will need to set that up and ensure your user has the "MigrationsRole"
+- If you do not already have an `~/.aws/credentials` file, create that file.
+- In that file, add the following:
+
+....
+[csdefault]
+aws_access_key_id = {your user key id}
+aws_secret_access_key = {your user secret access key}
+
+[collectionspacemigrationtools]
+role_arn = arn:aws:iam::163800758780:role/MigrationsRole
+source_profile = csdefault
+region = us-west-2
+....
+
+You can change the profile names in brackets as you wish. Just note that the first profile name is the value of `source_profile` in the second profile.
+
 === System config
+Copy `./sample_system_config.yml` to `./system_config.yml`
+
 You may wish to tweak the settings in `system_config.yml`. These include:
 
 csv_chunk_size:: The use/purpose of reading CSVs in chunks is explained in https://xjlin0.github.io/tech/2015/05/25/faster-parsing-csv-with-parallel-processing/[Faster Parsing CSV With Parallel Processing]. Each chunk is sent to a parallel worker for processing. A chunk with more rows will take longer to process, but I have not investigated the tradeoff between queueing up/passing on more chunks vs. larger chunks.
 max_threads:: Maximum number of threads that will be spun up for a given https://github.com/grosser/parallel[parallel] process run in threads.
 max_processes:: Maximum number of processes that will be spun up for a given https://github.com/grosser/parallel[parallel] process run in processes.
+aws_profile:: The name of the second AWS profile you created (the one with `role_arn` and `source_profile` specified.
 
 NOTE: The default settings seem to be working ok for not-gigantic migration projects on my DTS-issued Macbook Pro, but I have not yet done much testing to figure out optimal settings for these. I _assume_ if things are running super slowly, try upping max_threads/max_processes. If your system is too strained, lower max_threads/max_processes. I confess I'm not entirely sure if it thread vs process makes a difference in terms of system resource usage, but it seemed like a good idea to separate them in case this mattered.
 
@@ -77,9 +100,21 @@ You will need to have:
 
 * admin-level credentials to the CS instance
 * login info for connecting to the database for the CS instance
-* credentials for the ingest S3 bucket be set up for the CS instance (currently we need to request that Mark set this bucket up and put the credentials in LastPass)
+* the name of the S3 Fast Import bucket for the CS instance (currently we need to request that Mark set this bucket up)
 
 See https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/client_config_management.adoc[client config management documentation] for more details.
+
+== Test your setup
+
+Once you have done the one-time config and set up at least one instance, you can verify that your AWS access works by doing the following in this repo's base directory:
+
+[source,bash]
+----
+bin/console
+CMT::Build::S3Client.call
+----
+
+If you get `Success(#<Aws::S3::Client>)`, good. If you get a `Failure`, something is not right.
 
 == Usage
 Ensure desired config is in place (See <<one-time-setup>> and <<per-instance-setup>> sections above)

@@ -4,18 +4,13 @@ require 'mock_redis'
 require_relative '../../spec_helper'
 
 RSpec.describe CollectionspaceMigrationTools::Cache::Builder do
-  before(:all) do
-    @refname_port = CMT.config.redis.refname_port
-    @redis_db_number = CMT.config.client.redis_db_number
-  end
+  let(:cache_type) { :refname }
+  let(:result){ described_class.call(cache_type) }
 
   before do
     redis = MockRedis.new
     allow(Redis).to receive(:new).and_return(redis)
   end
-
-  let(:cache_type) { :refname }
-  let(:result){ described_class.call(cache_type) }
 
   describe '.call' do
     context 'with valid config' do
@@ -30,8 +25,7 @@ RSpec.describe CollectionspaceMigrationTools::Cache::Builder do
           CMT.config.client.redis_db_number = 9
         end
         after(:context) do
-          CMT.config.redis.refname_port = @refname_port
-          CMT.config.client.redis_db_number = @redis_db_number
+          CMT.reset_config
         end
 
         it 'connects to the expected Redis instance' do
@@ -46,8 +40,7 @@ RSpec.describe CollectionspaceMigrationTools::Cache::Builder do
           CMT.config.client.redis_db_number = 9
         end
         after(:context) do
-          CMT.config.redis.refname_port = @refname_port
-          CMT.config.client.redis_db_number = @redis_db_number
+          CMT.reset_config
         end
 
         let(:cache_type){ :csid }
