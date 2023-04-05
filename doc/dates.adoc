@@ -58,6 +58,7 @@ Output will be written to a CSV at the same path as your input, but with "_repor
 If you know you need to apply certain processing options, you can pass these through when you run the script:
 
 `bundle exec ruby utils/batch_result_report.rb -i {path_to_dates_CSV} -o "{edtf: true}"`
+====
 
 === Identify date values lacking support
 
