@@ -20,18 +20,25 @@ module CollectionspaceMigrationTools
 
       def call
         path = batch.source_csv
-        mapper = yield(CMT::Parse::RecordMapper.call(batch.mappable_rectype))
-        csid_deps = yield(CMT::Batch::CsidCacheDependencyIdentifier.call(path: path, mapper: mapper))
 
-        first_row = yield(CMT::Csv::FirstRowGetter.call(path))
         rn_deps = yield(CMT::Batch::RefnameCacheDependencyIdentifier.call(headers: first_row.headers, mapper: mapper))
 
-        plan = yield(CMT::Batch::CachingPlanner.call(refname: rn_deps, csid: csid_deps))
-        run = yield(CMT::Batch::AutoCacher.call(plan))
+        mapper = yield CMT::Parse::RecordMapper.call(batch.mappable_rectype)
+        csid_deps = yield CMT::Batch::CsidCacheDependencyIdentifier.call(
+          path: path,
+          mapper: mapper
+        )
+
+        first_row = yield CMT::Csv::FirstRowGetter.call(path)
+        plan = yield CMT::Batch::CachingPlanner.call(
+          refname: rn_deps,
+          csid: csid_deps
+        )
+        _run = yield(CMT::Batch::AutoCacher.call(plan))
 
         Success()
       end
-      
+
       private
 
       attr_reader :batch

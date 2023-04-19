@@ -20,7 +20,7 @@ module CollectionspaceMigrationTools
         @rec_type = rec_type
         extend record_type_mixin
       end
-      
+
       def call(data)
         before_report(data)
         do_population(data).either(
@@ -32,9 +32,10 @@ module CollectionspaceMigrationTools
       private
 
       attr_reader :cache_type, :cache, :cache_name, :rec_type
-      
+
       def before_report(data)
-        puts "Populating #{cache_name} cache (current size: #{cache.size}) with #{data.num_tuples} keys..."
+        puts "Populating #{cache_name} cache (current size: #{cache.size}) "\
+          "with #{data.num_tuples} keys..."
       end
 
       def after_report
@@ -45,7 +46,10 @@ module CollectionspaceMigrationTools
       def do_population(data)
         data.each{ |row| cache.send(command, *signature(row)) }
       rescue StandardError => err
-        Failure(CMT::Failure.new(context: "#{name}.#{__callee__}", message: err.message))
+        Failure(
+          CMT::Failure.new(context: "#{name}.#{__callee__}",
+                           message: err.message)
+        )
       else
         Success('ok')
       end
@@ -57,7 +61,8 @@ module CollectionspaceMigrationTools
       end
 
       def record_type_mixin
-        modname = "CollectionspaceMigrationTools::Cache::Populate::Types::#{rec_type}"
+        modname = "CollectionspaceMigrationTools::Cache::Populate::Types::"\
+          "#{rec_type}"
         modname.split('::').reduce(Module, :const_get)
       end
     end

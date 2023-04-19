@@ -11,7 +11,7 @@ module CollectionspaceMigrationTools
           self.new(...).call
         end
       end
-      
+
       def initialize(refname:, csid:)
         @refname_deps = refname.sub('vocabularies', 'vocabulary').split('|')
         @csid_deps = csid.split('|')
@@ -32,7 +32,7 @@ module CollectionspaceMigrationTools
       else
         Success(result)
       end
-      
+
       private
 
       attr_reader :refname_deps, :csid_deps
