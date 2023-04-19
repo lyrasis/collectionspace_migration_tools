@@ -3,13 +3,13 @@
 ruby File.read('.ruby-version').strip
 
 source 'https://rubygems.org'
-git_source(:github){ |repo_name| "https://github.com/#{repo_name}" }
+#git_source(:github){ |repo_name| "https://github.com/#{repo_name}" }
 
 gem 'aws-sdk-s3', '~> 1'
 gem 'aws-sdk-cloudwatchlogs', '~> 1'
 gem 'benchmark-memory', '~> 0.2'
-gem 'collectionspace-client', tag: 'v0.14.1', git: 'https://github.com/collectionspace/collectionspace-client.git'
-gem 'collectionspace-mapper', tag: 'v4.1.2', git: 'https://github.com/collectionspace/collectionspace-mapper.git'
+gem 'collectionspace-client', branch: 'main', git: 'https://github.com/collectionspace/collectionspace-client.git'
+gem 'collectionspace-mapper', branch: 'map-date-details', git: 'https://github.com/collectionspace/collectionspace-mapper.git'
 gem 'collectionspace-refcache', tag: 'v1.0.0', git: 'https://github.com/collectionspace/collectionspace-refcache.git'
 gem 'dry-monads', '~> 1.4'
 gem 'dry-transaction', '~>0.13'
