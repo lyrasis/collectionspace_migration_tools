@@ -14,12 +14,18 @@ endif::[]
 
 toc::[]
 
-== Requirements
+== Translate date string values to CS date detail fields
+
+Even if not all date formats in your client data are currently supported (and support can't feasibly be added in the migration time frame), the results can be given to client for manual cleanup/data prep.
+
+If you are not concerned with having *all* date strings translated automagically, you can skip everything between "Initial prep" and "Translate your dates to Collectionspace date details".
+
+=== Requirements
 Clone the https://github.com/kspurgin/emendate[Emendate] repository.
 
 `cd` into the repo directory and run `bundle install`.
 
-== Initial prep
+=== Initial prep
 Generate a CSV of all unique date values that need to be handled in your project.
 
 This is a one-column CSV with no header. (If header is included, things will still work, but the result of processing the first "date" will always be an error because the header value will not be a valid, processable date.)
@@ -41,12 +47,12 @@ all_date_fields: %i[birthdate deathdate proddate otherdate]
 transform Deduplicate::Table, field: :alldates
 ----
 
-== Identify unsupported date patterns
+=== Identify unsupported date patterns
 Support for date patterns is being added as-needed to support given project datasets. Currently, it is likely some of your date patterns will not be supported.
 
 The purpose of this step is to identify unsupported date patterns so that support can be added.
 
-=== Run date values through basic batch processing script
+==== Run date values through basic batch processing script
 
 * `cd` into Emendate repository directory
 * `bundle exec ruby utils/batch_result_report.rb -i {path_to_dates_CSV}`
@@ -60,7 +66,7 @@ If you know you need to apply certain processing options, you can pass these thr
 `bundle exec ruby utils/batch_result_report.rb -i {path_to_dates_CSV} -o "{edtf: true}"`
 ====
 
-=== Identify date values lacking support
+==== Identify date values lacking support
 
 Isolate any rows that have:
 
@@ -92,7 +98,7 @@ If `tags_date_type` includes `currently_unparseable`, this indicates a known pat
 If `tags_date_type` includes `unparseable`, this indicates there is no plan to support the pattern.
 ====
 
-=== Add or request support for date patterns
+==== Add or request support for date patterns
 
 You are welcome to submit Emendate PRs adding support for any date patterns.
 
@@ -110,7 +116,7 @@ If it isn't in the examples.csv, provide the following info that would be added 
 * expected certainty modifiers to be applied to parsed date
 * if the string can be parsed differently given different https://github.com/kspurgin/emendate/blob/main/docs/options.adoc[Emendate options], specify the options and expected output for each variation.
 
-== Identify date patterns not processed as expected
+=== Identify date patterns not processed as expected (or get client to help do so!)
 
 These will fall into two categories:
 
@@ -123,17 +129,23 @@ Note any options needed for your data set. (When batch processing, the given opt
 
 Report any that need to be fixed.
 
-== Wait for support for date patterns to be added
+=== Wait for support for date patterns to be added
 (Or jump in and make those PRs, lol)
 
-== Translate your dates to Collectionspace date details
+=== Translate your dates to Collectionspace date details
 
 Produces a CSV that can be:
 
 * passed to client for review/cleanup prior to merging into migration; OR
 * merged directly into migration
 
-How to:
+This still assumes you may have numerous records in your migration with the same date value, and that we are here working with unique date strings not tied to specific records in the migration project---the only input column currently supported by the script is the date string.
+
+The result of this script would be added as a supplied registry entry in your kiba-extend project, with `lookup_on: :orig`.
+
+NOTE: If you include Emendate in your kiba-extend migration project, it should be possible to merge translated date fields directly into the migration processing, but I haven't tried it yet.
+
+How to translate your dates:
 
 * `cd` into Emendate repository directory
 * `bundle exec ruby utils/translate_to_cspace_csv.rb -i {path_to_dates_CSV}`
@@ -147,11 +159,9 @@ If you know you need to apply certain processing options, you can pass these thr
 `bundle exec ruby utils/translate_to_cspace_csv.rb -i {path_to_dates_CSV} -o "{pluralized_date_interpretation: :broad}"`
 ====
 
-== Merge into migration project data
+== Merge translated dates into migration project data
 
-This still assumes you may have numerous records in your migration with the same date value, and that we are here working with unique date strings not tied to specific records in the migration project---the only input column currently supported by the script is the date string.
-
-The result of this script would be added as a supplied registry entry in your kiba-extend project, with `lookup_on: :orig`. Then you should use the following transform (or similar) to merge the fields in:
+ Then you should use the following transform (or similar) to merge the fields in:
 
 [source,ruby]
 ....
@@ -173,5 +183,66 @@ transform Delete::EmptyFieldValues,
 transform Delete::EmptyFields
 ....
 
-If you include Emendate in your kiba-extend migration project, it should be possible to merge translated date fields directly into the migration processing, but I haven't tried it yet.
+This should account for:
+
+* Properly formatting data for multivalue date fields
+* Handling any translated dates that produced multiple rows (treating them as multivalued dates)
+
+== Ingest date details via collectionspace-migration-tools or CSV Importer
+
+[WARNING]
 ====
+I recommend you do a separate batch for each date field group. For instance, if you have both person birth and death date details to ingest, do those in two batches.
+
+*WHY?*
+
+Both batch ingest tools have a basic assumption of _one CSV row/one XML document/one API call_.
+
+While you technically _can_ map/process birth and death date details in the same *update* CSV/batch, I am not clear on how CS would handle receiving two near-simultaneous `update` requests on the same record.
+
+If you attempt a *create* batch with two rows having the same record id value, it'll complain that you'll be creating duplicate records.
+====
+
+[NOTE]
+====
+Date detail ingest is per record type. This means it is absolutely not possible to ingest person birth dates and org foundation dates in the same batch.
+====
+
+=== Data requirements
+
+* Each row must contain all structured date information for the specfied structured date group, for the specified record. I.e. if you have 2 objectProductionDateGroup dates, you will need to represent them in a single row, separating the values wth your project's specified delimiters.
+
+WARNING: I have not yet tested this with, say, repeating structured date fields that themselves occur within repeatable field groups, so if you have that situation, *test and proceed carefully*
+
+* Required fields
+** record identifier - Actual field name varies per record type
+** `date_field_group` - Name of structured date group to be populated with row's date details. Use the form of field name found in the normal CSV Importer template for the record type. For example, `objectProductionDateGroup` or `objectproductiondategroup` (case is irrelevant).
+** `scalarValuesComputed` - If we don't explicitly provide this, CS doesn't figure it out when the XML is imported. "y" and "n" (and other common boolean indicator values) are automatically converted to true/false in the mapping process.
+
+
+=== How to
+
+==== collectonspace-migration-tools
+
+Create a .json file with:
+
+[source]
+....
+{
+  "batch_mode": "date details"
+}
+....
+
+In your client config file, specify the path to that .json file in the `batch_config_path` setting.
+
+Reload your config:
+
+`thor config switch {yourconfig}`
+
+Create/run your batch as usual.
+
+==== CSV Importer
+
+IMPORTANT: This doesn't work yet, because we are in an in-between state where new mapper version supporting this can't be added until CSV Importer is updated to work with Ruby 3.2. Also I need to do more extensive testing.
+
+Paste the above JSON into the black "Config" box on the page for creating your batch.
