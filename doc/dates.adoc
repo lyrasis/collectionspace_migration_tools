@@ -1,0 +1,248 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+= Date handling workflows
+
+toc::[]
+
+== Translate date string values to CS date detail fields
+
+Even if not all date formats in your client data are currently supported (and support can't feasibly be added in the migration time frame), the results can be given to client for manual cleanup/data prep.
+
+If you are not concerned with having *all* date strings translated automagically, you can skip everything between "Initial prep" and "Translate your dates to Collectionspace date details".
+
+=== Requirements
+Clone the https://github.com/kspurgin/emendate[Emendate] repository.
+
+`cd` into the repo directory and run `bundle install`.
+
+=== Initial prep
+Generate a CSV of all unique date values that need to be handled in your project.
+
+This is a one-column CSV with no header. (If header is included, things will still work, but the result of processing the first "date" will always be an error because the header value will not be a valid, processable date.)
+
+If any fields are multi-valued, make sure to split them into separate values for this purpose.
+
+.Sample kiba-extend transforms to do this
+[,ruby]
+----
+all_date_fields: %i[birthdate deathdate proddate otherdate]
+ transform CombineValues::FromFieldsWithDelimiter,
+   sources: all_date_fields,
+   target: :alldates,
+   sep: Kiba::Extend.delim,
+   delete_sources: true
+ transform Explode::RowsFromMultivalField,
+   field: :alldates:,
+   delim: Kiba::Extend.delim
+transform Deduplicate::Table, field: :alldates
+----
+
+=== Identify unsupported date patterns
+Support for date patterns is being added as-needed to support given project datasets. Currently, it is likely some of your date patterns will not be supported.
+
+The purpose of this step is to identify unsupported date patterns so that support can be added.
+
+==== Run date values through basic batch processing script
+
+* `cd` into Emendate repository directory
+* `bundle exec ruby utils/batch_result_report.rb -i {path_to_dates_CSV}`
+
+Output will be written to a CSV at the same path as your input, but with "_report" appended to the end of the file name.
+
+[TIP]
+====
+If you know you need to apply certain processing options, you can pass these through when you run the script:
+
+`bundle exec ruby utils/batch_result_report.rb -i {path_to_dates_CSV} -o "{edtf: true}"`
+====
+
+==== Identify date values lacking support
+
+Isolate any rows that have:
+
+* Value in `errs` column; OR
+* `warnings` column value beginning with "Untokenizable sequences: "; OR
+* `warnings` column value is "Unprocessable string"
+
+From this set, remove any rows with "date values" that cannot reasonably be expected to be parsed as a date.
+
+Examples of things to exclude:
+
+* Eras, dynasties, named periods ("contemporary", "Ming dynasty", "Roaring Twenties")
+** Exception: numbered century designations should be supported ("20th cent.")
+* Roman numerals -- I have no intention to delve into dealing with these.
+* "Date values" that include non-date info, such as date type, in the date string ("copyright 1993", "2021 reissue", "flourished 1738-1757")
+
+Examples of things to include:
+
+* Strings that specifically express an unknown/no date situation that may reasonably be found in other data sets. (strings like "n.d." and "unknown" are already handled)
+
+[TIP]
+====
+Refer to Emendate's example set CSV, which reflects known/expected date patterns.
+
+These patterns are NOT all currently supported. Many of them are **not** tagged as unsupported, however there are two special tagged categories:
+
+If `tags_date_type` includes `currently_unparseable`, this indicates a known pattern that has been designated as not currently processable, and low priority for adding processing support.
+
+If `tags_date_type` includes `unparseable`, this indicates there is no plan to support the pattern.
+====
+
+==== Add or request support for date patterns
+
+You are welcome to submit Emendate PRs adding support for any date patterns.
+
+However, realistically, at this point, you are probably going to send Kristina a list of unsupported date patterns.
+
+**Please send a list of unique date _patterns_ for which support is needed!** That is, do not send "1972 12 15" and "1982 06 07" and "2022 03 18". Please pick one of each pattern.
+
+**IDEALLY:**
+If your date pattern already exists in Emendate's examples.csv, refer to the pattern used there.
+
+If it isn't in the examples.csv, provide the following info that would be added to that file:
+
+* an original example string
+* expected full start and end date values when string is parsed
+* expected certainty modifiers to be applied to parsed date
+* if the string can be parsed differently given different https://github.com/kspurgin/emendate/blob/main/docs/options.adoc[Emendate options], specify the options and expected output for each variation.
+
+=== Identify date patterns not processed as expected (or get client to help do so!)
+
+These will fall into two categories:
+
+1. Patterns where the expected result is achieved by setting the relevant https://github.com/kspurgin/emendate/blob/main/docs/options.adoc[Emendate options]
+2. Patterns that are just being handled wrong, or are being handled one possible way as if it is the only possible way (and thus need some handling option applied)
+
+Refer to the https://github.com/kspurgin/emendate/blob/main/docs/use.adoc[Emendate Use] and https://github.com/kspurgin/emendate/blob/main/docs/options.adoc[Options] documentation to determine which category your patterns fall into.
+
+Note any options needed for your data set. (When batch processing, the given options apply to the entire set)
+
+Report any that need to be fixed.
+
+=== Wait for support for date patterns to be added
+(Or jump in and make those PRs, lol)
+
+=== Translate your dates to Collectionspace date details
+
+Produces a CSV that can be:
+
+* passed to client for review/cleanup prior to merging into migration; OR
+* merged directly into migration
+
+This still assumes you may have numerous records in your migration with the same date value, and that we are here working with unique date strings not tied to specific records in the migration project---the only input column currently supported by the script is the date string.
+
+The result of this script would be added as a supplied registry entry in your kiba-extend project, with `lookup_on: :orig`.
+
+NOTE: If you include Emendate in your kiba-extend migration project, it should be possible to merge translated date fields directly into the migration processing, but I haven't tried it yet.
+
+How to translate your dates:
+
+* `cd` into Emendate repository directory
+* `bundle exec ruby utils/translate_to_cspace_csv.rb -i {path_to_dates_CSV}`
+
+Output will be written to a CSV at the same path as your input, but with "_translated" appended to the end of the file name.
+
+[TIP]
+====
+If you know you need to apply certain processing options, you can pass these through when you run the script:
+
+`bundle exec ruby utils/translate_to_cspace_csv.rb -i {path_to_dates_CSV} -o "{pluralized_date_interpretation: :broad}"`
+====
+
+== Merge translated dates into migration project data
+
+ Then you should use the following transform (or similar) to merge the fields in:
+
+[source,ruby]
+....
+date_fields = %i[datedisplaydate dateperiod dateassociation datenote dateearliestsingleyear dateearliestsinglemonth dateearliestsingleday dateearliestsingleera dateearliestsinglecertainty dateearliestsinglequalifier dateearliestsinglequalifiervalue dateearliestsinglequalifierunit datelatestyear datelatestmonth datelatestday datelatestera datelatestcertainty datelatestqualifier datelatestqualifiervalue datelatestqualifierunit dateearliestscalarvalue datelatestscalarvalue scalarvaluescomputed]
+
+fieldmap = date_fields.map{ |field| [field, field] }.to_h
+
+transform Merge::MultiRowLookup,
+  lookup: :translated_dates,
+  keycolumn: :orig_date_field,
+  fieldmap: fieldmap,
+  multikey: true,
+  null_placeholder: Kiba::Extend.nullvalue,
+  delim: Kiba::Extend.delim
+transform Delete::EmptyFieldValues,
+  fields: date_fields,
+  delim: Kiba::Extend.delim,
+  usenull: true
+transform Delete::EmptyFields
+....
+
+This should account for:
+
+* Properly formatting data for multivalue date fields
+* Handling any translated dates that produced multiple rows (treating them as multivalued dates)
+
+== Ingest date details via collectionspace-migration-tools or CSV Importer
+
+[WARNING]
+====
+I recommend you do a separate batch for each date field group. For instance, if you have both person birth and death date details to ingest, do those in two batches.
+
+*WHY?*
+
+Both batch ingest tools have a basic assumption of _one CSV row/one XML document/one API call_.
+
+While you technically _can_ map/process birth and death date details in the same *update* CSV/batch, I am not clear on how CS would handle receiving two near-simultaneous `update` requests on the same record.
+
+If you attempt a *create* batch with two rows having the same record id value, it'll complain that you'll be creating duplicate records.
+====
+
+[NOTE]
+====
+Date detail ingest is per record type. This means it is absolutely not possible to ingest person birth dates and org foundation dates in the same batch.
+====
+
+=== Data requirements
+
+* Each row must contain all structured date information for the specfied structured date group, for the specified record. I.e. if you have 2 objectProductionDateGroup dates, you will need to represent them in a single row, separating the values wth your project's specified delimiters.
+
+WARNING: I have not yet tested this with, say, repeating structured date fields that themselves occur within repeatable field groups, so if you have that situation, *test and proceed carefully*
+
+* Required fields
+** record identifier - Actual field name varies per record type
+** `date_field_group` - Name of structured date group to be populated with row's date details. Use the form of field name found in the normal CSV Importer template for the record type. For example, `objectProductionDateGroup` or `objectproductiondategroup` (case is irrelevant).
+** `scalarValuesComputed` - If we don't explicitly provide this, CS doesn't figure it out when the XML is imported. "y" and "n" (and other common boolean indicator values) are automatically converted to true/false in the mapping process.
+
+
+=== How to
+
+==== collectonspace-migration-tools
+
+Create a .json file with:
+
+[source]
+....
+{
+  "batch_mode": "date details"
+}
+....
+
+In your client config file, specify the path to that .json file in the `batch_config_path` setting.
+
+Reload your config:
+
+`thor config switch {yourconfig}`
+
+Create/run your batch as usual.
+
+==== CSV Importer
+
+IMPORTANT: This doesn't work yet, because we are in an in-between state where new mapper version supporting this can't be added until CSV Importer is updated to work with Ruby 3.2. Also I need to do more extensive testing.
+
+Paste the above JSON into the black "Config" box on the page for creating your batch.

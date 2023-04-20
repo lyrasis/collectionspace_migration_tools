@@ -6,23 +6,26 @@ module CollectionspaceMigrationTools
   module Batch
     class RefnameCacheDependencyIdentifier
       include Dry::Monads[:result]
-      
+
       class << self
         def call(...)
           self.new(...).call
         end
       end
-      
+
       def initialize(headers:, mapper:)
         @headers = headers.map(&:downcase)
         @mappings = mapper.refname_columns
-        @subtype_mappings = CMT::RecordTypes.authority_subtype_machine_to_human_label_mapping
+        @subtype_mappings =
+          CMT::RecordTypes.authority_subtype_machine_to_human_label_mapping
       end
 
       def call
         return Success('') if mappings.empty?
-        
-        res = mappings.select{ |mapping| headers.any?(mapping['datacolumn'].downcase) }
+
+        res = mappings.select{ |mapping|
+          headers.any?(mapping['datacolumn'].downcase)
+        }
           .map{ |mapping| extract_cacheable(mapping) }
           .uniq
           .map{ |rectype| CMT::RecordTypes.to_obj(rectype) }
@@ -36,10 +39,13 @@ module CollectionspaceMigrationTools
 
           Success(final)
         else
-        fail_report = failures.map{ |f| f.failure.to_s }
-          .join('|')
-        msg = 'One or more fields in source CSV is populated with an authority that cannot be converted for caching:'
-        Failure("#{self.class.name.split('::')[-1]} ERROR: #{msg} #{fail_report}")
+          fail_report = failures.map{ |f| f.failure.to_s }
+            .join('|')
+          msg = "One or more fields in source CSV is populated with an "\
+            "authority that cannot be converted for caching:"
+          Failure(
+            "#{self.class.name.split('::')[-1]} ERROR: #{msg} #{fail_report}"
+          )
         end
       end
 
