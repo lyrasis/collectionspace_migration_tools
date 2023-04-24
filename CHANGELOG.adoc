@@ -27,6 +27,14 @@ These changes are merged into the `main` branch, but have not been released. Aft
 
 === Deprecated/Will break in a future version
 
+== 2.2.0 (2023-04-24)
+=== Added
+* Optional `aws_media_ingest_profile` system config setting, specifying AWS profile through which to access client media ingest bucket
+* Optional `media_bucket` client config setting, specifying name of client media ingest bucket
+* Two new commands to control the access policy of client media ingest bucket:
+** thor bucket:public (makes bucket public, so media can be ingested)
+** thor bucket:private (makes bucket private)
+
 == 2.1.0 (2023-04-19)
 === Added
 * Ability to ingest structured date details. See https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/dates.adoc[Dates workflows documentation] for details.

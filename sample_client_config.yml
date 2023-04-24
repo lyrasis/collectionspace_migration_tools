@@ -142,6 +142,9 @@ client:
   # This is the bucket we upload CSXML objects into, which uses AWS Lambda to call ingest for
   #   each object. It is NOT the bucket where client media files are uploaded.
   s3_bucket: "bucket_name"
+  # The name of the S3 bucket from which client media files will be ingested. This is optional, since some migrations
+  #   do not include media files.
+  media_bucket: "other_bucket_name"
 database:
   port: 5432
   db_password: dbpassword

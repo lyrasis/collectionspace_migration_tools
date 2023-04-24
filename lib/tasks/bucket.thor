@@ -14,12 +14,28 @@ class Bucket < Thor
       ->(failure){ puts failure.to_s; exit(1) }
     )
   end
-  
+
   desc 'objs', 'returns keys of objects in bucket'
   def objs
     CMT::S3::Bucket.objects.either(
       ->(list){ handle_list(list) },
-      ->(failure){ puts failure.to_s, exit(1) }
+      ->(failure){ puts failure.to_s; exit(1) }
+    )
+  end
+
+  desc 'private', 'sets policy of MEDIA INGEST bucket to private'
+  def private
+    CMT::S3::BucketPolicySetter.call(policy: :private).either(
+      ->(success){ puts "Success"; exit(0) },
+      ->(failure){ puts failure.to_s; exit(1) }
+    )
+  end
+
+  desc 'public', 'sets policy of MEDIA INGEST bucket to public for ingest'
+  def public
+    CMT::S3::BucketPolicySetter.call(policy: :public).either(
+      ->(success){ puts "Success"; exit(0) },
+      ->(failure){ puts failure.to_s; exit(1) }
     )
   end
 

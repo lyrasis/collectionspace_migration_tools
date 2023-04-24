@@ -9,6 +9,7 @@ module CollectionspaceMigrationTools
         required(:csv_chunk_size).filled(:integer)
         required(:max_threads).filled(:integer)
         required(:aws_profile).filled(:string)
+        optional(:aws_media_ingest_profile).maybe(:string)
       end
     end
   end

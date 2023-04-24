@@ -61,7 +61,7 @@ If you want to change the Redis ports, you need to update them in two places:
 Nothing in `./redis.yml` is sensitive, as it's all just on your local machine.
 
 === AWS config
-You will need to create an AWS profile that this tool will use to interact with S3 Fast Import Buckets (and eventually CloudWatchLogs).
+You will need to create an AWS profile that this tool will use to interact with S3 Fast Import Buckets (and eventually CloudWatchLogs) and S3 buckets set up to hold client media files for ingest.
 
 - You will need personal user credentials to the CollectionSpace AWS account. Mark (or whoever admins that account) will need to set that up and ensure your user has the "MigrationsRole"
 - If you do not already have an `~/.aws/credentials` file, create that file.
@@ -76,7 +76,14 @@ aws_secret_access_key = {your user secret access key}
 role_arn = arn:aws:iam::163800758780:role/MigrationsRole
 source_profile = csdefault
 region = us-west-2
+
+[cs-media]
+role_arn = arn:aws:iam::005622933699:role/MigrationsRole
+source_profile = csdefault
+region = us-west-2
 ....
+
+Your personal user credentials go in the `[csdefault]` entry. The `[collectionspacemigrationtools]` entry uses those credentials to access the account where the fast import buckets are created. The `[cs-media]` uses those credentials to access the account where client media buckets are created.
 
 You can change the profile names in brackets as you wish. Just note that the first profile name is the value of `source_profile` in the second profile.
 
