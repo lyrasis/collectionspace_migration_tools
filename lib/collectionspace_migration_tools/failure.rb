@@ -9,6 +9,14 @@ module CollectionspaceMigrationTools
       @message = message
     end
 
+    def backtrace
+      if message.respond_to?(:backtrace)
+        message.backtrace
+      else
+        nil
+      end
+    end
+
     def for_csv
       "ERROR in #{context}: #{message}"
     end
