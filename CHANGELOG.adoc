@@ -20,6 +20,7 @@ These changes are merged into the `main` branch, but have not been released. Aft
 === Added
 
 === Bugfixes
+- Update `collectionspace-mapper` to get fix for https://github.com/lyrasis/collectionspace_migration_tools/issues/34[#34]
 
 === Changed
 
