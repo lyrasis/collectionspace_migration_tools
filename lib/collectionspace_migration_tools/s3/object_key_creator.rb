@@ -2,6 +2,7 @@
 
 require 'base64'
 require 'dry/monads'
+require 'erb'
 
 module CollectionspaceMigrationTools
   module S3
@@ -9,8 +10,8 @@ module CollectionspaceMigrationTools
 
     # Base 64 hashed filenames for payloads to be transferred via S3
     class ObjectKeyCreator
-
       include Dry::Monads[:result]
+      include ERB::Util
 
       # @param svc_path [String]
       def initialize(svc_path:, batch: nil)
@@ -66,7 +67,9 @@ module CollectionspaceMigrationTools
       end
 
       def prepare_media_uri(media_uri, warnings)
-        result = URI(media_uri)
+        space_escaped = media_uri.gsub(" ", "%20")
+        all_escaped = ERB::Util.url_encode(space_escaped)
+        result = URI(all_escaped)
       rescue URI::Error
         warnings << 'media_uri cannot be encoded as valid ingest URI. File '\
           'ingest may not work as expected'
