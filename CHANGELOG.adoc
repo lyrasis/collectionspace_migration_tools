@@ -20,14 +20,17 @@ These changes are merged into the `main` branch, but have not been released. Aft
 === Added
 
 === Bugfixes
-- Update `collectionspace-mapper` to get fix for https://github.com/lyrasis/collectionspace_migration_tools/issues/34[#34]
-- Escape spaces in `mediafileuri` values, then url_encode them before construction S3 object key (https://github.com/lyrasis/collectionspace_migration_tools/issues/36[#36])
 
 === Changed
 
 === Deleted
 
 === Deprecated/Will break in a future version
+
+== 2.2.1 (2023-04-26)
+=== Bugfixes (related to media file ingest)
+- Update `collectionspace-mapper` to get fix for https://github.com/lyrasis/collectionspace_migration_tools/issues/34[#34]
+- Escape spaces in `mediafileuri` values, then url_encode them before construction S3 object key (https://github.com/lyrasis/collectionspace_migration_tools/issues/36[#36])
 
 == 2.2.0 (2023-04-24)
 === Added
