@@ -23,6 +23,14 @@ NOTE: In order to avoid leaving a bunch of orphaned blobs in the system, best pr
 
 WARNING: Ingesting records that trigger blob ingests remains flakier than ingesting other records. The speed at which records are ingested via this tool may be more likely to trigger throttling on the image downloading side. There are issues with ingesting blobs and finding/fixing failures even with CSV Importer, so there's still work to do...
 
+`mediaFileURI` value processing by collectionspace-migration-tools will:
+
+* Replace any spaces with `%20`;
+* Then, URL-encode the value
+
+This means you do not need to manually handle any escaping in your ingest data prep. Having the ingest prep replace spaces with `%20` will not cause any problems, but URL-encoding the entire value will cause ingest failures.
+
+
 == Media-related client config
 
 These are documented in comments in `sample_client_config.yml`
