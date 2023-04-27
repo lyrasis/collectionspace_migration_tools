@@ -22,12 +22,24 @@ Almost all of the tooling for working with CS data outside the actual applicatio
 
 The following applications may be involved:
 
+=== CollectionSpace Services API
+
+Part of core CollectionSpace: https://github.com/collectionspace/services
+
+https://collectionspace.atlassian.net/wiki/spaces/DOC/pages/701466725/Common+Services+REST+API+documentation[Documentation]
+
+In the data wrangling stack, we use the API to
+
+* create, update, or delete records in an instance by sending an https://collectionspace.atlassian.net/wiki/spaces/DOC/pages/701466725/Common+Services+REST+API+documentation#CommonServicesRESTAPIdocumentation-Payloads[XML record payload].
+* retrieve underlying identifiers of authority and vocabulary terms used in building CS XML
+* retrieve information about the status of records
+
 === collectionspace-client
 
 Provides:
 
 * method for connecting/authenticating to a CS instance
-* wrappers around services API functionality, including CRUD and search
+* wrappers around the CollectionSpace Services API functionality, including CRUD and search
 
 === collectionspace-refcache
 
