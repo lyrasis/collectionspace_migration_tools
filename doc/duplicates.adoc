@@ -10,7 +10,7 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
-= Workflows
+= Duplicate handling
 
 toc::[]
 
@@ -21,7 +21,7 @@ See the entries for https://github.com/lyrasis/collectionspace_migration_tools/b
 == Things to be aware of
 
 === Do not intentionally create duplicate records to hold different data
-One assumption of this process is that there will not be any intentional duplicates (i.e. records of the same type having the same object number, acquisition reference number, initial term display name, etc.). While CS allows this type of duplicate, it is generally bad practice and will lead to complications in the migration and working with batch updating data in the future. 
+One assumption of this process is that there will not be any intentional duplicates (i.e. records of the same type having the same object number, acquisition reference number, initial term display name, etc.). While CS allows this type of duplicate, it is generally bad practice and will lead to complications in the migration and working with batch updating data in the future.
 
 WARNING: If you load any such intentional duplicates, using this tool to delete duplicates post-ingest will do things you will NOT be happy about.
 
@@ -45,4 +45,3 @@ The CS Services API does not permit the creation of duplicate relation records, 
 Due to AWS architecture, the AWS S3/Lambda ingest process can introduce race conditions leading to the same message about an S3 object being processed more than once. For batches with `create` action, this means that duplicate records may be created.
 
 Troubleshooting that kind of thing is inherently complex, and it was comparatively simple to just let random duplicates get created and build a duplicate checker/deleter functionality into this tool to take care of them.
-

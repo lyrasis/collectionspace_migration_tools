@@ -1,3 +1,19 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+= Development decisions and notes
+
+toc::[]
+
 == Cache backend
 
 Uses Redis because in initial testing, populating a cache with a large number of refnames was over twice as fast using Redis as Zache.
@@ -42,4 +58,3 @@ In a number of places, I ran into people saying that using multiple databases in
 * Each client/migration project's config.yml includes a required `redis_db_number` setting, which controls which database is used in the Redis instances for that client
 ** This allows all keys for a given client to efficiently be removed via `FLUSHDB` command
 * One instance of `CollectionSpace::RefCache` is set up to act as client to `refnames`, and another to act as client to `csids`. These two should be able to both be processing/populating simultaneously
-
