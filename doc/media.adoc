@@ -93,11 +93,11 @@ There are columns for each expected derivative type. If that type is present, th
 
 === Duplicate media added until bucket emptied
 
-Looks like:: `batch ingstat` reports the record as an ingest error, but you see many duplicates of the record in CS. AWS S3 ingest do not show ERROR messages for the given object key
+Looks like:: `batch ingstat` reports the record as an ingest error, but you see many duplicates of the record in CS. AWS S3 ingest logs do not show ERROR or Exception messages for the given object key
 
 Cause:: AWS S3 ingest processor times out after ~30 seconds. For whatever reason, this does NOT report to logs as an ERROR, but the object is not removed from the S3 bucket, so ingest is reattempted. Reattempt times out. Repeat indefinitely. AWS ingest process reporting a timeout does not stop the ingest process that has been initiated in CS, resulting in duplicate records.
 
-Fix:: **Immmediate fix**: `thor bucket empty` will remove the endlessly re-trying object (and everything else) from the bucket. `thor batch cb {batchid}` will remove only objects associated with the given batch id. **Underlying fix:** Request the `batch_timeout` length on the bucket used for import
+Fix:: **Immmediate fix**: `thor bucket empty` will remove the endlessly re-trying object (and everything else) from the bucket. `thor batch cb {batchid}` will remove only objects associated with the given batch id. **Underlying fix:** Request increase of the `batch_timeout` length on the bucket used for import
 
 
 == Notes on working with media/blobs

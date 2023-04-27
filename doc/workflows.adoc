@@ -216,8 +216,6 @@ If any records failed to map because refnames were not found for authority or vo
 
 This CSV can be sorted by expected term source vocabulary, and the contents used to create source CSVs for necessary authority term ingests.
 
-NOTE: This list includes terms from vocabularies/dynamic term lists,footnote:[Distinct from terms from a specific authority vocabulary, such as person-ulan] but it is not yet possible to batch ingest vocabulary terms.
-
 ==== `batches.csv`
 Populates the following columns:
 
@@ -240,9 +238,19 @@ The most important warning category is batch action/record status mismatch. For 
 
 This may be convenient and expected, OR it may be unexpected and problematic if such records are indeed ingested as updates.
 
+Command to check what warnings there are from command line:
+
+`thor batch map_warnings batchname`
+
+or
+
+`thor batch map_warnings --with-counts batchname`
+
+For details on which records got what warnings, consult mapper_report.csv for the batch.
+
 ===== Review errors if `map_errs` is non-zero
 
-These records will not be uploaded, so the thing here is to decide if you want to fix whatever issues caused errors now and restart this as a single batch, or whether to want to move ahead with uploading the successes from this batch, and handling errors as a separate set.
+These records will not be uploaded, so the thing here is to decide if you want to fix whatever issues caused errors now and restart this as a single batch, or whether you want to move ahead with uploading the successes from this batch, and handling errors as a separate set.
 
 === Upload successfully mapped records to S3 bucket
 The upload of a record to the S3 bucket triggers an AWS Lambda function to attempt ingest of the record.
