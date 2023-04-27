@@ -175,7 +175,9 @@ The CSV file recording all active <<batch,batches>>, and used to manage batch wo
 
 === duplicate records
 
-Two or more records of the same <<mappable record type>> which have the same value in their <<identifier field>>
+Two or more records of the same <<mappable record type>> which have the same value in their <<identifier field>>.
+
+WARNING: Note that we are not comparing the content of records, but only the <<identifier field>> value. Two very different records with the same <<identifier field>> value will be treated as duplicates!
 
 === identifier field
 
@@ -185,4 +187,4 @@ The human editable/viewable field containing a value serving as a record identif
 
 Form of record type name corresponding to a JSON <<record mapper>> and service api path for transferring records of that type.
 
-Do `thor list rt` for a list of commands that will show you valid mappable record type values.
+Do `thor rt all` for a list of commands that will show you valid mappable record type values.
