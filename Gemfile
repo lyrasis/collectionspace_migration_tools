@@ -29,7 +29,6 @@ gem 'zeitwerk', '~> 2.5'
 group :code_quality do
   gem 'bundler-leak', '~> 0.2'
   gem 'dead_end', '~> 3.0'
-  gem 'git-lint', '~> 3.0'
   gem 'reek', '~> 6.1'
   gem 'rubocop', '~> 1.25'
   gem 'rubocop-performance', '~> 1.12'
