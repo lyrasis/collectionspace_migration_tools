@@ -18,6 +18,7 @@ These changes are merged into the `main` branch, but have not been released. Aft
 === Breaking
 
 === Added
+- `thor rt:delete_all` command for objects, procedures, and authorities. Do `thor rt help delete_all` for more details. (PR#42)
 
 === Bugfixes
 
