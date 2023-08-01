@@ -6,22 +6,23 @@ module CollectionspaceMigrationTools
       include CMT::Cache::Populatable
       include CMT::Duplicate::Checkable
       include CMT::Mappable
+      include CMT::Entity::DeleteAllable
 
       attr_reader :name, :status
-      
+
       def initialize(name)
         @name = name
         get_mapper
       end
-      
+
       private
 
       attr_reader :mapper
-      
+
       def cacheable_data_query
         return status if status.failure?
-        
-        query =    <<~SQL
+
+        query = <<~SQL
             select '#{name}' as type, oap.#{mapper.id_field} as id, cc.refname, h.name as csid
             from #{mapper.base_namespace} oap
             inner join misc on oap.id = misc.id and misc.lifecyclestate != 'deleted'
@@ -36,7 +37,7 @@ module CollectionspaceMigrationTools
         return status if status.failure?
 
         field = mapper.id_field
-        
+
         query = <<~SQL
             select oap.#{field} from #{mapper.base_namespace} oap
             left join misc on oap.id = misc.id
@@ -44,6 +45,19 @@ module CollectionspaceMigrationTools
             group by oap.#{field}
             having count(oap.#{field})>1
         SQL
+
+        Success(query)
+      end
+
+      def all_csids_query
+        return status if status.failure?
+
+        query = <<~SQL
+            select '#{name}' as rectype, h.name as csid
+            from #{mapper.base_namespace} oap
+            inner join misc on oap.id = misc.id and misc.lifecyclestate != 'deleted'
+            inner join hierarchy h on oap.id = h.id
+          SQL
 
         Success(query)
       end
