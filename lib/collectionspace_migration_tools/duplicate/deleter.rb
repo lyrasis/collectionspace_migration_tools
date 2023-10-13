@@ -30,13 +30,13 @@ module CollectionspaceMigrationTools
         puts 'No duplicates found'
         Success()
       end
-      
+
       def to_monad
         Success(self)
       end
-      
+
       private
-      
+
       attr_reader :rectype, :dupe_csv, :id, :action, :iteration, :remaining
 
       def duplicates
@@ -54,7 +54,7 @@ module CollectionspaceMigrationTools
 
         Success()
       end
-      
+
       def run_deletes(source_csv = dupe_csv)
         @iteration += 1
         if source_csv.nil?
@@ -66,7 +66,7 @@ module CollectionspaceMigrationTools
             return Success()
           end
         end
-        
+
         _add = yield(CMT::Batch::Add.call(id: id, csv: source_csv, rectype: rectype, action: action))
         _map = yield(CMT::Batch::MapRunner.call(batch_id: id))
         _upload = yield(CMT::Batch::UploadRunner.call(batch_id: id))
@@ -79,7 +79,7 @@ module CollectionspaceMigrationTools
         dupes = yield(duplicates)
         @remaining = dupes if dupes.num_tuples > 0
         _cleared = yield(CMT::Batch.delete(id))
-        
+
         Success()
       end
 
