@@ -102,6 +102,14 @@ module CollectionspaceMigrationTools
       add_option_to_section(result, :client, :batch_config_path, nil)
       add_option_to_section(result, :client, :auto_refresh_cache_before_mapping, false)
       add_option_to_section(result, :client, :clear_cache_before_refresh, false)
+      if result[:client].key?(:s3_bucket) && result[:client][:s3_bucket]
+        add_option_to_section(
+          result,
+          :client,
+          :log_group_name,
+          "/aws/lambda/#{result[:client][:s3_bucket]}"
+        )
+      end
 
       base = File.expand_path(result[:client][:base_dir])
       add_option_to_section(result, :client, :batch_csv, File.join(base, 'batches.csv'))
