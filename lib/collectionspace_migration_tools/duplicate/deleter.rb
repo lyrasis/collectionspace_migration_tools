@@ -59,8 +59,12 @@ module CollectionspaceMigrationTools
         @iteration += 1
         if source_csv.nil?
           initial = yield(duplicates)
-          @remaining = initial if initial.num_tuples > 0
-          source_csv = yield(write_remaining_to_csv)
+          if initial.num_tuples > 0
+            @remaining = initial
+            source_csv = yield(write_remaining_to_csv)
+          else
+            return Success()
+          end
         end
         
         _add = yield(CMT::Batch::Add.call(id: id, csv: source_csv, rectype: rectype, action: action))
