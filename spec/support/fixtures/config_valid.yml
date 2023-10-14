@@ -17,13 +17,13 @@ client:
   # The release number for the instance, not the UI version or profile version
   # Replace the period with an underscore
   # This must be in quotes or 7_0 will get interpreted as 70 for some reason.
-  cs_version: "7_0"
+  cs_version: "7_2"
 
   # Should match the directory names that organize mappers per release
   profile: anthro
 
   # Should match the form used in file names of individual .json files
-  profile_version: 5-0-0
+  profile_version: 7-0-0
 
   # The settings in the next section control where files for this project will be saved
 
@@ -36,7 +36,7 @@ client:
   #   your system. If the value as given expands to an existing directory on your machine, that's what
   #   will be used. If not, it'll used subdir value appended to base_dir. The subdirectory will be created
   #   if it does not exist.
-  mapper_dir: record_mappers
+  mapper_dir: ~/code/cs/migration_tools/spec/support/fixtures/record_mappers
 
   # directory in which to store generated xml
   # a sub-directory will be created in this for each csv that you convert to CS XML

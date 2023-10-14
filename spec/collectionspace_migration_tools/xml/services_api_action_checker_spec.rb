@@ -8,14 +8,10 @@ RSpec.describe CollectionspaceMigrationTools::Xml::ServicesApiActionChecker do
   describe "#call" do
     let(:result) { klass.call(response) }
     let(:response_new) do
-      response = CollectionSpace::Mapper::Response.new({"objectnumber" => "123"})
-      response.merge_status_data({status: :new})
-      response
+      double(record_status: :new)
     end
     let(:response_existing) do
-      response = CollectionSpace::Mapper::Response.new({"objectnumber" => "123"})
-      response.merge_status_data({status: :existing})
-      response
+      double(record_status: :existing)
     end
 
     context "with given action = create" do
@@ -24,18 +20,18 @@ RSpec.describe CollectionspaceMigrationTools::Xml::ServicesApiActionChecker do
       context "when rec status = new" do
         let(:response) { response_new }
         it "returns CREATE", :aggregate_failures do
+          expect(response).not_to receive(:add_warning)
           expect(result).to be_a(Dry::Monads::Success)
           expect(result.value!).to eq("CREATE")
-          expect(response.warnings.size).to eq(0)
         end
       end
 
       context "when rec status = existing" do
         let(:response) { response_existing }
         it "returns UPDATE", :aggregate_failures do
+          expect(response).to receive(:add_warning)
           expect(result).to be_a(Dry::Monads::Success)
           expect(result.value!).to eq("UPDATE")
-          expect(response.warnings.size).to eq(1)
         end
       end
     end
@@ -46,18 +42,18 @@ RSpec.describe CollectionspaceMigrationTools::Xml::ServicesApiActionChecker do
       context "when rec status = new" do
         let(:response) { response_new }
         it "returns CREATE", :aggregate_failures do
+          expect(response).to receive(:add_warning)
           expect(result).to be_a(Dry::Monads::Success)
           expect(result.value!).to eq("CREATE")
-          expect(response.warnings.size).to eq(1)
         end
       end
 
       context "when rec status = existing" do
         let(:response) { response_existing }
         it "returns UPDATE", :aggregate_failures do
+          expect(response).not_to receive(:add_warning)
           expect(result).to be_a(Dry::Monads::Success)
           expect(result.value!).to eq("UPDATE")
-          expect(response.warnings.size).to eq(0)
         end
       end
     end
@@ -75,9 +71,9 @@ RSpec.describe CollectionspaceMigrationTools::Xml::ServicesApiActionChecker do
       context "when rec status = existing" do
         let(:response) { response_existing }
         it "returns DELETE", :aggregate_failures do
+          expect(response).not_to receive(:add_warning)
           expect(result).to be_a(Dry::Monads::Success)
           expect(result.value!).to eq("DELETE")
-          expect(response.warnings.size).to eq(0)
         end
       end
     end

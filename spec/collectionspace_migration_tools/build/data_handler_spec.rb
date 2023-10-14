@@ -14,9 +14,12 @@ RSpec.describe CollectionspaceMigrationTools::Build::DataHandler do
       let(:rectype) { "collectionobject" }
 
       it "returns Success with DataHandler object" do
-        expect(result).to be_a(Dry::Monads::Success)
-        expect(result.value!).to be_a(CollectionSpace::Mapper::DataHandler)
-        expect(result.value!.mapper.batchconfig.status_check_method).to eq("cache")
+        res = result.value!
+        expect(res).to be_a(
+          CollectionSpace::Mapper::HandlerFullRecord
+        )
+        status_method = res.batch.status_check_method
+        expect(status_method).to eq("cache")
       end
     end
   end

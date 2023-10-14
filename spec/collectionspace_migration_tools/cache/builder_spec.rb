@@ -21,31 +21,19 @@ RSpec.describe CollectionspaceMigrationTools::Cache::Builder do
       end
 
       context "with cache_type = :refname" do
-        before(:context) do
+        it "connects to the expected Redis instance" do
           CMT.config.redis.refname_port = 9999
           CMT.config.client.redis_db_number = 9
-        end
-        after(:context) do
-          CMT.reset_config
-        end
-
-        it "connects to the expected Redis instance" do
           expected = "redis://localhost:9999/9"
           expect(result.value!.config[:redis]).to eq(expected)
         end
       end
 
       context "with cache_type = :csid" do
-        before(:context) do
-          CMT.config.redis.csid_port = 9998
-          CMT.config.client.redis_db_number = 9
-        end
-        after(:context) do
-          CMT.reset_config
-        end
-
         let(:cache_type) { :csid }
         it "connects to the expected Redis instance" do
+          CMT.config.redis.csid_port = 9998
+          CMT.config.client.redis_db_number = 9
           expected = "redis://localhost:9998/9"
           expect(result.value!.config[:redis]).to eq(expected)
         end

@@ -55,7 +55,7 @@ module Helpers
       "record_mappers")
     CMT.config.client.mapper_dir = mapper_dir
     CMT.config.client.profile = "anthro"
-    CMT.config.client.profile_version = "5-0-0"
+    CMT.config.client.profile_version = "7-0-0"
     CMT.config.client.batch_config_path = File.join(Bundler.root, "spec",
       "support", "fixtures", "client_batch_config.json")
   end

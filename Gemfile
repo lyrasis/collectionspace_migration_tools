@@ -42,9 +42,9 @@ group :development do
 end
 
 group :test do
-  gem "guard-rspec", "~> 4.7", require: false
-  gem "mock_redis", "~> 0.29"
-  gem "rspec", "~> 3.10"
+  gem "guard-rspec", require: false
+  gem "mock_redis"
+  gem "rspec"
 end
 
 group :tools do
