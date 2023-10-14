@@ -14,4 +14,29 @@ class Log < Thor
       ->(failure){ puts failure.to_s; exit(1) }
     )
   end
+  desc "logstream_report", "Write report with n start/end events for each "\
+    "logstream in log group"
+  option :start,
+    default: 25,
+    type: :numeric,
+    desc: "The number of initial events from the logstream to output in "\
+    "report. Set to 0 to skip output of first events."
+  option :end,
+    default: 25,
+    type: :numeric,
+    desc: "The number of initial events from the logstream to output in "\
+    "report. Set to 0 to skip output of final events."
+  option :path,
+    required: true,
+    type: :string,
+    desc: "Path where output file will be written"
+  def logstream_report
+    fullpath = File.expand_path(options[:path])
+    CMT::Logs::LogstreamReport.call(
+      options[:start], options[:end], fullpath
+    ).either(
+      ->(success){ puts "Written: #{fullpath}"; exit(0) },
+      ->(failure){ puts failure.to_s; exit(1) }
+    )
+  end
 end
