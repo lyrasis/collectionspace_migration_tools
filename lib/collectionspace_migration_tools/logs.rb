@@ -16,5 +16,16 @@ module CollectionspaceMigrationTools
     else
       Success(response)
     end
+    def setup_client(client)
+      if client.is_a?(Aws::CloudWatchLogs::Client)
+        client
+      elsif client.is_a?(Dry::Monads::Success)
+        client.value!
+      elsif client.is_a?(Dry::Monads::Failure)
+        client.failure
+      else
+        raise "Unknown client class"
+      end
+    end
   end
 end
