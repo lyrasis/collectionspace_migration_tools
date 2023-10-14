@@ -3,7 +3,7 @@
 module CollectionspaceMigrationTools
   module Batch
     extend Dry::Monads[:result, :do]
-    
+
     module_function
     def delete(id)
       batch = yield(find(id))
@@ -21,7 +21,7 @@ module CollectionspaceMigrationTools
     def done(id)
       batch = yield(find(id))
       _rewritten = yield(batch.mark_done)
-      
+
       Success()
     end
 
@@ -36,7 +36,7 @@ module CollectionspaceMigrationTools
       _run = yield(CMT::Batch::MapRunner.call(
         batch_id: id, autocache: autocache, clearcache: clearcache
       ))
-      
+
       Success()
     end
 
@@ -46,7 +46,7 @@ module CollectionspaceMigrationTools
 
       Success(batches)
     end
-    
+
     def rollback_ingest(id)
       batch = yield(find(id))
       rolled_back = yield(batch.rollback_ingest)
@@ -60,13 +60,18 @@ module CollectionspaceMigrationTools
 
       Success(rolled_back)
     end
-    
+
     def rollback_upload(id)
       batch = yield(find(id))
       rolled_back = yield(batch.rollback_upload)
 
       Success(rolled_back)
     end
+
+    def log_event_count(id)
+      events = yield CMT::Logs::BatchEvents.call(batchid: id)
+
+      Success(events.length)
+    end
   end
 end
-
