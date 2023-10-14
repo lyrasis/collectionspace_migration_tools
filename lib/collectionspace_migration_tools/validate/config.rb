@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
+require "dry/monads"
 
 module CollectionspaceMigrationTools
   module Validate
@@ -13,17 +13,20 @@ module CollectionspaceMigrationTools
 
         def call(config_hash)
           warn_of_deprecated_settings(config_hash)
-          validated = config_hash.keys.map{ |key| validate(config: config_hash, type: key) }
+          validated = config_hash.keys.map do |key|
+            validate(config: config_hash, type: key)
+          end
           return Success(config_hash) if validated.all?(&:success?)
 
-          Failure(CMT::Failure.new(context: name, message: compile_error_messages(validated)))
+          Failure(CMT::Failure.new(context: name,
+            message: compile_error_messages(validated)))
         end
 
         private
 
         def compile_error_messages(arr)
-          failures(arr).map{ |result| format_errors(result) }
-                              .join('; ')
+          failures(arr).map { |result| format_errors(result) }
+            .join("; ")
         end
 
         def failures(arr)
@@ -31,8 +34,10 @@ module CollectionspaceMigrationTools
         end
 
         def format_errors(result)
-          result.failure.errors.messages.map{ |msg| "#{msg.path.join(', ')} #{msg.text}" }
-                .join('; ')
+          result.failure.errors.messages.map do |msg|
+            "#{msg.path.join(", ")} #{msg.text}"
+          end
+            .join("; ")
         end
 
         def validate(config:, type:)

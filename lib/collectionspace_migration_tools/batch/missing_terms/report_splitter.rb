@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'csv'
-require 'fileutils'
-require 'smarter_csv'
+require "csv"
+require "fileutils"
+require "smarter_csv"
 
 module CollectionspaceMigrationTools
   module Batch
@@ -17,7 +17,7 @@ module CollectionspaceMigrationTools
 
         class << self
           def call(...)
-            self.new(...).call
+            new(...).call
           end
         end
 
@@ -31,11 +31,11 @@ module CollectionspaceMigrationTools
 
         def call
           batch = yield(CMT::Batch.find(batch_id))
-          term_ct = yield(batch.get('missing_terms'))
-          return Success('No missing terms to split') if term_ct == 0
+          term_ct = yield(batch.get("missing_terms"))
+          return Success("No missing terms to split") if term_ct == 0
 
           batches_dir = CMT.config.client.batch_dir
-          batch_dir = yield(batch.get('dir'))
+          batch_dir = yield(batch.get("dir"))
           source = "#{batches_dir}/#{batch_dir}/missing_terms.csv"
           prephash = yield(prepare_by_authority(source))
           written = yield(write(prephash))
@@ -44,7 +44,7 @@ module CollectionspaceMigrationTools
           _vocabs_final = yield(swap_vocab_file(vocabs_paths))
           Success(paths)
         end
-        
+
         private
 
         attr_reader :batch_id, :target_dir
@@ -61,13 +61,15 @@ module CollectionspaceMigrationTools
           SmarterCSV.process(source) do |rowarr|
             row = rowarr[0]
             vocab = row[:vocabulary]
-            next if vocab.start_with?('vocabularies-')
-            
-            by_auth.key?(vocab) ? by_auth[vocab] << row[:term] : by_auth[vocab] = [row[:term]]
+            next if vocab.start_with?("vocabularies-")
+
+            by_auth.key?(vocab) ? by_auth[vocab] << row[:term] : by_auth[vocab] =
+                                                                   [row[:term]]
           end
-        rescue StandardError => err
+        rescue => err
           msg = "#{err.message} IN #{err.backtrace[0]}"
-          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+            message: msg))
         else
           Success(by_auth)
         end
@@ -76,52 +78,56 @@ module CollectionspaceMigrationTools
           target = "#{source}.tmp"
           headers = CMT::Csv::BatchTermReporter.headers.first(4)
 
-          CSV.open(target, 'wb') do |csv|
+          CSV.open(target, "wb") do |csv|
             csv << headers
             SmarterCSV.process(source) do |rowarr|
               row = rowarr[0]
               vocab = row[:vocabulary]
-              next unless vocab.start_with?('vocabularies-')
+              next unless vocab.start_with?("vocabularies-")
 
               csv << row.values
             end
           end
-        rescue StandardError => err
+        rescue => err
           msg = "#{err.message} IN #{err.backtrace[0]}"
-          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+            message: msg))
         else
           Success([target, source])
         end
 
         def swap_vocab_file(vocabs_paths)
           FileUtils.mv(vocabs_paths[0], vocabs_paths[1])
-        rescue StandardError => err
+        rescue => err
           msg = "#{err.message} IN #{err.backtrace[0]}"
-          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+            message: msg))
         else
           Success()
         end
-        
+
         def write(hash)
           result = hash.map do |vocab, terms|
             write_file(vocab, terms)
           end
-        rescue StandardError => err
+        rescue => err
           msg = "#{err.message} IN #{err.backtrace[0]}"
-          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+            message: msg))
         else
           Success(result)
         end
 
         def write_file(vocab, terms)
           target = File.join(target_dir, "#{batch_id}_missing_#{vocab}.csv")
-          CSV.open(target, 'wb') do |csv|
-            csv << ['termdisplayname']
-            terms.each{ |term| csv << [term]}
+          CSV.open(target, "wb") do |csv|
+            csv << ["termdisplayname"]
+            terms.each { |term| csv << [term] }
           end
-        rescue StandardError => err
+        rescue => err
           msg = "#{err.message} IN #{err.backtrace[0]}"
-          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+            message: msg))
         else
           Success(target)
         end

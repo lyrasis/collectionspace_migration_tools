@@ -9,7 +9,7 @@ module CollectionspaceMigrationTools
 
       class << self
         def call(client:, row:)
-          self.new(client: client).call(row: row)
+          new(client: client).call(row: row)
         end
       end
 
@@ -37,7 +37,7 @@ module CollectionspaceMigrationTools
       attr_reader :client
 
       def get_csid(row)
-        result = row['csid']
+        result = row["csid"]
         return Success(result) if result
 
         msg = "No CSID in row"
@@ -47,7 +47,7 @@ module CollectionspaceMigrationTools
       end
 
       def get_rectype(row)
-        result = row['rectype']
+        result = row["rectype"]
         return Success(result) if result
 
         msg = "No rectype in row"
@@ -58,7 +58,7 @@ module CollectionspaceMigrationTools
 
       def get_client_response(path)
         result = client.delete(path)
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
         Failure(CMT::Failure.new(
           context: "#{self.class.name}.#{__callee__}", message: msg

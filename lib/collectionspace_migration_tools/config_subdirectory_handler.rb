@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'fileutils'
+require "fileutils"
 
 module CollectionspaceMigrationTools
   # Deals with the fact that I want to be able to specify:
@@ -11,16 +11,15 @@ module CollectionspaceMigrationTools
   # Updates the relevant setting to contain the full path:
   # - expanded if give path external to project dir
   # - base dir + sub dir if relative subdir given
-  # 
+  #
   # If subdirectory is given relative to project base directory, and does not exist, the
   #   directory is created
   class ConfigSubdirectoryHandler
-
     class << self
-      # @param config [Struct] 
+      # @param config [Struct]
       # @param setting [Symbol] the setting/method containing the subdirectory value
       def call(config:, setting:)
-        self.new(config: config, setting: setting).call
+        new(config: config, setting: setting).call
       end
     end
 
@@ -30,7 +29,7 @@ module CollectionspaceMigrationTools
         super(msg)
       end
     end
-    
+
     # @param config [Struct]
     # @param setting [Symbol] the setting/method containing the subdirectory value
     def initialize(config:, setting:)
@@ -44,13 +43,13 @@ module CollectionspaceMigrationTools
     def call
       if File.absolute_path?(value)
         handle_absolute_path
-      elsif value.start_with?('~')
+      elsif value.start_with?("~")
         handle_relative_path
       else
         handle_subdir
       end
     end
-    
+
     private
 
     attr_reader :config, :setting, :updater, :base, :value
@@ -59,16 +58,19 @@ module CollectionspaceMigrationTools
       puts "Creating directory: #{path}"
       FileUtils.mkdir(path)
     end
-    
+
     def handle_absolute_path
-      return if Dir.exists?(value)
+      return if Dir.exist?(value)
 
       raise NonExistentDirectorySpecifiedError.new(setting, value)
     end
 
     def handle_relative_path
       expanded = File.expand_path(value)
-      raise NonExistentDirectorySpecifiedError.new(setting, expanded) unless Dir.exists?(expanded)
+      unless Dir.exist?(expanded)
+        raise NonExistentDirectorySpecifiedError.new(setting,
+          expanded)
+      end
 
       update_setting(expanded)
     end
@@ -76,8 +78,8 @@ module CollectionspaceMigrationTools
     def handle_subdir
       path = "#{base}/#{value}"
       update_setting(path)
-      return if Dir.exists?(path)
-      
+      return if Dir.exist?(path)
+
       create_directory(path)
     end
 

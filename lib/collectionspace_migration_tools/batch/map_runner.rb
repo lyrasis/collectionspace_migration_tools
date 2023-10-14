@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
-require 'dry/monads/do'
+require "dry/monads"
+require "dry/monads/do"
 
 module CollectionspaceMigrationTools
   module Batch
@@ -12,7 +12,7 @@ module CollectionspaceMigrationTools
 
       class << self
         def call(...)
-          self.new(...).call
+          new(...).call
         end
       end
 
@@ -29,7 +29,7 @@ module CollectionspaceMigrationTools
       def call
         batch = yield(CMT::Batch.find(batch_id))
         return Failure("Batch #{batch_id} is not mappable") unless batch.mappable?
-        
+
         if autocache
           _cc = yield(CMT::Caches::Clearer.call) if clearcache
           _ac = yield(CMT::Batch::AutocacheRunner.call(batch))
@@ -44,11 +44,12 @@ module CollectionspaceMigrationTools
         output_dir = yield(processor.call)
         puts "Elapsed time for mapping: #{Time.now - start_time}"
 
-        report = yield(CMT::Batch::PostMapReporter.new(batch: batch, dir: output_dir).call)
+        report = yield(CMT::Batch::PostMapReporter.new(batch: batch,
+          dir: output_dir).call)
 
         Success(report)
       end
-      
+
       private
 
       attr_reader :batch_id, :autocache, :clearcache

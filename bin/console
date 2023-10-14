@@ -1,11 +1,11 @@
 #! /usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'bundler/setup'
+require "bundler/setup"
 Bundler.require(:tools)
 
-require_relative '../lib/collectionspace_migration_tools'
-require 'pry'
+require_relative "../lib/collectionspace_migration_tools"
+require "pry"
 
 def reload!(print = true)
   load("#{Bundler.root}/lib/collectionspace_migration_tools.rb")

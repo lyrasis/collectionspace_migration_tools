@@ -1,20 +1,21 @@
 # frozen_string_literal: true
 
-require 'parallel'
-require 'smarter_csv'
+require "parallel"
+require "smarter_csv"
 
 module CollectionspaceMigrationTools
   module Batch
     class CsidCacheDependencyIdentifier
       include Dry::Monads[:result]
-      include Dry::Monads::Do.for(:analyze_authority_hierarchy, :analyze_nonhierarchicalrelationship)
-      
+      include Dry::Monads::Do.for(:analyze_authority_hierarchy,
+        :analyze_nonhierarchicalrelationship)
+
       class << self
         def call(...)
-          self.new(...).call
+          new(...).call
         end
       end
-      
+
       def initialize(path:, mapper:)
         @path = path
         @mapper = mapper
@@ -27,15 +28,14 @@ module CollectionspaceMigrationTools
         return Success(deps.first) unless relation?
 
         case name
-        when 'authorityhierarchy'
+        when "authorityhierarchy"
           analyze_authority_hierarchy
-        when 'nonhierarchicalrelationship'
+        when "nonhierarchicalrelationship"
           analyze_nonhierarchicalrelationship
-        when 'objecthierarchy'
-          deps << 'collectionobject'
-          Success(deps.join('|'))
+        when "objecthierarchy"
+          deps << "collectionobject"
+          Success(deps.join("|"))
         end
-
       end
 
       private
@@ -48,8 +48,8 @@ module CollectionspaceMigrationTools
         mapped = yield(map_authority_values(combined.keys))
 
         mapped << name
-        
-        Success(mapped.sort.join('|'))
+
+        Success(mapped.sort.join("|"))
       end
 
       def analyze_nonhierarchicalrelationship
@@ -58,31 +58,34 @@ module CollectionspaceMigrationTools
         mapped = yield(map_nhr_values(combined.keys))
 
         mapped << name
-        
-        Success(mapped.sort.join('|'))
+
+        Success(mapped.sort.join("|"))
       end
 
       def authority_hierarchy_worker(chunk)
         result = {}
-        chunk.each{ |row| result["#{row['term_type']}/#{row['term_subtype']}"] = nil }
+        chunk.each do |row|
+          result["#{row["term_type"]}/#{row["term_subtype"]}"] = nil
+        end
         result
       end
-      
+
       def chunks
         SmarterCSV.process(
           path, {
             chunk_size: CMT.config.system.csv_chunk_size,
             convert_values_to_numeric: false,
             strings_as_keys: true
-          })
+          }
+        )
       end
 
       def dependent_setup
         case name
-        when 'authorityhierarchy'
+        when "authorityhierarchy"
           @type_lookup = CMT::RecordTypes.service_path_to_mappable_type_mapping
           @subtype_lookup = CMT::RecordTypes.authority_subtype_machine_to_human_label_mapping
-        when 'nonhierarchicalrelationship'
+        when "nonhierarchicalrelationship"
           @type_lookup = CMT::RecordTypes.service_path_to_mappable_type_mapping
         end
       end
@@ -90,14 +93,16 @@ module CollectionspaceMigrationTools
       def extract_authority_hierarchy_rectypes
         puts "Analyzing authority_hierarchy source CSV for record types to csid-cache..."
         stime = Time.now
-        res = Parallel.map(chunks, in_processes: CMT.config.system.max_processes) do |chunk|
+        res = Parallel.map(chunks,
+          in_processes: CMT.config.system.max_processes) do |chunk|
           authority_hierarchy_worker(chunk)
         end
         elapsed = Time.now - stime
         puts "Elapsed time: #{elapsed}"
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: msg))
       else
         Success(res)
       end
@@ -105,35 +110,39 @@ module CollectionspaceMigrationTools
       def extract_nhr_rectypes
         puts "Analyzing nonhierarchicalrelationship source CSV for record types to csid-cache..."
         stime = Time.now
-        res = Parallel.map(chunks, in_processes: CMT.config.system.max_processes) do |chunk|
+        res = Parallel.map(chunks,
+          in_processes: CMT.config.system.max_processes) do |chunk|
           nhr_worker(chunk)
         end
         elapsed = Time.now - stime
         puts "Elapsed time: #{elapsed}"
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: msg))
       else
         Success(res)
       end
-      
+
       def map_authority_values(arr)
         res = arr.map do |rectype|
-          splitval = rectype.split('/')
+          splitval = rectype.split("/")
           "#{type_lookup[splitval[0]]}-#{subtype_lookup[splitval[1]]}"
         end
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: msg))
       else
         Success(res)
       end
 
       def map_nhr_values(arr)
-        res = arr.map{ |rectype| type_lookup[rectype] }
-      rescue StandardError => err
+        res = arr.map { |rectype| type_lookup[rectype] }
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: msg))
       else
         Success(res)
       end
@@ -141,8 +150,8 @@ module CollectionspaceMigrationTools
       def nhr_worker(chunk)
         result = {}
         chunk.each do |row|
-          result[row['item1_type']] = nil
-          result[row['item2_type']] = nil
+          result[row["item1_type"]] = nil
+          result[row["item2_type"]] = nil
         end
         result
       end

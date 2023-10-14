@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
-require 'dry/monads/do'
+require "dry/monads"
+require "dry/monads/do"
 
 module CollectionspaceMigrationTools
   module Batch
@@ -20,7 +20,7 @@ module CollectionspaceMigrationTools
         show_summary
         wrapped
       end
-      
+
       def call_wrapper(report_method)
         puts "\nUpdating batches CSV with #{process_type} results..."
         start_reporting = Time.now
@@ -37,27 +37,26 @@ module CollectionspaceMigrationTools
         _updated = yield(batch.populate_field(key, value))
         _written = yield(batch.rewrite)
         success_for(key, value)
-        
+
         Success()
       end
 
       def show_summary
         puts summary_header
         return if updated.empty?
-        
-        updated.each{ |key, value| puts "  #{key}: #{value}" }
+
+        updated.each { |key, value| puts "  #{key}: #{value}" }
       end
-      
+
       def success_for(key, value)
         @updated[key] = value
       end
 
       def summary_header
-        return 'No values written to batches CSV' if updated.empty?
+        return "No values written to batches CSV" if updated.empty?
 
-        'The following values were written to batches CSV'
+        "The following values were written to batches CSV"
       end
-      
     end
   end
 end

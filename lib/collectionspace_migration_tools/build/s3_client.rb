@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
-require 'aws-sdk-s3'
-require 'dry/monads'
-require 'dry/monads/do'
+require "aws-sdk-s3"
+require "dry/monads"
+require "dry/monads/do"
 
 module CollectionspaceMigrationTools
   module Build
-  # Returns AWS S3 client
+    # Returns AWS S3 client
     class S3Client
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)
 
       class << self
-        def call()
-          self.new.call
+        def call
+          new.call
         end
       end
 
@@ -37,18 +37,20 @@ module CollectionspaceMigrationTools
         client = Aws::S3::Client.new(
           profile: profile
         )
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: msg))
       else
         Success(client)
       end
 
       def try(client)
         result = client.get_bucket_location({bucket: bucket})
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: msg))
       else
         Success(result)
       end

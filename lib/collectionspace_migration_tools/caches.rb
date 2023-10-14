@@ -8,7 +8,7 @@ module CollectionspaceMigrationTools
       cache_method = "#{type}_cache".to_sym
       CMT.send(cache_method)
     end
-    
+
     def types
       %w[csid refname]
     end

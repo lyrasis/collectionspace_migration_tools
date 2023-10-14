@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry/validation'
+require "dry/validation"
 
 module CollectionspaceMigrationTools
   module Validate
@@ -37,7 +37,7 @@ module CollectionspaceMigrationTools
       end
 
       rule(:base_uri) do
-        key.failure(%(must end with "/cspace-services")) unless value.end_with?('/cspace-services')
+        key.failure(%(must end with "/cspace-services")) unless value.end_with?("/cspace-services")
       end
 
       rule(:batch_config_path) do
@@ -50,28 +50,28 @@ module CollectionspaceMigrationTools
       end
 
       rule(:cs_version) do
-        unless /^\d+_\d+$/.match(value)
-          key.failure('must follow pattern: number underscore number')
+        unless /^\d+_\d+$/.match?(value)
+          key.failure("must follow pattern: number underscore number")
         end
       end
 
       rule(:profile) do
         ok = %w[anthro bonsai botgarden core fcart herbarium lhmc materials ohc
-                omca publicart]
+          omca publicart]
         unless ok.any?(value)
-          key.failure("must be one of: #{ok.join(', ')}")
+          key.failure("must be one of: #{ok.join(", ")}")
         end
       end
 
       rule(:profile_version) do
-        unless /^(\d+-){2,}\d+(?:-rc\d+|)$/.match(value)
-          key.failure('must follow pattern: number hyphen number hyphen number')
+        unless /^(\d+-){2,}\d+(?:-rc\d+|)$/.match?(value)
+          key.failure("must follow pattern: number hyphen number hyphen number")
         end
       end
 
       rule(:username) do
-        unless /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i.match?(value)
-          key.failure('must be a valid email address')
+        unless /\A[\w+\-.]+@[a-z\d-]+(\.[a-z\d-]+)*\.[a-z]+\z/i.match?(value)
+          key.failure("must be a valid email address")
         end
       end
     end

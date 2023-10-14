@@ -22,7 +22,7 @@ module CollectionspaceMigrationTools
       def to_s
         name
       end
-      
+
       private
 
       attr_reader :name, :type
@@ -34,7 +34,7 @@ module CollectionspaceMigrationTools
           inner join hierarchy h on rc.id = h.id
           #{constraint}
           #{predicate}
-          SQL
+        SQL
 
         Success(query)
       end
@@ -45,26 +45,26 @@ module CollectionspaceMigrationTools
 
       def name_constraint_lookup
         {
-          'authorityhierarchy' => "inner join hierarchy hh on rc.subjectcsid = hh.name and hh.primarytype not like 'CollectionObject%'",
-          'nonhierarchicalrelationship' => '',
-          'objecthierarchy' => "inner join hierarchy hh on rc.subjectcsid = hh.name and hh.primarytype like 'CollectionObject%'"
+          "authorityhierarchy" => "inner join hierarchy hh on rc.subjectcsid = hh.name and hh.primarytype not like 'CollectionObject%'",
+          "nonhierarchicalrelationship" => "",
+          "objecthierarchy" => "inner join hierarchy hh on rc.subjectcsid = hh.name and hh.primarytype like 'CollectionObject%'"
         }
       end
 
       def name_type_lookup
         {
-          'authorityhierarchy' => :hier,
-          'nonhierarchicalrelationship' => :nhr,
-          'objecthierarchy' => :hier
+          "authorityhierarchy" => :hier,
+          "nonhierarchicalrelationship" => :nhr,
+          "objecthierarchy" => :hier
         }
       end
 
       def predicate
         type_predicate_lookup[type]
       end
-      
+
       def rectype_mixin
-        'Relations'
+        "Relations"
       end
 
       def set_name(rectype)
@@ -75,7 +75,7 @@ module CollectionspaceMigrationTools
           @status = Failure("#{rectype} is not a valid relation rectype. Do `thor rt:rels` for list of allowed rectypes")
         end
       end
-      
+
       def set_type
         return if status.failure?
 

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
-require 'dry/monads/do'
-require 'csv'
+require "dry/monads"
+require "dry/monads/do"
+require "csv"
 
 module CollectionspaceMigrationTools
   module VocabularyTerms
@@ -23,7 +23,7 @@ module CollectionspaceMigrationTools
           adder.call(row)
         end
         Success()
-      rescue StandardError => err
+      rescue => err
         Failure(err)
       end
 
@@ -32,7 +32,7 @@ module CollectionspaceMigrationTools
       end
 
       def to_s
-        "<##{self.class}:#{self.object_id.to_s(8)} #{csv_path}>"
+        "<##{self.class}:#{object_id.to_s(8)} #{csv_path}>"
       end
 
       private

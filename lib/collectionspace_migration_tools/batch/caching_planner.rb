@@ -8,13 +8,13 @@ module CollectionspaceMigrationTools
 
       class << self
         def call(...)
-          self.new(...).call
+          new(...).call
         end
       end
 
       def initialize(refname:, csid:)
-        @refname_deps = refname.sub('vocabularies', 'vocabulary').split('|')
-        @csid_deps = csid.split('|')
+        @refname_deps = refname.sub("vocabularies", "vocabulary").split("|")
+        @csid_deps = csid.split("|")
       end
 
       def call
@@ -26,9 +26,10 @@ module CollectionspaceMigrationTools
         result[:populate_both_caches] = both unless both.empty?
         result[:populate_csid_cache] = csid unless csid.empty?
         result[:populate_refname_cache] = refname unless refname.empty?
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: msg))
       else
         Success(result)
       end

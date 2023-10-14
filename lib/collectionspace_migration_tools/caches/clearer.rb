@@ -7,22 +7,22 @@ module CollectionspaceMigrationTools
 
       class << self
         def call
-          self.new.call
+          new.call
         end
       end
 
       def initialize
         @results = []
       end
-      
+
       def call
         threads = []
         CMT::Caches.types.each do |cache_type|
-          threads << Thread.new{ clear(cache_type) }
+          threads << Thread.new { clear(cache_type) }
         end
-        threads.each{ |thread| thread.join }
+        threads.each { |thread| thread.join }
 
-        @results.each{ |result| report(result) }
+        @results.each { |result| report(result) }
 
         if @results.any?(&:failure?)
           Failure(@results)
@@ -36,17 +36,19 @@ module CollectionspaceMigrationTools
       def clear(cache_type)
         cache = CMT::Caches.get_cache(cache_type)
         cache.flush
-      rescue StandardError => err
+      rescue => err
         msg = "#{cache_type.upcase} clear failure: #{err.message} IN #{err.backtrace[0]}"
-        @results << Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+        @results << Failure(CMT::Failure.new(
+          context: "#{self.class.name}.#{__callee__}", message: msg
+        ))
       else
         @results << Success("#{cache_type.upcase} cache cleared")
       end
 
       def report(result)
         result.either(
-          ->(success){ puts "Success: #{success}" },
-          ->(failure){ puts "Error: #{failure}" }
+          ->(success) { puts "Success: #{success}" },
+          ->(failure) { puts "Error: #{failure}" }
         )
       end
     end

@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require 'base64'
-require 'dry/monads'
+require "base64"
+require "dry/monads"
 
 module CollectionspaceMigrationTools
   module Xml
     # Determines actual action to use in file name, based on given action and record status
     class ServicesApiActionChecker
       include Dry::Monads[:result]
-      
+
       # @param action [String<'CREATE', 'UPDATE', 'DELETE'>]
       def initialize(action)
         @action = action
@@ -17,7 +17,10 @@ module CollectionspaceMigrationTools
       # @param response [CollectionSpace::Mapper::Response]
       def call(response)
         actual_action = determine_action(response)
-        return Failure([:cannot_delete_new_record, response]) if actual_action == :error
+        if actual_action == :error
+          return Failure([:cannot_delete_new_record,
+            response])
+        end
 
         Success(actual_action)
       end
@@ -25,15 +28,15 @@ module CollectionspaceMigrationTools
       def to_monad
         Success(self)
       end
-      
+
       private
-      
+
       attr_reader :action
 
       def create_action(status)
         return action if status == :new
 
-        'UPDATE'
+        "UPDATE"
       end
 
       def delete_action(status)
@@ -45,11 +48,11 @@ module CollectionspaceMigrationTools
       def determine_action(response)
         status = response.record_status
         case action
-        when 'CREATE'
+        when "CREATE"
           actual = create_action(status)
-        when 'UPDATE'
+        when "UPDATE"
           actual = update_action(status)
-        when 'DELETE'
+        when "DELETE"
           actual = delete_action(status)
         end
 
@@ -60,11 +63,10 @@ module CollectionspaceMigrationTools
         actual
       end
 
-
       def update_action(status)
         return action if status == :existing
 
-        'CREATE'
+        "CREATE"
       end
 
       def warning(status, actual_action)
@@ -76,4 +78,3 @@ module CollectionspaceMigrationTools
     end
   end
 end
-

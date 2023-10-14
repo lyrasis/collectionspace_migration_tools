@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'fileutils'
+require "fileutils"
 
 module CollectionspaceMigrationTools
   module Batch
@@ -10,15 +10,15 @@ module CollectionspaceMigrationTools
       include Dry::Monads::Do.for(:rollback_upload)
 
       def rollback_upload
-        rolled = yield(rollback_step('upload'))
+        rolled = yield(rollback_step("upload"))
 
-        Success('Upload information rolled back. Note this does NOT undo any ingest operations triggered by an upload')
+        Success("Upload information rolled back. Note this does NOT undo any ingest operations triggered by an upload")
       end
 
       def upload_step_headers
         CMT::Batch::Csv::Headers.upload_headers
       end
-      
+
       def upload_step_report_paths
         ["#{dirpath}/upload_report.csv"]
       end
@@ -28,7 +28,7 @@ module CollectionspaceMigrationTools
       end
 
       def uploadable?
-        check_status('upload')
+        check_status("upload")
       end
     end
   end

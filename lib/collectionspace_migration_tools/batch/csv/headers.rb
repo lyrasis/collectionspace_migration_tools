@@ -13,13 +13,13 @@ module CollectionspaceMigrationTools
 
         def dependency_value_lookup(steptype)
           h = {
-            'map' => 'rec_ct',
-            'upload' => 'map_oks',
-            'ingest' => 'upload_oks'
+            "map" => "rec_ct",
+            "upload" => "map_oks",
+            "ingest" => "upload_oks"
           }
           h[steptype]
         end
-        
+
         def derived_at_add_headers
           %w[rec_ct]
         end
@@ -30,7 +30,7 @@ module CollectionspaceMigrationTools
             derived_at_add_headers
           ].flatten
         end
-        
+
         def map_headers
           %w[mapped? dir map_errs map_oks map_warns missing_terms]
         end
@@ -54,7 +54,7 @@ module CollectionspaceMigrationTools
         def final_headers
           %w[done?]
         end
-        
+
         def all_headers
           [
             supplied_headers,
@@ -67,9 +67,10 @@ module CollectionspaceMigrationTools
         end
 
         def populated_if_done_headers
-          [map_headers.first, upload_headers.first, ingest_check_headers.first, duplicates_headers.first]
+          [map_headers.first, upload_headers.first, ingest_check_headers.first,
+            duplicates_headers.first]
         end
-        
+
         # requires class mixing this in to have `table` method defined
         def check_headers
           return Success() if table.headers == all_headers

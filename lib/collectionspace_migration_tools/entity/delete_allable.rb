@@ -16,12 +16,12 @@ module CollectionspaceMigrationTools
 
       def delete_all
         do_deletes.either(
-          ->(success){
+          ->(success) {
             FileUtils.rm(tmp_csv_path)
             puts "All #{success} #{name} records deleted."
             Success(success)
           },
-          ->(failure){ Failure(failure) }
+          ->(failure) { Failure(failure) }
         )
       end
 
@@ -57,13 +57,13 @@ module CollectionspaceMigrationTools
         headers = %w[csid rectype]
         CSV.open(tmp_csv_path, "w") do |csv|
           csv << headers
-          rows.each{ |row| csv << row.values_at(*headers) }
+          rows.each { |row| csv << row.values_at(*headers) }
         end
-      rescue StandardError => err
+      rescue => err
         Failure(CMT::Failure.new(
-            context: "#{name}.#{__callee__}",
-            message: err.message
-          ))
+          context: "#{name}.#{__callee__}",
+          message: err.message
+        ))
       else
         Success()
       end

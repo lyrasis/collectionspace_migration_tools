@@ -5,6 +5,7 @@ module CollectionspaceMigrationTools
     extend Dry::Monads[:result, :do]
 
     module_function
+
     def delete(id)
       batch = yield(find(id))
       _deleted = yield(batch.delete)

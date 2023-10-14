@@ -8,9 +8,9 @@ module CollectionspaceMigrationTools
           def command
             :put_object
           end
-          
+
           def signature(row)
-            [row['id'], row[cache_type.to_s]]
+            [row["id"], row[cache_type.to_s]]
           end
         end
       end

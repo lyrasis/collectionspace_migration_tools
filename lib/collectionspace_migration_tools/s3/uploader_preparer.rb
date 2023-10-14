@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
-require 'dry/monads/do'
+require "dry/monads"
+require "dry/monads/do"
 
 module CollectionspaceMigrationTools
   module S3
@@ -10,10 +10,9 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)
 
-
       class << self
         def call(...)
-          self.new(...).call
+          new(...).call
         end
       end
 
@@ -66,7 +65,7 @@ module CollectionspaceMigrationTools
       attr_reader :file_dir, :rectype
 
       def threads
-        if rectype == 'media'
+        if rectype == "media"
           CMT.config.client.max_media_upload_threads
         else
           CMT.config.system.max_threads

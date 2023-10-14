@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
-require 'dry/monads/do'
+require "dry/monads"
+require "dry/monads/do"
 
 module CollectionspaceMigrationTools
   module Xml
@@ -11,7 +11,7 @@ module CollectionspaceMigrationTools
       include Dry::Monads::Do.for(:write)
 
       def initialize(output_dir:, action_checker:, namer:, s3_key_creator:,
-                     reporter:)
+        reporter:)
         @output_dir = output_dir
         @action_checker = action_checker
         @namer = namer
@@ -22,8 +22,8 @@ module CollectionspaceMigrationTools
       # @param response [CollectionSpace::Mapper::Response]
       def call(response)
         write(response).either(
-          ->(result){ reporter.report_success(result) },
-          ->(result){ reporter.report_failure(result, self) }
+          ->(result) { reporter.report_success(result) },
+          ->(result) { reporter.report_failure(result, self) }
         )
       end
 
@@ -33,7 +33,8 @@ module CollectionspaceMigrationTools
 
       private
 
-      attr_reader :output_dir, :action_checker, :namer, :s3_key_creator, :reporter
+      attr_reader :output_dir, :action_checker, :namer, :s3_key_creator,
+        :reporter
 
       def add_key_warnings(key, response)
         key.warnings.each do |warning|
@@ -62,11 +63,12 @@ module CollectionspaceMigrationTools
       end
 
       def write_file(path, response)
-        File.open(path, 'wb'){ |file| file << response.doc }
-      rescue StandardError => err
+        File.open(path, "wb") { |file| file << response.doc }
+      rescue => err
         Failure([:error_on_write, response, err])
       else
-        File.exist?(path) ? Success(response) : Failure([:file_not_written, response])
+        File.exist?(path) ? Success(response) : Failure([:file_not_written,
+          response])
       end
     end
   end

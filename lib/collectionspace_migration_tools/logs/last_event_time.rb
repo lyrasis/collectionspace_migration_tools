@@ -9,7 +9,7 @@ module CollectionspaceMigrationTools
 
       class << self
         def call
-          self.new.call
+          new.call
         end
       end
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
+require "dry/monads"
 
 module CollectionspaceMigrationTools
   module VocabularyTerms
@@ -10,7 +10,7 @@ module CollectionspaceMigrationTools
 
       class << self
         def call(...)
-          self.new(...).call
+          new(...).call
         end
       end
 
@@ -20,10 +20,10 @@ module CollectionspaceMigrationTools
       end
 
       def call
-        if row.key?('vocab') && row.key?('term')
+        if row.key?("vocab") && row.key?("term")
           Success()
         else
-          Failure('Terms ingest CSV must have headers: vocab, terms')
+          Failure("Terms ingest CSV must have headers: vocab, terms")
         end
       end
 

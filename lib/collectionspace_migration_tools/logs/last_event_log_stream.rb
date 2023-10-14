@@ -12,20 +12,20 @@ module CollectionspaceMigrationTools
 
       class << self
         def call(...)
-          self.new(...).call
+          new(...).call
         end
       end
 
       def initialize(client: CMT::Build::LogClient.call)
         @client = if client.is_a?(Aws::CloudWatchLogs::Client)
-                    client
-                  elsif client.is_a?(Dry::Monads::Success)
-                    client.value!
-                  elsif client.is_a?(Dry::Monads::Failure)
-                    client.failure
-                  else
-                    raise "Unknown client class"
-                  end
+          client
+        elsif client.is_a?(Dry::Monads::Success)
+          client.value!
+        elsif client.is_a?(Dry::Monads::Failure)
+          client.failure
+        else
+          raise "Unknown client class"
+        end
         @params = {
           log_group_name: CMT.config.client.log_group_name,
           order_by: "LastEventTime",

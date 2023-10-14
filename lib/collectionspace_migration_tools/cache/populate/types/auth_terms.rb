@@ -8,9 +8,9 @@ module CollectionspaceMigrationTools
           def command
             :put_auth_term
           end
-          
+
           def signature(row)
-            [row['type'], row['subtype'], row['term'], row[cache_type.to_s]]
+            [row["type"], row["subtype"], row["term"], row[cache_type.to_s]]
           end
         end
       end

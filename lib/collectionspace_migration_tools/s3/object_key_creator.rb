@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'base64'
-require 'dry/monads'
-require 'erb'
+require "base64"
+require "dry/monads"
+require "erb"
 
 module CollectionspaceMigrationTools
   module S3
@@ -16,14 +16,14 @@ module CollectionspaceMigrationTools
       # @param svc_path [String]
       def initialize(svc_path:, batch: nil)
         @svc_path = svc_path
-        @batch = batch.nil? ? 'na' : batch
+        @batch = batch.nil? ? "na" : batch
         @separator = CMT.config.client.s3_delimiter
       end
 
       # @param response [CollectionSpace::Mapper::Response]
       def call(response, action)
         id = response.identifier
-        base_path = action == 'CREATE' ? svc_path : "#{svc_path}/#{response.csid}"
+        base_path = (action == "CREATE") ? svc_path : "#{svc_path}/#{response.csid}"
         warnings = []
         final_path = get_final_path(response, base_path, warnings)
         result = Base64.urlsafe_encode64(
@@ -49,9 +49,9 @@ module CollectionspaceMigrationTools
       attr_reader :svc_path, :batch, :separator
 
       def get_final_path(response, base_path, warnings)
-        return base_path unless svc_path == '/media'
+        return base_path unless svc_path == "/media"
 
-        media_uri = response.orig_data['mediafileuri']
+        media_uri = response.orig_data["mediafileuri"]
         return base_path if media_uri.blank?
 
         media_path(media_uri, base_path, warnings)
@@ -71,8 +71,8 @@ module CollectionspaceMigrationTools
         all_escaped = ERB::Util.url_encode(space_escaped)
         result = URI(all_escaped)
       rescue URI::Error
-        warnings << 'media_uri cannot be encoded as valid ingest URI. File '\
-          'ingest may not work as expected'
+        warnings << "media_uri cannot be encoded as valid ingest URI. File "\
+          "ingest may not work as expected"
         media_uri
       else
         result.to_s

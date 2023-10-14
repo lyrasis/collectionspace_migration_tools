@@ -5,10 +5,10 @@ module CollectionspaceMigrationTools
     class IngestStatusChecker
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)
-      
+
       class << self
         def call(...)
-          self.new(...).call
+          new(...).call
         end
       end
 
@@ -25,7 +25,7 @@ module CollectionspaceMigrationTools
       def call
         size = yield(get_size)
         return Success(lister) if size == 0
-        
+
         @last_size = size
 
         _chk = yield(do_checks)
@@ -33,13 +33,14 @@ module CollectionspaceMigrationTools
 
         Success(lister)
       end
-      
+
       private
 
-      attr_reader :lister, :wait, :checks, :rechecks, :chk_ct, :rechk_ct, :last_size, :this_size
+      attr_reader :lister, :wait, :checks, :rechecks, :chk_ct, :rechk_ct,
+        :last_size, :this_size
 
       def do_checks
-        until chk_ct == checks do
+        until chk_ct == checks
           sleep wait
 
           size = get_size
@@ -48,7 +49,7 @@ module CollectionspaceMigrationTools
           @this_size = size.value!
           return Success() if this_size == 0
           inc_chk
-          
+
           if maybe_done?
             return Success()
           else
@@ -59,7 +60,7 @@ module CollectionspaceMigrationTools
       end
 
       def do_rechecks
-        until rechk_ct == rechecks do
+        until rechk_ct == rechecks
           sleep wait
 
           size = get_size
@@ -77,11 +78,11 @@ module CollectionspaceMigrationTools
 
       def get_size
         lister.call.either(
-          ->(success){ Success(lister.size) },
-          ->(failure){ Failure(failure) }
+          ->(success) { Success(lister.size) },
+          ->(failure) { Failure(failure) }
         )
       end
-      
+
       def inc_chk
         @chk_ct += 1
       end
@@ -96,4 +97,3 @@ module CollectionspaceMigrationTools
     end
   end
 end
-

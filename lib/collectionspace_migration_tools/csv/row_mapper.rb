@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
+require "dry/monads"
 
 module CollectionspaceMigrationTools
   module Csv
@@ -23,18 +23,18 @@ module CollectionspaceMigrationTools
       def to_monad
         Success(self)
       end
-      
+
       private
 
       attr_reader :handler
 
       def valid?(response)
-        response.all?{ |resp| resp.success? }
+        response.all? { |resp| resp.success? }
       end
 
       def map(row)
         result = handler.process(row)
-      rescue StandardError => err
+      rescue => err
         Failure(CMT::Failure.new(context: "Handler.process", message: err))
       else
         Success(result)
@@ -43,7 +43,7 @@ module CollectionspaceMigrationTools
       def wrap_result(result)
         val = result.value!
         val_arr = val.is_a?(Array) ? val : [val]
-        val_arr.map{ |res| res.valid? ? Success(res) : Failure(res) }
+        val_arr.map { |res| res.valid? ? Success(res) : Failure(res) }
       end
     end
   end

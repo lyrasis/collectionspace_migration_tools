@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'parallel'
+require "parallel"
 
 module CollectionspaceMigrationTools
   module Media
@@ -10,7 +10,7 @@ module CollectionspaceMigrationTools
 
       class << self
         def call(...)
-          self.new(...).call
+          new(...).call
         end
       end
 
@@ -23,16 +23,16 @@ module CollectionspaceMigrationTools
       end
 
       def call
-        puts 'Making API calls to check derivatives. This will take a long '\
-          'time...'
+        puts "Making API calls to check derivatives. This will take a long "\
+          "time..."
         start_time = Time.now
         result = Parallel.map(chunks,
-                     in_threads: CMT.config.system.max_threads) do |chunk|
+          in_threads: CMT.config.system.max_threads) do |chunk|
           worker(chunk)
         end
         elap = Time.now - start_time
         puts "Threaded derivative checking time: #{elap}"
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
         Failure(
           CMT::Failure.new(
@@ -52,7 +52,7 @@ module CollectionspaceMigrationTools
         chunk.map do |row|
           CMT::Media::DerivableData.new(
             blob: row,
-            deriv: checker.call(blobcsid: row['blobcsid'])
+            deriv: checker.call(blobcsid: row["blobcsid"])
           ).to_h
         end
       end
@@ -63,10 +63,10 @@ module CollectionspaceMigrationTools
         result = rows.map do |row|
           CMT::Media::DerivableData.new(
             blob: row,
-            deriv: checker.call(blobcsid: row['blobcsid'])
+            deriv: checker.call(blobcsid: row["blobcsid"])
           ).to_h
         end
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
         Failure(CMT::Failure.new(
           context: "#{self.class.name}.#{__callee__}", message: msg

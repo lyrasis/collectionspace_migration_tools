@@ -8,7 +8,7 @@ module CollectionspaceMigrationTools
 
       class << self
         def call(...)
-          self.new(...).call
+          new(...).call
         end
       end
 
@@ -27,12 +27,11 @@ module CollectionspaceMigrationTools
         end
 
         uploadable = batch.map_oks
-        if uploadable.nil? || uploadable.empty? || uploadable == '0'
+        if uploadable.nil? || uploadable.empty? || uploadable == "0"
           return Failure("No uploadable records for batch: #{batch_id}")
         end
 
         batch_dir = yield CMT::Batch.dir(batch_id)
-
 
         puts "\n\nUPLOADING"
         uploader = yield CMT::S3::UploaderPreparer.new(

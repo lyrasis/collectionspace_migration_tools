@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
+require "dry/monads"
 
 module CollectionspaceMigrationTools
   module VocabularyTerms
@@ -36,7 +36,7 @@ module CollectionspaceMigrationTools
       attr_reader :handler, :reporter
 
       def add_term(row)
-        handler.add_term(vocab: row['vocab'], term: row['term'])
+        handler.add_term(vocab: row["vocab"], term: row["term"])
       end
     end
   end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
-require 'dry/monads/do'
+require "dry/monads"
+require "dry/monads/do"
 
 module CollectionspaceMigrationTools
   module Batch
@@ -13,59 +13,62 @@ module CollectionspaceMigrationTools
 
       class << self
         def call(...)
-          self.new(...).call
+          new(...).call
         end
       end
 
       def initialize(batch:, dir:)
-        @process_type = 'mapping'
+        @process_type = "mapping"
         @batch = batch
         @report_path = "#{dir}/mapper_report.csv"
         @dir = dir
         @updated = {}
-        @status = 'WARN: Reporting did not complete successfully'
+        @status = "WARN: Reporting did not complete successfully"
       end
 
       def call
         call_and_report
       end
-      
+
       private
 
       def count_xml_files
         result = Dir.new(dir)
           .children
-          .select{ |file| File.extname(file) == '.xml' }
+          .select { |file| File.extname(file) == ".xml" }
           .length
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: msg))
       else
         Success(result)
       end
 
       def do_reporting
-        _status = yield(report('mapped?', Time.now.strftime("%F_%H_%M")))
-        _dir  = yield(report('dir', File.basename(dir)))
+        _status = yield(report("mapped?", Time.now.strftime("%F_%H_%M")))
+        _dir = yield(report("dir", File.basename(dir)))
         successes = yield(count_xml_files)
-        _successes = yield(report('map_oks', successes))
+        _successes = yield(report("map_oks", successes))
         total = batch.rec_ct.to_i
-        failures = yield(CMT::Batch::CsvRowCounter.call(path: report_path, field: 'cmt_outcome', value: 'failure'))
-        _failures = yield(report('map_errs', failures))
-        warns = yield(CMT::Batch::CsvRowCounter.call(path: report_path, field: 'cmt_warnings'))
-        _warns = yield(report('map_warns', warns))
+        failures = yield(CMT::Batch::CsvRowCounter.call(path: report_path,
+          field: "cmt_outcome", value: "failure"))
+        _failures = yield(report("map_errs", failures))
+        warns = yield(CMT::Batch::CsvRowCounter.call(path: report_path,
+          field: "cmt_warnings"))
+        _warns = yield(report("map_warns", warns))
         missing_term_report = "#{dir}/missing_terms.csv"
-        if File.exists?(missing_term_report)
+        if File.exist?(missing_term_report)
           missing_term_ct = yield(CMT::Batch::CsvRowCounter.call(path: missing_term_report))
         else
           missing_term_ct = 0
         end
-        _missing_term = yield(report('missing_terms', missing_term_ct))
+        _missing_term = yield(report("missing_terms", missing_term_ct))
 
-        @status = 'Reporting completed'
+        @status = "Reporting completed"
         Success()
       end
-      
+
       attr_reader :process_type, :batch, :dir, :report_path, :updated, :status
     end
   end

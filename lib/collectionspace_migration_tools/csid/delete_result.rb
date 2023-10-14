@@ -20,7 +20,7 @@ module CollectionspaceMigrationTools
       def to_h
         row.to_h.merge(
           {
-            status: result.success? ? 'success' : 'failure',
+            status: result.success? ? "success" : "failure",
             errs: result.success? ? nil : result.failure.for_csv
           }
         )

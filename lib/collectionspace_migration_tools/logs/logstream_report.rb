@@ -9,7 +9,7 @@ module CollectionspaceMigrationTools
 
       class << self
         def call(...)
-          self.new(...).call
+          new(...).call
         end
       end
 
@@ -59,10 +59,10 @@ module CollectionspaceMigrationTools
             file << event.message
             file << "\n"
           end
-          if end_events_per_stream > 0
-            file << "\n[...]\n"
+          file << if end_events_per_stream > 0
+            "\n[...]\n"
           else
-            file << "\n"
+            "\n"
           end
         end
 

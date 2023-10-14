@@ -12,12 +12,12 @@ module CollectionspaceMigrationTools
     module Checkable
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:duplicates)
-      
+
       def duplicates
         _status = yield(self)
         query = yield(duplicates_query)
 
-        puts "\nQuerying for #{to_s} duplicates..."
+        puts "\nQuerying for #{self} duplicates..."
         rows = yield(CMT::Database::ExecuteQuery.call(query))
         CMT.connection.close if CMT.connection
         CMT.tunnel.close if CMT.tunnel

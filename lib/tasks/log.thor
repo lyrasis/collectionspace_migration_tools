@@ -1,17 +1,23 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
-require 'thor'
+require "dry/monads"
+require "thor"
 
 # tasks targeting AWS Logs
 class Log < Thor
   include Dry::Monads[:result]
 
-  desc 'last_event', 'Returns time of last logged event for import bucket'
+  desc "last_event", "Returns time of last logged event for import bucket"
   def last_event
     CMT::Logs::LastEventTime.call.either(
-      ->(success){ puts success; exit(0) },
-      ->(failure){ puts failure.to_s; exit(1) }
+      ->(success) {
+        puts success
+        exit(0)
+      },
+      ->(failure) {
+        puts failure
+        exit(1)
+      }
     )
   end
   desc "logstream_report", "Write report with n start/end events for each "\
@@ -35,8 +41,14 @@ class Log < Thor
     CMT::Logs::LogstreamReport.call(
       options[:start], options[:end], fullpath
     ).either(
-      ->(success){ puts "Written: #{fullpath}"; exit(0) },
-      ->(failure){ puts failure.to_s; exit(1) }
+      ->(success) {
+        puts "Written: #{fullpath}"
+        exit(0)
+      },
+      ->(failure) {
+        puts failure
+        exit(1)
+      }
     )
   end
 end

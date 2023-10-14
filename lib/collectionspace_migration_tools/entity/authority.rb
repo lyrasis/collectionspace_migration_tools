@@ -11,8 +11,8 @@ module CollectionspaceMigrationTools
 
       class << self
         def from_str(str)
-          arr = str['/'] ? str.split('/') : str.split('-')
-          self.new(type: arr.shift, subtype: arr.join('-'))
+          arr = str["/"] ? str.split("/") : str.split("-")
+          new(type: arr.shift, subtype: arr.join("-"))
         end
       end
 
@@ -32,7 +32,7 @@ module CollectionspaceMigrationTools
       def cacheable_data_query
         return status if status.failure?
 
-        query =  <<~SQL
+        query = <<~SQL
           with auth_vocab_csid as (
             select acv.id, h.name as csid, acv.shortidentifier
               from #{db_vocab_table} acv
@@ -57,7 +57,7 @@ module CollectionspaceMigrationTools
             inner join auth_vocab_csid acv on ac.inauthority = acv.csid
             inner join terms t on ac.id = t.id
             inner join hierarchy h on ac.id = h.id
-          SQL
+        SQL
 
         Success(query)
       end
@@ -79,24 +79,24 @@ module CollectionspaceMigrationTools
         return status if status.failure?
 
         query = <<~SQL
-            with auth_vocab_csid as (
-            select acv.id, h.name as csid, acv.shortidentifier from #{db_vocab_table} acv
-            inner join hierarchy h on acv.id = h.id
-            where acv.shortidentifier = '#{mapper.subtype}'
-            ),
-            terms as (
-            select h.parentid as id, tg.termdisplayname from hierarchy h
-            inner join #{db_term_table} ac on ac.id = h.parentid and h.name like '%TermGroupList' and pos = 0
-            inner join #{mapper.db_term_group_table_name} tg on h.id = tg.id
-            )
+          with auth_vocab_csid as (
+          select acv.id, h.name as csid, acv.shortidentifier from #{db_vocab_table} acv
+          inner join hierarchy h on acv.id = h.id
+          where acv.shortidentifier = '#{mapper.subtype}'
+          ),
+          terms as (
+          select h.parentid as id, tg.termdisplayname from hierarchy h
+          inner join #{db_term_table} ac on ac.id = h.parentid and h.name like '%TermGroupList' and pos = 0
+          inner join #{mapper.db_term_group_table_name} tg on h.id = tg.id
+          )
 
-            select t.termdisplayname from #{db_term_table} ac
-            inner join misc on ac.id = misc.id and misc.lifecyclestate != 'deleted'
-            inner join auth_vocab_csid acv on ac.inauthority = acv.csid
-            inner join terms t on ac.id = t.id
-            inner join hierarchy h on ac.id = h.id
-            group by t.termdisplayname
-            having count(t.termdisplayname)>1
+          select t.termdisplayname from #{db_term_table} ac
+          inner join misc on ac.id = misc.id and misc.lifecyclestate != 'deleted'
+          inner join auth_vocab_csid acv on ac.inauthority = acv.csid
+          inner join terms t on ac.id = t.id
+          inner join hierarchy h on ac.id = h.id
+          group by t.termdisplayname
+          having count(t.termdisplayname)>1
         SQL
 
         Success(query)
@@ -109,7 +109,7 @@ module CollectionspaceMigrationTools
       end
 
       def rectype_mixin
-        'AuthTerms'
+        "AuthTerms"
       end
 
       def service_path
@@ -121,7 +121,7 @@ module CollectionspaceMigrationTools
       def all_csids_query
         return status if status.failure?
 
-        query =  <<~SQL
+        query = <<~SQL
           with auth_vocab_csid as (
             select acv.id, h.name as csid, acv.shortidentifier
               from #{db_vocab_table} acv
@@ -134,7 +134,7 @@ module CollectionspaceMigrationTools
               and misc.lifecyclestate != 'deleted'
             inner join auth_vocab_csid acv on ac.inauthority = acv.csid
             inner join hierarchy h on ac.id = h.id
-          SQL
+        SQL
 
         Success(query)
       end

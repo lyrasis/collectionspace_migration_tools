@@ -18,7 +18,7 @@ module Helpers
 
   # returns path to system config
   def sys_config_path
-    File.join(Bundler.root, 'sample_system_config.yml')
+    File.join(Bundler.root, "sample_system_config.yml")
   end
 
   # returns valid config parsed as hash
@@ -33,12 +33,12 @@ module Helpers
 
   # returns path to valid test config (core.dev)
   def valid_config_path
-    File.join(Bundler.root, 'spec', 'support', 'fixtures', 'config_valid.yml')
+    File.join(Bundler.root, "spec", "support", "fixtures", "config_valid.yml")
   end
 
   # returns path to valid test config (core.dev)
   def invalid_config_path
-    File.join(Bundler.root, 'spec', 'support', 'fixtures', 'config_invalid.yml')
+    File.join(Bundler.root, "spec", "support", "fixtures", "config_invalid.yml")
   end
 
   def setup_handler(rectype)
@@ -51,10 +51,12 @@ module Helpers
   end
 
   def setup_mapping
-    mapper_dir = File.join(Bundler.root.to_s, 'spec', 'support', 'fixtures', 'record_mappers')
+    mapper_dir = File.join(Bundler.root.to_s, "spec", "support", "fixtures",
+      "record_mappers")
     CMT.config.client.mapper_dir = mapper_dir
-    CMT.config.client.profile = 'anthro'
-    CMT.config.client.profile_version = '5-0-0'
-    CMT.config.client.batch_config_path = File.join(Bundler.root, 'spec', 'support', 'fixtures', 'client_batch_config.json')
+    CMT.config.client.profile = "anthro"
+    CMT.config.client.profile_version = "5-0-0"
+    CMT.config.client.batch_config_path = File.join(Bundler.root, "spec",
+      "support", "fixtures", "client_batch_config.json")
   end
 end

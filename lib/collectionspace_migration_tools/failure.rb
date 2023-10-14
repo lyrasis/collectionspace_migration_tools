@@ -12,8 +12,6 @@ module CollectionspaceMigrationTools
     def backtrace
       if message.respond_to?(:backtrace)
         message.backtrace
-      else
-        nil
       end
     end
 
@@ -23,9 +21,9 @@ module CollectionspaceMigrationTools
 
     def to_s
       <<~MSG
-         ERROR in #{context}
-         MESSAGE:
-         #{message}
+        ERROR in #{context}
+        MESSAGE:
+        #{message}
       MSG
     end
   end

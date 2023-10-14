@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'csv'
-require 'dry/monads'
+require "csv"
+require "dry/monads"
 
 module CollectionspaceMigrationTools
   module Csv
@@ -11,30 +11,30 @@ module CollectionspaceMigrationTools
 
       def initialize(output_dir:, fields:, term_reporter:)
         @path = "#{output_dir}/mapper_report.csv"
-        @fields = [fields, 'CMT_rec_status', 'CMT_outcome', 'CMT_output_file',
-                   'CMT_S3_key', 'CMT_warnings', 'CMT_errors']
-                     .flatten
+        @fields = [fields, "CMT_rec_status", "CMT_outcome", "CMT_output_file",
+          "CMT_S3_key", "CMT_warnings", "CMT_errors"]
+          .flatten
         @term_reporter = term_reporter
-        CSV.open(path, 'wb'){ |csv| csv << @fields }
+        CSV.open(path, "wb") { |csv| csv << @fields }
       end
 
       def report_failure(result, source)
         response = get_response(result, source)
         data = response.orig_data
-        data['CMT_rec_status'] = response.record_status
-        data['CMT_outcome'] = 'failure'
-        data['CMT_warnings'] = compile_warnings(response)
+        data["CMT_rec_status"] = response.record_status
+        data["CMT_outcome"] = "failure"
+        data["CMT_warnings"] = compile_warnings(response)
         write_row(add_errors(result, data, source))
       end
 
       def report_success(result)
         response = result[0]
         data = response.orig_data
-        data['CMT_rec_status'] = response.record_status
-        data['CMT_output_file'] = result[1]
-        data['CMT_S3_key'] = result[2]
-        data['CMT_outcome'] = 'success'
-        data['CMT_warnings'] = compile_warnings(response)
+        data["CMT_rec_status"] = response.record_status
+        data["CMT_output_file"] = result[1]
+        data["CMT_S3_key"] = result[2]
+        data["CMT_outcome"] = "success"
+        data["CMT_warnings"] = compile_warnings(response)
         write_row(data)
       end
 
@@ -47,7 +47,7 @@ module CollectionspaceMigrationTools
       attr_reader :path, :fields, :term_reporter
 
       def add_errors(result, data, source)
-        if source.class.name.end_with?('RowProcessor')
+        if source.class.name.end_with?("RowProcessor")
           add_row_processor_errors(result, data)
         else
           add_xml_writer_errors(result, data)
@@ -55,7 +55,7 @@ module CollectionspaceMigrationTools
       end
 
       def add_row_processor_errors(result, data)
-        data['CMT_errors'] = compile_processor_errors(result)
+        data["CMT_errors"] = compile_processor_errors(result)
         term_reporter.call(result) if term_errors?(result)
 
         data
@@ -65,31 +65,35 @@ module CollectionspaceMigrationTools
         error = result[0]
         response = result[1]
         if error == :file_already_exists
-          data['CMT_errors'] = "An XML record with identifier #{response.identifier} has already been written. Check for duplicates"
+          data["CMT_errors"] =
+            "An XML record with identifier #{response.identifier} has already been written. Check for duplicates"
         elsif error == :error_on_write
-          data['CMT_errors'] = "Attempt to write XML to file raised error: #{result[2]}"
+          data["CMT_errors"] =
+            "Attempt to write XML to file raised error: #{result[2]}"
         elsif error == :cannot_delete_new_record
-          data['CMT_errors'] = "Cannot delete new record"
+          data["CMT_errors"] = "Cannot delete new record"
         else
-          data['CMT_errors'] = 'Unable to write file for unknown reason.'
+          data["CMT_errors"] = "Unable to write file for unknown reason."
         end
 
         data
       end
 
       def compile_processor_errors(result)
-        result.errors.map{ |err| "#{err[:category]}: #{err[:message]}" }.join("; ")
+        result.errors.map do |err|
+          "#{err[:category]}: #{err[:message]}"
+        end.join("; ")
       end
 
       def compile_warnings(result)
         warnings = result.warnings
         return nil if warnings.empty?
 
-        result.warnings.map{ |warning| warning[:message] }.join("; ")
+        result.warnings.map { |warning| warning[:message] }.join("; ")
       end
 
       def get_response(result, source)
-        if source.class.name.end_with?('RowProcessor')
+        if source.class.name.end_with?("RowProcessor")
           result
         else
           result[1]
@@ -97,12 +101,14 @@ module CollectionspaceMigrationTools
       end
 
       def term_errors?(result)
-        result.errors.any?{ |err| err[:category] == :no_records_found_for_term }
+        result.errors.any? do |err|
+          err[:category] == :no_records_found_for_term
+        end
       end
 
       def write_row(data)
-        row = data.fetch_values(*fields){ |_key| nil }
-        CSV.open(path, 'a'){ |csv| csv << row }
+        row = data.fetch_values(*fields) { |_key| nil }
+        CSV.open(path, "a") { |csv| csv << row }
       end
     end
   end

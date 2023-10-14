@@ -1,51 +1,51 @@
-require 'bundler/inline'
+require "bundler/inline"
 
 gemfile do
   source "https://rubygems.org"
-  gem 'faker', :git => 'https://github.com/faker-ruby/faker.git', :branch => 'master'
-  gem 'pry'
+  gem "faker", git: "https://github.com/faker-ruby/faker.git",
+    branch: "master"
+  gem "pry"
 end
 
-
-require 'csv'
-require 'faker'
-require 'optparse'
-require 'pry'
-require 'singleton'
-
+require "csv"
+require "faker"
+require "optparse"
+require "pry"
+require "singleton"
 
 options = {}
-OptionParser.new{ |opts|
-  opts.on('-o', '--output OUTPUTPATH', 'Path to output CSV'){ |o|
+OptionParser.new do |opts|
+  opts.on("-o", "--output OUTPUTPATH", "Path to output CSV") do |o|
     options[:output] = File.expand_path(o)
-  }
-  opts.on('-n', '--num INTEGER', 'number of record rows to generate'){ |n|
+  end
+  opts.on("-n", "--num INTEGER", "number of record rows to generate") do |n|
     options[:num] = n.to_i
-  }
-  opts.on('-s', '--suffix STRING', 'string to add to end of id values'){ |s|
+  end
+  opts.on("-s", "--suffix STRING", "string to add to end of id values") do |s|
     options[:suffix] = s
-  }
-  opts.on('-t', '--type STRING', 'record type to create'){ |t|
+  end
+  opts.on("-t", "--type STRING", "record type to create") do |t|
     options[:type] = t
-  }
-  opts.on('-c', '--complexity STRING', 'complexity of records to create: low, high'){ |c|
+  end
+  opts.on("-c", "--complexity STRING",
+    "complexity of records to create: low, high") do |c|
     options[:complexity] = c
-  }
+  end
 
-  opts.on('-h', '--help', 'Prints this help'){
+  opts.on("-h", "--help", "Prints this help") do
     puts opts
     exit
-  }
-}.parse!
+  end
+end.parse!
 
-DELIM = '|'
-SGDELIM = '^^'
-NV = '%NULLVALUE%'
+DELIM = "|"
+SGDELIM = "^^"
+NV = "%NULLVALUE%"
 
 # usage: Multi.call(3) {Date.call}
 class Multi
   def self.call(max, &meth)
-    Array.new(rand(0..max+1)){ meth.call }
+    Array.new(rand(0..max + 1)) { meth.call }
       .compact
       .uniq
       .join(DELIM)
@@ -74,15 +74,16 @@ class Date
     end
 
     private
+
     def formats
       [
-        '%Y', #2021
-        '%D', #02/03/21
-        '%F', #2021-02-03
-        "%-m/%-d/%Y", #2/3/2021
-        "%B %-d, %Y", #February 3, 2021 
-        "%b %-d, %Y", #Feb 3, 2021 
-        "%b %d %Y", #Feb 03 2021
+        "%Y", # 2021
+        "%D", # 02/03/21
+        "%F", # 2021-02-03
+        "%-m/%-d/%Y", # 2/3/2021
+        "%B %-d, %Y", # February 3, 2021
+        "%b %-d, %Y", # Feb 3, 2021
+        "%b %d %Y" # Feb 03 2021
       ]
     end
   end
@@ -94,7 +95,8 @@ class InventoryStatus
     include Selectable
 
     def values
-      ["unknown", "accession status unclear", "accessioned", "deaccessioned", "destroyed", "destructive analysis", "discarded", "exchanged", "intended for transfer", "irregular museum number", "missing", "missing in inventory", "not cataloged", "not located", "not received", "number not used", "object mount", "on loan", "partially deaccessioned", "partially exchanged", "partially recataloged", "returned loan object", "sold", "stolen", "transferred"]
+      ["unknown", "accession status unclear", "accessioned", "deaccessioned",
+        "destroyed", "destructive analysis", "discarded", "exchanged", "intended for transfer", "irregular museum number", "missing", "missing in inventory", "not cataloged", "not located", "not received", "number not used", "object mount", "on loan", "partially deaccessioned", "partially exchanged", "partially recataloged", "returned loan object", "sold", "stolen", "transferred"]
     end
   end
 end
@@ -120,7 +122,8 @@ class ResponsibleDepartment
     include Selectable
 
     def values
-      %w[antiquities architecture-design decorative-arts ethnography herpetology media-performance-art paintings-sculpture paleobotany photographs prints-drawings]
+      %w[antiquities architecture-design decorative-arts ethnography
+        herpetology media-performance-art paintings-sculpture paleobotany photographs prints-drawings]
     end
   end
 end
@@ -131,7 +134,8 @@ class Role
     include Selectable
 
     def values
-        [Faker::Cosmere.knight_radiant, Faker::Cosmere.allomancer, Faker::Cosmere.feruchemist]
+      [Faker::Cosmere.knight_radiant, Faker::Cosmere.allomancer,
+        Faker::Cosmere.feruchemist]
     end
   end
 end
@@ -140,11 +144,11 @@ class Organization
   class << self
     include Nullable
     include Selectable
-    
+
     attr_reader :values
 
     def setup(num = 25)
-      @values = Array.new(num){ Faker::Company.unique.name }
+      @values = Array.new(num) { Faker::Company.unique.name }
     end
   end
 end
@@ -153,11 +157,11 @@ class Person
   class << self
     include Nullable
     include Selectable
-    
+
     attr_reader :values
 
     def setup(num = 50)
-      @values = Array.new(num){ Faker::Name.unique.name }
+      @values = Array.new(num) { Faker::Name.unique.name }
     end
   end
 end
@@ -166,11 +170,11 @@ class NamedCollectionWork
   class << self
     include Nullable
     include Selectable
-    
+
     attr_reader :values
 
     def setup(num = 50)
-      @values = Array.new(num){ "#{Faker::Science.science} Collection" }
+      @values = Array.new(num) { "#{Faker::Science.science} Collection" }
     end
   end
 end
@@ -178,23 +182,24 @@ end
 class PublishTo
   class << self
     def call(max = 1)
-      postprocess(Array.new(rand(max + 1)){ value })
+      postprocess(Array.new(rand(max + 1)) { value })
     end
 
     private
 
     def postprocess(arr)
-      if arr.any?('All')
-        'All'
-      elsif arr.any?('None')
-        'None'
+      if arr.any?("All")
+        "All"
+      elsif arr.any?("None")
+        "None"
       else
         arr.uniq.join(DELIM)
       end
     end
-    
+
     def value
-      ["All", "None", "CollectionSpace Public Browser", "Culture Object", "DPLA", "Omeka"].sample
+      ["All", "None", "CollectionSpace Public Browser", "Culture Object",
+        "DPLA", "Omeka"].sample
     end
   end
 end
@@ -205,47 +210,49 @@ module Groupable
   end
 
   def multijoin(vals, delim = DELIM)
-    vals.transpose.map{ |fieldvals| fieldvals.join(delim) }
+    vals.transpose.map { |fieldvals| fieldvals.join(delim) }
   end
 end
 
 module Subgroupable
   include Groupable
-  
-  def call(groups: 2, max_subgroups: 3)
-    return Array.new(headers.length, '') if groups == 0
-    
-    subgroups = rand(max_subgroups + 1)
-    return Array.new(headers.length, '') if subgroups == 0
 
-    vals = Array.new(groups){ per_group(subgroups) }
-    groups == 1 ? vals.flatten : multijoin(vals, DELIM)
+  def call(groups: 2, max_subgroups: 3)
+    return Array.new(headers.length, "") if groups == 0
+
+    subgroups = rand(max_subgroups + 1)
+    return Array.new(headers.length, "") if subgroups == 0
+
+    vals = Array.new(groups) { per_group(subgroups) }
+    (groups == 1) ? vals.flatten : multijoin(vals, DELIM)
   end
 
   def per_group(subgroups)
-    return Array.new(headers.length, '') if subgroups == 0
-    
-    vals = Array.new(subgroups){ template.values_at(*headers) }
-    subgroups == 1 ? vals.flatten : multijoin(vals, SGDELIM)
+    return Array.new(headers.length, "") if subgroups == 0
+
+    vals = Array.new(subgroups) { template.values_at(*headers) }
+    (subgroups == 1) ? vals.flatten : multijoin(vals, SGDELIM)
   end
 end
 
 class DimensionSubGroup
   class << self
     include Subgroupable
-    
+
     private
 
     def template
       {
-        'dimension' => %w[area base circumference count depth diameter height length running-time target volume weight width].sample,
-        'measuredbypersonlocal' => Person.call,
-        'measurementunit' => %w[carats centimeters cubic-centimeters feet inches kilograms liters meters millimeters minutes ounces pixels pounds square-feet stories tons].sample,
-        'value' => [
+        "dimension" => %w[area base circumference count depth diameter height
+          length running-time target volume weight width].sample,
+        "measuredbypersonlocal" => Person.call,
+        "measurementunit" => %w[carats centimeters cubic-centimeters feet
+          inches kilograms liters meters millimeters minutes ounces pixels pounds square-feet stories tons].sample,
+        "value" => [
           Faker::Number.number(digits: rand(1..3)),
           Faker::Number.decimal(l_digits: rand(1..3), r_digits: rand(1..3))
         ].sample,
-        'valuedate' => Date.call
+        "valuedate" => Date.call
       }
     end
   end
@@ -254,7 +261,7 @@ end
 class MeasuredPartGroup
   class << self
     include Groupable
-    
+
     def call(max_groups: 3, max_subgroups: 3)
       groups = rand(max_groups + 1)
       [
@@ -270,16 +277,18 @@ class MeasuredPartGroup
     private
 
     def group_data(num)
-      return Array.new(headers.length, '') if num == 0
-      
-      vals = Array.new(num){ template.values_at(*headers) }
-      num == 1 ? vals.flatten : multijoin(vals, DELIM)
+      return Array.new(headers.length, "") if num == 0
+
+      vals = Array.new(num) { template.values_at(*headers) }
+      (num == 1) ? vals.flatten : multijoin(vals, DELIM)
     end
-    
+
     def template
       {
-        'dimensionsummary' => Faker::Lorem.sentence(word_count: 1, random_words_to_add: 7).delete_suffix('.'),
-        'measuredpart' => %w[base frame framed image-size mount paper-size plate-size unframed].sample
+        "dimensionsummary" => Faker::Lorem.sentence(word_count: 1,
+          random_words_to_add: 7).delete_suffix("."),
+        "measuredpart" => %w[base frame framed image-size mount paper-size
+          plate-size unframed].sample
       }
     end
   end
@@ -288,13 +297,14 @@ end
 class TitleTranslationSubGroup
   class << self
     include Subgroupable
-    
+
     private
 
     def template
       {
-        'titletranslation' => Faker::Lorem.sentence(word_count: 2, random_words_to_add: 4),
-        'titletranslationlanguage' => Language.call
+        "titletranslation" => Faker::Lorem.sentence(word_count: 2,
+          random_words_to_add: 4),
+        "titletranslationlanguage" => Language.call
       }
     end
   end
@@ -303,12 +313,13 @@ end
 class TitleGroup
   class << self
     include Groupable
-    
+
     def call(max_groups: 3, max_subgroups: 3)
       groups = rand(max_groups + 1)
       [
         group_data(groups),
-        TitleTranslationSubGroup.call(groups: groups, max_subgroups: max_subgroups)
+        TitleTranslationSubGroup.call(groups: groups,
+          max_subgroups: max_subgroups)
       ].flatten
     end
 
@@ -319,34 +330,35 @@ class TitleGroup
     private
 
     def group_data(num)
-      return Array.new(headers.length, '') if num == 0
-      
-      vals = Array.new(num){ template.values_at(*headers) }
-      num == 1 ? vals.flatten : multijoin(vals, DELIM)
+      return Array.new(headers.length, "") if num == 0
+
+      vals = Array.new(num) { template.values_at(*headers) }
+      (num == 1) ? vals.flatten : multijoin(vals, DELIM)
     end
-    
+
     def template
       {
-        'title' => Faker::Lorem.sentence(word_count: 2, random_words_to_add: 4).delete_suffix('.'),
-        'titlelanguage' => Language.call,
-        'titletype' => ['assigned-by-artist', 'collection', 'generic', 'popular', 'series', 'trade', ''].sample
+        "title" => Faker::Lorem.sentence(word_count: 2,
+          random_words_to_add: 4).delete_suffix("."),
+        "titlelanguage" => Language.call,
+        "titletype" => ["assigned-by-artist", "collection", "generic",
+          "popular", "series", "trade", ""].sample
       }
     end
   end
 end
 
-
 class FieldGroupList
   class << self
     include Groupable
-    
+
     def call(max_groups: 3)
       num = rand(max_groups + 1)
 
-      return Array.new(headers.length, '') if num == 0
-      
-      vals = Array.new(num){ template.values_at(*headers) }
-      num == 1 ? vals.flatten : multijoin(vals, DELIM)
+      return Array.new(headers.length, "") if num == 0
+
+      vals = Array.new(num) { template.values_at(*headers) }
+      (num == 1) ? vals.flatten : multijoin(vals, DELIM)
     end
   end
 end
@@ -357,10 +369,12 @@ class AnnotationList < FieldGroupList
 
     def template
       {
-        'annotationType' => ["additional taxa", "deaccession", "holotype location", "image made", "nomenclature", "number collision", "population biology", "type", "Vegetation Type Map Project", ""].sample,
-        'annotationNote' => Faker::Lorem.paragraph(sentence_count: 1, random_sentences_to_add: 2),
-        'annotationDate' => Date.call,
-        'annotationAuthor' => Person.call,
+        "annotationType" => ["additional taxa", "deaccession",
+          "holotype location", "image made", "nomenclature", "number collision", "population biology", "type", "Vegetation Type Map Project", ""].sample,
+        "annotationNote" => Faker::Lorem.paragraph(sentence_count: 1,
+          random_sentences_to_add: 2),
+        "annotationDate" => Date.call,
+        "annotationAuthor" => Person.call
       }
     end
   end
@@ -372,9 +386,10 @@ class AssocOrganization < FieldGroupList
 
     def template
       {
-        'assocOrganization' => Organization.call,
-        'assocOrganizationType' => Role.call,
-        'assocOrganizationNote' => Faker::Lorem.paragraph(sentence_count: 1, random_sentences_to_add: 2)
+        "assocOrganization" => Organization.call,
+        "assocOrganizationType" => Role.call,
+        "assocOrganizationNote" => Faker::Lorem.paragraph(sentence_count: 1,
+          random_sentences_to_add: 2)
       }
     end
   end
@@ -386,9 +401,10 @@ class AssocPerson < FieldGroupList
 
     def template
       {
-        'assocPerson' => Person.call,
-        'assocPersonType' => Role.call,
-        'assocPersonNote' => Faker::Lorem.paragraph(sentence_count: 1, random_sentences_to_add: 2)
+        "assocPerson" => Person.call,
+        "assocPersonType" => Role.call,
+        "assocPersonNote" => Faker::Lorem.paragraph(sentence_count: 1,
+          random_sentences_to_add: 2)
       }
     end
   end
@@ -400,9 +416,10 @@ class AssocDate < FieldGroupList
 
     def template
       {
-        'assocstructureddategroup' => Date.call,
-        'assocDateType' => Role.call,
-        'assocDateNote' => Faker::Lorem.paragraph(sentence_count: 1, random_sentences_to_add: 2)
+        "assocstructureddategroup" => Date.call,
+        "assocDateType" => Role.call,
+        "assocDateNote" => Faker::Lorem.paragraph(sentence_count: 1,
+          random_sentences_to_add: 2)
       }
     end
   end
@@ -414,8 +431,8 @@ class ObjectProductionPerson < FieldGroupList
 
     def template
       {
-        'objectProductionPerson' => Person.call,
-        'objectProductionPersonRole' => Role.call
+        "objectProductionPerson" => Person.call,
+        "objectProductionPersonRole" => Role.call
       }
     end
   end
@@ -427,8 +444,8 @@ class ObjectProductionOrganization < FieldGroupList
 
     def template
       {
-        'objectProductionOrganization' => Organization.call,
-        'objectProductionOrganizationRole' => Role.call
+        "objectProductionOrganization" => Organization.call,
+        "objectProductionOrganizationRole" => Role.call
       }
     end
   end
@@ -440,8 +457,10 @@ class ObjectName < FieldGroupList
 
     def template
       {
-        'objectname' => Faker::Lorem.sentence(word_count: 1, random_words_to_add: 2).delete_suffix('.'),
-        'objectnamenote' => Faker::Lorem.paragraph(sentence_count: 1, random_sentences_to_add: 2)
+        "objectname" => Faker::Lorem.sentence(word_count: 1,
+          random_words_to_add: 2).delete_suffix("."),
+        "objectnamenote" => Faker::Lorem.paragraph(sentence_count: 1,
+          random_sentences_to_add: 2)
       }
     end
   end
@@ -453,8 +472,8 @@ class OtherNumberList < FieldGroupList
 
     def template
       {
-        'numbervalue' => Faker::Number.number(digits: 10),
-        'numbertype' => %w[lender obsolete previous serial unknown].sample
+        "numbervalue" => Faker::Number.number(digits: 10),
+        "numbertype" => %w[lender obsolete previous serial unknown].sample
       }
     end
   end
@@ -463,8 +482,7 @@ end
 class BaseRow
   def initialize(suffix)
     @suffix = suffix
-    @orgs = Array.new(25){ Faker::Company.name }
-
+    @orgs = Array.new(25) { Faker::Company.name }
   end
 
   def call
@@ -479,16 +497,16 @@ class BaseRow
   def header_row
     headers.flatten
   end
-  
+
   private
 
   attr_reader :suffix, :orgs, :persons
-  
+
   def date
   end
 
   def handle_id
-    if id == 'termdisplayname'
+    if id == "termdisplayname"
       idvals = template[id].split(DELIM)
       mainid = "#{prefix}#{idvals.shift}#{suffix}"
       edited = {id => [mainid, idvals].flatten.join(DELIM)}
@@ -496,13 +514,14 @@ class BaseRow
       edited = {id => "#{prefix}#{template[id]}#{suffix}"}
     end
     template.merge(edited)
-  end  
+  end
 end
 
 class CSObject < BaseRow
   private
+
   def id
-    'objectnumber'
+    "objectnumber"
   end
 
   def prefix
@@ -516,74 +535,110 @@ class ObjectLow < CSObject
   def template
     {
       id => Faker::Number.unique.number(digits: 6),
-      'title' => Faker::Book.title
+      "title" => Faker::Book.title
     }
-  end  
+  end
 end
 
 class ObjectHigh < CSObject
   private
 
-#      'title' => Faker::Book.title
+  #      'title' => Faker::Book.title
   def template
     {
       id => Faker::Number.unique.number(digits: 6),
-      'numberOfObjects' => [Faker::Number.number(digits: rand(1..3)), ''].sample,
+      "numberOfObjects" => [Faker::Number.number(digits: rand(1..3)),
+        ""].sample,
       OtherNumberList.headers => OtherNumberList.call,
-      'responsibleDepartment' => Multi.call(2){ ResponsibleDepartment.call(nullable: false) },
-      'collection' => ['library-collection', 'permanent-collection', 'study-collection', 'teaching-collection', ''].sample,
-      'namedCollection' => Multi.call(3){ NamedCollectionWork.call(nullable: false) },
-      'recordStatus' => ['approved', 'in-process', 'new', 'temporary', ''].sample,
-      'publishTo' => PublishTo.call(3),
-      'inventoryStatus' => Multi.call(2){InventoryStatus.call(nullable: false)},
-      'briefDescription' => Multi.call(3){ Faker::Lorem.paragraph(sentence_count: 1, random_sentences_to_add: 2) },
-      'distinguishingFeatures' => Faker::Lorem.paragraph(sentence_count: 1, random_sentences_to_add: 2),
-      'comment' => Multi.call(3){ Faker::Lorem.paragraph(sentence_count: 1, random_sentences_to_add: 2) },
+      "responsibleDepartment" => Multi.call(2) do
+                                   ResponsibleDepartment.call(nullable: false)
+                                 end,
+      "collection" => ["library-collection", "permanent-collection",
+        "study-collection", "teaching-collection", ""].sample,
+      "namedCollection" => Multi.call(3) do
+                             NamedCollectionWork.call(nullable: false)
+                           end,
+      "recordStatus" => ["approved", "in-process", "new", "temporary",
+        ""].sample,
+      "publishTo" => PublishTo.call(3),
+      "inventoryStatus" => Multi.call(2) do
+                             InventoryStatus.call(nullable: false)
+                           end,
+      "briefDescription" => Multi.call(3) do
+                              Faker::Lorem.paragraph(sentence_count: 1,
+                                random_sentences_to_add: 2)
+                            end,
+      "distinguishingFeatures" => Faker::Lorem.paragraph(sentence_count: 1,
+        random_sentences_to_add: 2),
+      "comment" => Multi.call(3) do
+                     Faker::Lorem.paragraph(sentence_count: 1,
+                       random_sentences_to_add: 2)
+                   end,
       AnnotationList.headers => AnnotationList.call,
       TitleGroup.header_row => TitleGroup.call,
       ObjectName.headers => ObjectName.call,
-      'copyNumber' => [Faker::Number.number(digits: 2), ''].sample,
-      'objectStatus' => Multi.call(2){ ['copy', 'forgery', 'holotype', 'paralectotype', 'paratype', 'type', ''].sample },
-      'sex' => ['female', 'male', ''].sample,
-      'phase' => ['adult', 'imago', 'larva', 'nymph', 'pupa', ''].sample,
-      'form' => Multi.call(2){ ['dry', 'pinned', 'thin-section', 'wet', ''].sample },
-      'editionNumber' => [Faker::Number.number(digits: 2), ''].sample,
+      "copyNumber" => [Faker::Number.number(digits: 2), ""].sample,
+      "objectStatus" => Multi.call(2) do
+                          ["copy", "forgery", "holotype", "paralectotype", "paratype", "type",
+                            ""].sample
+                        end,
+      "sex" => ["female", "male", ""].sample,
+      "phase" => ["adult", "imago", "larva", "nymph", "pupa", ""].sample,
+      "form" => Multi.call(2) do
+                  ["dry", "pinned", "thin-section", "wet", ""].sample
+                end,
+      "editionNumber" => [Faker::Number.number(digits: 2), ""].sample,
       MeasuredPartGroup.header_row => MeasuredPartGroup.call,
-      'style' => Multi.call(3){ [Faker::Adjective.positive, Faker::Adjective.negative, nil].sample },
-      'color' => Multi.call(3){ [Faker::Commerce.color, nil].sample },
-      'physicalDescription' => Faker::Lorem.paragraph(sentence_count: 1, random_sentences_to_add: 2),
-      'contentDescription' => Faker::Lorem.paragraph(sentence_count: 1, random_sentences_to_add: 2),
-      'contentLanguage' => Multi.call(3){ Language.call(nullable: false) },
-      'contentActivity' => Multi.call(2){ Faker::Hobby.activity },
-      'contentConceptConceptMaterial' => Multi.call(2){ Faker::Commerce.material },
-      'contentDateGroup' => Date.call,
-      'contentPersonPersonLocal' => Multi.call(2){ Person.call },
-      'contentOrganizationOrganizationLocal' => Multi.call(2){ Organization.call },
-      'contentNote' => Faker::Lorem.paragraph(sentence_count: 1, random_sentences_to_add: 2),
-      'objectProductionDateGroup' => Multi.call(3){ Date.call},
-      'objectProductionReason' => Faker::Lorem.paragraph(sentence_count: 1, random_sentences_to_add: 2),
+      "style" => Multi.call(3) do
+                   [Faker::Adjective.positive, Faker::Adjective.negative,
+                     nil].sample
+                 end,
+      "color" => Multi.call(3) { [Faker::Commerce.color, nil].sample },
+      "physicalDescription" => Faker::Lorem.paragraph(sentence_count: 1,
+        random_sentences_to_add: 2),
+      "contentDescription" => Faker::Lorem.paragraph(sentence_count: 1,
+        random_sentences_to_add: 2),
+      "contentLanguage" => Multi.call(3) { Language.call(nullable: false) },
+      "contentActivity" => Multi.call(2) { Faker::Hobby.activity },
+      "contentConceptConceptMaterial" => Multi.call(2) do
+                                           Faker::Commerce.material
+                                         end,
+      "contentDateGroup" => Date.call,
+      "contentPersonPersonLocal" => Multi.call(2) { Person.call },
+      "contentOrganizationOrganizationLocal" => Multi.call(2) do
+                                                  Organization.call
+                                                end,
+      "contentNote" => Faker::Lorem.paragraph(sentence_count: 1,
+        random_sentences_to_add: 2),
+      "objectProductionDateGroup" => Multi.call(3) { Date.call },
+      "objectProductionReason" => Faker::Lorem.paragraph(sentence_count: 1,
+        random_sentences_to_add: 2),
       ObjectProductionPerson.headers => ObjectProductionPerson.call,
       ObjectProductionOrganization.headers => ObjectProductionOrganization.call,
-      'objectProductionNote' => Faker::Lorem.paragraph(sentence_count: 1, random_sentences_to_add: 2),
+      "objectProductionNote" => Faker::Lorem.paragraph(sentence_count: 1,
+        random_sentences_to_add: 2),
       AssocOrganization.headers => AssocOrganization.call,
       AssocPerson.headers => AssocPerson.call,
       AssocDate.headers => AssocDate.call,
-      'objectHistoryNote' => [Faker::Lorem.paragraph(sentence_count: 1, random_sentences_to_add: 2), ''].sample,
-      'ownerPersonLocal' => Multi.call(2){ Person.call },
-      'ownerOrganizationLocal' => Multi.call(2){ Organization.call },
-      'ownershipDateGroup' => Multi.call(2){ Date.call },
-      'ownershipAccess' => ['limited', 'open', 'restricted', ''].sample,
+      "objectHistoryNote" => [
+        Faker::Lorem.paragraph(sentence_count: 1,
+          random_sentences_to_add: 2), ""
+      ].sample,
+      "ownerPersonLocal" => Multi.call(2) { Person.call },
+      "ownerOrganizationLocal" => Multi.call(2) { Organization.call },
+      "ownershipDateGroup" => Multi.call(2) { Date.call },
+      "ownershipAccess" => ["limited", "open", "restricted", ""].sample
     }
-  end  
+  end
 end
 
 class Authority < BaseRow
   def id
-    'termdisplayname'
+    "termdisplayname"
   end
 
   def prefix
-    ''
+    ""
   end
 end
 
@@ -592,42 +647,42 @@ class PersonLow < Authority
 
   def template
     {
-      id => Multi.call(3){ Faker::Name.unique.name }
+      id => Multi.call(3) { Faker::Name.unique.name }
     }
-  end  
+  end
 end
 
 class MediaHigh < BaseRow
   private
-  
+
   def id
-    'identificationnumber'
+    "identificationnumber"
   end
 
   def prefix
-    'MR'
+    "MR"
   end
-  
+
   def template
     {
-      'identificationnumber' => Faker::Code.unique.isbn,
-      'title' => Faker::Book.title,
-      'publishto' => PublishTo.call(3),
-      'mimetype' => Faker::File.mime_type,
-      'mediafileuri' => Faker::Placeholdit.image(format: 'jpg'),
-      'contributororganizationlocal' => org,
-      'creatorpersonlocal' => Person.call,
-      'language' => Multi.call(3){ Language.call },
-      'publisherorganizationlocal' => Organization.call,
-      'copyrightstatement' => Faker::Lorem.sentence,
-      'dategroup' => Date.call,
-      'relation' => Multi.call(3){ role },
-      'source' => Faker::Commerce.department,
-      'rightsholderpersonlocal' => Person.call,
-      'alttext' => Faker::Commerce.product_name,
+      "identificationnumber" => Faker::Code.unique.isbn,
+      "title" => Faker::Book.title,
+      "publishto" => PublishTo.call(3),
+      "mimetype" => Faker::File.mime_type,
+      "mediafileuri" => Faker::Placeholdit.image(format: "jpg"),
+      "contributororganizationlocal" => org,
+      "creatorpersonlocal" => Person.call,
+      "language" => Multi.call(3) { Language.call },
+      "publisherorganizationlocal" => Organization.call,
+      "copyrightstatement" => Faker::Lorem.sentence,
+      "dategroup" => Date.call,
+      "relation" => Multi.call(3) { role },
+      "source" => Faker::Commerce.department,
+      "rightsholderpersonlocal" => Person.call,
+      "alttext" => Faker::Commerce.product_name,
       MeasuredPartGroup.header_row => MeasuredPartGroup.call
     }
-  end  
+  end
 end
 
 class Creator
@@ -639,9 +694,9 @@ class Creator
   end
 
   def call
-    CSV.open(path, 'w') do |csv|
+    CSV.open(path, "w") do |csv|
       csv << klass.header_row
-      num.times{ csv << klass.call }
+      num.times { csv << klass.call }
     end
   end
 
@@ -662,4 +717,3 @@ creator = Creator.new(
   num: options[:num]
 )
 creator.call
-

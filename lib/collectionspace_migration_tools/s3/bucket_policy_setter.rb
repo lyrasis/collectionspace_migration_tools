@@ -8,14 +8,14 @@ module CollectionspaceMigrationTools
 
       class << self
         def call(...)
-          self.new(...).call
+          new(...).call
         end
       end
 
       # @param policy [:private, :public]
       def initialize(policy:)
         @policy = policy
-        @public_access_block = policy == :private ? true : false
+        @public_access_block = policy == :private
       end
 
       def call
@@ -36,10 +36,12 @@ module CollectionspaceMigrationTools
       attr_reader :bucket, :client, :policy, :public_access_block
 
       def get_bucket
-        return Failure(CMT::Failure.new(
-          context: "#{self.class.name}.#{__callee__}",
-          message: "No client media_bucket setting specified"
-        )) unless CMT.config.client.respond_to?(:media_bucket)
+        unless CMT.config.client.respond_to?(:media_bucket)
+          return Failure(CMT::Failure.new(
+            context: "#{self.class.name}.#{__callee__}",
+            message: "No client media_bucket setting specified"
+          ))
+        end
 
         Success(CMT.config.client.media_bucket)
       end
@@ -66,18 +68,18 @@ module CollectionspaceMigrationTools
           block_public_acls: public_access_block,
           ignore_public_acls: public_access_block,
           block_public_policy: public_access_block,
-          restrict_public_buckets: public_access_block,
+          restrict_public_buckets: public_access_block
         }
       end
 
       def set_policy
-        if policy == :public
-          resp = client.put_bucket_policy({
+        resp = if policy == :public
+          client.put_bucket_policy({
             bucket: bucket,
             policy: public_policy
           })
         else
-          resp = client.delete_bucket_policy({
+          client.delete_bucket_policy({
             bucket: bucket
           })
         end

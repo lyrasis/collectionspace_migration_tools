@@ -3,7 +3,7 @@
 module CollectionspaceMigrationTools
   module Batches
     extend Dry::Monads[:result, :do]
-    
+
     module_function
 
     # @param status [Symbol] :mappable?, :uploadable?, :ingestable?, :is_done?
@@ -23,22 +23,24 @@ module CollectionspaceMigrationTools
 
     def ingstat(wait: 1.5, checks: 1, rechecks: 1, autodelete: false)
       ids = yield(ids_by_status(:ingestable?))
-      results = ids.map{ |id| CMT::Batch::IngestCheckRunner.call(
-        batch_id: id,
-        wait: wait,
-        checks: checks,
-        rechecks: rechecks,
-        autodelete: autodelete
-      )}
+      results = ids.map do |id|
+        CMT::Batch::IngestCheckRunner.call(
+          batch_id: id,
+          wait: wait,
+          checks: checks,
+          rechecks: rechecks,
+          autodelete: autodelete
+        )
+      end
       _chk = yield(result_check(results))
 
       Success()
     end
 
     def map(autocache = CMT.config.client.auto_refresh_cache_before_mapping,
-            clearcache = CMT.config.client.clear_cache_before_refresh)
+      clearcache = CMT.config.client.clear_cache_before_refresh)
       ids = yield(ids_by_status(:mappable?))
-      results = ids.map{ |id| CMT::Batch.map(id, autocache, clearcache) }
+      results = ids.map { |id| CMT::Batch.map(id, autocache, clearcache) }
       _chk = yield(result_check(results))
 
       Success()
@@ -54,11 +56,10 @@ module CollectionspaceMigrationTools
 
     def upload
       ids = yield(ids_by_status(:uploadable?))
-      results = ids.map{ |id| CMT::Batch::UploadRunner.call(batch_id: id) }
+      results = ids.map { |id| CMT::Batch::UploadRunner.call(batch_id: id) }
       _chk = yield(result_check(results))
 
       Success()
     end
   end
 end
-

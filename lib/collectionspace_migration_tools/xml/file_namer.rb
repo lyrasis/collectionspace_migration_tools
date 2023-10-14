@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'base64'
-require 'dry/monads'
-require 'dry/monads/do'
+require "base64"
+require "dry/monads"
+require "dry/monads/do"
 
 module CollectionspaceMigrationTools
   module Xml
@@ -12,7 +12,7 @@ module CollectionspaceMigrationTools
     class FileNamer
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)
-      
+
       # @param svc_path [String]
       def initialize
       end
@@ -28,24 +28,29 @@ module CollectionspaceMigrationTools
       def to_monad
         Success(self)
       end
-      
+
       private
 
       def encode(id)
         hashed = Base64.urlsafe_encode64(id)
-      rescue StandardError => err
-        return Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: err))
+      rescue => err
+        Failure(CMT::Failure.new(
+          context: "#{self.class.name}.#{__callee__}", message: err
+        ))
       else
         Success(hashed)
       end
-      
+
       def get_id(response)
         id = response.identifier
-        return Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: 'no id found for record')) if id.blank?
+        if id.blank?
+          return Failure(CMT::Failure.new(
+            context: "#{self.class.name}.#{__callee__}", message: "no id found for record"
+          ))
+        end
 
         Success(id)
       end
     end
   end
 end
-

@@ -10,10 +10,10 @@ module CollectionspaceMigrationTools
 
       class << self
         def call(...)
-          self.new(...).call
+          new(...).call
         end
       end
-      
+
       def initialize(plan)
         @plan = plan
         @results = []
@@ -22,18 +22,18 @@ module CollectionspaceMigrationTools
       def call
         puts "\n\nAUTO-CACHING"
         starttime = Time.now
-        
-        plan.each{ |meth, list| do_command(meth, list) }
+
+        plan.each { |meth, list| do_command(meth, list) }
 
         CMT.connection.close
         CMT.tunnel.close
 
         puts "Elapsed time for caching: #{Time.now - starttime}"
         return Success() unless @results.any?(:failure?)
-        
+
         Failure("#{self.class.name} ERROR: Unable to cache some necessary values")
       end
-      
+
       def to_monad
       end
 

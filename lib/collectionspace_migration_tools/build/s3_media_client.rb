@@ -2,7 +2,7 @@
 
 module CollectionspaceMigrationTools
   module Build
-  # Returns AWS S3 client for interacting with media ingest bucket
+    # Returns AWS S3 client for interacting with media ingest bucket
     class S3MediaClient < S3Client
       def initialize
         @profile = CMT.config.system.aws_media_ingest_profile

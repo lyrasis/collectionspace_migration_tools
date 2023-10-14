@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'collectionspace/client'
-require 'dry/monads'
+require "collectionspace/client"
+require "dry/monads"
 
 module CollectionspaceMigrationTools
   module Xml
@@ -12,7 +12,7 @@ module CollectionspaceMigrationTools
       class << self
         # @param mapper [Hash] parsed JSON record mapper
         def call(mapper)
-          self.new(mapper).call
+          new(mapper).call
         end
       end
 
@@ -36,8 +36,9 @@ module CollectionspaceMigrationTools
           type: mapper.type,
           subtype: mapper.subtype
         )
-      rescue StandardError => err
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: err))
+      rescue => err
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: err))
       else
         Success(result)
       end
@@ -46,8 +47,9 @@ module CollectionspaceMigrationTools
         result = CollectionSpace::Service.get(
           type: mapper.service_path
         )
-      rescue StandardError => err
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: err))
+      rescue => err
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: err))
       else
         Success(result)
       end

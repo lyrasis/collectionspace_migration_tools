@@ -1,22 +1,25 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
-require 'thor'
+require "dry/monads"
+require "thor"
 
 # tasks related to verifying media ingest
 class Media < Thor
   include Dry::Monads[:result]
 
-  desc 'blob_data', 'writes CSV of media identificationnumber and '\
-                    'blob data, if present'
+  desc "blob_data", "writes CSV of media identificationnumber and "\
+                    "blob data, if present"
   def blob_data
     CMT::Media.blob_data_report.either(
-      ->(success){ exit(0) },
-      ->(failure){ puts failure.to_s; exit(1) }
+      ->(success) { exit(0) },
+      ->(failure) {
+        puts failure
+        exit(1)
+      }
     )
   end
 
-  desc 'deriv_report', 'writes CSV of derivative data'
+  desc "deriv_report", "writes CSV of derivative data"
   long_desc <<-LONGDESC
     Writes CSV report of derivatives for each blob attached to a media
     handling procedure to `{base_dir}/blob_derivative_report.csv`
@@ -33,15 +36,18 @@ class Media < Thor
     it takes a long time to run.
   LONGDESC
   option :csv,
-         type: :string,
-         banner: '/path/to/csv',
-         default: nil,
-         desc: 'Path to CSV with `blobcsid` & `mimetype` columns'
+    type: :string,
+    banner: "/path/to/csv",
+    default: nil,
+    desc: "Path to CSV with `blobcsid` & `mimetype` columns"
   def deriv_report
     CMT::Media::DerivReporter.call(csv_path: options[:csv])
       .either(
-        ->(success){ exit(0) },
-        ->(failure){ puts failure.to_s; exit(1) }
+        ->(success) { exit(0) },
+        ->(failure) {
+          puts failure
+          exit(1)
+        }
       )
   end
 end
