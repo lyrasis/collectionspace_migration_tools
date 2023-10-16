@@ -23,10 +23,13 @@ module CollectionspaceMigrationTools
 
       # @param output_dir [String] directory for batch
       # @param bucket_list [Array<String>] keys of objects still in S3 bucket
-      def initialize(output_dir:, bucket_list:)
+      # @param errs [nil, Hash{String=>String}] where keys are S3 object keys of
+      #   objects in bucket, and values are error messages from logs
+      def initialize(output_dir:, bucket_list:, errs:)
         @bucket_list = bucket_list
         return if bucket_list.empty?
 
+        @errs = errs
         batchdir = CMT.config.client.batch_dir
         @path = File.join(batchdir, output_dir, "ingest_report.csv")
         @source = File.join(batchdir, output_dir, "upload_report.csv")
@@ -53,7 +56,7 @@ module CollectionspaceMigrationTools
 
       private
 
-      attr_reader :fields, :bucket_list, :source
+      attr_reader :fields, :bucket_list, :errs, :source
 
       def report_and_stop
         puts "No ingest failures. Skipping writing a report."
@@ -94,6 +97,8 @@ module CollectionspaceMigrationTools
       def process_row(row)
         status = bucket_list.any?(row["cmt_s3_key"]) ? "failure" : "success"
         row["CMT_ingest_status"] = status
+        row["CMT_ingest_message"] =
+          errs[CMT::S3.obj_key_log_format(row["cmt_s3_key"])]
         row
       end
 
