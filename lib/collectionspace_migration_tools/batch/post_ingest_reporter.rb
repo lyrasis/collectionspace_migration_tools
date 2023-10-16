@@ -4,6 +4,7 @@ module CollectionspaceMigrationTools
   module Batch
     # Updates ingest-related fields in batches CSV
     class PostIngestReporter
+      include CMT::Batch::DataGettable
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:do_reporting)
       include CMT::Batch::Reportable
@@ -36,7 +37,9 @@ module CollectionspaceMigrationTools
 
       def do_reporting
         _status = yield(report("ingest_done?", Time.now.strftime("%F_%H_%M")))
-        uploaded_ct = yield(uploaded)
+        _done = yield(report("ingest_complete_time", done_time)) if done_time
+        uploaded = yield get_batch_data(batch, "upload_oks")
+        uploaded_ct = uploaded.to_i
         failures = list.length
         _failures = yield(report("ingest_errs", failures))
         successes = uploaded_ct - failures
@@ -49,13 +52,6 @@ module CollectionspaceMigrationTools
 
         @status = "Ingest reporting completed"
         Success()
-      end
-
-      def uploaded
-        result = batch.upload_oks
-        return Failure("#{self.class.name} cannot get number of uploaded records for #{id}") if result.nil? || result.empty?
-
-        Success(result.to_i)
       end
     end
   end

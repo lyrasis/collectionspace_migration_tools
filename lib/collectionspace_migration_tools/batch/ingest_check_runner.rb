@@ -3,6 +3,7 @@
 module CollectionspaceMigrationTools
   module Batch
     class IngestCheckRunner
+      include CMT::Batch::DataGettable
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)
 
@@ -71,13 +72,6 @@ module CollectionspaceMigrationTools
         return false if uncheckable_rectypes.any?(rectype)
 
         true
-      end
-
-      def get_batch_data(batch, field)
-        val = batch.send(field.to_sym)
-        return Failure("No #{field} found for batch #{id}") if val.nil? || val.empty?
-
-        Success(val)
       end
 
       def uncheckable_rectypes
