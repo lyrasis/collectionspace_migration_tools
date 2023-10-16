@@ -62,12 +62,19 @@ module CollectionspaceMigrationTools
         raise NoMethodError, message
       end
 
-      def populate_field(key, value)
+      def populate_field(key, value, overwrite: false)
         return Failure("#{key} is not a valid field") unless data.key?(key)
-        return Failure("#{key} is already populated") unless data[key].nil? || data[key].empty?
+
+        unless overwrite
+          return Failure("#{key} is already populated") unless field_empty?(key)
+        end
 
         data[key] = value
         Success(data)
+      end
+
+      def field_empty?(key)
+        data[key].nil? || data[key].empty?
       end
 
       def prefix

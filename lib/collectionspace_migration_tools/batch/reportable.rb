@@ -33,8 +33,8 @@ module CollectionspaceMigrationTools
         result
       end
 
-      def report(key, value)
-        _updated = yield(batch.populate_field(key, value))
+      def report(key, value, overwrite: false)
+        _updated = yield(batch.populate_field(key, value, overwrite: overwrite))
         _written = yield(batch.rewrite)
         success_for(key, value)
 
