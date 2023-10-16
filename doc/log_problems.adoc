@@ -1,5 +1,4 @@
-:toc:
-:toc-placement!:
+:toc: macro
 :toclevels: 4
 
 = Fast Import Bucket Log Problems
