@@ -30,35 +30,12 @@ module CollectionspaceMigrationTools
         client = yield(CMT::Build::S3Client.call)
         lister = yield(CMT::S3::BucketLister.new(client: client,
           prefix: prefix))
-        listable = yield(CMT::Batch::IngestStatusChecker.call(lister: lister,
-          wait: wait, checks: checks, rechecks: rechecks))
-        batchdir = yield(get_batch_data(batch, "dir"))
-        ingest_item_reporter = yield(CMT::Ingest::Reporter.new(
-          output_dir: batchdir, bucket_list: listable.objects
-        ))
-        ingest_report = yield(CMT::Batch::PostIngestReporter.call(
-          batch: batch,
-          list: listable.objects,
-          reporter: ingest_item_reporter
-        ))
 
-        rectype = yield(get_batch_data(batch, "mappable_rectype"))
-        action = yield(get_batch_data(batch, "action"))
-
-        unless dupe_checkable?(rectype, action)
-          _dupe_reporter = yield(CMT::Batch::DuplicateReporter.call(batch: batch))
-          return Success()
         end
 
-        obj = yield(CMT::RecordTypes.to_obj(rectype))
-        dupes = yield(obj.duplicates)
-        _dupe_reporter = yield(CMT::Batch::DuplicateReporter.call(batch: batch,
-          data: dupes))
-
-        if autodelete && dupes.num_tuples > 0
-          _deleter = yield(CMT::Duplicate::Deleter.call(rectype: rectype,
-            batchdir: batchdir))
-        end
+        _post = yield CMT::Batch::PostIngestCheckRunner.call(
+          batch: batch, bucket_list: bucket_objs
+        )
 
         Success()
       end
@@ -66,17 +43,6 @@ module CollectionspaceMigrationTools
       private
 
       attr_reader :id, :wait, :checks, :rechecks, :autodelete
-
-      def dupe_checkable?(rectype, action)
-        return false unless action == "create"
-        return false if uncheckable_rectypes.any?(rectype)
-
-        true
-      end
-
-      def uncheckable_rectypes
-        %w[authorityhierarchy nonhierarchicalrelationship objecthierarchy]
-      end
 
       def uploaded?(batch)
         timestamp = batch.uploaded?

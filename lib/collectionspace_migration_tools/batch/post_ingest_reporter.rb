@@ -15,9 +15,10 @@ module CollectionspaceMigrationTools
         end
       end
 
-      def initialize(batch:, list:, reporter:)
+      def initialize(batch:, list:, reporter:, done_time: nil)
         @batch = batch
         @list = list
+        @done_time = done_time
         @reporter = reporter
         @process_type = "ingesting"
         @dir = "#{CMT.config.client.batch_dir}/#{batch.dir}"
@@ -32,8 +33,8 @@ module CollectionspaceMigrationTools
 
       private
 
-      attr_reader :process_type, :batch, :list, :reporter, :report_path,
-        :updated, :status
+      attr_reader :process_type, :batch, :list, :done_time, :reporter,
+        :report_path, :updated, :status
 
       def do_reporting
         _status = yield(report("ingest_done?", Time.now.strftime("%F_%H_%M")))

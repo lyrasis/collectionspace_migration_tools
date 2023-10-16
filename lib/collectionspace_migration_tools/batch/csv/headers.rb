@@ -44,11 +44,11 @@ module CollectionspaceMigrationTools
         end
 
         def ingest_headers
-          [ingest_check_headers, duplicates_headers].flatten
+          [post_ingest_headers, duplicates_headers].flatten
         end
 
-        def ingest_check_headers
-          %w[ingest_done? ingest_errs ingest_oks]
+        def post_ingest_headers
+          %w[ingest_done? ingest_complete_time ingest_errs ingest_oks]
         end
 
         def duplicates_headers
