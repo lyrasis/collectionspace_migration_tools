@@ -69,10 +69,31 @@ module CollectionspaceMigrationTools
       Success(rolled_back)
     end
 
-    def log_event_count(id)
-      events = yield CMT::Logs::BatchEvents.call(batchid: id)
+    def object_key_log_events(id, objkeys)
+      list = objkeys.map { |key| CMT::S3.obj_key_log_format(key) }
+      events = yield CMT::Logs::BatchEventsFiltered.call(
+        batchid: id,
+        pattern: "%\\sObject key\\x3A %",
+        selector: ->(event) do
+          list.include?(
+            CMT::S3.obj_key_log_format(
+              CMT::Logs::Event.new(event, "Object key: ").value
+            )
+          )
+        end
+      )
 
-      Success(events.length)
+      Success(events)
+    end
+
+    def exception_log_events(id)
+      events = yield CMT::Logs::BatchEventsFiltered.call(
+        batchid: id,
+        pattern: "Exception",
+        selector: ->(event) { !event.message.match?("NoSuchKey") }
+      )
+
+      Success(events)
     end
   end
 end
