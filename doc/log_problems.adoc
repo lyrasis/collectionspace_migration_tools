@@ -1,11 +1,11 @@
-:toc: macro
+:toc: preamble
 :toclevels: 4
 
 = Fast Import Bucket Log Problems
 
 TLDR: With the logging as-is, I might be able to figure out an ingest failure reporting strategy that feels super hacky that seems to work, but I will never trust it. _However, there has got to be a better/more informative way to structure these logs to actually support the use case here_.
 
-toc:[]
+'''
 
 == User story
 
