@@ -40,6 +40,22 @@ class Batch < Thor
     )
   end
 
+  desc "lb BATCHID",
+    "(L)ist (b)ucket. List keys of objects from this batch in S3 bucket"
+  def lb(id)
+    CMT::S3::Bucket.batch_objects(id).either(
+      ->(success) {
+        puts success
+        puts "Total: #{success.length}"
+        exit(0)
+      },
+      ->(failure) {
+        puts failure
+        exit(1)
+      }
+    )
+  end
+
   desc "delete BATCHID",
     "Removes batch row from batches CSV and deletes batch directory"
   def delete(id)
