@@ -23,7 +23,7 @@ module CollectionspaceMigrationTools
     #   "2023-10-31_23:59:06", or "2023-10-31_23:59:06.592"
     # @return [Integer] epoch-with-milliseconds date/time expression used in
     #   AWS log timestamps
-    def timestamp_from_datestring(datestr)
+    def self.timestamp_from_datestring(datestr)
       result = (Time.parse(datestr).to_f * 1000.0).to_i
     rescue => err
       msg = "#{err.message} IN #{err.backtrace[0]}"
@@ -39,9 +39,10 @@ module CollectionspaceMigrationTools
     # @param timestamp [Integer] epoch-with-milliseconds date/time
     #   expression used in AWS log timestamps
     # @return [String] human-readable date/time in machine-local timezone
-    def datestring_from_timestamp(timestamp)
-      result = Time.at(0, timestamp, :millisecond)
-        .strftime("%Y-%m-%d_%H:%M:%S.%L")
+    def self.datestring_from_timestamp(timestamp)
+      result = CMT::Logs.format_timestring(
+        Time.at(0, timestamp, :millisecond)
+      )
     rescue => err
       msg = "#{err.message} IN #{err.backtrace[0]}"
       Failure(
@@ -51,6 +52,10 @@ module CollectionspaceMigrationTools
       )
     else
       Success(result)
+    end
+
+    def self.format_timestring(time)
+      time.strftime("%Y-%m-%d_%H:%M:%S.%L")
     end
 
     def setup_client(client)
