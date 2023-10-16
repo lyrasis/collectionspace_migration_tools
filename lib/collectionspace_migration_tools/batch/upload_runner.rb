@@ -38,10 +38,12 @@ module CollectionspaceMigrationTools
           file_dir: batch_dir,
           rectype: batch.mappable_rectype
         ).call
+        start_time = Time.now
         _uploaded = yield uploader.call
         report = yield CMT::Batch::PostUploadReporter.new(
           batch: batch,
-          dir: batch_dir
+          dir: batch_dir,
+          start_time: start_time
         ).call
 
         Success(report)

@@ -37,8 +37,10 @@ module CollectionspaceMigrationTools
           %w[mapped? dir map_errs map_oks map_warns missing_terms]
         end
 
+        # ingest_start_time is considered to be the time the upload was
+        #   initiated, so it is written by the upload process
         def upload_headers
-          %w[uploaded? upload_errs upload_oks batch_prefix]
+          %w[uploaded? upload_errs upload_oks batch_prefix ingest_start_time]
         end
 
         def ingest_headers

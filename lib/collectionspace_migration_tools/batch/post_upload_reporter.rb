@@ -14,9 +14,10 @@ module CollectionspaceMigrationTools
         end
       end
 
-      def initialize(batch:, dir:)
+      def initialize(batch:, dir:, start_time:)
         @process_type = "uploading"
         @batch = batch
+        @start_time = CMT::Logs.format_timestring(start_time)
         @dir = "#{CMT.config.client.batch_dir}/#{dir}"
         @report_path = "#{@dir}/upload_report.csv"
         @updated = {}
@@ -42,12 +43,14 @@ module CollectionspaceMigrationTools
         failures = total - successes
         _failures = yield(report("upload_errs", failures))
         _prefix = yield(report("batch_prefix", batch.prefix))
+        _starttime = yield(report("ingest_start_time", start_time))
 
         @status = "Reporting completed"
         Success()
       end
 
-      attr_reader :process_type, :batch, :dir, :report_path, :updated, :status
+      attr_reader :process_type, :batch, :start_time, :dir, :report_path,
+        :updated, :status
     end
   end
 end
