@@ -21,13 +21,13 @@ module CollectionspaceMigrationTools
       end
 
       def to_s
-        'vocabularies'
+        "vocabularies"
       end
-      
+
       private
-      
+
       def cacheable_data_query
-        query =    <<~SQL
+        query = <<~SQL
           with vocab_csids as (
           select vc.id, h.name as csid, vc.shortidentifier from vocabularies_common vc
           inner join hierarchy h on vc.id = h.id
@@ -38,13 +38,13 @@ module CollectionspaceMigrationTools
           inner join misc on vic.id = misc.id and misc.lifecyclestate != 'deleted'
           inner join vocab_csids vc on vic.inauthority = vc.csid
           inner join hierarchy h on vic.id = h.id
-          SQL
+        SQL
 
         Success(query)
       end
 
       def rectype_mixin
-        'VocabTerms'
+        "VocabTerms"
       end
     end
   end

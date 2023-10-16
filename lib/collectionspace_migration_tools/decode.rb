@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'base64'
+require "base64"
 
 module CollectionspaceMigrationTools
   module Decode
@@ -11,10 +11,10 @@ module CollectionspaceMigrationTools
 
     def key(key)
       result = Base64.urlsafe_decode64(key)
-    rescue StandardError => err
+    rescue => err
       msg = "#{err.message} IN #{err.backtrace[0]}"
       Failure(CMT::Failure.new(
-        context: "#{self.name}.#{__callee__}(#{key})", message: msg
+        context: "#{name}.#{__callee__}(#{key})", message: msg
       ))
     else
       Success(result)

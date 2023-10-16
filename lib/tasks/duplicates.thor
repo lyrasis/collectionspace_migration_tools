@@ -1,25 +1,32 @@
 # frozen_string_literal: true
 
-require 'thor'
+require "thor"
 
 # tasks targeting duplicate CS entities
 class Duplicates < Thor
   include Dry::Monads[:result]
   include Dry::Monads::Do.for(:do_check)
-  
-  desc 'check RECTYPE', 'check rectype for duplicates'
+
+  desc "check RECTYPE", "check rectype for duplicates"
   def check(rectype)
     do_check(rectype).either(
-      ->(results){ report_check(results); exit(0) },
-      ->(failure){ puts failure.to_s; exit(1) }
+      ->(results) {
+        report_check(results)
+        exit(0)
+      },
+      ->(failure) {
+        puts failure
+        exit(1)
+      }
     )
   end
-  
-  desc 'delete RECTYPE', 'deletes all duplicate records of a given mappable rectype'
+
+  desc "delete RECTYPE",
+    "deletes all duplicate records of a given mappable rectype"
   def delete(rectype)
     CMT::Duplicate::Deleter.call(rectype: rectype).either(
-      ->(success){ exit(0) },
-      ->(failure){ puts failure.to_s, exit(1) }
+      ->(success) { exit(0) },
+      ->(failure) { puts failure, exit(1) }
     )
   end
 

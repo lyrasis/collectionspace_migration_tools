@@ -9,13 +9,13 @@ module CollectionspaceMigrationTools
 
       class << self
         def call(...)
-          self.new(...).call
+          new(...).call
         end
       end
-      
-      def initialize(target_path: File.join(Bundler.root, 'client_config.yml'),
-                     config_dir: File.join(Bundler.root, 'config'),
-                     config_name:)
+
+      def initialize(config_name:, target_path: File.join(Bundler.root,
+        "client_config.yml"),
+        config_dir: File.join(Bundler.root, "config"))
         @target_path = target_path
         @source_path = File.join(config_dir, "#{config_name}.yml")
       end
@@ -27,22 +27,23 @@ module CollectionspaceMigrationTools
 
         Success()
       end
-      
+
       private
 
       attr_reader :target_path, :source_path
 
       def check_source_exists
-        return Success() if File.exists?(source_path)
+        return Success() if File.exist?(source_path)
 
         Failure("#{source_path} does not exist")
       end
 
       def copy_source
         FileUtils.cp(source_path, target_path)
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: msg))
       else
         Success()
       end

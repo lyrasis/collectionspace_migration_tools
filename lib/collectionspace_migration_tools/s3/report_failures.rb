@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
-require 'dry/monads/do'
+require "dry/monads"
+require "dry/monads/do"
 
 module CollectionspaceMigrationTools
   module S3
@@ -9,10 +9,9 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:get_failures)
 
-      
       class << self
         def call(file_dir:)
-          self.new(file_dir: file_dir).call
+          new(file_dir: file_dir).call
         end
       end
 
@@ -22,20 +21,22 @@ module CollectionspaceMigrationTools
 
       def call
         get_failures.either(
-          ->(failures){ failures },
-          ->(failure){ puts failure.to_s; exit }
+          ->(failures) { failures },
+          ->(failure) {
+            puts failure
+            exit
+          }
         )
       end
-      
+
       private
 
       attr_reader :file_dir
 
       def get_failures
         client = yield(CMT::Build::S3Client.call)
-        
       end
-      
+
       def setup
         # Make sure upload_report CSV is present and ok since we are using it to power our uploads
         report_path = "#{file_dir}/upload_report.csv"

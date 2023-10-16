@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'parallel'
-require 'smarter_csv'
+require "parallel"
+require "smarter_csv"
 
 module CollectionspaceMigrationTools
   module Csid
@@ -11,7 +11,7 @@ module CollectionspaceMigrationTools
 
       class << self
         def call(...)
-          self.new(...).call
+          new(...).call
         end
       end
 
@@ -24,15 +24,15 @@ module CollectionspaceMigrationTools
       end
 
       def call
-        puts 'Making API calls to delete records...'
+        puts "Making API calls to delete records..."
         start_time = Time.now
         result = Parallel.map(chunks,
-                     in_threads: CMT.config.system.max_threads) do |chunk|
+          in_threads: CMT.config.system.max_threads) do |chunk|
           worker(chunk)
         end
         elap = Time.now - start_time
         puts "CSID deletion time: #{elap}"
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
         Failure(
           CMT::Failure.new(
@@ -54,7 +54,8 @@ module CollectionspaceMigrationTools
             chunk_size: CMT.config.system.csv_chunk_size,
             convert_values_to_numeric: false,
             strings_as_keys: true
-          })
+          }
+        )
       end
 
       def worker(chunk)

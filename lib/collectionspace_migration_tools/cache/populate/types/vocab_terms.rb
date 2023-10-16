@@ -8,9 +8,9 @@ module CollectionspaceMigrationTools
           def command
             :put_vocab_term
           end
-          
+
           def signature(row)
-            [row['vocab'], row['term'], row[cache_type.to_s]]
+            [row["vocab"], row["term"], row[cache_type.to_s]]
           end
         end
       end

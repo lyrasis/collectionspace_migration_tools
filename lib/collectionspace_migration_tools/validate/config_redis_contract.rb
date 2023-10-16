@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'dry/validation'
-require 'redis'
+require "dry/validation"
+require "redis"
 
 module CollectionspaceMigrationTools
   module Validate
@@ -13,7 +13,7 @@ module CollectionspaceMigrationTools
 
       rule(:refname_port, :csid_port) do
         checked = check_connection(value)
-        key.failure("Redis not available on port #{value}") unless checked == 'PONG'
+        key.failure("Redis not available on port #{value}") unless checked == "PONG"
       end
 
       private
@@ -22,7 +22,7 @@ module CollectionspaceMigrationTools
         redis = Redis.new(port: port)
         status = redis.ping
       rescue
-        'nope'
+        "nope"
       else
         status
       end

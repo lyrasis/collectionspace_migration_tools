@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'csv'
+require "csv"
 
 module CollectionspaceMigrationTools
   module S3
@@ -10,37 +10,37 @@ module CollectionspaceMigrationTools
 
       class << self
         def call(...)
-          self.new.call(...)
+          new.call(...)
         end
       end
 
-      def initialize()
+      def initialize
       end
 
       # @param scope [:bucket, String] batch prefix can be passes as String
       #   to limit to objects from a particular batch
       # @param mode [:stdout, :csv]
       def call(scope: :bucket, mode: :stdout)
-        if scope == :bucket
-          list = yield CMT::S3::Bucket.objects
+        list = if scope == :bucket
+          yield CMT::S3::Bucket.objects
         elsif scope.is_a?(Array)
-          list = scope
+          scope
         else
-          list = yield CMT::S3::Bucket.batch_objects(scope)
+          yield CMT::S3::Bucket.batch_objects(scope)
         end
-        decoded = list.map{ |key| CMT::Decode.to_h(key) }
-        successes = decoded.select{ |result| result.success? }
+        decoded = list.map { |key| CMT::Decode.to_h(key) }
+        successes = decoded.select { |result| result.success? }
           .map(&:value!)
-        failures = decoded.select{ |result| result.failure? }
+        failures = decoded.select { |result| result.failure? }
           .map(&:failure)
 
         case mode
         when :stdout
           successes.each do |hash|
             pp(hash)
-            puts ''
+            puts ""
           end
-          failures.each{ |f| puts f }
+          failures.each { |f| puts f }
         when :csv
           path = yield write_csv(successes, failures)
           puts "Wrote decoded to #{path}"
@@ -62,18 +62,18 @@ module CollectionspaceMigrationTools
           CMT.config.client.base_dir,
           "s3_objs_decoded_#{now}.csv"
         )
-        CSV.open(path, 'w') do |csv|
+        CSV.open(path, "w") do |csv|
           csv << headers
-          successes.each{ |success| csv << success.values }
+          successes.each { |success| csv << success.values }
           failures.each do |failure|
             csv << [
               failure.context.match(/\((.*)\)/)[1],
-              'DECODE ERROR',
+              "DECODE ERROR",
               failure.message
-              ]
+            ]
           end
         end
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
         Failure(
           CMT::Failure.new(

@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
-require 'dry/monads/do'
-require 'fileutils'
+require "dry/monads"
+require "dry/monads/do"
+require "fileutils"
 
 module CollectionspaceMigrationTools
   class Configuration
     include Dry::Monads[:result]
     include Dry::Monads::Do.for(:validated_config_data,
-                                :get_client_config_hash)
+      :get_client_config_hash)
 
     # If you change default values here, update sample_client_config.yml
     CLIENT_CONFIG_DEFAULTS = {
@@ -18,24 +18,24 @@ module CollectionspaceMigrationTools
         batch_dir: "batch_data",
         auto_refresh_cache_before_mapping: true,
         clear_cache_before_refresh: true,
-        csv_delimiter: ',',
-        s3_delimiter: '|',
+        csv_delimiter: ",",
+        s3_delimiter: "|",
         media_with_blob_upload_delay: 250,
         max_media_upload_threads: 5
       },
       database: {
         port: 5432,
-        db_user: 'csadmin',
-        db_connect_host: 'localhost'
+        db_user: "csadmin",
+        db_connect_host: "localhost"
       }
     }
 
     attr_reader :client, :database, :system, :redis
 
     def initialize(
-      client: File.join(Bundler.root, 'client_config.yml'),
-      system: File.join(Bundler.root, 'system_config.yml'),
-      redis: File.join(Bundler.root, 'redis.yml'),
+      client: File.join(Bundler.root, "client_config.yml"),
+      system: File.join(Bundler.root, "system_config.yml"),
+      redis: File.join(Bundler.root, "redis.yml"),
       check: false
     )
       @client_path = client
@@ -45,8 +45,8 @@ module CollectionspaceMigrationTools
       @status = Success()
 
       validated_config_data.either(
-        ->(result){ build_config(result) },
-        ->(result){ handle_failure(result) }
+        ->(result) { build_config(result) },
+        ->(result) { handle_failure(result) }
       )
     end
 
@@ -87,7 +87,7 @@ module CollectionspaceMigrationTools
           base[section][setting] = value
         end
       end
-    rescue StandardError => err
+    rescue => err
       Failure(CMT::Failure.new(
         context: "#{name}.#{__callee__}", message: err.message
       ))
@@ -100,11 +100,21 @@ module CollectionspaceMigrationTools
     # -=-=-=-=-=-=-=-=-=-=-=
     def build_config(result)
       add_option_to_section(result, :client, :batch_config_path, nil)
-      add_option_to_section(result, :client, :auto_refresh_cache_before_mapping, false)
+      add_option_to_section(result, :client,
+        :auto_refresh_cache_before_mapping, false)
       add_option_to_section(result, :client, :clear_cache_before_refresh, false)
+      if result[:client].key?(:s3_bucket) && result[:client][:s3_bucket]
+        add_option_to_section(
+          result,
+          :client,
+          :log_group_name,
+          "/aws/lambda/#{result[:client][:s3_bucket]}"
+        )
+      end
 
       base = File.expand_path(result[:client][:base_dir])
-      add_option_to_section(result, :client, :batch_csv, File.join(base, 'batches.csv'))
+      add_option_to_section(result, :client, :batch_csv,
+        File.join(base, "batches.csv"))
 
       add_media_blob_delay(result)
 
@@ -146,7 +156,7 @@ module CollectionspaceMigrationTools
     end
 
     def expand_base_dir
-      expanded = File.expand_path(client.base_dir).delete_suffix('/')
+      expanded = File.expand_path(client.base_dir).delete_suffix("/")
       client.base_dir = expanded
     end
 
@@ -178,10 +188,10 @@ module CollectionspaceMigrationTools
     end
 
     def bad_config_exit(result)
-      puts('Could not create config.')
+      puts("Could not create config.")
       puts("Error occurred in: #{result.context}")
       puts("Error message: #{result.message}")
-      puts('Exiting...')
+      puts("Exiting...")
       exit
     end
   end

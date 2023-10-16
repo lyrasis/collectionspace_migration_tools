@@ -8,7 +8,7 @@ module CollectionspaceMigrationTools
 
       class << self
         def call(...)
-          self.new(...).call
+          new(...).call
         end
       end
 
@@ -44,16 +44,17 @@ module CollectionspaceMigrationTools
       def to_monad
         Success(self)
       end
-      
+
       private
 
       attr_reader :client, :prefix, :bucket, :max, :opts
 
       def compile(response)
         @objects << response.contents.map(&:key)
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: msg))
       else
         Success()
       end
@@ -65,12 +66,13 @@ module CollectionspaceMigrationTools
 
         Success()
       end
-      
+
       def get_response(args = opts)
         response = client.list_objects_v2(**args)
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: msg))
       else
         Success(response)
       end
@@ -81,7 +83,7 @@ module CollectionspaceMigrationTools
 
         Success()
       end
-      
+
       def set_opts
         return {bucket: bucket, max_keys: max} unless prefix
 

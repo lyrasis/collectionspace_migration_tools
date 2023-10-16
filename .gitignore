@@ -11,3 +11,4 @@ tmp
 
 .DS_Store
 system_config.yml
+/logstream_report.txt

@@ -12,8 +12,8 @@ module CollectionspaceMigrationTools
 
       def to_h
         deriv.either(
-          ->success{ success_to_h(success) },
-          ->failure{ failure_to_h(failure) }
+          ->(success) { success_to_h(success) },
+          ->(failure) { failure_to_h(failure) }
         )
       end
 
@@ -29,9 +29,9 @@ module CollectionspaceMigrationTools
       def failure_to_h(data)
         blob.to_h
           .merge({
-            'derivable?'=>'y',
-            'check_success?'=>'n',
-            'error_msgs'=>data.for_csv
+            "derivable?" => "y",
+            "check_success?" => "n",
+            "error_msgs" => data.for_csv
           })
       end
 
@@ -40,8 +40,8 @@ module CollectionspaceMigrationTools
         blob.to_h
           .merge(data.to_h)
           .merge({
-            'derivable?'=>'y',
-            'check_success?'=>'y'
+            "derivable?" => "y",
+            "check_success?" => "y"
           })
       end
     end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'csv'
+require "csv"
 
 module CollectionspaceMigrationTools
   module Duplicate
@@ -11,7 +11,7 @@ module CollectionspaceMigrationTools
 
       class << self
         def call(...)
-          self.new(...).call
+          new(...).call
         end
       end
 
@@ -24,26 +24,27 @@ module CollectionspaceMigrationTools
         @path = path
         @duplicates = duplicates
         @headers = get_headers
-        CSV.open(path, 'wb'){ |csv| csv << @headers }
+        CSV.open(path, "wb") { |csv| csv << @headers }
       end
 
       def call
-        CSV.open(path, 'a') do |csv|
-          duplicates.each{ |row| csv << row.values_at(*headers) }
+        CSV.open(path, "a") do |csv|
+          duplicates.each { |row| csv << row.values_at(*headers) }
         end
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: msg))
       else
         Success(path)
       end
-      
+
       def to_monad
         Success(self)
       end
-      
+
       private
-      
+
       attr_reader :duplicates, :headers
 
       def get_headers

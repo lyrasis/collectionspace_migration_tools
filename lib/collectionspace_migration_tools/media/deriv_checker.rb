@@ -9,8 +9,8 @@ module CollectionspaceMigrationTools
       include Dry::Monads::Do.for(:call)
 
       class << self
-        def call(client:, obj: CMT::Media::DerivData, blobcsid:)
-          self.new(client: client, obj: obj).call(blobcsid: blobcsid)
+        def call(client:, blobcsid:, obj: CMT::Media::DerivData)
+          new(client: client, obj: obj).call(blobcsid: blobcsid)
         end
       end
 
@@ -36,7 +36,7 @@ module CollectionspaceMigrationTools
 
       def get_client_response(path)
         result = client.get(path)
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
         Failure(CMT::Failure.new(
           context: "#{self.class.name}.#{__callee__}", message: msg

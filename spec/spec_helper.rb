@@ -1,30 +1,31 @@
 # frozen_string_literal: true
 
-require 'bundler/setup'
+require "bundler/setup"
 Bundler.require(:tools)
 
-require 'simplecov'
-SimpleCov.start{ enable_coverage :branch }
+require "simplecov"
+SimpleCov.start { enable_coverage :branch }
 
-require_relative './helpers'
-require 'collectionspace_migration_tools'
-require 'collectionspace/mapper'
-require 'pry'
+require_relative "./helpers"
+require "collectionspace_migration_tools"
+require "collectionspace/mapper"
+require "pry"
 
-require 'refinements'
+require "refinements"
 using Refinements::Pathnames
-Pathname.require_tree(__dir__, 'support/shared_contexts/**/*.rb')
+Pathname.require_tree(__dir__, "support/shared_contexts/**/*.rb")
 
 RSpec.configure do |config|
   config.include Helpers
   config.color = true
   config.disable_monkey_patching!
-  config.example_status_persistence_file_path = './tmp/rspec-examples.txt'
+  config.example_status_persistence_file_path = "./tmp/rspec-examples.txt"
   config.filter_run_when_matching(:focus)
-  config.formatter = ENV['CI'] == 'true' ? :progress : :documentation
+  config.formatter = (ENV["CI"] == "true") ? :progress : :documentation
   config.order = :random
   config.shared_context_metadata_behavior = :apply_to_host_groups
   config.warnings = true
+  config.before(:each) { CMT.reset_config }
 
   config.expect_with(:rspec) do |expectations|
     expectations.syntax = :expect

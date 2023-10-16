@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
-require 'dry/monads/do'
+require "dry/monads"
+require "dry/monads/do"
 
 module CollectionspaceMigrationTools
   module VocabularyTerms
@@ -13,7 +13,7 @@ module CollectionspaceMigrationTools
 
       class << self
         def call(...)
-          self.new(...).call
+          new(...).call
         end
       end
 
@@ -35,8 +35,8 @@ module CollectionspaceMigrationTools
           output_dir
         )
         adder = yield CMT::VocabularyTerms::TermAdder.new(
-            handler: handler,
-            reporter: term_reporter
+          handler: handler,
+          reporter: term_reporter
         )
 
         binding.pry

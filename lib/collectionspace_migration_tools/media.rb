@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'csv'
+require "csv"
 
 module CollectionspaceMigrationTools
   module Media
@@ -22,12 +22,12 @@ module CollectionspaceMigrationTools
     def blob_data_path
       result = File.join(
         CMT.config.client.base_dir,
-        'blob_data.csv'
+        "blob_data.csv"
       )
-    rescue StandardError => err
+    rescue => err
       msg = "#{err.message} IN #{err.backtrace[0]}"
       Failure(CMT::Failure.new(
-        context: "#{self.name}.#{__callee__}(#{key})", message: msg
+        context: "#{name}.#{__callee__}(#{key})", message: msg
       ))
     else
       Success(result)
@@ -43,14 +43,14 @@ module CollectionspaceMigrationTools
 
     def write_blob_data_report(rows, path)
       headers = rows[0].keys
-      CSV.open(path, 'w') do |csv|
+      CSV.open(path, "w") do |csv|
         csv << headers
-        rows.each{ |row| csv << row.values }
+        rows.each { |row| csv << row.values }
       end
-    rescue StandardError => err
+    rescue => err
       msg = "#{err.message} IN #{err.backtrace[0]}"
       Failure(CMT::Failure.new(
-        context: "#{self.name}.#{__callee__}(#{key})", message: msg
+        context: "#{name}.#{__callee__}(#{key})", message: msg
       ))
     else
       puts "Wrote blob data report to #{path}..."

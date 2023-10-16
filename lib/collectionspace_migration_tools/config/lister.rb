@@ -9,12 +9,12 @@ module CollectionspaceMigrationTools
 
       class << self
         def call(...)
-          self.new.call(...)
+          new.call(...)
         end
       end
 
       # @param type [Symbol] allowed values: :filename, :basename, :path
-      def initialize(config_dir: File.join(Bundler.root, 'config'))
+      def initialize(config_dir: File.join(Bundler.root, "config"))
         @config_dir = config_dir
       end
 
@@ -34,7 +34,7 @@ module CollectionspaceMigrationTools
 
         Success(result)
       end
-      
+
       private
 
       attr_reader :config_dir
@@ -42,18 +42,19 @@ module CollectionspaceMigrationTools
       def allowed_type?(type)
         return Success() if allowed_types.any?(type)
 
-        Failure("type must be one of: #{allowed_types.join(', ')}")
+        Failure("type must be one of: #{allowed_types.join(", ")}")
       end
-      
+
       def allowed_types
         %i[filename basename path]
       end
 
       def basenames(filenames)
-        result = filenames.map{ |fn| File.basename(fn, '.yml') }
-      rescue StandardError => err
+        result = filenames.map { |fn| File.basename(fn, ".yml") }
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: msg))
       else
         Success(result)
       end
@@ -61,28 +62,31 @@ module CollectionspaceMigrationTools
       def children
         result = Dir.new(config_dir)
           .children
-          .select{ |file| File.extname(file) == '.yml' }
-      rescue StandardError => err
+          .select { |file| File.extname(file) == ".yml" }
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: msg))
       else
         Success(result)
       end
-      
+
       def copy_source
         FileUtils.cp(source_path, target_path)
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: msg))
       else
         Success()
       end
 
       def paths(filenames)
-        result = filenames.map{ |fn| File.join(config_dir, fn) }
-      rescue StandardError => err
+        result = filenames.map { |fn| File.join(config_dir, fn) }
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: msg))
       else
         Success(result)
       end

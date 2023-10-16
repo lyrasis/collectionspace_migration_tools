@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
-require 'dry/monads/do'
+require "dry/monads"
+require "dry/monads/do"
 
 module CollectionspaceMigrationTools
   module Csv
@@ -10,10 +10,9 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)
 
-
       class << self
         def call(...)
-          self.new(...).call
+          new(...).call
         end
       end
 
@@ -28,7 +27,7 @@ module CollectionspaceMigrationTools
         if ACTIONS.any?(action)
           @action = action.upcase
         else
-          puts "Action must be one of: #{ACTIONS.join(', ')}"
+          puts "Action must be one of: #{ACTIONS.join(", ")}"
           exit
         end
         @batch = batch

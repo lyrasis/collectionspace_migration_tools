@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'csv'
+require "csv"
 
 module CollectionspaceMigrationTools
   module Batch
@@ -12,7 +12,7 @@ module CollectionspaceMigrationTools
 
         class << self
           def call
-            self.new.call
+            new.call
           end
         end
 
@@ -22,26 +22,27 @@ module CollectionspaceMigrationTools
         end
 
         def call
-          if File.exists?(path)
+          if File.exist?(path)
             puts "#{path} already exists; leaving it alone"
-            
+
             Success()
           else
             build_batches_csv
           end
         end
-        
+
         private
 
         attr_reader :path, :headers
 
         def build_batches_csv
-          CSV.open(path, 'wb'){ |csv| csv << headers }
-        rescue StandardError => err
+          CSV.open(path, "wb") { |csv| csv << headers }
+        rescue => err
           msg = "#{err.message} IN #{err.backtrace[0]}"
-          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+            message: msg))
         else
-          File.exists?(path) ? Success() : Failure()
+          File.exist?(path) ? Success() : Failure()
         end
       end
     end

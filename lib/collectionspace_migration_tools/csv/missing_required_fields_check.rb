@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
+require "dry/monads"
 
 module CollectionspaceMigrationTools
   module Csv
@@ -9,23 +9,23 @@ module CollectionspaceMigrationTools
 
       class << self
         def call(handler, row)
-          self.new(handler, row).call
+          new(handler, row).call
         end
       end
-      
+
       def initialize(handler, row)
         @handler = handler
         @row = row.to_h
       end
 
       def call
-        puts 'Checking for presence of required field(s)...'
+        puts "Checking for presence of required field(s)..."
         validated = handler.validate(row)
         return Success() if validated.valid?
 
-        Failure(validated.errors.join('; '))
+        Failure(validated.errors.join("; "))
       end
-      
+
       private
 
       attr_reader :handler, :row

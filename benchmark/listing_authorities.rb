@@ -1,15 +1,14 @@
 # frozen_string_literal: true
 
-require 'bundler/setup'
-require_relative '../lib/collectionspace_migration_tools'
-require 'benchmark'
-require 'debug'
-
+require "bundler/setup"
+require_relative "../lib/collectionspace_migration_tools"
+require "benchmark"
+require "debug"
 
 Benchmark.bm do |x|
-  x.report('a'){ 50.times{ CMT::RecordTypes.authorities_a } }
-  x.report('b'){ 50.times{ CMT::RecordTypes.authorities_b } } 
-  x.report('c'){ 50.times{ CMT::RecordTypes.authorities_c } }
+  x.report("a") { 50.times { CMT::RecordTypes.authorities_a } }
+  x.report("b") { 50.times { CMT::RecordTypes.authorities_b } }
+  x.report("c") { 50.times { CMT::RecordTypes.authorities_c } }
 end
 
 __END__

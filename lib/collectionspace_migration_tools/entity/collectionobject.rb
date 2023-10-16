@@ -16,7 +16,7 @@ module CollectionspaceMigrationTools
       end
 
       def to_s
-        'collectionobject'
+        "collectionobject"
       end
 
       def name
@@ -32,7 +32,7 @@ module CollectionspaceMigrationTools
           inner join misc on obj.id = misc.id and misc.lifecyclestate != 'deleted'
           inner join hierarchy h on obj.id = h.id
           inner join collectionspace_core cc on obj.id = cc.id
-          SQL
+        SQL
 
         Success(query)
       end
@@ -44,25 +44,25 @@ module CollectionspaceMigrationTools
           where misc.lifecyclestate != 'deleted'
           group by cc.objectnumber
           having count(cc.objectnumber)>1
-          SQL
+        SQL
 
         Success(query)
       end
 
       def all_csids_query
         query = <<~SQL
-        select h.name as csid, '#{to_s}' as rectype
-          from collectionobjects_common obj
-          inner join misc on obj.id = misc.id
-            and misc.lifecyclestate != 'deleted'
-          inner join hierarchy h on obj.id = h.id
-          SQL
+          select h.name as csid, '#{self}' as rectype
+            from collectionobjects_common obj
+            inner join misc on obj.id = misc.id
+              and misc.lifecyclestate != 'deleted'
+            inner join hierarchy h on obj.id = h.id
+        SQL
 
         Success(query)
       end
 
       def rectype_mixin
-        'Objects'
+        "Objects"
       end
     end
   end

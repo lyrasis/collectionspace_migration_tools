@@ -23,12 +23,12 @@ module CollectionspaceMigrationTools
         return status if status.failure?
 
         query = <<~SQL
-            select '#{name}' as type, oap.#{mapper.id_field} as id, cc.refname, h.name as csid
-            from #{mapper.base_namespace} oap
-            inner join misc on oap.id = misc.id and misc.lifecyclestate != 'deleted'
-            inner join hierarchy h on oap.id = h.id
-            inner join collectionspace_core cc on oap.id = cc.id
-          SQL
+          select '#{name}' as type, oap.#{mapper.id_field} as id, cc.refname, h.name as csid
+          from #{mapper.base_namespace} oap
+          inner join misc on oap.id = misc.id and misc.lifecyclestate != 'deleted'
+          inner join hierarchy h on oap.id = h.id
+          inner join collectionspace_core cc on oap.id = cc.id
+        SQL
 
         Success(query)
       end
@@ -39,11 +39,11 @@ module CollectionspaceMigrationTools
         field = mapper.id_field
 
         query = <<~SQL
-            select oap.#{field} from #{mapper.base_namespace} oap
-            left join misc on oap.id = misc.id
-            where misc.lifecyclestate != 'deleted'
-            group by oap.#{field}
-            having count(oap.#{field})>1
+          select oap.#{field} from #{mapper.base_namespace} oap
+          left join misc on oap.id = misc.id
+          where misc.lifecyclestate != 'deleted'
+          group by oap.#{field}
+          having count(oap.#{field})>1
         SQL
 
         Success(query)
@@ -53,17 +53,17 @@ module CollectionspaceMigrationTools
         return status if status.failure?
 
         query = <<~SQL
-            select '#{name}' as rectype, h.name as csid
-            from #{mapper.base_namespace} oap
-            inner join misc on oap.id = misc.id and misc.lifecyclestate != 'deleted'
-            inner join hierarchy h on oap.id = h.id
-          SQL
+          select '#{name}' as rectype, h.name as csid
+          from #{mapper.base_namespace} oap
+          inner join misc on oap.id = misc.id and misc.lifecyclestate != 'deleted'
+          inner join hierarchy h on oap.id = h.id
+        SQL
 
         Success(query)
       end
 
       def rectype_mixin
-        'Procedures'
+        "Procedures"
       end
     end
   end

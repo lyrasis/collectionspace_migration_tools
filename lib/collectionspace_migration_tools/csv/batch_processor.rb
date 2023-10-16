@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
-require 'dry/monads/do'
-require 'parallel'
-require 'smarter_csv'
+require "dry/monads"
+require "dry/monads/do"
+require "parallel"
+require "smarter_csv"
 
 module CollectionspaceMigrationTools
   module Csv
@@ -17,7 +17,8 @@ module CollectionspaceMigrationTools
       # @param first_row [CSV::Row]
       # @param row_processor [CMT::Csv::RowProcessor]
       # @param term_reporter [CMT::Csv::BatchTermReporter]
-      def initialize(csv_path:, handler:, first_row:, row_processor:, term_reporter:, output_dir:)
+      def initialize(csv_path:, handler:, first_row:, row_processor:,
+        term_reporter:, output_dir:)
         @csv_path = csv_path
         @handler = handler
         @first_row = first_row
@@ -45,7 +46,8 @@ module CollectionspaceMigrationTools
       end
 
       def preprocess
-        CMT::Csv::BatchPreprocessor.call(handler: handler, first_row: first_row, batch: self)
+        CMT::Csv::BatchPreprocessor.call(handler: handler,
+          first_row: first_row, batch: self)
       end
 
       def chunks
@@ -54,24 +56,27 @@ module CollectionspaceMigrationTools
             chunk_size: CMT.config.system.csv_chunk_size,
             convert_values_to_numeric: false,
             strings_as_keys: true
-          })
+          }
+        )
       end
 
       def process
         puts "Mapping CSV rows to CS XML..."
 
-        Parallel.map(chunks, in_processes: CMT.config.system.max_processes) do |chunk|
+        Parallel.map(chunks,
+          in_processes: CMT.config.system.max_processes) do |chunk|
           worker(chunk)
         end
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: msg))
       else
         Success()
       end
 
       def worker(chunk)
-        chunk.each{ |row| row_processor.call(row) }
+        chunk.each { |row| row_processor.call(row) }
       end
 
       def to_monad
@@ -79,12 +84,13 @@ module CollectionspaceMigrationTools
       end
 
       def to_s
-        "<##{self.class}:#{self.object_id.to_s(8)} #{csv_path}>"
+        "<##{self.class}:#{object_id.to_s(8)} #{csv_path}>"
       end
 
       private
 
-      attr_reader :csv_path, :handler, :first_row, :row_processor, :term_reporter, :output_dir
+      attr_reader :csv_path, :handler, :first_row, :row_processor,
+        :term_reporter, :output_dir
     end
   end
 end

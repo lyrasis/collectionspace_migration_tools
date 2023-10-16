@@ -8,11 +8,11 @@ module CollectionspaceMigrationTools
 
       class << self
         def call(...)
-          self.new(...).call
+          new(...).call
         end
       end
 
-      def initialize(client:, bucket: CMT.config.client.s3_bucket, list:)
+      def initialize(client:, list:, bucket: CMT.config.client.s3_bucket)
         @client = client
         @bucket = bucket
         @list = list
@@ -20,13 +20,13 @@ module CollectionspaceMigrationTools
 
       def call
         size = list.length
-        return Success('No objects to delete') if size == 0
-        
+        return Success("No objects to delete") if size == 0
+
         puts "Deleting #{size} objects from S3"
         del_res = yield(do_deletes)
         _errs = yield(errored_chunks(del_res))
 
-        Success('Done.')
+        Success("Done.")
       end
 
       private
@@ -43,30 +43,32 @@ module CollectionspaceMigrationTools
             }
           })
         end
-        rescue StandardError => err
-          msg = "#{err.message} IN #{err.backtrace[0]}"
-          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
-        else
-          Success(result)
+      rescue => err
+        msg = "#{err.message} IN #{err.backtrace[0]}"
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: msg))
+      else
+        Success(result)
       end
-      
+
       def chunks
         list.each_slice(1000)
           .to_a
-          .map{ |obj_arr| hashify_object_chunk(obj_arr) }
+          .map { |obj_arr| hashify_object_chunk(obj_arr) }
       end
 
       def hashify_object_chunk(chunk)
-        chunk.map{ |obj| { key: obj } }
+        chunk.map { |obj| {key: obj} }
       end
 
       def errored_chunks(arr)
-        result = arr.select{ |response| !response.errors.empty? }
-        rescue StandardError => err
-          msg = "#{err.message} IN #{err.backtrace[0]}"
-          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
-        else
-          result.empty? ? Success() : Failure(result)
+        result = arr.select { |response| !response.errors.empty? }
+      rescue => err
+        msg = "#{err.message} IN #{err.backtrace[0]}"
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: msg))
+      else
+        result.empty? ? Success() : Failure(result)
       end
     end
   end

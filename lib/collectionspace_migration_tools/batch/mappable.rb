@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'fileutils'
+require "fileutils"
 
 module CollectionspaceMigrationTools
   module Batch
@@ -8,20 +8,22 @@ module CollectionspaceMigrationTools
     module Mappable
       include CMT::Batch::Steppable
       include Dry::Monads::Do.for(:rollback_map)
-      
+
       def rollback_map
-        rolled = yield(rollback_step('map'))
+        rolled = yield(rollback_step("map"))
         dir_del = yield(delete_batch_dir)
 
-        Success('Mapping data rolled back')
+        Success("Mapping data rolled back")
       end
 
       def map_step_headers
         CMT::Batch::Csv::Headers.map_headers
       end
-      
+
       def map_step_report_paths
-        ['mapping_report.csv', 'missing_terms.csv'].map{ |report| "#{dirpath}/#{report}" }
+        ["mapping_report.csv", "missing_terms.csv"].map do |report|
+          "#{dirpath}/#{report}"
+        end
       end
 
       def map_next_step
@@ -29,7 +31,7 @@ module CollectionspaceMigrationTools
       end
 
       def mappable?
-        check_status('map')
+        check_status("map")
       end
     end
   end

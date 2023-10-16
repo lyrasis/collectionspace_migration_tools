@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
-require 'dry/monads/do'
+require "dry/monads"
+require "dry/monads/do"
 
 module CollectionspaceMigrationTools
   module Batch
@@ -24,7 +24,7 @@ module CollectionspaceMigrationTools
       def validate
         to_monad
       end
-      
+
       private
 
       attr_reader :str
@@ -32,13 +32,13 @@ module CollectionspaceMigrationTools
       def check_chars
         return Success() if str.match?(/^[A-Za-z0-9]+$/)
 
-        Failure('Batch ID must consist of only letters and numbers')
+        Failure("Batch ID must consist of only letters and numbers")
       end
-      
+
       def check_length
         return Success() if str.length <= 6
 
-        Failure('Batch ID must be 6 or fewer characters')
+        Failure("Batch ID must be 6 or fewer characters")
       end
     end
   end

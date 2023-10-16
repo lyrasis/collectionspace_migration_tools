@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
-require 'dry/monads/do'
-require 'parallel'
-require 'smarter_csv'
+require "dry/monads"
+require "dry/monads/do"
+require "parallel"
+require "smarter_csv"
 
 module CollectionspaceMigrationTools
   module S3
@@ -38,7 +38,7 @@ module CollectionspaceMigrationTools
       end
 
       def to_s
-        "<##{self.class}:#{self.object_id.to_s(8)} #{csv_path}>"
+        "<##{self.class}:#{object_id.to_s(8)} #{csv_path}>"
       end
 
       private
@@ -51,7 +51,8 @@ module CollectionspaceMigrationTools
             chunk_size: CMT.config.system.csv_chunk_size,
             convert_values_to_numeric: false,
             strings_as_keys: true
-          })
+          }
+        )
       end
 
       def process
@@ -61,7 +62,7 @@ module CollectionspaceMigrationTools
         ) do |chunk|
           worker(chunk)
         end
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
         Failure(
           CMT::Failure.new(
@@ -74,7 +75,7 @@ module CollectionspaceMigrationTools
       end
 
       def worker(chunk)
-        chunk.each{ |row| uploader.call(row) }
+        chunk.each { |row| uploader.call(row) }
       end
     end
   end

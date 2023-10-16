@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'thor'
+require "thor"
 
 # tasks targeting one RefCache at a time
 class Cache < Thor
-  desc 'clear CACHETYPE', 'remove all keys from given cache (csid, refname)'
+  desc "clear CACHETYPE", "remove all keys from given cache (csid, refname)"
   def clear(cachetype)
     check_cachetype(cachetype)
     cache = get_cache(cachetype)
@@ -14,7 +14,7 @@ class Cache < Thor
     exit(0)
   end
 
-  desc 'size CACHETYPE', 'print size of given cache (csid, refname)'
+  desc "size CACHETYPE", "print size of given cache (csid, refname)"
   def size(cachetype)
     check_cachetype(cachetype)
     puts get_cache(cachetype).size
@@ -27,13 +27,12 @@ class Cache < Thor
       cache_method = "#{type}_cache".to_sym
       CMT.method(cache_method).call
     end
-    
+
     def check_cachetype(cachetype)
       return if %w[csid refname].any?(cachetype)
 
-      puts 'cachetype must be csid or refname'
+      puts "cachetype must be csid or refname"
       exit(1)
     end
   end
 end
-

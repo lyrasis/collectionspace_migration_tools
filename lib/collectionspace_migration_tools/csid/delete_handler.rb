@@ -6,10 +6,9 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)
 
-
       class << self
         def call(...)
-          self.new(...).call
+          new(...).call
         end
       end
 
@@ -37,7 +36,7 @@ module CollectionspaceMigrationTools
 
         headers = processed.first.headers
 
-        out_path = in_path.sub('.csv', '_report.csv')
+        out_path = in_path.sub(".csv", "_report.csv")
         _written = yield write_report(
           path: out_path,
           headers: headers,
@@ -52,11 +51,11 @@ module CollectionspaceMigrationTools
       attr_reader :csv_path, :derivable_image_types
 
       def write_report(path:, headers:, rows:)
-        CSV.open(path, 'w') do |csv|
+        CSV.open(path, "w") do |csv|
           csv << headers
-          rows.each{ |row| csv << row.values_at(*headers) }
+          rows.each { |row| csv << row.values_at(*headers) }
         end
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
         Failure(CMT::Failure.new(
           context: "#{self.class.name}.#{__callee__}", message: msg

@@ -8,10 +8,9 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)
 
-
       class << self
         def call(...)
-          self.new(...).call
+          new(...).call
         end
       end
 
@@ -41,11 +40,11 @@ module CollectionspaceMigrationTools
 
         headers = [
           blob_row.headers,
-          'derivable?', 'check_success?',
-          'deriv_ct',
+          "derivable?", "check_success?",
+          "deriv_ct",
           CMT::Media::DerivData::DERIV_TYPES,
-          'error_msgs'
-          ].flatten
+          "error_msgs"
+        ].flatten
         grouped_rows = yield group_rows(path)
         derivable = yield CMT::Media::DerivCheckProcessor.call(
           checker: checker,
@@ -68,13 +67,13 @@ module CollectionspaceMigrationTools
       def write_report(headers:, rows:)
         outpath = File.join(
           CMT.config.client.base_dir,
-          'blob_derivative_report.csv'
+          "blob_derivative_report.csv"
         )
-        CSV.open(outpath, 'w') do |csv|
+        CSV.open(outpath, "w") do |csv|
           csv << headers
-          rows.each{ |row| csv << row.values_at(*headers) }
+          rows.each { |row| csv << row.values_at(*headers) }
         end
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
         Failure(CMT::Failure.new(
           context: "#{self.class.name}.#{__callee__}", message: msg
@@ -91,10 +90,10 @@ module CollectionspaceMigrationTools
         result = rows.map do |row|
           CMT::Media::DerivableData.new(
             blob: row,
-            deriv: checker.call(blobcsid: row['blobcsid'])
+            deriv: checker.call(blobcsid: row["blobcsid"])
           ).to_h
         end
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
         Failure(CMT::Failure.new(
           context: "#{self.class.name}.#{__callee__}", message: msg
@@ -110,11 +109,11 @@ module CollectionspaceMigrationTools
         result = rows.map do |row|
           row.to_h
             .merge({
-              'derivable?'=>'n',
-              'check_success?'=> 'n/a'
+              "derivable?" => "n",
+              "check_success?" => "n/a"
             })
         end
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
         Failure(CMT::Failure.new(
           context: "#{self.class.name}.#{__callee__}", message: msg
@@ -127,10 +126,10 @@ module CollectionspaceMigrationTools
         derivable = []
         underivable = []
         CSV.foreach(path, headers: true) do |row|
-          derivable?(row['mimetype']) ? derivable << row : underivable << row
+          derivable?(row["mimetype"]) ? derivable << row : underivable << row
         end
         result = {derivable: derivable, underivable: underivable}
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
         Failure(CMT::Failure.new(
           context: "#{self.class.name}.#{__callee__}", message: msg
@@ -142,7 +141,7 @@ module CollectionspaceMigrationTools
       def image?(mimetype)
         return false unless mimetype
 
-        mimetype.start_with?('image/')
+        mimetype.start_with?("image/")
       end
 
       def derivable?(mimetype)
@@ -150,7 +149,7 @@ module CollectionspaceMigrationTools
         return false unless image?(mimetype)
 
         derivable_image_types.any?(
-          mimetype.split('/').last
+          mimetype.split("/").last
         )
       end
     end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry/validation'
+require "dry/validation"
 
 module CollectionspaceMigrationTools
   module Validate
@@ -17,7 +17,7 @@ module CollectionspaceMigrationTools
       end
 
       rule(:db_host) do
-        key.failure(%(must not contain "-bastion")) if value['-bastion']
+        key.failure(%(must not contain "-bastion")) if value["-bastion"]
       end
     end
   end

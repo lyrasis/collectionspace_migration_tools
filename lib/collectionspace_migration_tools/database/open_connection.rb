@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
-require 'pg'
+require "dry/monads"
+require "pg"
 
 module CollectionspaceMigrationTools
   module Database
@@ -9,13 +9,13 @@ module CollectionspaceMigrationTools
       def close
         if open?
           finish
-          puts 'Closed DB connection'
+          puts "Closed DB connection"
         else
-          puts 'DB connection already closed'
+          puts "DB connection already closed"
         end
         CMT.tunnel.close
       end
-      
+
       def open?
         status
       rescue PG::ConnectionBad
@@ -24,7 +24,7 @@ module CollectionspaceMigrationTools
         true
       end
     end
-    
+
     # opens database connection through tunnel
     class OpenConnection
       class << self
@@ -34,7 +34,7 @@ module CollectionspaceMigrationTools
           check_connection = CMT.connection
 
           if check_connection && check_connection.open?
-            puts 'DB connection already open. Using existing.'
+            puts "DB connection already open. Using existing."
             Success(check_connection)
           else
             CMT::DB::OpenTunnel.call.bind do
@@ -58,8 +58,9 @@ module CollectionspaceMigrationTools
         def get_connection
           sleep(3)
           connection = PG::Connection.new(**db_info)
-        rescue StandardError => err
-          Failure(CMT::Failure.new(context: "#{name}.#{__callee__}", message: err.message))
+        rescue => err
+          Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
+            message: err.message))
         else
           CMT.connection = connection
           Success(connection)

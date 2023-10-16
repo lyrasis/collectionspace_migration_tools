@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'fileutils'
+require "fileutils"
 
 module CollectionspaceMigrationTools
   module Batch
@@ -35,12 +35,12 @@ module CollectionspaceMigrationTools
         return false if field.nil?
 
         val = send(field.to_sym)
-        return false if val.nil? || val.empty? || val == '0'
+        return false if val.nil? || val.empty? || val == "0"
 
         true
       end
       private :dependency_present?
-      
+
       def not_yet_done?(steptype)
         meth = "#{steptype}_step_headers".to_sym
         to_chk = send(meth).first
@@ -50,15 +50,16 @@ module CollectionspaceMigrationTools
         false
       end
       private :not_yet_done?
-      
+
       def clear_step_fields(steptype)
         meth = "#{steptype}_step_headers".to_sym
         send(meth).each do |header|
-          data[header] = '' if data.key?(header)
+          data[header] = "" if data.key?(header)
         end
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: msg))
       else
         Success()
       end
@@ -67,11 +68,12 @@ module CollectionspaceMigrationTools
       def delete_step_reports(steptype)
         meth = "#{steptype}_step_report_paths".to_sym
         send(meth).each do |path|
-          FileUtils.rm(path) if File.exists?(path)
+          FileUtils.rm(path) if File.exist?(path)
         end
-      rescue StandardError => err
+      rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}", message: msg))
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: msg))
       else
         Success()
       end

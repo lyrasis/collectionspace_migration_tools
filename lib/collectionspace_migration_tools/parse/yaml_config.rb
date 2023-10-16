@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'psych'
-require 'dry/monads'
+require "psych"
+require "dry/monads"
 
 module CollectionspaceMigrationTools
   module Parse
@@ -19,17 +19,19 @@ module CollectionspaceMigrationTools
 
         def parse(yaml)
           parsed = Psych.load(yaml, symbolize_names: true)
-        rescue StandardError => err
+        rescue => err
           msg = "YAML could not be parsed: #{err.message}"
-          Failure(CMT::Failure.new(context: "#{name}.#{__callee__}", message: msg))
+          Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
+            message: msg))
         else
           Success(parsed)
         end
 
         def read(config_path)
           yaml_string = File.read(config_path)
-        rescue StandardError => err
-          Failure(CMT::Failure.new(context: "#{name}.#{__callee__}", message: err.message))
+        rescue => err
+          Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
+            message: err.message))
         else
           Success(yaml_string)
         end

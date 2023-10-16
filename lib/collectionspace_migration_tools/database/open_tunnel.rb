@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
+require "dry/monads"
 
 module CollectionspaceMigrationTools
   module Database
@@ -13,10 +13,10 @@ module CollectionspaceMigrationTools
           check_tunnel = CMT.tunnel
 
           if check_tunnel && check_tunnel.open?
-            puts 'DB SSH tunnel already open. Using existing.'
+            puts "DB SSH tunnel already open. Using existing."
             Success(check_tunnel)
           else
-            open_tunnel.fmap{ |tunnel| tunnel }
+            open_tunnel.fmap { |tunnel| tunnel }
           end
         end
 
@@ -24,8 +24,9 @@ module CollectionspaceMigrationTools
 
         def open_tunnel
           tunnel_pid = spawn(tunnel_command)
-        rescue StandardError => err
-          Failure(CMT::Failure.new(context: "#{name}.#{__callee__}", message: err))
+        rescue => err
+          Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
+            message: err))
         else
           Process.detach(tunnel_pid)
 
@@ -35,7 +36,7 @@ module CollectionspaceMigrationTools
             Success(tunnel_obj)
           else
             Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
-                                     message: 'Tunnel not created'))
+              message: "Tunnel not created"))
           end
         end
 

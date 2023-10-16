@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'dry/monads'
-require 'dry/monads/do'
+require "dry/monads"
+require "dry/monads/do"
 
 module CollectionspaceMigrationTools
   module Csv
@@ -12,7 +12,7 @@ module CollectionspaceMigrationTools
 
       class << self
         def call(handler:, first_row:, batch:)
-          self.new(handler: handler, first_row: first_row, batch: batch).call
+          new(handler: handler, first_row: first_row, batch: batch).call
         end
       end
 
@@ -27,12 +27,14 @@ module CollectionspaceMigrationTools
 
       def call
         _headers_present = yield(CMT::Csv::MissingHeaderCheck.call(row))
-        _required_present = yield(CMT::Csv::MissingRequiredFieldsCheck.call(handler, row))
+        _required_present = yield(CMT::Csv::MissingRequiredFieldsCheck.call(
+          handler, row
+        ))
         _unknown = yield(CMT::Csv::UnknownFieldsCheck.call(handler, row))
 
         Success()
       end
-      
+
       private
 
       attr_reader :handler, :row, :batch
