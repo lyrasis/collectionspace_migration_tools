@@ -24,13 +24,20 @@ module CollectionspaceMigrationTools
       end
 
       def call
-        batch = yield(CMT::Batch.find(id))
-        _up = yield(uploaded?(batch))
-        prefix = yield(get_batch_data(batch, "prefix"))
-        client = yield(CMT::Build::S3Client.call)
-        lister = yield(CMT::S3::BucketLister.new(client: client,
-          prefix: prefix))
+        batch = yield CMT::Batch.find(id)
+        _up = yield uploaded?(batch)
+        client = yield CMT::Build::S3Client.call
+        prefix = yield get_batch_data(batch, "prefix")
+        lister = yield CMT::S3::BucketLister.new(
+          client: client, prefix: prefix
+        )
+        bucket_objs = yield lister.call
 
+        unless bucket_objs.empty?
+          _statuscheck = yield CMT::Batch::IngestStatusChecker.call(
+            lister: lister, wait: wait, checks: checks, rechecks: rechecks
+          )
+          bucket_objs = lister.objects
         end
 
         _post = yield CMT::Batch::PostIngestCheckRunner.call(
@@ -46,13 +53,18 @@ module CollectionspaceMigrationTools
 
       def uploaded?(batch)
         timestamp = batch.uploaded?
-        return Failure("Batch #{id} has not been uploaded") if timestamp.nil? || timestamp.empty?
+        if timestamp.nil? || timestamp.empty?
+          return Failure("Batch #{id} has not been uploaded")
+        end
 
         ct = batch.upload_oks
-        return Failure("No successful upload count found for batch #{id}") if ct.nil? || ct.empty?
-        return Failure("No records were uploaded for ingest for batch #{id}") if ct == "0"
-
-        Success()
+        if ct.nil? || ct.empty?
+          Failure("No successful upload count found for batch #{id}")
+        elsif ct == "0"
+          Failure("No records were uploaded for ingest for batch #{id}")
+        else
+          Success()
+        end
       end
     end
   end
