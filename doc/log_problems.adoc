@@ -1,0 +1,238 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+= Fast Import Bucket Log Problems
+
+TLDR: With the logging as-is, I might be able to figure out an ingest failure reporting strategy that feels super hacky that seems to work, but I will never trust it. _However, there has got to be a better/more informative way to structure these logs to actually support the use case here_.
+
+toc:[]
+
+== User story
+
+=== TLDR
+
+I have the S3 Object Key of all objects uploaded to Fast Import Bucket. If an object remains in the bucket after the rest of the objects have been processed and removed, it is considered an ingest error, but without consulting the logs I don't know why it failed. I need to be able to get the exception/error message (or plural thereof) received for each object key that failed ingest.
+
+=== Full
+
+Fast Import Bucket is used to bulk ingest records into the CollectionSpace instance associated with the bucket. Migration specialists prepare records for ingest and upload them to the bucket in batches. (The source data for a batch is a single CSV file from which CS XML records are created).
+
+From the user side, I know the following pieces of info for each object put in the Fast Import Bucket:
+
+* Object key (name of the object put in the Bucket)
+* Record identifier (this is encoded in the Object key along with other info and comes out in the logs as "Decoded identifier")
+* Batch prefix - our migration tooling requires each batch be given a brief (<=6 char) id, which is also encoded as part of the Object key. Batch prefix is the first part of the hashed Object key, a consistent string for all objects in the batch. This is how we identify which objects in the Bucket are associated with which batch.
+
+Ingest of a batch is determined to be complete when:
+
+* (A) the number of Bucket objects associated with a batch = 0; OR
+* (B) the number of Bucket objects associated with a batch remains the same after a configurable number of checks with a configurable amount of delay in between checks
+
+If a completed ingest is in category (B), we know there were ingest failures, and we can pull the list of non-ingested objects keys from the Bucket.
+
+**However, we do not know WHY the ingest for these objects failed. I need to be able to match a log event containing the Exception with the Object key whose ingest triggered the exception.**
+
+I thought I'd achieved this. My code worked on some large batches with relatively few ingest errors.
+
+However, when I pulled out the 140 records that previously failed into a new batch and ingested it, and all of the records in the batch failed to ingest, big problems in my approach were obvious.
+
+== Current approach to matching exceptions to object keys
+
+Migration tooling records the time we start uploading a batch's objects (or just before) to the bucket as the `ingest_start_time`.
+
+When number of objects for batch in the bucket has stabilized, we call the ingest complete and record `ingest_end_time` for the batch.
+
+If number of objects for batch remaining bucket is non-zero, we know we have ingest failures.
+
+We list the bucket objects for the batch to get the object keys of ingest failure records.
+
+We https://github.com/lyrasis/collectionspace_migration_tools/blob/main/lib/collectionspace_migration_tools/logs/batch_logstreams.rb[get the logstreams created while this batch was active].footnote:[`filter_log_events` does not require logstream names be given, and can instead be given start and end times. However, `get_log_events` works on only one logstream at a time. I initially thought I'd be using `get_log_events` in this process, so I build the `BatchLogstreams` function and passing the logstream names to `filter_log_events` is neither easier nor harder than converting the time values I have to the format required, so here we are. Also, to make this work reliably without changes to the log structure I'm going to have to revert to `get_log_events` for the batch's logstreams.]
+
+[NOTE]
+====
+The log event message field, in general, appears to be tab-delimited and to have the following structure:
+
+* label/category (INFO, ERROR, etc)
+* timestamp
+* UUID referring to something
+* message body
+====
+
+We https://github.com/lyrasis/collectionspace_migration_tools/blob/e8d5a6bc1f692de14bf6924eb0971be1edaf30ad/lib/collectionspace_migration_tools/batch.rb#L72[get the log events] where message body starts with "Object key: " and the remainder of the body equals (after normalization)footnote:[Because nothing about this can be straightforward, the object keys assigned to uploaded objects and returned by the S3 `ls` command often end with `=` or `==`. For whatever reason, when output in the message of a log event, each `=` has been converted to `%3D`.] an object key for one of the failed objects remaining in the bucket.
+
+My initial hope/assumption was that the message UUID segment was unique to each object key being processed, and could be used to tie all the otherwise contextless/useless log messages for a given object together.
+
+
+Based on that, we then https://github.com/lyrasis/collectionspace_migration_tools/blob/e8d5a6bc1f692de14bf6924eb0971be1edaf30ad/lib/collectionspace_migration_tools/batch.rb#L89[get the log events where message body starts with "Exception" and does NOT contain "NoSuchKey".footnote:[There are generally lots of errors I don't care about at all caused by Lambda race conditions or something. My understanding is more than one message got sent for a given object, and if the object was successfully ingested by one process and removed from the bucket, then it isn't in the bucket when a subsequent process attempts to ingest it, causing an error that doesn't really indicate an error of any note]
+
+Then take the UUID from the object key events and the exception events and match them up, so I have `{objectkey=>exceptionmessage}`.
+
+This gets passed to the detailed/item level ingest report generator for output in the ingest_report.csv.
+
+This appeared to work across batches with few/sparse ingest errors.
+
+== But it doesn't actually work.
+
+Because that UUID is NOT unique to an object. It is a "RequestId", where the request is controlled by I don't know what (AWS Lambda set up to be triggered by S3 I guess) and may involve 1 to ?? objects. But it is NOT a request to the CollectionSpace instance API to post, put, or delete a single record.
+
+Looks like the EVENT is what is passed to that handler.py script, and it results in the following. Since LOTS of objects can get handled (and potentially fail) in the same EVENT/Request, the RequestID is useless for connecting an exception to an object key.
+
+....
+START RequestId: c3579727-5004-597f-9921-ca8003e72416 Version: $LATEST
+[INFO]	2023-10-16T15:07:15.229Z	c3579727-5004-597f-9921-ca8003e72416	EVENT: {big mess of something that looks like JSON but that does not validate so I can turn it into something human-readable in any tools I normally use}
+[INFO]	2023-10-16T15:07:15.238Z	c3579727-5004-597f-9921-ca8003e72416	Endpoint: https://cspace.museumca.org/cspace-services
+[INFO]	2023-10-16T15:07:15.238Z	c3579727-5004-597f-9921-ca8003e72416	Username: kristina.spurgin@lyrasis.org
+[INFO]	2023-10-16T15:07:15.238Z	c3579727-5004-597f-9921-ca8003e72416	Bucket name: cspace-lcs-importer-omca
+[INFO]	2023-10-16T15:07:15.238Z	c3579727-5004-597f-9921-ca8003e72416	Object key: b2JqZXJyfC9jb2xsZWN0aW9ub2JqZWN0cy9lYzhlZGQwYS02YzEzLTQwZTQtODdmYy04ZWIwMjkxNTM1YzF8QTY3LjEzNy45Njg3MXxVUERBVEU%3D
+[INFO]	2023-10-16T15:07:15.238Z	c3579727-5004-597f-9921-ca8003e72416	Object size: 753
+[INFO]	2023-10-16T15:07:15.238Z	c3579727-5004-597f-9921-ca8003e72416	Decoded batch: objerr
+[INFO]	2023-10-16T15:07:15.238Z	c3579727-5004-597f-9921-ca8003e72416	Decoded path: /collectionobjects/ec8edd0a-6c13-40e4-87fc-8eb0291535c1
+[INFO]	2023-10-16T15:07:15.238Z	c3579727-5004-597f-9921-ca8003e72416	Decoded identifier: A67.137.96871
+[INFO]	2023-10-16T15:07:15.238Z	c3579727-5004-597f-9921-ca8003e72416	Decoded type: update
+[INFO]	2023-10-16T15:07:15.238Z	c3579727-5004-597f-9921-ca8003e72416	Composite Id: ebe2777f3136c7d1a43015a53be0264e
+[INFO]	2023-10-16T15:07:15.238Z	c3579727-5004-597f-9921-ca8003e72416	Url: https://cspace.museumca.org/cspace-services/collectionobjects/ec8edd0a-6c13-40e4-87fc-8eb0291535c1
+[ERROR]	2023-10-16T15:07:18.868Z	c3579727-5004-597f-9921-ca8003e72416	Exception: 409 Client Error:  for url: https://cspace.museumca.org/cspace-services/collectionobjects/ec8edd0a-6c13-40e4-87fc-8eb0291535c1
+[INFO]	2023-10-16T15:07:18.878Z	c3579727-5004-597f-9921-ca8003e72416	Endpoint: https://cspace.museumca.org/cspace-services
+[INFO]	2023-10-16T15:07:18.878Z	c3579727-5004-597f-9921-ca8003e72416	Username: kristina.spurgin@lyrasis.org
+[INFO]	2023-10-16T15:07:18.878Z	c3579727-5004-597f-9921-ca8003e72416	Bucket name: cspace-lcs-importer-omca
+[INFO]	2023-10-16T15:07:18.878Z	c3579727-5004-597f-9921-ca8003e72416	Object key: b2JqZXJyfC9jb2xsZWN0aW9ub2JqZWN0cy9mNmYxMjgzZi1lZjY0LTQxMTktOTk4Ni1kMDU3MDg4YTkxYTN8QTY3LjEzNy45NzQ3NHxVUERBVEU%3D
+[INFO]	2023-10-16T15:07:18.878Z	c3579727-5004-597f-9921-ca8003e72416	Object size: 753
+[INFO]	2023-10-16T15:07:18.878Z	c3579727-5004-597f-9921-ca8003e72416	Decoded batch: objerr
+[INFO]	2023-10-16T15:07:18.878Z	c3579727-5004-597f-9921-ca8003e72416	Decoded path: /collectionobjects/f6f1283f-ef64-4119-9986-d057088a91a3
+[INFO]	2023-10-16T15:07:18.878Z	c3579727-5004-597f-9921-ca8003e72416	Decoded identifier: A67.137.97474
+[INFO]	2023-10-16T15:07:18.878Z	c3579727-5004-597f-9921-ca8003e72416	Decoded type: update
+[INFO]	2023-10-16T15:07:18.878Z	c3579727-5004-597f-9921-ca8003e72416	Composite Id: 1ab0c85e251d1b6133e7b8765e44b7a4
+[INFO]	2023-10-16T15:07:18.878Z	c3579727-5004-597f-9921-ca8003e72416	Url: https://cspace.museumca.org/cspace-services/collectionobjects/f6f1283f-ef64-4119-9986-d057088a91a3
+[ERROR]	2023-10-16T15:07:23.271Z	c3579727-5004-597f-9921-ca8003e72416	Exception: 409 Client Error:  for url: https://cspace.museumca.org/cspace-services/collectionobjects/f6f1283f-ef64-4119-9986-d057088a91a3
+[INFO]	2023-10-16T15:07:23.271Z	c3579727-5004-597f-9921-ca8003e72416	Endpoint: https://cspace.museumca.org/cspace-services
+[INFO]	2023-10-16T15:07:23.272Z	c3579727-5004-597f-9921-ca8003e72416	Username: kristina.spurgin@lyrasis.org
+[INFO]	2023-10-16T15:07:23.272Z	c3579727-5004-597f-9921-ca8003e72416	Bucket name: cspace-lcs-importer-omca
+[INFO]	2023-10-16T15:07:23.272Z	c3579727-5004-597f-9921-ca8003e72416	Object key: b2JqZXJyfC9jb2xsZWN0aW9ub2JqZWN0cy8xYTg0NDg3MC1mZWUyLTQwM2EtYmM1OC0wYTMxMDk4ZmM2ZWV8QTY3LjEzNy45NzQ1OXxVUERBVEU%3D
+[INFO]	2023-10-16T15:07:23.272Z	c3579727-5004-597f-9921-ca8003e72416	Object size: 753
+[INFO]	2023-10-16T15:07:23.272Z	c3579727-5004-597f-9921-ca8003e72416	Decoded batch: objerr
+[INFO]	2023-10-16T15:07:23.272Z	c3579727-5004-597f-9921-ca8003e72416	Decoded path: /collectionobjects/1a844870-fee2-403a-bc58-0a31098fc6ee
+[INFO]	2023-10-16T15:07:23.272Z	c3579727-5004-597f-9921-ca8003e72416	Decoded identifier: A67.137.97459
+[INFO]	2023-10-16T15:07:23.272Z	c3579727-5004-597f-9921-ca8003e72416	Decoded type: update
+[INFO]	2023-10-16T15:07:23.272Z	c3579727-5004-597f-9921-ca8003e72416	Composite Id: 9398406b3607f17939ab1c73386cca77
+[INFO]	2023-10-16T15:07:23.272Z	c3579727-5004-597f-9921-ca8003e72416	Url: https://cspace.museumca.org/cspace-services/collectionobjects/1a844870-fee2-403a-bc58-0a31098fc6ee
+[ERROR]	2023-10-16T15:07:25.288Z	c3579727-5004-597f-9921-ca8003e72416	Exception: 409 Client Error:  for url: https://cspace.museumca.org/cspace-services/collectionobjects/1a844870-fee2-403a-bc58-0a31098fc6ee
+[INFO]	2023-10-16T15:07:25.289Z	c3579727-5004-597f-9921-ca8003e72416	Endpoint: https://cspace.museumca.org/cspace-services
+[INFO]	2023-10-16T15:07:25.289Z	c3579727-5004-597f-9921-ca8003e72416	Username: kristina.spurgin@lyrasis.org
+[INFO]	2023-10-16T15:07:25.289Z	c3579727-5004-597f-9921-ca8003e72416	Bucket name: cspace-lcs-importer-omca
+[INFO]	2023-10-16T15:07:25.289Z	c3579727-5004-597f-9921-ca8003e72416	Object key: b2JqZXJyfC9jb2xsZWN0aW9ub2JqZWN0cy8wZTJmOGZhMS02ZWFiLTQyMGEtODQzNi01NTY2NTEyYmVjNTh8QTY3LjEzNy45Njg0OXxVUERBVEU%3D
+[INFO]	2023-10-16T15:07:25.289Z	c3579727-5004-597f-9921-ca8003e72416	Object size: 753
+[INFO]	2023-10-16T15:07:25.289Z	c3579727-5004-597f-9921-ca8003e72416	Decoded batch: objerr
+[INFO]	2023-10-16T15:07:25.289Z	c3579727-5004-597f-9921-ca8003e72416	Decoded path: /collectionobjects/0e2f8fa1-6eab-420a-8436-5566512bec58
+[INFO]	2023-10-16T15:07:25.289Z	c3579727-5004-597f-9921-ca8003e72416	Decoded identifier: A67.137.96849
+[INFO]	2023-10-16T15:07:25.289Z	c3579727-5004-597f-9921-ca8003e72416	Decoded type: update
+[INFO]	2023-10-16T15:07:25.289Z	c3579727-5004-597f-9921-ca8003e72416	Composite Id: 4ed50d3316c36634dfac82c458d491d3
+[INFO]	2023-10-16T15:07:25.289Z	c3579727-5004-597f-9921-ca8003e72416	Url: https://cspace.museumca.org/cspace-services/collectionobjects/0e2f8fa1-6eab-420a-8436-5566512bec58
+[ERROR]	2023-10-16T15:07:27.929Z	c3579727-5004-597f-9921-ca8003e72416	Exception: 409 Client Error:  for url: https://cspace.museumca.org/cspace-services/collectionobjects/0e2f8fa1-6eab-420a-8436-5566512bec58
+[INFO]	2023-10-16T15:07:27.930Z	c3579727-5004-597f-9921-ca8003e72416	Endpoint: https://cspace.museumca.org/cspace-services
+[INFO]	2023-10-16T15:07:27.930Z	c3579727-5004-597f-9921-ca8003e72416	Username: kristina.spurgin@lyrasis.org
+[INFO]	2023-10-16T15:07:27.930Z	c3579727-5004-597f-9921-ca8003e72416	Bucket name: cspace-lcs-importer-omca
+[INFO]	2023-10-16T15:07:27.930Z	c3579727-5004-597f-9921-ca8003e72416	Object key: b2JqZXJyfC9jb2xsZWN0aW9ub2JqZWN0cy85MTc2MWEwYS1lNzYyLTQ3ODUtOTk2Ni1kYWY1YWJlZDJlMzB8QTY3LjEzNy45Njg3NXxVUERBVEU%3D
+[INFO]	2023-10-16T15:07:27.930Z	c3579727-5004-597f-9921-ca8003e72416	Object size: 753
+[INFO]	2023-10-16T15:07:27.930Z	c3579727-5004-597f-9921-ca8003e72416	Decoded batch: objerr
+[INFO]	2023-10-16T15:07:27.930Z	c3579727-5004-597f-9921-ca8003e72416	Decoded path: /collectionobjects/91761a0a-e762-4785-9966-daf5abed2e30
+[INFO]	2023-10-16T15:07:27.930Z	c3579727-5004-597f-9921-ca8003e72416	Decoded identifier: A67.137.96875
+[INFO]	2023-10-16T15:07:27.930Z	c3579727-5004-597f-9921-ca8003e72416	Decoded type: update
+[INFO]	2023-10-16T15:07:27.930Z	c3579727-5004-597f-9921-ca8003e72416	Composite Id: 1118a8fec53ff55159fb49a4eb45c635
+[INFO]	2023-10-16T15:07:27.930Z	c3579727-5004-597f-9921-ca8003e72416	Url: https://cspace.museumca.org/cspace-services/collectionobjects/91761a0a-e762-4785-9966-daf5abed2e30
+[ERROR]	2023-10-16T15:07:30.896Z	c3579727-5004-597f-9921-ca8003e72416	Exception: 409 Client Error:  for url: https://cspace.museumca.org/cspace-services/collectionobjects/91761a0a-e762-4785-9966-daf5abed2e30
+[INFO]	2023-10-16T15:07:30.896Z	c3579727-5004-597f-9921-ca8003e72416	Endpoint: https://cspace.museumca.org/cspace-services
+[INFO]	2023-10-16T15:07:30.896Z	c3579727-5004-597f-9921-ca8003e72416	Username: kristina.spurgin@lyrasis.org
+[INFO]	2023-10-16T15:07:30.896Z	c3579727-5004-597f-9921-ca8003e72416	Bucket name: cspace-lcs-importer-omca
+[INFO]	2023-10-16T15:07:30.896Z	c3579727-5004-597f-9921-ca8003e72416	Object key: b2JqZXJyfC9jb2xsZWN0aW9ub2JqZWN0cy9hNmE4OTZlNS1hOTE4LTRmMjEtYmFlMS0zOWZlMTI3NDBhMzN8SDc0LjY0OS41Nzd8VVBEQVRF
+[INFO]	2023-10-16T15:07:30.896Z	c3579727-5004-597f-9921-ca8003e72416	Object size: 730
+[INFO]	2023-10-16T15:07:30.896Z	c3579727-5004-597f-9921-ca8003e72416	Decoded batch: objerr
+[INFO]	2023-10-16T15:07:30.896Z	c3579727-5004-597f-9921-ca8003e72416	Decoded path: /collectionobjects/a6a896e5-a918-4f21-bae1-39fe12740a33
+[INFO]	2023-10-16T15:07:30.897Z	c3579727-5004-597f-9921-ca8003e72416	Decoded identifier: H74.649.577
+[INFO]	2023-10-16T15:07:30.897Z	c3579727-5004-597f-9921-ca8003e72416	Decoded type: update
+[INFO]	2023-10-16T15:07:30.897Z	c3579727-5004-597f-9921-ca8003e72416	Composite Id: 80b33bf57939bd1fd47ba5a944e05391
+[INFO]	2023-10-16T15:07:30.897Z	c3579727-5004-597f-9921-ca8003e72416	Url: https://cspace.museumca.org/cspace-services/collectionobjects/a6a896e5-a918-4f21-bae1-39fe12740a33
+[ERROR]	2023-10-16T15:07:32.534Z	c3579727-5004-597f-9921-ca8003e72416	Exception: 409 Client Error:  for url: https://cspace.museumca.org/cspace-services/collectionobjects/a6a896e5-a918-4f21-bae1-39fe12740a33
+[INFO]	2023-10-16T15:07:32.539Z	c3579727-5004-597f-9921-ca8003e72416	Endpoint: https://cspace.museumca.org/cspace-services
+[INFO]	2023-10-16T15:07:32.539Z	c3579727-5004-597f-9921-ca8003e72416	Username: kristina.spurgin@lyrasis.org
+[INFO]	2023-10-16T15:07:32.539Z	c3579727-5004-597f-9921-ca8003e72416	Bucket name: cspace-lcs-importer-omca
+[INFO]	2023-10-16T15:07:32.539Z	c3579727-5004-597f-9921-ca8003e72416	Object key: b2JqZXJyfC9jb2xsZWN0aW9ub2JqZWN0cy81MmRmZDY4OC0yOTg3LTQwZTItYjlkNS05ODBlYmRkOWUwYTV8QTY3LjEzNy43MjcwfFVQREFURQ%3D%3D
+[INFO]	2023-10-16T15:07:32.539Z	c3579727-5004-597f-9921-ca8003e72416	Object size: 748
+[INFO]	2023-10-16T15:07:32.539Z	c3579727-5004-597f-9921-ca8003e72416	Decoded batch: objerr
+[INFO]	2023-10-16T15:07:32.539Z	c3579727-5004-597f-9921-ca8003e72416	Decoded path: /collectionobjects/52dfd688-2987-40e2-b9d5-980ebdd9e0a5
+[INFO]	2023-10-16T15:07:32.539Z	c3579727-5004-597f-9921-ca8003e72416	Decoded identifier: A67.137.7270
+[INFO]	2023-10-16T15:07:32.539Z	c3579727-5004-597f-9921-ca8003e72416	Decoded type: update
+[INFO]	2023-10-16T15:07:32.539Z	c3579727-5004-597f-9921-ca8003e72416	Composite Id: 90c7700feb9a71448534062d26ff8c7a
+[INFO]	2023-10-16T15:07:32.539Z	c3579727-5004-597f-9921-ca8003e72416	Url: https://cspace.museumca.org/cspace-services/collectionobjects/52dfd688-2987-40e2-b9d5-980ebdd9e0a5
+[ERROR]	2023-10-16T15:07:35.692Z	c3579727-5004-597f-9921-ca8003e72416	Exception: 409 Client Error:  for url: https://cspace.museumca.org/cspace-services/collectionobjects/52dfd688-2987-40e2-b9d5-980ebdd9e0a5
+[INFO]	2023-10-16T15:07:35.692Z	c3579727-5004-597f-9921-ca8003e72416	Endpoint: https://cspace.museumca.org/cspace-services
+[INFO]	2023-10-16T15:07:35.692Z	c3579727-5004-597f-9921-ca8003e72416	Username: kristina.spurgin@lyrasis.org
+[INFO]	2023-10-16T15:07:35.692Z	c3579727-5004-597f-9921-ca8003e72416	Bucket name: cspace-lcs-importer-omca
+[INFO]	2023-10-16T15:07:35.692Z	c3579727-5004-597f-9921-ca8003e72416	Object key: b2JqZXJyfC9jb2xsZWN0aW9ub2JqZWN0cy80MGYyNTkyZi1hMjlmLTRjNGMtOWI3OS05MDRjMWY1MTI1ZmZ8QTY3LjEzNy45Njg1MHxVUERBVEU%3D
+[INFO]	2023-10-16T15:07:35.692Z	c3579727-5004-597f-9921-ca8003e72416	Object size: 753
+[INFO]	2023-10-16T15:07:35.692Z	c3579727-5004-597f-9921-ca8003e72416	Decoded batch: objerr
+[INFO]	2023-10-16T15:07:35.692Z	c3579727-5004-597f-9921-ca8003e72416	Decoded path: /collectionobjects/40f2592f-a29f-4c4c-9b79-904c1f5125ff
+[INFO]	2023-10-16T15:07:35.692Z	c3579727-5004-597f-9921-ca8003e72416	Decoded identifier: A67.137.96850
+[INFO]	2023-10-16T15:07:35.692Z	c3579727-5004-597f-9921-ca8003e72416	Decoded type: update
+[INFO]	2023-10-16T15:07:35.692Z	c3579727-5004-597f-9921-ca8003e72416	Composite Id: e615867f91f6ac8ebe75baeb4d8e2fb3
+[INFO]	2023-10-16T15:07:35.692Z	c3579727-5004-597f-9921-ca8003e72416	Url: https://cspace.museumca.org/cspace-services/collectionobjects/40f2592f-a29f-4c4c-9b79-904c1f5125ff
+[ERROR]	2023-10-16T15:07:37.409Z	c3579727-5004-597f-9921-ca8003e72416	Exception: 409 Client Error:  for url: https://cspace.museumca.org/cspace-services/collectionobjects/40f2592f-a29f-4c4c-9b79-904c1f5125ff
+[INFO]	2023-10-16T15:07:37.410Z	c3579727-5004-597f-9921-ca8003e72416	Endpoint: https://cspace.museumca.org/cspace-services
+[INFO]	2023-10-16T15:07:37.410Z	c3579727-5004-597f-9921-ca8003e72416	Username: kristina.spurgin@lyrasis.org
+[INFO]	2023-10-16T15:07:37.410Z	c3579727-5004-597f-9921-ca8003e72416	Bucket name: cspace-lcs-importer-omca
+[INFO]	2023-10-16T15:07:37.410Z	c3579727-5004-597f-9921-ca8003e72416	Object key: b2JqZXJyfC9jb2xsZWN0aW9ub2JqZWN0cy9iMTkwOGVlYy1lOGVkLTQ5YTEtODY5MS1hNzgyYmI1ZmIzZjF8SDc0LjY0OS4xODk1fFVQREFURQ%3D%3D
+[INFO]	2023-10-16T15:07:37.410Z	c3579727-5004-597f-9921-ca8003e72416	Object size: 514
+[INFO]	2023-10-16T15:07:37.410Z	c3579727-5004-597f-9921-ca8003e72416	Decoded batch: objerr
+[INFO]	2023-10-16T15:07:37.410Z	c3579727-5004-597f-9921-ca8003e72416	Decoded path: /collectionobjects/b1908eec-e8ed-49a1-8691-a782bb5fb3f1
+[INFO]	2023-10-16T15:07:37.410Z	c3579727-5004-597f-9921-ca8003e72416	Decoded identifier: H74.649.1895
+[INFO]	2023-10-16T15:07:37.410Z	c3579727-5004-597f-9921-ca8003e72416	Decoded type: update
+[INFO]	2023-10-16T15:07:37.410Z	c3579727-5004-597f-9921-ca8003e72416	Composite Id: 119f469c37844f9952aedc8bfe2af399
+[INFO]	2023-10-16T15:07:37.410Z	c3579727-5004-597f-9921-ca8003e72416	Url: https://cspace.museumca.org/cspace-services/collectionobjects/b1908eec-e8ed-49a1-8691-a782bb5fb3f1
+[ERROR]	2023-10-16T15:07:38.937Z	c3579727-5004-597f-9921-ca8003e72416	Exception: 409 Client Error:  for url: https://cspace.museumca.org/cspace-services/collectionobjects/b1908eec-e8ed-49a1-8691-a782bb5fb3f1
+[INFO]	2023-10-16T15:07:38.937Z	c3579727-5004-597f-9921-ca8003e72416	Endpoint: https://cspace.museumca.org/cspace-services
+[INFO]	2023-10-16T15:07:38.937Z	c3579727-5004-597f-9921-ca8003e72416	Username: kristina.spurgin@lyrasis.org
+[INFO]	2023-10-16T15:07:38.937Z	c3579727-5004-597f-9921-ca8003e72416	Bucket name: cspace-lcs-importer-omca
+[INFO]	2023-10-16T15:07:38.937Z	c3579727-5004-597f-9921-ca8003e72416	Object key: b2JqZXJyfC9jb2xsZWN0aW9ub2JqZWN0cy9lYTlhMTczYi0zNzQwLTQwMzctOGQzYy1jNGZkMTc0ZTI3ZGF8QTY3LjEzNy43MjUxfFVQREFURQ%3D%3D
+[INFO]	2023-10-16T15:07:38.937Z	c3579727-5004-597f-9921-ca8003e72416	Object size: 748
+[INFO]	2023-10-16T15:07:38.938Z	c3579727-5004-597f-9921-ca8003e72416	Decoded batch: objerr
+[INFO]	2023-10-16T15:07:38.938Z	c3579727-5004-597f-9921-ca8003e72416	Decoded path: /collectionobjects/ea9a173b-3740-4037-8d3c-c4fd174e27da
+[INFO]	2023-10-16T15:07:38.938Z	c3579727-5004-597f-9921-ca8003e72416	Decoded identifier: A67.137.7251
+[INFO]	2023-10-16T15:07:38.938Z	c3579727-5004-597f-9921-ca8003e72416	Decoded type: update
+[INFO]	2023-10-16T15:07:38.938Z	c3579727-5004-597f-9921-ca8003e72416	Composite Id: 0243362995fe75095049e9056ef29791
+[INFO]	2023-10-16T15:07:38.938Z	c3579727-5004-597f-9921-ca8003e72416	Url: https://cspace.museumca.org/cspace-services/collectionobjects/ea9a173b-3740-4037-8d3c-c4fd174e27da
+[ERROR]	2023-10-16T15:07:40.698Z	c3579727-5004-597f-9921-ca8003e72416	Exception: 409 Client Error:  for url: https://cspace.museumca.org/cspace-services/collectionobjects/ea9a173b-3740-4037-8d3c-c4fd174e27da
+END RequestId: c3579727-5004-597f-9921-ca8003e72416
+REPORT RequestId: c3579727-5004-597f-9921-ca8003e72416	Duration: 25554.03 ms	Billed Duration: 25555 ms	Memory Size: 128 MB	Max Memory Used: 87 MB
+....
+
+== Ways forward?
+
+=== What I can do, but I'm not 100% certain it works reliably either
+Given how we are doing this now, if no changes to logging or functionality are made, the only way I can see to actually match an exception with an object key is some hacky-feeling approach based on:
+
+* Getting all log events for each batch logstream and mapping their messages to a dumb string like the one shown above.
+* Some regexp or StringScanner approach to finding the non-"NoSuchKey" Exception messages, with the object key message prior to each of them.
+
+This is doable BUT it feels kind of ridiculous.
+
+*AND* I have no idea if that order can really be relied on. It looks like the objects sent to handler.py in an EVENT are shuffled, but then handled linearly.
+
+But is it a safe assumption that these log rows are always in the same order, and the last object key prior to an Exception is always the one the Exception refers to? Even when the object keys are for media handling records with attached files of dramatically different sizes?
+
+=== Other options
+
+Change how this works so that the logs work for their one actual use case.
+
+[IMPORTANT]
+====
+Yes, looking at the logs as they are with saw or other tools, or combing through the results of filtering on `Exception` is doable for manually checking 1 or a handful of failures.
+
+But if I'm ingesting a batch of 30,000 records and there are 300 failures, I need my tooling to automatically, reliably put the right error message with each failed object in my ingest report.
+
+This does not feel like an unreasonable expectation!
+====
+
+== Other notes
+
+* Do we really need to be logging the bucket name for every object when the bucket name is in the log group name and the log stream name and the EVENT that triggers each processing request?
+* Since (I believe) endpoint and user credentials are 1:1 associated with each bucket, do these really need to be logged for every object?
