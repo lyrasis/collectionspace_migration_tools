@@ -71,7 +71,8 @@ module CollectionspaceMigrationTools
 
           inc_rechk
 
-          return Failure("Ingest is still being processed: #{this_size} remaining") unless maybe_done?
+          failmsg = "Ingest is still being processed: #{this_size} remaining"
+          return Failure(failmsg) unless maybe_done?
         end
         Success()
       end

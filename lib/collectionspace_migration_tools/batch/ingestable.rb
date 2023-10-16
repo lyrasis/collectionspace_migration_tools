@@ -8,9 +8,10 @@ module CollectionspaceMigrationTools
       include Dry::Monads::Do.for(:rollback_ingest)
 
       def rollback_ingest
-        rolled = yield(rollback_step("ingest"))
+        _rolled = yield(rollback_step("ingest"))
 
-        Success("Ingest information rolled back. Note this does NOT undo any ingest operations that occurred")
+        Success("Ingest information rolled back. Note this does NOT undo any "\
+                "ingest operations that occurred")
       end
 
       def ingest_step_headers

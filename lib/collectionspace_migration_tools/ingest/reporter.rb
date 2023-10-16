@@ -14,8 +14,8 @@ module CollectionspaceMigrationTools
       include Dry::Monads::Do.for(:report)
 
       class << self
-        def call(output_dir:, bucket_list:)
-          new(output_dir: output_dir, bucket_list: bucket_list).call
+        def call(...)
+          new(...).call
         end
       end
 

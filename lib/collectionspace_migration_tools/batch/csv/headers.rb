@@ -3,7 +3,8 @@
 module CollectionspaceMigrationTools
   module Batch
     module Csv
-      # Mixed in where access to Batch CSV headers is needed at various levels of granularity
+      # Mixed in where access to Batch CSV headers is needed at
+      #   various levels of granularity
       module Headers
         module_function
 
@@ -24,7 +25,8 @@ module CollectionspaceMigrationTools
           %w[rec_ct]
         end
 
-        # currently superfluous, but useful in case we ever add new derived header groups
+        # Currently superfluous, but useful in case we ever add new
+        #   derived header groups
         def derived_headers
           [
             derived_at_add_headers

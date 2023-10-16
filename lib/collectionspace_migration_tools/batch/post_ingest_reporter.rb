@@ -43,7 +43,7 @@ module CollectionspaceMigrationTools
         _successes = yield(report("ingest_oks", successes))
 
         if failures > 0
-          rpt = yield(reporter.call)
+          _rpt = yield(reporter.call)
           puts "Wrote item level ingest report to: #{report_path}"
         end
 
