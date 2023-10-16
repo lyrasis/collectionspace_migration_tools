@@ -64,7 +64,7 @@ module CollectionspaceMigrationTools
           sleep wait
 
           size = get_size
-          break Failure(size.failue) if size.failure?
+          break Failure(size.failure) if size.failure?
 
           @this_size = size.value!
           return Success() if this_size == 0
