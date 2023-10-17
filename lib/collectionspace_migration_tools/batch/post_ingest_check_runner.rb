@@ -15,9 +15,11 @@ module CollectionspaceMigrationTools
 
       # @param batch [CMT::Batch::Batch]
       # @param bucket_list [Array]
-      def initialize(batch:, bucket_list:)
+      # @param autodelete [Boolean]
+      def initialize(batch:, bucket_list:, autodelete: false)
         @batch = batch
         @bucket_list = bucket_list
+        @autodelete = autodelete
       end
 
       def call
@@ -79,7 +81,7 @@ module CollectionspaceMigrationTools
 
       private
 
-      attr_reader :batch, :bucket_list
+      attr_reader :batch, :bucket_list, :autodelete
 
       def completed_time?
         true if batch.ingest_complete_time && !batch.ingest_complete_time.empty?
