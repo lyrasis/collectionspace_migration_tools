@@ -41,7 +41,7 @@ module CollectionspaceMigrationTools
         end
 
         _post = yield CMT::Batch::PostIngestCheckRunner.call(
-          batch: batch, bucket_list: bucket_objs
+          batch: batch, bucket_list: bucket_objs, autodelete: autodelete
         )
 
         Success()
