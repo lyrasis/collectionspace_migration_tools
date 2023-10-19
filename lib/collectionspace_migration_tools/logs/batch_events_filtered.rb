@@ -32,13 +32,8 @@ module CollectionspaceMigrationTools
       def call
         client = yield CMT::Build::LogClient.call
         streams = yield CMT::Logs::BatchLogstreams.call(batchid)
-        params = {
-          log_group_name: CMT.config.client.log_group_name,
-          filter_pattern: pattern,
-          log_stream_names: streams.map(&:log_stream_name),
-          start_time: start_time,
-          end_time: end_time
-        }.compact
+        batch = yield CMT::Batch.find(batchid)
+        params = build_params(batch, streams)
         response = yield client_response(client, :filter_log_events, params)
         events = yield get_events(response, selector)
 
@@ -48,6 +43,28 @@ module CollectionspaceMigrationTools
       private
 
       attr_reader :batchid, :pattern, :start_time, :end_time, :selector
+
+      def build_params(batch, streams)
+        params = {
+          log_group_name: CMT.config.client.log_group_name,
+          filter_pattern: pattern,
+          start_time: start_time,
+          end_time: end_time
+        }.compact
+
+        if streams.empty?
+          unless params.key?(:start_time)
+            params[:start_time] = batch.time(:start)
+          end
+          unless params.key?(:end_time)
+            batch.ingest_complete_time
+            params[:end_time] = batch.time(:end)
+          end
+        else
+          params[:log_stream_names] = streams.map(&:log_stream_name)
+        end
+        params.compact
+      end
 
       # @param response
       # @param selector [nil, Lambda] takes single event object as argument;

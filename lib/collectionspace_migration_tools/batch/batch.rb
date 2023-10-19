@@ -83,6 +83,18 @@ module CollectionspaceMigrationTools
         str[0..-2]
       end
 
+      # @param type [:start, :end]
+      def time(type)
+        field = (type == :start) ? :ingest_start_time : :ingest_complete_time
+        val = send(field)
+        return nil if val.nil? || val.empty?
+
+        CMT::Logs.timestamp_from_datestring(val).either(
+          ->(success) { success },
+          ->(failure) {}
+        )
+      end
+
       def printable_row
         [id, action, rec_ct, mappable_rectype,
           File.basename(source_csv)].join("\t")
