@@ -20,7 +20,11 @@ module CollectionspaceMigrationTools
 
     def base_namespace
       config["ns_uri"].keys
-        .select { |ns| ns.end_with?("_common") && (ns[type_label] || ns[service_path]) }
+        .select do |ns|
+        ns.end_with?("_common") && (
+          ns[type_label] || ns[service_path] || ns[document_name]
+        )
+      end
         .first
     end
 
