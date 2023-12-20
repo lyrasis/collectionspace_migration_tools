@@ -22,8 +22,8 @@ gem "pg", "~> 1.4"
 gem "redis", "~> 4.2.1"
 gem "refinements", "~> 9.1"
 gem "smarter_csv", "~> 1.7.4"
-gem "thor", "~> 1.2"
-gem "thor-hollaback", "~> 0.2"
+gem "thor", "~> 1"
+gem "thor-hollaback", "~> 0"
 gem "zeitwerk", "~> 2.5"
 
 group :code_quality do
