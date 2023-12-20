@@ -69,6 +69,8 @@ class Rectypes < Thor
     def do_delete_all(rectype)
       obj = yield check_is_deleteable(rectype)
       deleter = yield obj.delete_all
+
+      Success(deleter)
     end
   end
 end
