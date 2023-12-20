@@ -20,7 +20,7 @@ module CollectionspaceMigrationTools
         Success()
       end
 
-      def to_s
+      def name
         "vocabularies"
       end
 
@@ -32,7 +32,7 @@ module CollectionspaceMigrationTools
           select vc.id, h.name as csid, vc.shortidentifier from vocabularies_common vc
           inner join hierarchy h on vc.id = h.id
           )
-          
+
           select vc.shortidentifier as vocab, vic.displayname as term, vic.refname, h.name as csid
           from vocabularyitems_common vic
           inner join misc on vic.id = misc.id and misc.lifecyclestate != 'deleted'

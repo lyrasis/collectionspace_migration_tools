@@ -6,6 +6,7 @@ module CollectionspaceMigrationTools
     #
     # Classes mixing this in need to have the following methods:
     #   - cacheable_data_query
+    #   - name
     #   - rectype_mixin
     #   - to_monad
     #   - to_s
@@ -17,7 +18,7 @@ module CollectionspaceMigrationTools
         _status = yield(self)
         query = yield(cacheable_data_query)
 
-        puts "\nQuerying cacheable data for #{self}..."
+        puts "\nQuerying cacheable data for #{name}..."
         rows = yield(CMT::Database::ExecuteQuery.call(query))
 
         ct = result_count(rows)
@@ -47,7 +48,7 @@ module CollectionspaceMigrationTools
         _status = yield(self)
         query = yield(cacheable_data_query)
 
-        puts "\nQuerying cacheable data for #{self}..."
+        puts "\nQuerying cacheable data for #{name}..."
         rows = yield(CMT::Database::ExecuteQuery.call(query))
 
         ct = result_count(rows)

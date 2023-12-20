@@ -25,6 +25,11 @@ module CollectionspaceMigrationTools
         get_mapper
       end
 
+      def to_s
+        "<##{self.class}:#{object_id.to_s(8)} #{name}>"
+      end
+      alias_method :inspect, :to_s
+
       private
 
       attr_reader :mapper
