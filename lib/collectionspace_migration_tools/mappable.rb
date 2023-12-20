@@ -21,9 +21,5 @@ module CollectionspaceMigrationTools
     def to_monad
       status
     end
-
-    def to_s
-      name
-    end
   end
 end

@@ -34,7 +34,7 @@ module CollectionspaceMigrationTools
 
         if failures.empty?
           final = res.map(&:value!)
-            .map(&:to_s)
+            .map(&:name)
             .join("|")
 
           Success(final)
