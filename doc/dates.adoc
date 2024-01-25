@@ -216,7 +216,7 @@ WARNING: I have not yet tested this with, say, repeating structured date fields 
 
 * Required fields
 ** record identifier - Actual field name varies per record type
-** `date_field_group` - Name of structured date group to be populated with row's date details. Use the form of field name found in the normal CSV Importer template for the record type. For example, `objectProductionDateGroup` or `objectproductiondategroup` (case is irrelevant).
+** `date_field_group` - Name of structured date group to be populated with row's date details. Use the form of field name found in the normal CSV Importer template for the record type. For example, `objectProductionDateGroup`. **Case matters for this value.**
 ** `scalarValuesComputed` - If we don't explicitly provide this, CS doesn't figure it out when the XML is imported. "y" and "n" (and other common boolean indicator values) are automatically converted to true/false in the mapping process.
 
 
