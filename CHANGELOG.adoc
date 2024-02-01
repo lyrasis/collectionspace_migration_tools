@@ -27,6 +27,10 @@ These changes are merged into the `main` branch, but have not been released. Aft
 
 === Deprecated/Will break in a future version
 
+== 2.2.3 (2024-02-01)
+=== Bugfixes
+- Use new version of `collectionspace-mapper` that supports retaining `%NULLVALUE%` fields as blank fields, and sets `shortid` correctly when mapping date details for authority records.
+
 == 2.2.2 (2023-12-19)
 === Added
 - `thor rt:delete_all` command for objects, procedures, and authorities. Do `thor rt help delete_all` for more details. (PR#42)

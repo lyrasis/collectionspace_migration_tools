@@ -11,7 +11,7 @@ GIT
 GIT
   remote: https://github.com/collectionspace/collectionspace-mapper.git
   revision: 8363a100e15d77de3cb6b97efbc7c24f00892c1f
-  tag: v5.0.3
+  branch: authority-date-load
   specs:
     collectionspace-mapper (5.0.3)
       activesupport (= 7.0.4.3)
