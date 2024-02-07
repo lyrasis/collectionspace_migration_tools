@@ -2,8 +2,6 @@
 :toc-placement!:
 :toclevels: 4
 
-+:us: _
-
 ifdef::env-github[]
 :tip-caption: :bulb:
 :note-caption: :information_source:
@@ -194,38 +192,31 @@ This should account for:
 
 [WARNING]
 ====
-I recommend you do a separate batch for each date field group. For instance, if you have both person birth and death date details to ingest, do those in two batches.
+You must do a separate batch for each date field group. For instance, if you have both person birth and death date details to ingest, do those in two batches.
 
 *WHY?*
 
 Both batch ingest tools have a basic assumption of _one CSV row/one XML document/one API call_.
 
-While you technically _can_ map/process birth and death date details in the same *update* CSV/batch, I am not clear on how CS would handle receiving two near-simultaneous `update` requests on the same record.
+You can only specify one target `date_field_group` per row, and can include only one set of structured date details, that will be mapped into that `date_field_group`.
 
-If you attempt a *create* batch with two rows having the same record id value, it'll complain that you'll be creating duplicate records.
+Because of how CSXML files and S3 object keys are named, having two rows for the same record (one row for birth date, another for death date) will be flagged as a duplicate record.
 ====
 
-[NOTE]
-====
-Date detail ingest is per record type. This means it is absolutely not possible to ingest person birth dates and org foundation dates in the same batch.
-====
+Ingest currently supports:
+
+* Single structured date value into field (i.e. objectProductionDate with single date value)
+* Multiple date values into multivalued field (i.e. multiple date values into objectProductionDate), if data is combined/delimited/padded properly
+* Structured date values into a structured date field within a repeating field group AND any other field values occurring in the same repeating field group as the structured date field. (i.e. in Citation record, you can load publisher, edition, publicationPlace, and publicationDate all at once. To find the group level of the structured date group, find the `date_field_group` value in the relevant CSV ingest template. If that field has a REPEATING FIELD GROUP value in the template, any other field values with the same REPEATING FIELD GROUP value can be ingested together.)
+
+Ingest currently does NOT support:
+
+* Structured date values into two different structured date fields in a repeatable field group. I'm not sure if this pattern exists, but if it does, the assumptions outlined above will block populating both fields at once.
 
 === Data requirements
 
 * Each row must contain all structured date information for the specfied structured date group, for the specified record. I.e. if you have 2 objectProductionDateGroup dates, you will need to represent them in a single row, separating the values wth your project's specified delimiters.
 
-[NOTE]
-====
-For a pattern for preparing repeating structured dates in a kiba-extend project see the following files in the kiba-tms project:
-
-https://github.com/lyrasis/kiba-tms/blob/3f27e18382a9e8a66d4666a4504c4e7f884ba822/lib/kiba/tms/jobs/obj_dates/merge_translated.rb[obj{us}dates/merge{us}translated.rb]::The first step in preparing Associated Dates for loading into CollectionSpace objects. The source table `prep__obj_dates` has one row per date recorded for objects. An object may have multiple date rows. This job uses Emendate translate output as the lookup table `dates_translated__lookup`. The reusuable transform logic to merge in the tranlated date fields from the lookup is in `Tms::DatesTranslated.merge_xforms`. There is date type and note information that we will map to assocDateNote and assocDateType fields, which must be ingested separately from the date details. We're putting TMS' "effective date of the recorded date" value in the `datePeriod` field within the structured date, but being careful not to overwrite any values the Emendate translator may have put in that field. *Perhaps the most important step in this job is using the `Replace::EmptyFieldValues` kiba-extend transform to replace empty field values with `%NULLVALUE%`.*
-https://github.com/lyrasis/kiba-tms/blob/3f27e18382a9e8a66d4666a4504c4e7f884ba822/lib/kiba/tms/jobs/collectionobjects/assoc_dates.rb[collectionobjects/assoc{us}dates.rb]::Generates the file to be loaded with `batch_mode: date details` config. Uses the previous job as both source and lookup table. Removes all fields except object ids, deduplicates so we have one row per object. Then merges the date data back in, in our desired sort order, to create all the necessary multivalued fields.
-https://github.com/lyrasis/kiba-tms/blob/3f27e18382a9e8a66d4666a4504c4e7f884ba822/lib/kiba/tms/jobs/collectionobjects/assoc_date_added_fields.rb[collectionobjects/assoc{us}date{us}added{us}fields.rb]::Generates the file used to ingest the assocDateType and assocDateNote field values after dates are loaded. This should be ingested with the `null_value_string_handling: empty` batch config, in order to prevent deletion of date values which don't have grouped type or note field values.
-====
-
-
-
-WARNING: This works with repeating structured date fields, and structured date fields that themselves occur within repeatable field groups, so if you have that situation, *test and proceed carefully*
 
 * Required fields
 ** record identifier - Actual field name varies per record type
