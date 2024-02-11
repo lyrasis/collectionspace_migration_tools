@@ -27,6 +27,10 @@ These changes are merged into the `main` branch, but have not been released. Aft
 
 === Deprecated/Will break in a future version
 
+== 2.2.5 (2024-02-11)
+=== Bugfixes
+- Uses new version of `collectionspace-mapper` with a bugfix to prevent errors in reporting failures in date details mapping.
+
 == 2.2.4 (2024-02-07)
 === Added
 - Use new version of `collectionspace-mapper` that supports ingesting fields in same repeating field group as a structured date when you are ingesting structured date details for a date in that group.
