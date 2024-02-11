@@ -3,14 +3,16 @@
 require_relative "../spec_helper"
 
 RSpec.describe CollectionspaceMigrationTools::Configuration do
-  let(:result) { described_class.new(client: config_file) }
+  let(:result) { described_class.call(client: config_file) }
 
   context "with valid config without optional settings" do
     let(:config_file) { valid_config_path }
 
     it "returns Configuration object", :aggregate_failures do
       expect(result).to be_a(CMT::Configuration)
-      expect(result.client.base_uri).to eq("https://core.dev.collectionspace.org/cspace-services")
+      expect(result.client.base_uri).to eq(
+        "https://core.dev.collectionspace.org/cspace-services"
+      )
       expect(result.client.batch_config_path).to be_nil
       expect(result.client.batch_csv).to eq(File.join(result.client.base_dir,
         "batches.csv"))
@@ -28,7 +30,10 @@ RSpec.describe CollectionspaceMigrationTools::Configuration do
     end
 
     it "returns Configuration object", :aggregate_failures do
-      batch_cfg = File.expand_path("~/code/cs/migration_tools/spec/support/fixtures/client_batch_config.json")
+      batch_cfg = File.expand_path(
+        "~/code/cs/migration_tools/spec/support/fixtures/"\
+          "client_batch_config.json"
+      )
       expect(result.client.batch_config_path).to eq(batch_cfg)
       expect(result.client.batch_csv).to eq(File.join(result.client.base_dir,
         "batch_tracker.csv"))
@@ -44,7 +49,9 @@ RSpec.describe CollectionspaceMigrationTools::Configuration do
     # If this test fails make sure you do not have redis running
     it "outputs error message and exits" do
       expect { result }
-        .to output(/Could not create config/).to_stdout.and raise_error(SystemExit)
+        .to output(/Could not create config/).to_stdout.and raise_error(
+          SystemExit
+        )
     end
   end
 end

@@ -56,9 +56,23 @@ RSpec.describe CollectionspaceMigrationTools::Validate::ConfigClientContract do
     end
   end
 
+  context "with bad ingest_dir" do
+    let(:client_config) do
+      valid_config.merge({ingest_dir: "foo"})
+    end
+
+    it "returns Failure" do
+      expect(result).to be_a(Dry::Monads::Failure)
+    end
+  end
+
   context "with existing batch config file" do
     let(:client_config) do
-      valid_config.merge({batch_config_path: "~/code/cs/migration_tools/spec/support/fixtures/client_batch_config.json"})
+      valid_config.merge(
+        {batch_config_path:
+         "~/code/cs/migration_tools/spec/support/fixtures/"\
+           "client_batch_config.json"}
+      )
     end
 
     it "returns Success" do
@@ -68,7 +82,10 @@ RSpec.describe CollectionspaceMigrationTools::Validate::ConfigClientContract do
 
   context "with non-existent batch config file" do
     let(:client_config) do
-      valid_config.merge({batch_config_path: "~/code/cs/migration_tools/spec/support/fixtures/batch_config.json"})
+      valid_config.merge(
+        {batch_config_path:
+         "~/code/cs/migration_tools/spec/support/fixtures/batch_config.json"}
+      )
     end
 
     it "returns Failure" do

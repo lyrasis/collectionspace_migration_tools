@@ -23,7 +23,7 @@ module Helpers
 
   # returns valid config parsed as hash
   def valid_config
-    CMT::Configuration.new(client: valid_config_path)
+    CMT::Configuration.call(client: valid_config_path)
   end
 
   # returns valid config parsed as hash

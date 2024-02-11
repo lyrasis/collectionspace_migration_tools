@@ -13,33 +13,37 @@ module CollectionspaceMigrationTools
         end
       end
 
-      def initialize(config_name:, target_path: File.join(Bundler.root,
-        "client_config.yml"),
-        config_dir: File.join(Bundler.root, "config"))
+      def initialize(
+        client:,
+        target_path: CMT.config.system.config_name_file,
+        config_dir: CMT.config.system.client_config_dir
+      )
+        @client = client
         @target_path = target_path
-        @source_path = File.join(config_dir, "#{config_name}.yml")
+        @source_path = File.join(config_dir, "#{client}.yml")
       end
 
       def call
-        _chk = yield(check_source_exists)
-        _valid = yield(CMT::Configuration.new(client: source_path, check: true))
-        _copy = yield(copy_source)
+        _chk = yield check_source_exists
+        valid = yield CMT::Configuration.call(client: client, mode: :check)
+        _copy = yield set_source
 
-        Success()
+        Success(valid)
       end
 
       private
 
-      attr_reader :target_path, :source_path
+      attr_reader :client, :target_path, :source_path
 
       def check_source_exists
         return Success() if File.exist?(source_path)
 
-        Failure("#{source_path} does not exist")
+        current = File.read(target_path)
+        Failure("#{source_path} does not exist. Still using #{current}")
       end
 
-      def copy_source
-        FileUtils.cp(source_path, target_path)
+      def set_source
+        File.open(target_path, "w") { |file| file << client }
       rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",

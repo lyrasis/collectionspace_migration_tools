@@ -16,6 +16,14 @@ endif::[]
 These changes are merged into the `main` branch, but have not been released. After merging pull requests (PRs) that are not immediately released into `main`, a tag is added appending the PR# to the current release. For example, if the release version/tag is `v0.0.0`, and PR# 15 is merged without a new release, the state of the codebase after that merge will be tagged as `v0.0.0.pr15`.
 
 === Breaking
+* Client configuration management changes. To use new version:
+** In your `system_config.yml` file:
+*** Remove initial `system:` line and indetation of subsequent lines
+*** Specify a `client_config_dir` location. See https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/client_config_management.adoc[the client config management documentation page] for more information.
+** Remove initial `redis:` line and indentation of subsequent lines from your `redis.yml` file if necessary
+** After adding `client_config_dir` to your system config, you will need to run `thor config switch CONFIGNAME`
+** Delete `client_config.yml` from the CMT repository base directory if it is still there.
+** Changes were made to how the active config is stored/looked up after I discovered you could get stuck unable to switch away from an invalid config. The changes have other side benefits, too.
 
 === Added
 

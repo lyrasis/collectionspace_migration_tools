@@ -7,192 +7,87 @@ require "fileutils"
 module CollectionspaceMigrationTools
   class Configuration
     include Dry::Monads[:result]
-    include Dry::Monads::Do.for(:validated_config_data,
-      :get_client_config_hash)
+    include Dry::Monads::Do.for(:derive_config)
 
-    # If you change default values here, update sample_client_config.yml
-    CLIENT_CONFIG_DEFAULTS = {
-      client: {
-        page_size: 50,
-        cs_version: "7_0",
-        batch_dir: "batch_data",
-        auto_refresh_cache_before_mapping: true,
-        clear_cache_before_refresh: true,
-        csv_delimiter: ",",
-        s3_delimiter: "|",
-        media_with_blob_upload_delay: 250,
-        max_media_upload_threads: 5
-      },
-      database: {
-        port: 5432,
-        db_user: "csadmin",
-        db_connect_host: "localhost"
-      }
-    }
+    class << self
+      def call(...)
+        new(...).call
+      end
+    end
 
     attr_reader :client, :database, :system, :redis
 
     def initialize(
-      client: File.join(Bundler.root, "client_config.yml"),
+      client: nil,
       system: File.join(Bundler.root, "system_config.yml"),
       redis: File.join(Bundler.root, "redis.yml"),
-      check: false
+      mode: :prod
     )
-      @client_path = client
-      @system_path = system
-      @redis_path = redis
-      @check = check
-      @status = Success()
-
-      validated_config_data.either(
-        ->(result) { build_config(result) },
-        ->(result) { handle_failure(result) }
-      )
+      @client = client
+      @mode = mode
     end
 
-    def to_monad
-      status
+    def call
+      derive_config.either(
+        ->(success) { handle_success(success) },
+        ->(failure) { handle_failure(failure) }
+      )
     end
 
     private
 
-    attr_reader :client_path, :system_path, :redis_path, :check, :status
+    attr_reader :mode
 
-    # -=-=-=-=-=-=-=-=-=-=-=
-    # VALIDATING CONFIG DATA
-    # -=-=-=-=-=-=-=-=-=-=-=
-    def validated_config_data
-      client_hash = yield(get_client_config_hash)
-      system_hash = yield(CMT::Parse::YamlConfig.call(system_path))
-      redis_hash = yield(CMT::Parse::YamlConfig.call(redis_path))
-      config_data = client_hash.merge(system_hash).merge(redis_hash)
-      validated = yield(CMT::Validate::Config.call(config_data))
+    def derive_config
+      @system = yield CMT::Config::System.call
+      @redis = yield CMT::Config::Redis.call
+      instance = yield CMT::Parse::YamlConfig.call(client_path)
+      @client = yield CMT::Config::Client.call(hash: instance[:client])
+      @database = yield CMT::Config::Database.call(hash: instance[:database])
 
-      Success(validated)
-    end
-
-    def get_client_config_hash
-      base = yield CMT::Parse::YamlConfig.call(client_path)
-      _defaults_applied = yield apply_client_config_defaults(base)
-
-      Success(base)
-    end
-
-    # @param base [Hash] literal config from YAML file
-    def apply_client_config_defaults(base)
-      [:client, :database].each do |section|
-        CLIENT_CONFIG_DEFAULTS[section].each do |setting, value|
-          next if base[section].key?(setting)
-
-          base[section][setting] = value
-        end
-      end
-    rescue => err
-      Failure(CMT::Failure.new(
-        context: "#{name}.#{__callee__}", message: err.message
-      ))
-    else
       Success()
     end
 
-    # -=-=-=-=-=-=-=-=-=-=-=
-    # BUILDING CONFIG OBJECT
-    # -=-=-=-=-=-=-=-=-=-=-=
-    def build_config(result)
-      add_option_to_section(result, :client, :batch_config_path, nil)
-      add_option_to_section(result, :client,
-        :auto_refresh_cache_before_mapping, false)
-      add_option_to_section(result, :client, :clear_cache_before_refresh, false)
-      if result[:client].key?(:s3_bucket) && result[:client][:s3_bucket]
-        add_option_to_section(
-          result,
-          :client,
-          :log_group_name,
-          "/aws/lambda/#{result[:client][:s3_bucket]}"
+    def client_path
+      return path_from_config_name_file if !client
+      return client if ["~", "/"].any? { |char| client.start_with?(char) }
+
+      File.expand_path(
+        File.join(system.client_config_dir, "#{client}.yml")
+      )
+    end
+
+    def path_from_config_name_file
+      current = File.read(File.expand_path(system.config_name_file))
+      case current
+      when "sample"
+        File.join(Bundler.root, "sample_client_config.yml")
+      else
+        File.expand_path(
+          File.join(system.client_config_dir, "#{current}.yml")
         )
       end
-
-      base = File.expand_path(result[:client][:base_dir])
-      add_option_to_section(result, :client, :batch_csv,
-        File.join(base, "batches.csv"))
-
-      add_media_blob_delay(result)
-
-      result.each do |section, config_data|
-        instance_variable_set("@#{section}".to_sym, section_struct(config_data))
-      end
-      fix_config_paths
     end
 
-    # Manipulate the config hash before converting to Structs
-    def add_option_to_section(confighash, section, key, value)
-      return if confighash[section].key?(key)
-
-      confighash[section][key] = value
-    end
-
-    def add_media_blob_delay(result)
-      key = :media_with_blob_upload_delay
-      if result[:client].key?(key)
-        val = result[:client][key]
-        return if val == 0
-
-        result[:client][key] = Rational("#{val}/1000").to_f
+    def handle_success(success)
+      case mode
+      when :prod
+        self
       else
-        add_option_to_section(result, :client, :media_with_blob_upload_delay, 0)
+        Success(self)
       end
     end
 
-    def section_struct(config_data)
-      keys = config_data.keys
-      values = config_data.values
-      Struct.new(*keys).new(*values)
-    end
-
-    def fix_config_paths
-      expand_base_dir
-      expand_other_paths
-      handle_subdirs
-    end
-
-    def expand_base_dir
-      expanded = File.expand_path(client.base_dir).delete_suffix("/")
-      client.base_dir = expanded
-    end
-
-    def expand_other_paths
-      %i[batch_csv batch_config_path].each do |key|
-        val = client.send(key)
-        next unless val
-
-        meth = "#{key}=".to_sym
-        client.send(meth, File.expand_path(val))
-      end
-    end
-
-    def handle_subdirs
-      %i[mapper_dir batch_dir].each do |subdir|
-        CMT::ConfigSubdirectoryHandler.call(config: client, setting: subdir)
-      end
-    end
-
-    # -=-=-=-=-=-=-=-=-=-=-=
-    # HANDLING FAILURES
-    # -=-=-=-=-=-=-=-=-=-=-=
     def handle_failure(failure)
-      if check
-        @status = Failure(failure)
+      case mode
+      when :prod
+        puts("Could not create config.")
+        puts failure
+        puts("Exiting...")
+        exit
       else
-        bad_config_exit(failure)
+        Failure(failure)
       end
-    end
-
-    def bad_config_exit(result)
-      puts("Could not create config.")
-      puts("Error occurred in: #{result.context}")
-      puts("Error message: #{result.message}")
-      puts("Exiting...")
-      exit
     end
   end
 end
