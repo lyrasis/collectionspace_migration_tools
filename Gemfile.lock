@@ -10,10 +10,10 @@ GIT
 
 GIT
   remote: https://github.com/collectionspace/collectionspace-mapper.git
-  revision: 9587bed3208f57bab6ee773ed4681af73aec3550
-  tag: v5.0.5
+  revision: 9d66dfec79efd52eb5c999924346ffb25e63b4df
+  tag: v5.0.6
   specs:
-    collectionspace-mapper (5.0.5)
+    collectionspace-mapper (5.0.6)
       activesupport (= 7.0.4.3)
       chronic
       collectionspace-client (~> 0.15.0)
@@ -179,7 +179,7 @@ GEM
     method_source (1.0.0)
     mime-types-data (3.2021.1115)
     mini_mime (1.1.5)
-    minitest (5.22.0)
+    minitest (5.22.2)
     mock_redis (0.36.0)
       ruby2_keywords
     multi_xml (0.6.0)
