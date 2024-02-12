@@ -31,7 +31,9 @@ module CollectionspaceMigrationTools
         puts "Elapsed time for caching: #{Time.now - starttime}"
         return Success() unless @results.any?(:failure?)
 
-        Failure("#{self.class.name} ERROR: Unable to cache some necessary values")
+        Failure(
+          "#{self.class.name} ERROR: Unable to cache some necessary values"
+        )
       end
 
       def to_monad
