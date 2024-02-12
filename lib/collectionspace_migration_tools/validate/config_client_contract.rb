@@ -14,6 +14,7 @@ module CollectionspaceMigrationTools
         required(:profile).filled(:string)
         required(:profile_version).filled(:string)
         required(:base_dir).filled(:string)
+        optional(:ingest_dir).filled(:string)
         optional(:batch_csv).maybe(:string)
         required(:mapper_dir).filled(:string)
         required(:batch_dir).filled(:string)
@@ -43,6 +44,8 @@ module CollectionspaceMigrationTools
       end
 
       rule(:base_dir).validate(:dir_exists)
+
+      rule(:ingest_dir).validate(:subdir_exists)
 
       rule(:mapper_dir).validate(:subdir_exists)
 
