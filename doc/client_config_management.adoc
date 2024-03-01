@@ -14,31 +14,32 @@ endif::[]
 
 toc::[]
 
-TIP: Do `thor list config` to see all config-related commands
+TIP: Do `thor config` to see all config-related commands. For details on a specific command, do `thor config help THECOMMAND`.
 
-== Active config
-Whatever is in `./client_config.yml` is the instance any commands will be run against.
+Client/project-specific configuration is stored in .yml files with the directory set as `client_config_dir` in your `system_config.yml`.
 
-TIP:: Do `thor config:show` to show the active config
+TIP: The config files must use the `.yml` file extension, not `.yaml` or anything else.
 
-Because we typically need to work with multiple instances, we manage our client configs in the `./config` directory and use the `thor config:switch` command to control which is the active config.
-
-WARNING: `./client_config.yml` and the contents of `./config` are excluded from version control tracking. **If you do anything to change the naming conventions or locations of these files make CERTAIN they do not get committed, as they contain sensitive information.**
-
-TIP: Aside from the security concerns associated with deviating from the set conventions on config location/naming, none of the built-in config management stuff will work. *So, really just follow the pattern given.* 😀
+WARNING: Your `client_config_dir` must be in a secure location and must not be made public via version control or other methods.
 
 == Creating a new client config
-For each CS instance you need to work with, you need to create a client config .yml file inside `./config`.
+
+For each CS instance you need to work with, you need to create a client config .yml file inside your `client_config_dir`.
 
 Copy `sample_client_config.yml` into `./config` with a name clearly identifying your instance (e.g. anthro_dev.yml, clientname_staging.yml, clientname_prod.yml) and edit it.
 
 `sample_client_config.yml` is self-documenting.
 
-If you want to start working with this config, run `thor config:switch clientname_staging`
+If you want to start working with the new config, run `thor config:switch clientname_staging`.
+
+== Active config
+
+Do `thor config:show` to show the name of the active config
+
+Do `thor config:show -v` to print the full config to screen.
 
 == Updating a client config
-IMPORTANT: Always edit the .yml files inside the `./config` directory.
 
-If you updated the config that is currently active, run `thor config:switch active_config_name` to refresh the active config with the updated file.
+Each time you run a command, the active config is read in from its .yml file.
 
-The `config:switch` command doesn't know what the source of the current active config was, so it just re-copies whatever config you specify to `./client_config.yml` and reloads the app configuration based on the new copy.
+As of v3.0.0, you no longer need to `thor config switch` after making changes.

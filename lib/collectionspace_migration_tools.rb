@@ -26,7 +26,7 @@ module CollectionspaceMigrationTools
     end
 
     def config
-      @config ||= CMT::Configuration.new
+      @config ||= CMT::Configuration.call
     end
 
     def client

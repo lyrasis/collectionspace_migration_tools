@@ -2,7 +2,8 @@
 
 module CollectionspaceMigrationTools
   module Batch
-    # Takes batch data and derives the set of commands needed to efficiently populate the required caches
+    # Takes batch data and derives the set of commands needed to efficiently
+    # populate the required caches
     class CachingPlanner
       include Dry::Monads[:result]
 

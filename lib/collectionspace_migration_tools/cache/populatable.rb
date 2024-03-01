@@ -27,8 +27,8 @@ module CollectionspaceMigrationTools
         threads = []
         %w[refname csid].each do |cache_type|
           threads << Thread.new do
-            CMT::Cache::Populator.call(cache_type: cache_type, rec_type: rectype_mixin,
-              data: rows)
+            CMT::Cache::Populator.call(cache_type: cache_type,
+              rec_type: rectype_mixin, data: rows)
           end
         end
         threads.each { |thread| thread.join }

@@ -27,14 +27,10 @@ module CollectionspaceMigrationTools
         )
 
         first_row = yield CMT::Csv::FirstRowGetter.call(path)
-        rn_deps = if batch.mode == "date details"
-          yield Success("vocabularies")
-        else
-          yield CMT::Batch::RefnameCacheDependencyIdentifier.call(
-            headers: first_row.headers,
-            mapper: mapper
-          )
-        end
+        rn_deps = yield CMT::Batch::RefnameCacheDependencyIdentifier.call(
+          headers: first_row.headers,
+          mapper: mapper
+        )
 
         plan = yield CMT::Batch::CachingPlanner.call(
           refname: rn_deps,

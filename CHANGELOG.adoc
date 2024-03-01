@@ -27,6 +27,29 @@ These changes are merged into the `main` branch, but have not been released. Aft
 
 === Deprecated/Will break in a future version
 
+== 3.0.0 (2024-03-01)
+=== Breaking
+
+* Client configuration management changes. To use new version:
+** In your `system_config.yml` file:
+*** Remove initial `system:` line and indetation of subsequent lines
+*** Specify a `client_config_dir` location. See https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/client_config_management.adoc[the client config management documentation page] for more information.
+** Remove initial `redis:` line and indentation of subsequent lines from your `redis.yml` file if necessary
+** After adding `client_config_dir` to your system config, you will need to run `thor config switch CONFIGNAME`
+** Delete `client_config.yml` from the CMT repository base directory if it is still there.
+** Changes were made to how the active config is stored/looked up after I discovered you could get stuck unable to switch away from an invalid config. The changes have other side benefits, too.
+
+=== Added
+
+* Optional `ingest_dir` setting in client config, which allows you to enter file name only when calling `thor batch add` `--csv` option for files in that default ingest directory.
+* `thor cspace:reindex` command to trigger fulltext reindexing of the configured CollectionSpace instance
+* Utility script: `utils/copy_media_bucket_objects_in_place.rb` - If media ingest bucket is created without overriding the default AWS encryption settings, we run into problems with access to the files. Infrastructure can fix the encryption settings of the bucket, but any objects already in the bucket need to be copied in place to refresh them to use the new encryption settings. This is a quick/dirty script to do all that copying.
+
+=== Bugfixes
+
+* Report issue/don't fail messily when there is a missing item type value in a nonhierarchicalrelationship row
+* Fix failure when reporting ingstat for batches with non-ingested items (i.e. items that failed map or upload steps and were thus not ingested)
+
 == 2.2.5 (2024-02-11)
 === Bugfixes
 - Uses new version of `collectionspace-mapper` with a bugfix to prevent errors in reporting failures in date details mapping.

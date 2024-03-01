@@ -7,13 +7,24 @@ class Batch < Thor
   include Dry::Monads[:result]
 
   desc "add",
-    "Adds a new batch to batch csv. ID must be <= 6 alphanumeric characters"
-  option :id, required: true, type: :string
-  option :csv, required: true, type: :string
-  option :rectype, required: true, type: :string
-  option :action, required: true, type: :string
+    "Adds a new batch to batch csv"
+  option :id, required: true, type: :string,
+    desc: "6-or-fewer-character-length code to identify the batch"
+  option :csv, required: true, type: :string,
+    desc: "Name of file in default client :ingest_dir or full path of file "\
+    "anywhere"
+  option :rectype, required: true, type: :string,
+    desc: "do `thor rt:all` for list of valid values"
+  option :action, required: true, type: :string,
+    desc: "create, update, or delete"
+
   def add
-    CMT::Batch::Add.call(id: options[:id], csv: options[:csv], rectype: options[:rectype], action: options[:action]).either(
+    CMT::Batch::Add.call(
+      id: options[:id],
+      csv: options[:csv],
+      rectype: options[:rectype],
+      action: options[:action]
+    ).either(
       ->(success) {
         put_added(success)
         exit(0)

@@ -37,7 +37,8 @@ module CollectionspaceMigrationTools
         cache = CMT::Caches.get_cache(cache_type)
         cache.flush
       rescue => err
-        msg = "#{cache_type.upcase} clear failure: #{err.message} IN #{err.backtrace[0]}"
+        msg = "#{cache_type.upcase} clear failure: #{err.message} IN "\
+          "#{err.backtrace[0]}"
         @results << Failure(CMT::Failure.new(
           context: "#{self.class.name}.#{__callee__}", message: msg
         ))

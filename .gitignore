@@ -1,7 +1,6 @@
 .bundle
 .rubocop-http*
 .yardoc
-client_config.yml
 config/*.yml
 coverage
 data

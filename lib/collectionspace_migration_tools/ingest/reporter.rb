@@ -95,10 +95,16 @@ module CollectionspaceMigrationTools
       end
 
       def process_row(row)
-        status = bucket_list.any?(row["cmt_s3_key"]) ? "failure" : "success"
-        row["CMT_ingest_status"] = status
-        row["CMT_ingest_message"] =
-          errs[CMT::S3.obj_key_log_format(row["cmt_s3_key"])]
+        key = row["cmt_s3_key"]
+        if key.nil? || key.empty?
+          row["CMT_ingest_status"] = "skip"
+          row["CMT_ingest_message"] = nil
+        else
+          status = bucket_list.any?(key) ? "failure" : "success"
+          row["CMT_ingest_status"] = status
+          row["CMT_ingest_message"] =
+            errs[CMT::S3.obj_key_log_format(row["cmt_s3_key"])]
+        end
         row
       end
 

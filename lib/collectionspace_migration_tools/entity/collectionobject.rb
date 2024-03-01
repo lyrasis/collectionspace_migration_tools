@@ -29,7 +29,8 @@ module CollectionspaceMigrationTools
         query = <<~SQL
           select obj.objectnumber as id, cc.refname, h.name as csid
           from collectionobjects_common obj
-          inner join misc on obj.id = misc.id and misc.lifecyclestate != 'deleted'
+          inner join misc on obj.id = misc.id and
+            misc.lifecyclestate != 'deleted'
           inner join hierarchy h on obj.id = h.id
           inner join collectionspace_core cc on obj.id = cc.id
         SQL

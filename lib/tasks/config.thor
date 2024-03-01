@@ -39,25 +39,32 @@ class Config < Thor
     (fails == 0) ? exit(0) : exit(1)
   end
 
-  desc "show", "print active config to screen"
+  desc "show", "print name of active config to screen"
+  method_option :verbose,
+    aliases: "-v",
+    desc: "Print full active config to screen"
   def show
-    pp(CMT.config)
+    verbose = options[:verbose]
+    if verbose
+      pp(CMT.config)
+    else
+      puts File.read(CMT.config.system.config_name_file)
+    end
     exit(0)
   end
 
   desc "switch CONFIG_NAME_WITHOUT_EXTENSION",
-    "Copies specified .yml file from `repo_dir/config` to client_config.yml"
+    "Validates the specified client config, and if valid, resets the current "\
+    "config value stored in `config_name_file` (see system config)"
   def switch(name)
-    CMT::Config::Switcher.call(config_name: name).either(
+    CMT::Config::Switcher.call(client: name).either(
       ->(success) {
         puts "NOW USING CONFIG:"
-        pp(CMT::Configuration.new)
+        pp(success)
         exit(0)
       },
       ->(failure) {
         puts failure
-        puts "STILL USING CONFIG:"
-        pp(CMT::Configuration.new)
         exit(1)
       }
     )

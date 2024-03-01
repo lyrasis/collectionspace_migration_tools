@@ -1,3 +1,2 @@
-redis:
-  refname_port: 6380
-  csid_port: 6381
+refname_port: 6380
+csid_port: 6381

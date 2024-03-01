@@ -12,12 +12,13 @@ module CollectionspaceMigrationTools
   # - expanded if give path external to project dir
   # - base dir + sub dir if relative subdir given
   #
-  # If subdirectory is given relative to project base directory, and does not exist, the
-  #   directory is created
+  # If subdirectory is given relative to project base directory, and does not
+  # exist, the directory is created
   class ConfigSubdirectoryHandler
     class << self
       # @param config [Struct]
-      # @param setting [Symbol] the setting/method containing the subdirectory value
+      # @param setting [Symbol] the setting/method containing the subdirectory
+      #   value
       def call(config:, setting:)
         new(config: config, setting: setting).call
       end
@@ -31,8 +32,11 @@ module CollectionspaceMigrationTools
     end
 
     # @param config [Struct]
-    # @param setting [Symbol] the setting/method containing the subdirectory value
+    # @param setting [Symbol] the setting/method containing the subdirectory
+    #   value
     def initialize(config:, setting:)
+      return unless config.respond_to?(setting)
+
       @config = config
       @setting = setting
       @updater = "#{setting}=".to_sym
@@ -41,6 +45,8 @@ module CollectionspaceMigrationTools
     end
 
     def call
+      return unless config
+
       if File.absolute_path?(value)
         handle_absolute_path
       elsif value.start_with?("~")

@@ -1,6 +1,7 @@
-system:
-  csv_chunk_size: 50
-  max_threads: 10
-  max_processes: 6
-  aws_profile: collectionspacemigrationtools
-  aws_media_ingest_profile: cs-media
+csv_chunk_size: 50
+max_threads: 10
+max_processes: 6
+aws_profile: collectionspacemigrationtools
+aws_media_ingest_profile: cs-media
+client_config_dir: ~/code/cs/migration_tools/config
+config_name_file: ~/code/cs/migration_tools/current_config

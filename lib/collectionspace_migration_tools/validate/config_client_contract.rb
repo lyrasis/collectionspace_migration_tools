@@ -14,6 +14,7 @@ module CollectionspaceMigrationTools
         required(:profile).filled(:string)
         required(:profile_version).filled(:string)
         required(:base_dir).filled(:string)
+        optional(:ingest_dir).filled(:string)
         optional(:batch_csv).maybe(:string)
         required(:mapper_dir).filled(:string)
         required(:batch_dir).filled(:string)
@@ -29,19 +30,31 @@ module CollectionspaceMigrationTools
         optional(:media_bucket).maybe(:string)
       end
 
-      rule(:base_dir) do
-        full = File.expand_path(value)
-        unless Dir.exist?(full)
-          key.failure("#{full} does not exist")
+      register_macro(:subdir_exists) do
+        unless value.nil?
+          path = if ["~", "/"].any? { |char| value.start_with?(char) }
+            File.expand_path(value)
+          else
+            File.join(File.expand_path(values[:base_dir]), value)
+          end
+          unless Dir.exist?(path)
+            key.failure("#{path} does not exist")
+          end
         end
       end
+
+      rule(:base_dir).validate(:dir_exists)
+
+      rule(:ingest_dir).validate(:subdir_exists)
+
+      rule(:mapper_dir).validate(:subdir_exists)
 
       rule(:base_uri) do
         key.failure(%(must end with "/cspace-services")) unless value.end_with?("/cspace-services")
       end
 
       rule(:batch_config_path) do
-        if key?
+        if key? && value
           full = File.expand_path(value)
           unless File.exist?(full)
             key.failure("#{full} does not exist")
