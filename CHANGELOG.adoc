@@ -29,6 +29,7 @@ These changes are merged into the `main` branch, but have not been released. Aft
 === Added
 
 * Optional `ingest_dir` setting in client config, which allows you to enter file name only when calling `thor batch add` `--csv` option for files in that default ingest directory.
+* `thor cspace:reindex` command to trigger fulltext reindexing of the configured CollectionSpace instance
 
 === Bugfixes
 
