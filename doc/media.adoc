@@ -91,6 +91,19 @@ There are columns for each expected derivative type. If that type is present, th
 
 == Observed failure patterns
 
+=== Wrong bucket encryption setup
+If Infrastructure creates a media ingest bucket without overriding what is now the default for encryption of S3 buckets, we run into problems.
+
+When trying to view a media file in the browser, you'll get an error including the message: Requests specifying Server Side Encryption with AWS KMS managed keys require AWS Signature Version 4
+
+The CollectionSpace application will also not be able to download the file from the S3 URL and ingest of blobs will fail.
+
+If you see this, you need to ask Infrastructure to change the encryption settings of the bucket to the one that works for media ingest. This is a pretty quick change for them to make.
+
+Unfortunately, any files already in the bucket will retain the previous, wrong encryption until they are copied in place.
+
+`utils/copy_media_bucket_objects_in_place.rb` is a quick and dirty script you can use to call the AWS S3 CLI's "copy this file in place" command on all objects in a bucket, based on a file containing the output of an `aws s3 ls` command on the bucket in question. You will need to update variables at the top of the script to use it.
+
 === Duplicate media added until bucket emptied
 
 Looks like:: `batch ingstat` reports the record as an ingest error, but you see many duplicates of the record in CS. AWS S3 ingest logs do not show ERROR or Exception messages for the given object key

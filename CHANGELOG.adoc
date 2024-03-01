@@ -30,7 +30,7 @@ These changes are merged into the `main` branch, but have not been released. Aft
 
 * Optional `ingest_dir` setting in client config, which allows you to enter file name only when calling `thor batch add` `--csv` option for files in that default ingest directory.
 * `thor cspace:reindex` command to trigger fulltext reindexing of the configured CollectionSpace instance
-
+* Utility script: `utils/copy_media_bucket_objects_in_place.rb` - If media ingest bucket is created without overriding the default AWS encryption settings, we run into problems with access to the files. Infrastructure can fix the encryption settings of the bucket, but any objects already in the bucket need to be copied in place to refresh them to use the new encryption settings. This is a quick/dirty script to do all that copying.
 === Bugfixes
 
 * Report issue/don't fail messily when there is a missing item type value in a nonhierarchicalrelationship row
