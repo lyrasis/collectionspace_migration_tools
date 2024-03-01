@@ -32,6 +32,8 @@ These changes are merged into the `main` branch, but have not been released. Aft
 
 === Bugfixes
 
+* Report issue/don't fail messily when there is a missing item type value in a nonhierarchicalrelationship row
+
 === Changed
 
 === Deleted

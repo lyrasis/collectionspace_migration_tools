@@ -57,6 +57,10 @@ module CollectionspaceMigrationTools
         combined = extracted.inject({}, :merge)
         mapped = yield(map_nhr_values(combined.keys))
 
+        if mapped.any?(&:nil?)
+          return Failure("Some records have no item_type value(s)")
+        end
+
         mapped << name
 
         Success(mapped.sort.join("|"))
