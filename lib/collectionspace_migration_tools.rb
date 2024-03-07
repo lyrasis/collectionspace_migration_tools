@@ -64,6 +64,14 @@ module CollectionspaceMigrationTools
       exit
     end
 
+    def get_csv_path(csv)
+      config = CMT.config.client
+      return csv unless config.respond_to?(:ingest_dir)
+      return csv if ["~", "/"].any? { |char| csv.start_with?(char) }
+
+      File.join(config.ingest_dir, csv)
+    end
+
     def domain
       @domain ||= client.domain
     end

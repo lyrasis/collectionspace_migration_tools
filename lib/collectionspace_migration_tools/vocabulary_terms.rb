@@ -8,7 +8,7 @@ module CollectionspaceMigrationTools
 
     def add(csv_path)
       processor = yield CMT::VocabularyTerms::TermsProcessorPreparer.call(
-        csv_path: csv_path
+        csv_path: CMT.get_csv_path(csv_path)
       )
       _result = yield processor.call
 
