@@ -42,8 +42,8 @@ module CollectionspaceMigrationTools
     end
 
     def prep_missing_terms(id)
-      _split = yield(CMT::Batch::MissingTerms::ReportSplitter.call(batch_id: id))
-      batches = yield(CMT::Batch::MissingTerms::BatchCreator.call(batch_id: id))
+      _split = yield CMT::Batch::MissingTerms::ReportSplitter.call(batch_id: id)
+      batches = yield CMT::Batch::MissingTerms::BatchCreator.call(batch_id: id)
 
       Success(batches)
     end

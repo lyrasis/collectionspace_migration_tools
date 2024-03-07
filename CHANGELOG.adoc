@@ -33,6 +33,10 @@ These changes are merged into the `main` branch, but have not been released. Aft
 
 * Speed up caching CSIDs and refnames by pipelining values directly to Redis instead of using individual collectionspace-refcache calls
 
+=== Bugfixes
+
+* Fix for #55 - `thor batch mtprep` command failing when all missing terms are vocabulary terms (not authority terms)
+
 == 3.0.0 (2024-03-01)
 === Breaking
 
