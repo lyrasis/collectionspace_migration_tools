@@ -37,6 +37,7 @@ These changes are merged into the `main` branch, but have not been released. Aft
 === Bugfixes
 
 * Fix for https://github.com/lyrasis/collectionspace_migration_tools/issues/55[#55] - `thor batch mtprep` command failing when all missing terms are vocabulary terms (not authority terms)
+* When batch config's `batch_mode` is "date details", autocache vocabularies for the batch (https://github.com/lyrasis/collectionspace_migration_tools/issues/58[#58])
 
 == 3.0.0 (2024-03-01)
 === Breaking
