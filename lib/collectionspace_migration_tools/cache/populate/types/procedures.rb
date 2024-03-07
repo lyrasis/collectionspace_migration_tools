@@ -10,8 +10,18 @@ module CollectionspaceMigrationTools
           end
 
           def signature(row)
-            type = CMT::RecordTypes.mappable_type_to_service_path_mapping[row["type"]]
+            type = CMT::RecordTypes.mappable_type_to_service_path_mapping[
+              row["type"]
+            ]
             [type, row["id"], row[cache_type.to_s]]
+          end
+
+          def key_val(row)
+            type = CMT::RecordTypes.mappable_type_to_service_path_mapping[
+              row["type"]
+            ]
+            key = cache.send(:procedure_key, type, row["id"])
+            [key, row[cache_type.to_s]]
           end
         end
       end
