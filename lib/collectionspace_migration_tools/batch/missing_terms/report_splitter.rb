@@ -8,8 +8,9 @@ module CollectionspaceMigrationTools
   module Batch
     module MissingTerms
       # Splits missing_terms.csv into separate CSVs for each type/subtype.
-      # @todo optimize this for huge batches so that it reads/writes in chunks/parallel rather than holding
-      #   all terms in memory. However, for initial go, we will assume there are not prohibitively large
+      # @TODO optimize this for huge batches so that it reads/writes in
+      #   chunks/parallel rather than holding all terms in memory. However, for
+      #   initial go, we will assume there are not prohibitively large
       #   missing term files to process
       class ReportSplitter
         include Dry::Monads[:result]
@@ -30,18 +31,20 @@ module CollectionspaceMigrationTools
         end
 
         def call
-          batch = yield(CMT::Batch.find(batch_id))
-          term_ct = yield(batch.get("missing_terms"))
+          batch = yield CMT::Batch.find(batch_id)
+          term_ct = yield batch.get("missing_terms")
           return Success("No missing terms to split") if term_ct == 0
 
           batches_dir = CMT.config.client.batch_dir
-          batch_dir = yield(batch.get("dir"))
-          source = "#{batches_dir}/#{batch_dir}/missing_terms.csv"
-          prephash = yield(prepare_by_authority(source))
-          written = yield(write(prephash))
-          paths = yield(check_write(written))
-          vocabs_paths = yield(rewrite_vocab_terms(source))
-          _vocabs_final = yield(swap_vocab_file(vocabs_paths))
+          batch_dir = yield batch.get("dir")
+          source = File.join(batches_dir, batch_dir, "missing_terms.csv")
+
+          prephash = yield prepare_by_authority(source)
+          written = yield write(prephash)
+          paths = yield check_write(written)
+
+          vocab_dir = CMT.config.client.ingest_dir || batch_dir
+          _vocabs_paths = yield rewrite_vocab_terms(source, vocab_dir)
           Success(paths)
         end
 
@@ -74,19 +77,17 @@ module CollectionspaceMigrationTools
           Success(by_auth)
         end
 
-        def rewrite_vocab_terms(source)
-          target = "#{source}.tmp"
-          headers = CMT::Csv::BatchTermReporter.headers.first(4)
+        def rewrite_vocab_terms(source, vocab_dir)
+          vocab_terms = CSV.readlines(source)
+            .select { |arr| arr.first == "vocabularies" }
+          return Success("No vocab terms") if vocab_terms.empty?
+
+          target = File.join(vocab_dir, "#{batch_id}_vocabulary_terms.csv")
+          headers = %w[vocab term]
 
           CSV.open(target, "wb") do |csv|
             csv << headers
-            SmarterCSV.process(source) do |rowarr|
-              row = rowarr[0]
-              vocab = row[:vocabulary]
-              next unless vocab.start_with?("vocabularies-")
-
-              csv << row.values
-            end
+            vocab_terms.each { |arr| csv << [arr[1], arr[3]] }
           end
         rescue => err
           msg = "#{err.message} IN #{err.backtrace[0]}"
@@ -94,16 +95,6 @@ module CollectionspaceMigrationTools
             message: msg))
         else
           Success([target, source])
-        end
-
-        def swap_vocab_file(vocabs_paths)
-          FileUtils.mv(vocabs_paths[0], vocabs_paths[1])
-        rescue => err
-          msg = "#{err.message} IN #{err.backtrace[0]}"
-          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-            message: msg))
-        else
-          Success()
         end
 
         def write(hash)
