@@ -27,6 +27,12 @@ These changes are merged into the `main` branch, but have not been released. Aft
 
 === Deprecated/Will break in a future version
 
+== 3.0.1 (2024-03-07)
+
+=== Changes
+
+* Speed up caching CSIDs and refnames by pipelining values directly to Redis instead of using individual collectionspace-refcache calls
+
 == 3.0.0 (2024-03-01)
 === Breaking
 

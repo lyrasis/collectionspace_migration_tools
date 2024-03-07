@@ -16,6 +16,8 @@ module CollectionspaceMigrationTools
       def initialize(cache_type:, rec_type:)
         @cache_type = cache_type
         @cache = CMT.send("#{cache_type}_cache".to_sym)
+        @redis = cache.instance_variable_get(:@cache)
+          .instance_variable_get(:@c)
         @cache_name = cache_type.upcase
         @rec_type = rec_type
         extend record_type_mixin
@@ -37,7 +39,7 @@ module CollectionspaceMigrationTools
 
       private
 
-      attr_reader :cache_type, :cache, :cache_name, :rec_type
+      attr_reader :cache_type, :cache, :redis, :cache_name, :rec_type
 
       def before_report(data)
         puts "Populating #{cache_name} cache (current size: #{cache.size}) "\
@@ -50,7 +52,9 @@ module CollectionspaceMigrationTools
       end
 
       def do_population(data)
-        data.each { |row| cache.send(command, *signature(row)) }
+        redis.pipelined do |pipeline|
+          data.each { |row| pipeline.set(*key_val(row)) }
+        end
       rescue => err
         Failure(
           CMT::Failure.new(context: "#{name}.#{__callee__}",
