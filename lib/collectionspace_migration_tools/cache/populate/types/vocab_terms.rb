@@ -12,6 +12,13 @@ module CollectionspaceMigrationTools
           def signature(row)
             [row["vocab"], row["term"], row[cache_type.to_s]]
           end
+
+          def key_val(row)
+            [
+              cache.send(:vocab_term_key, row["vocab"], row["term"]),
+              row[cache_type.to_s]
+            ]
+          end
         end
       end
     end

@@ -149,11 +149,19 @@ class Batch < Thor
   end
 
   desc "mtprep BATCHID",
-    "Splits missing term report into term source specific CSVs and creates batches to add terms"
+    "Splits missing term report into term source specific CSVs and creates "\
+    "batches to add terms"
   def mtprep(id)
     CMT::Batch.prep_missing_terms(id).either(
       ->(success) {
-        puts "Created batches: #{success.join(", ")}"
+        if success == "No missing terms batches to create"
+          puts "No missing authority terms. Check ingest or batch directory "\
+            "for vocabulary terms to load"
+        else
+          puts "Created batches: #{success.join(", ")}"
+          puts "Check ingest or batch directory for missing vocabulary terms "\
+            "to load"
+        end
         exit(0)
       },
       ->(failure) {

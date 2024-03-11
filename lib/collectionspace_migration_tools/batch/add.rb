@@ -23,7 +23,7 @@ module CollectionspaceMigrationTools
 
       def call(id:, csv:, rectype:, action:)
         valid_id = yield(validate_id(id))
-        csvpath = get_csv_path(csv)
+        csvpath = CMT.get_csv_path(csv)
         valid_csv = yield(validate_csv(csvpath))
         valid_rectype = yield(CMT::RecordTypes.valid_mappable?(rectype))
         valid_action = yield(validate_action(action))
@@ -49,14 +49,6 @@ module CollectionspaceMigrationTools
       private
 
       attr_reader :path, :headers, :ids
-
-      def get_csv_path(csv)
-        config = CMT.config.client
-        return csv unless config.respond_to?(:ingest_dir)
-        return csv if ["~", "/"].any? { |char| csv.start_with?(char) }
-
-        File.join(config.ingest_dir, csv)
-      end
 
       def allowed_actions
         %w[create update delete]

@@ -14,6 +14,14 @@ module CollectionspaceMigrationTools
               row[cache_type.to_s]]
           end
 
+          def key_val(row)
+            [
+              cache.send(:relation_key, reltype(row), row["subjectcsid"],
+                row["objectcsid"]),
+              row[cache_type.to_s]
+            ]
+          end
+
           private
 
           def reltype(row)
