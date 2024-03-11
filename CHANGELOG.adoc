@@ -27,7 +27,7 @@ These changes are merged into the `main` branch, but have not been released. Aft
 
 === Deprecated/Will break in a future version
 
-== 3.0.1 (2024-03-07)
+== 3.0.1 (2024-03-11)
 
 === Changes
 
