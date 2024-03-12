@@ -14,7 +14,7 @@ module CollectionspaceMigrationTools
           clear_cache_before_refresh: true,
           csv_delimiter: ",",
           s3_delimiter: "|",
-          media_with_blob_upload_delay: 250,
+          media_with_blob_upload_delay: 500,
           max_media_upload_threads: 5
         }
         @validator = CMT::Validate::ConfigClientContract
