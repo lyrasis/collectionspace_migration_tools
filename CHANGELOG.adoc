@@ -27,6 +27,12 @@ These changes are merged into the `main` branch, but have not been released. Aft
 
 === Deprecated/Will break in a future version
 
+== 3.0.2 (unreleased)
+
+=== Changes
+
+* `csid delete --csv` option now uses `ingest_dir` if configured and only a file name is given
+
 == 3.0.1 (2024-03-11)
 
 === Changes
