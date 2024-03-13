@@ -19,8 +19,8 @@ module CollectionspaceMigrationTools
       Success(response)
     end
 
-    # @param datestr [String] in format "2023-10-31", "2023-10-31_23:59",
-    #   "2023-10-31_23:59:06", or "2023-10-31_23:59:06.592"
+    # @param datestr [String] in format "2023-10-31", "2023-10-31 23:59",
+    #   "2023-10-31 23:59:06", or "2023-10-31 23:59:06.592"
     # @return [Integer] epoch-with-milliseconds date/time expression used in
     #   AWS log timestamps
     def self.timestamp_from_datestring(datestr)
@@ -55,7 +55,7 @@ module CollectionspaceMigrationTools
     end
 
     def self.format_timestring(time)
-      time.strftime("%Y-%m-%d_%H:%M:%S.%L")
+      time.strftime("%Y-%m-%d %H:%M:%S.%L")
     end
 
     def setup_client(client)

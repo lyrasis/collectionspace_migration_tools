@@ -48,7 +48,8 @@ module CollectionspaceMigrationTools
         end
 
         def post_ingest_headers
-          %w[ingest_done? ingest_complete_time ingest_errs ingest_oks]
+          %w[ingest_done? ingest_complete_time ingest_duration
+            ingest_errs ingest_oks]
         end
 
         def duplicates_headers
