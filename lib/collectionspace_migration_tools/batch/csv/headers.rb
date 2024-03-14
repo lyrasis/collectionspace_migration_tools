@@ -9,7 +9,7 @@ module CollectionspaceMigrationTools
         module_function
 
         def supplied_headers
-          %w[id source_csv mappable_rectype action]
+          %w[id source_csv mappable_rectype action batch_status]
         end
 
         def dependency_value_lookup(steptype)

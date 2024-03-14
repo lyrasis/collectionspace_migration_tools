@@ -27,6 +27,8 @@ module CollectionspaceMigrationTools
         CMT::Batch::Csv::Headers.ingest_headers.first
       end
 
+      def upload_previous_status = "mapped"
+
       def uploadable?
         check_status("upload")
       end

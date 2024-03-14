@@ -30,6 +30,8 @@ module CollectionspaceMigrationTools
         CMT::Batch::Csv::Headers.upload_headers.first
       end
 
+      def map_previous_status = "added"
+
       def mappable?
         check_status("map")
       end

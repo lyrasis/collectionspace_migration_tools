@@ -37,6 +37,7 @@ module CollectionspaceMigrationTools
         :report_path, :updated, :status
 
       def do_reporting
+        _bs = yield report("batch_status", "ingested", overwrite: true)
         _status = yield report("ingest_done?", Time.now.strftime("%F %H_%M"))
 
         if done_time

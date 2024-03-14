@@ -26,6 +26,8 @@ module CollectionspaceMigrationTools
         CMT::Batch::Csv::Headers.final_headers.first
       end
 
+      def ingest_previous_status = "uploaded"
+
       def ingestable?
         check_status("ingest")
       end
