@@ -39,8 +39,7 @@ module CollectionspaceMigrationTools
 
         # @param status [Symbol] eg. :mappable?, :uploadable?
         def find_status(status)
-          result = table.map { |row| CMT::Batch::Batch.new(self, row["id"]) }
-            .select(&status)
+          result = table.delete_if { |row| !to_batch(row).send(status) }
           if result.empty?
             Failure("No #{status.to_s.delete_suffix("?")} batches")
           else
@@ -118,6 +117,10 @@ module CollectionspaceMigrationTools
               read_batches_csv.value!
             }
           )
+        end
+
+        def to_batch(row)
+          CMT::Batch::Batch.new(self, row["id"])
         end
 
         def delete_from_table(bid)

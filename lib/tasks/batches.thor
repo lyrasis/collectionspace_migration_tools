@@ -128,11 +128,10 @@ class Batches < Thor
 
   no_commands do
     def batch_lister(status)
-      CMT::Batch::Csv::Reader.new.find_status(status).either(
+      reader = CMT::Batch::Csv::Reader.new
+      reader.find_status(status).either(
         ->(success) {
-          success.each do |batch|
-            puts batch.printable_row
-          end
+          reader.to_cli_table(success)
           exit(0)
         },
         ->(failure) {

@@ -32,6 +32,9 @@ module CollectionspaceMigrationTools
         Success()
       end
 
+      def mappable? = batch_status == "added"
+      def uploadable? = batch_status == "mapped"
+      def ingestable? = batch_status == "uploaded"
       def done? = batch_status == "ingested"
 
       def get(field)
