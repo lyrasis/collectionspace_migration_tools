@@ -44,7 +44,7 @@ class Batches < Thor
   # @todo fix this so it uses do notation and it cleanly exitable
   desc "delete_done", "Delete completed batches"
   def delete_done
-    done_batches = CMT::Batch::Csv::Reader.new.find_status(:is_done?)
+    done_batches = CMT::Batch::Csv::Reader.new.find_status(:done?)
     puts done_batches.failure if done_batches.failure?
 
     done_batches.value!.each do |batch|
@@ -55,7 +55,7 @@ class Batches < Thor
 
   desc "done", "Brief listing of batches that are done"
   def done
-    batch_lister(:is_done?)
+    batch_lister(:done?)
   end
 
   desc "ingstat",
@@ -87,20 +87,6 @@ class Batches < Thor
   def map
     CMT::Batches.map(options[:autocache], options[:clearcache]).either(
       ->(success) { exit(0) },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
-  end
-
-  desc "mark_done", "Mark done any batches with all steps completed"
-  def mark_done
-    CMT::Batch::Csv::DoneMarker.call.either(
-      ->(success) {
-        puts "Batches marked done: #{success.join(", ")}"
-        exit(0)
-      },
       ->(failure) {
         puts failure
         exit(1)

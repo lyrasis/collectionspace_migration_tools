@@ -23,7 +23,7 @@ module CollectionspaceMigrationTools
       end
 
       def ingest_next_step
-        CMT::Batch::Csv::Headers.final_headers.first
+        "done"
       end
 
       def ingest_previous_status = "uploaded"

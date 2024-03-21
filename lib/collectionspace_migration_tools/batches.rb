@@ -6,13 +6,13 @@ module CollectionspaceMigrationTools
 
     module_function
 
-    # @param status [Symbol] :mappable?, :uploadable?, :ingestable?, :is_done?
+    # @param status [Symbol] :mappable?, :uploadable?, :ingestable?, :done?
     # @returns Dry::Monad::Result wrapping array of Batch::Batch objects
     def by_status(status)
       CMT::Batch::Csv::Reader.new.find_status(status)
     end
 
-    # @param status [Symbol] :mappable?, :uploadable?, :ingestable?, :is_done?
+    # @param status [Symbol] :mappable?, :uploadable?, :ingestable?, :done?
     # @returns [Array<String>] ids of batches matching status
     def ids_by_status(status)
       batches = yield(CMT::Batch::Csv::Reader.new.find_status(status))

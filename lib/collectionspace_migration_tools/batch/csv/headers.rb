@@ -56,18 +56,13 @@ module CollectionspaceMigrationTools
           %w[duplicates_checked? duplicates]
         end
 
-        def final_headers
-          %w[done?]
-        end
-
         def all_headers
           [
             supplied_headers,
             derived_at_add_headers,
             map_headers,
             upload_headers,
-            ingest_headers,
-            final_headers
+            ingest_headers
           ].flatten
         end
 

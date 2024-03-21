@@ -27,7 +27,11 @@ These changes are merged into the `main` branch, but have not been released. Aft
 
 === Deprecated/Will break in a future version
 
-== 3.0.2 (unreleased)
+== 4.0.0 (unreleased)
+
+=== Breaking
+
+* `done` as an explicit batch status is removed from the application. Commands to mark batches as done are removed. `batches:done` will now display all batches with batch_status = ingested.
 
 === Changes
 
