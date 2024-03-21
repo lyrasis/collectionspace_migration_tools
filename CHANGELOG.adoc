@@ -32,6 +32,7 @@ These changes are merged into the `main` branch, but have not been released. Aft
 === Breaking
 
 * `done` as an explicit batch status is removed from the application. Commands to mark batches as done are removed. `batches:done` will now display all batches with batch_status = ingested.
+* `batches:to_ingcheck` command renamed `batches:to_ingstat`, in order to be consistent with `batches:ingstat` and `batch:ingstat` commands.
 
 === Changes
 

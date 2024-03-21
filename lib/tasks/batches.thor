@@ -99,9 +99,9 @@ class Batches < Thor
     CMT::Batch::Csv::Reader.new.to_cli_table
   end
 
-  desc "to_ingcheck",
-    "Brief listing of batches uploaded and needing ingest check"
-  def to_ingcheck
+  desc "to_ingstat",
+    "Brief listing of batches uploaded and needing ingest status check"
+  def to_ingstat
     batch_lister(:ingestable?)
   end
 
