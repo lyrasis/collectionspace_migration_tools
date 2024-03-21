@@ -34,11 +34,15 @@ These changes are merged into the `main` branch, but have not been released. Aft
 * `done` as an explicit batch status is removed from the application. Commands to mark batches as done are removed. `batches:done` will now display all batches with batch_status = ingested.
 * `batches:to_ingcheck` command renamed `batches:to_ingstat`, in order to be consistent with `batches:ingstat` and `batch:ingstat` commands.
 
+=== Added
+
+* `batch_status` column to batches CSV
+* `ingest duration` calculated, shown in STDOUT, and recorded in batches CSV if ingest is complete when `batch:ingstat` is run
+
 === Changes
 
 * `csid delete --csv` option now uses `ingest_dir` if configured and only a file name is given
 * Reset default client config `media_with_blob_upload_delay` value to 500ms in accordance with the sample client config
-* `batch ingstat` if ingest is complete when this is run, ingest duration will be recorded in batches CSV and shown in STDOUT
 * `batches show` now shows headers and batch status
 
 == 3.0.1 (2024-03-11)
