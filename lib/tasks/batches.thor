@@ -58,8 +58,8 @@ class Batches < Thor
     batch_lister(:done?)
   end
 
-  desc "ingstat",
-    "Checks ingest status of all batches that have been uploaded but not successfully ingest checked"
+  desc "ingstat", "Checks ingest status of all batches that have been "\
+    "uploaded but not successfully ingest checked"
   option :sleep, required: false, type: :numeric, default: 1.5
   option :checks, required: false, type: :numeric, default: 1
   option :rechecks, required: false, type: :numeric, default: 1
