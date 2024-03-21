@@ -110,7 +110,7 @@ class Batches < Thor
 
   desc "show", "Brief listing of batch ids and info"
   def show
-    CMT::Batch::Csv::Reader.new.list
+    CMT::Batch::Csv::Reader.new.to_cli_table
   end
 
   desc "to_ingcheck",

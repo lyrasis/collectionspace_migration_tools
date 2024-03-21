@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "csv"
+require "tabulo"
 
 module CollectionspaceMigrationTools
   module Batch
@@ -47,8 +48,20 @@ module CollectionspaceMigrationTools
           end
         end
 
+        # @param data [#each] where each returns a CSV Row
+        def to_cli_table(data = table)
+          tt = Tabulo::Table.new(data.by_row, align_header: :left,
+            align_body: :left)
+          header_map.each do |real, cli|
+            tt.add_column(cli) { |row| row[real] }
+          end
+          tt.add_column("source") { |row| File.basename(row["source_csv"]) }
+          puts tt.pack
+        end
+
         def list
           table.each do |row|
+            puts %w[id status action recs rectype source].join("\t")
             puts printable_row(row)
           end
         end
@@ -56,6 +69,7 @@ module CollectionspaceMigrationTools
         def printable_row(row)
           [
             row["id"],
+            row["batch_status"],
             row["action"],
             row["rec_ct"],
             row["mappable_rectype"],
@@ -77,6 +91,17 @@ module CollectionspaceMigrationTools
         private
 
         attr_reader :rewriter, :headers
+
+        # Map actual CSV headers to headers for CLI table display
+        def header_map
+          {
+            "id" => "id",
+            "batch_status" => "status",
+            "action" => "action",
+            "rec_ct" => "recs",
+            "mappable_rectype" => "rectype"
+          }
+        end
 
         def check_id_uniqueness
           uniq_ids = ids.uniq
