@@ -5,7 +5,7 @@ module CollectionspaceMigrationTools
     class PostIngestCheckRunner
       include CMT::Batch::DataGettable
       include Dry::Monads[:result]
-      include Dry::Monads::Do.for(:call)
+      include Dry::Monads::Do.for(:call, :batch_end_time)
 
       class << self
         def call(...)
@@ -23,16 +23,7 @@ module CollectionspaceMigrationTools
       end
 
       def call
-        unless completed_time?
-          events = yield CMT::Logs::BatchEventsFiltered.call(
-            batchid: batch.id,
-            pattern: "%Decoded batch\\x3A #{batch.id}\\s%"
-          )
-          donetime = yield CMT::Logs.datestring_from_timestamp(
-            events.last.timestamp
-          )
-        end
-
+        donetime = yield batch_end_time
         errs = yield CMT::Ingest::ErrorMessageCompiler.call(
           batch: batch,
           bucket_list: bucket_list
@@ -46,7 +37,7 @@ module CollectionspaceMigrationTools
           list: bucket_list,
           reporter: ingest_item_reporter
         }
-        report_params[:done_time] = donetime unless completed_time?
+        report_params[:done_time] = donetime
 
         _ingest_report = yield CMT::Batch::PostIngestReporter.call(
           **report_params
@@ -85,6 +76,22 @@ module CollectionspaceMigrationTools
 
       def completed_time?
         true if batch.ingest_complete_time && !batch.ingest_complete_time.empty?
+      end
+
+      def batch_end_time
+        if completed_time?
+          donetime = yield get_batch_data(batch, "ingest_complete_time")
+        else
+          events = yield CMT::Logs::BatchEventsFiltered.call(
+            batchid: batch.id,
+            pattern: "%Decoded batch\\x3A #{batch.id}\\s%"
+          )
+          donetime = yield CMT::Logs.datestring_from_timestamp(
+            events.last.timestamp
+          )
+        end
+
+        Success(donetime)
       end
 
       def dupe_checkable?(rectype, action)

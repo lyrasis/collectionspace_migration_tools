@@ -15,7 +15,7 @@ module CollectionspaceMigrationTools
       end
 
       def ingest_step_headers
-        CMT::Batch::Csv::Headers.ingest_headers - ["ingest_complete_time"]
+        CMT::Batch::Csv::Headers.ingest_headers
       end
 
       def ingest_step_report_paths
@@ -23,8 +23,10 @@ module CollectionspaceMigrationTools
       end
 
       def ingest_next_step
-        CMT::Batch::Csv::Headers.final_headers.first
+        "done"
       end
+
+      def ingest_previous_status = "uploaded"
 
       def ingestable?
         check_status("ingest")

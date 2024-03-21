@@ -18,6 +18,7 @@ module CollectionspaceMigrationTools
       def rollback_step(steptype)
         _checked = yield(rollbackable?(steptype))
         _cleared = yield(clear_step_fields(steptype))
+        _status_updated = yield(rollback_status(steptype))
         _rewritten = yield(rewrite)
         _deleted = yield(delete_step_reports(steptype))
 
@@ -64,6 +65,17 @@ module CollectionspaceMigrationTools
         Success()
       end
       private :clear_step_fields
+
+      def rollback_status(steptype)
+        meth = "#{steptype}_previous_status".to_sym
+        data["batch_status"] = send(meth)
+      rescue => err
+        msg = "#{err.message} IN #{err.backtrace[0]}"
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
+          message: msg))
+      else
+        Success()
+      end
 
       def delete_step_reports(steptype)
         meth = "#{steptype}_step_report_paths".to_sym

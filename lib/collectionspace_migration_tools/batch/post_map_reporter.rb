@@ -46,6 +46,7 @@ module CollectionspaceMigrationTools
       end
 
       def do_reporting
+        _bs = yield report("batch_status", "mapped", overwrite: true)
         _status = yield(report("mapped?", Time.now.strftime("%F_%H_%M")))
         _dir = yield(report("dir", File.basename(dir)))
         successes = yield(count_xml_files)

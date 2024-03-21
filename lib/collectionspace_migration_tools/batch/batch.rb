@@ -32,25 +32,16 @@ module CollectionspaceMigrationTools
         Success()
       end
 
-      def is_done?
-        return true if done? == "y"
-
-        missing_vals = CMT::Batch::Csv::Headers.populated_if_done_headers
-          .map { |field| send(field.to_sym) }
-          .select { |val| val.nil? || val.empty? }
-        missing_vals.empty? ? true : false
-      end
+      def mappable? = batch_status == "added"
+      def uploadable? = batch_status == "mapped"
+      def ingestable? = batch_status == "uploaded"
+      def done? = batch_status == "ingested"
 
       def get(field)
         val = send(field.to_sym)
         return Failure("No value for #{field}") if val.nil? || val.empty?
 
         Success(val)
-      end
-
-      def mark_done
-        data["done?"] = "y"
-        rewrite
       end
 
       # Each header from batches CSV becomes a method name returning the value for this batch

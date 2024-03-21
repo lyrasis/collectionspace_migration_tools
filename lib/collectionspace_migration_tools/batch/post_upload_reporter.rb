@@ -31,6 +31,7 @@ module CollectionspaceMigrationTools
       private
 
       def do_reporting
+        _bs = yield report("batch_status", "uploaded", overwrite: true)
         _status = yield(report("uploaded?", Time.now.strftime("%F_%H_%M")))
         successes = yield(
           CMT::Batch::CsvRowCounter.call(
