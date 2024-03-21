@@ -15,7 +15,7 @@ module CollectionspaceMigrationTools
       end
 
       def ingest_step_headers
-        CMT::Batch::Csv::Headers.ingest_headers - ["ingest_complete_time"]
+        CMT::Batch::Csv::Headers.ingest_headers
       end
 
       def ingest_step_report_paths
