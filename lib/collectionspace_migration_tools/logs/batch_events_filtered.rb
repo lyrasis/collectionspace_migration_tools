@@ -35,6 +35,7 @@ module CollectionspaceMigrationTools
         batch = yield CMT::Batch.find(batchid)
         params = build_params(batch, streams)
         response = yield client_response(client, :filter_log_events, params)
+        binding.pry
         events = yield get_events(response, selector)
 
         Success(events)

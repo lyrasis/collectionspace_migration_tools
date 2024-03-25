@@ -37,9 +37,9 @@ module CollectionspaceMigrationTools
           _statuscheck = yield CMT::Batch::IngestStatusChecker.call(
             lister: lister, wait: wait, checks: checks, rechecks: rechecks
           )
-          bucket_objs = lister.objects
         end
 
+        bucket_objs = lister.objects
         _post = yield CMT::Batch::PostIngestCheckRunner.call(
           batch: batch, bucket_list: bucket_objs, autodelete: autodelete
         )

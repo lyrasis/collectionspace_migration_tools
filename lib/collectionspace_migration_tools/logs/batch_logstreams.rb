@@ -37,18 +37,16 @@ module CollectionspaceMigrationTools
       # @return [Array<Aws::CloudWatchLogs::Types::LogStream>] wrapped in
       #   Dry::Monad::Success
       def call
-        client = yield CMT::Build::LogClient.call
         batch = yield CMT::Batch.find(batchid)
         starttime = yield get_batch_data(batch, "ingest_start_time")
         startts = yield CMT::Logs.timestamp_from_datestring(starttime)
         min_ts = startts - 20000
         max_ts = get_endtime(batch)
+        allstreams = yield CMT::Logs::GetLogstreams.call(:desc)
+        binding.pry
+        eligible = yield get_eligible(allstreams, min_ts, max_ts)
 
-        response = yield client_response(client, :describe_log_streams, params)
-        selector = build_selector(min_ts, max_ts)
-        streams = yield select_eligible(response, selector)
-
-        Success(streams)
+        Success(eligible)
       end
 
       private
@@ -62,6 +60,20 @@ module CollectionspaceMigrationTools
         CMT::Logs.timestamp_from_datestring(val).value!
       end
 
+      def get_eligible(allstreams, min_ts, max_ts)
+        selector = build_selector(min_ts, max_ts)
+        result = allstreams.select(&selector)
+      rescue => err
+        msg = "#{err.message} IN #{err.backtrace[0]}"
+        Failure(
+          CMT::Failure.new(
+            context: "#{name}.#{__callee__}", message: msg
+          )
+        )
+      else
+        Success(result)
+      end
+
       def build_selector(min_ts, max_ts)
         if max_ts
           ->(logstream) do
@@ -71,24 +83,6 @@ module CollectionspaceMigrationTools
         else
           ->(logstream) { logstream.creation_time >= min_ts }
         end
-      end
-
-      def select_eligible(response, selector)
-        streams = streams_for_batch(response.log_streams, selector)
-        return Success(streams) if response.last_page?
-
-        get_from_next(response.next_page, selector, [streams])
-      end
-
-      def get_from_next(response, selector, streams)
-        streams << streams_for_batch(response.log_streams, selector)
-        return Success(streams.flatten) if response.last_page?
-
-        get_from_next(response.next_page, selector, streams)
-      end
-
-      def streams_for_batch(arr, selector)
-        arr.select { |stream| selector.call(stream) }
       end
     end
   end

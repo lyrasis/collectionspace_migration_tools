@@ -19,35 +19,28 @@ module CollectionspaceMigrationTools
         @start_events_per_stream = start_events_per_stream
         @end_events_per_stream = end_events_per_stream
         @outpath = outpath
-        @client = setup_client(CMT::Build::LogClient.call)
         @log_group_name = CMT.config.client.log_group_name
       end
 
-      # @return [Aws::CloudWatchLogs::Types::LogStream] wrapped in
-      #   Dry::Monad::Success
+      # @return [Dry::Monad::Result]
+      # Writes the following to the given file:
+      #
+      # - Header with log stream name
+      # - The first n events for the stream
+      # - The last n events for the stream
       def call
-        strparam = {
-          log_group_name: log_group_name,
-          order_by: "LastEventTime",
-          descending: false
-        }
-        response = yield client_response(
-          client, :describe_log_streams, strparam
-        )
+        client = yield CMT::Build::LogClient.call
+        streams = yield CMT::Logs::GetLogstreams.call(:asc)
         file = File.open(outpath, "w")
-        response.each { |page| report_page_streams(client, page, file) }
+        streams.each { |stream| report(client, stream, file) }
         file.close
         Success()
       end
 
       private
 
-      attr_reader :client, :outpath, :log_group_name, :start_events_per_stream,
-        :end_events_per_stream
-
-      def report_page_streams(client, page, file)
-        page.log_streams.each { |stream| report(client, stream, file) }
-      end
+      attr_reader :start_events_per_stream, :end_events_per_stream, :outpath,
+        :log_group_name
 
       def report(client, stream, file)
         file << "========================================\n"
