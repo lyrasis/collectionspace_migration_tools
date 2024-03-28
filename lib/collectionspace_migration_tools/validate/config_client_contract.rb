@@ -6,6 +6,8 @@ module CollectionspaceMigrationTools
   module Validate
     class ConfigClientContract < CMT::Validate::ApplicationContract
       schema do
+        optional(:archive_batches).filled(:bool)
+        optional(:batch_archive_filename).maybe(:string)
         required(:base_uri).filled(:string)
         required(:username).filled(:string)
         required(:password).filled(:string)
