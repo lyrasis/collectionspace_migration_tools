@@ -14,6 +14,8 @@ module CollectionspaceMigrationTools
 
       attr_reader :mode
 
+      # @param csv [CMT::Batch::Csv::Reader]
+      # @param id [String] batch id
       def initialize(csv, id)
         @csv = csv
         @id = id
@@ -48,8 +50,8 @@ module CollectionspaceMigrationTools
         str_meth = meth.to_s
         return data[str_meth] if data.key?(str_meth)
 
-        message = "You called #{str_meth} with #{args}. This method doesn't exist."
-        raise NoMethodError, message
+        raise NoMethodError, "You called #{str_meth} with #{args}. This "\
+          "method doesn't exist."
       end
 
       def populate_field(key, value, overwrite: false)
