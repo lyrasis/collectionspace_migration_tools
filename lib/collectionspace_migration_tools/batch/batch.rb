@@ -45,7 +45,8 @@ module CollectionspaceMigrationTools
         Success(val)
       end
 
-      # Each header from batches CSV becomes a method name returning the value for this batch
+      # Each header from batches CSV becomes a method name returning the value
+      # for this batch
       def method_missing(meth, *args)
         str_meth = meth.to_s
         return data[str_meth] if data.key?(str_meth)
@@ -71,7 +72,7 @@ module CollectionspaceMigrationTools
 
       def prefix
         str = Base64.urlsafe_encode64("#{id}#{CMT.config.client.s3_delimiter}",
-          padding: false)
+                                      padding: false)
         str[0..-2]
       end
 
