@@ -12,7 +12,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::CsidCacheDependencyIdentifi
       let(:path) { "foo" }
       let(:mapper) { CMT::Parse::RecordMapper.call("acquisition").value! }
 
-      it "returns expected", :aggregate_failures do
+      it "returns expected" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq("acquisition")
       end
@@ -22,7 +22,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::CsidCacheDependencyIdentifi
       let(:path) { "foo" }
       let(:mapper) { CMT::Parse::RecordMapper.call("objecthierarchy").value! }
 
-      it "returns expected", :aggregate_failures do
+      it "returns expected" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq("objecthierarchy|collectionobject")
       end
@@ -37,7 +37,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::CsidCacheDependencyIdentifi
         CMT::Parse::RecordMapper.call("authorityhierarchy").value!
       end
 
-      it "returns expected", :aggregate_failures do
+      it "returns expected" do
         expect(result).to be_a(Dry::Monads::Success)
         expected = "authorityhierarchy|citation-local|citation-worldcat|concept-activity|concept-associated|location-local|location-offsite|organization-local|organization-ulan|person-local|person-ulan|place-local|place-tgn|work-cona|work-local"
         expect(result.value!).to eq(expected)
@@ -53,7 +53,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::CsidCacheDependencyIdentifi
         CMT::Parse::RecordMapper.call("nonhierarchicalrelationship").value!
       end
 
-      it "returns expected", :aggregate_failures do
+      it "returns expected" do
         expect(result).to be_a(Dry::Monads::Success)
         expected = "acquisition|collectionobject|exhibition|group|loanin|nonhierarchicalrelationship"
         expect(result.value!).to eq(expected)

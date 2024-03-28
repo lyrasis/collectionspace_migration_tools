@@ -12,7 +12,7 @@ RSpec.describe CollectionspaceMigrationTools::Validate::ConfigSystemContract do
       data
     end
 
-    it "returns Failure with expected message", :aggregate_failures do
+    it "returns Failure with expected message" do
       expect(result).to be_a(Dry::Monads::Failure)
       expect(result.failure.errors(full: true).to_h.values[0][0]).to eq(
         "aws_profile is missing"

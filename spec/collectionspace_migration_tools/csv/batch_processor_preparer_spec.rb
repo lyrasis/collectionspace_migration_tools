@@ -17,7 +17,7 @@ RSpec.describe CollectionspaceMigrationTools::Csv::BatchProcessorPreparer do
       described_class.call(csv_path: csv_path, rectype: rectype, action: action)
     end
 
-    it "is Success", :aggregate_failures do
+    it "is Success" do
       expect(result).to be_a(Dry::Monads::Success)
       expect(result.value!).to be_a(CMT::Csv::BatchProcessor)
     end

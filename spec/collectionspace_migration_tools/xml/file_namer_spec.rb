@@ -12,7 +12,7 @@ RSpec.describe CollectionspaceMigrationTools::Xml::FileNamer do
 
     context "with rec_id = 123" do
       let(:rec_id) { "123" }
-      it "returns Success containing expected name", :aggregate_failures do
+      it "returns Success containing expected name" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq(hashed)
       end
@@ -20,7 +20,7 @@ RSpec.describe CollectionspaceMigrationTools::Xml::FileNamer do
 
     context "with rec_id = " do
       let(:rec_id) { "" }
-      it "returns Failure", :aggregate_failures do
+      it "returns Failure" do
         expect(result).to be_a(Dry::Monads::Failure)
         expect(result.failure.message).to eq("no id found for record")
       end

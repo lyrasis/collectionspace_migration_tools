@@ -33,6 +33,10 @@ RSpec.configure do |config|
     expectations.max_formatted_output_length = 2000
   end
 
+  config.define_derived_metadata do |meta|
+    meta[:aggregate_failures] = true
+  end
+
   config.mock_with(:rspec) do |mocks|
     mocks.verify_doubled_constant_names = true
     mocks.verify_partial_doubles = true

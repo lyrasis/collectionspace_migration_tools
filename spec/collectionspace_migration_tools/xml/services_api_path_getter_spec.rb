@@ -18,7 +18,7 @@ RSpec.describe CollectionspaceMigrationTools::Xml::ServicesApiPathGetter do
         }
       end
 
-      it "returns Success containing expected path", :aggregate_failures do
+      it "returns Success containing expected path" do
         path = "/personauthorities/urn:cspace:name(ulan_pa)/items"
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq(path)
@@ -35,7 +35,7 @@ RSpec.describe CollectionspaceMigrationTools::Xml::ServicesApiPathGetter do
         }
       end
 
-      it "returns Success containing expected path", :aggregate_failures do
+      it "returns Success containing expected path" do
         path = "/collectionobjects"
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq(path)
