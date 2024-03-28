@@ -82,9 +82,13 @@ module CollectionspaceMigrationTools
         if completed_time?
           donetime = yield get_batch_data(batch, "ingest_complete_time")
         else
+          st = yield get_batch_data(batch, "ingest_start_time")
+          starttime = yield CMT::Logs.timestamp_from_datestring(st)
+
           events = yield CMT::Logs::BatchEventsFiltered.call(
             batchid: batch.id,
-            pattern: "%Decoded batch\\x3A #{batch.id}\\s%"
+            pattern: "%Decoded batch\\x3A #{batch.id}\\s%",
+            start_time: starttime
           )
           donetime = yield CMT::Logs.datestring_from_timestamp(
             events.last.timestamp
