@@ -7,8 +7,7 @@ module CollectionspaceMigrationTools
   module Batch
     class Batch
       include Dry::Monads[:result]
-      include Dry::Monads::Do.for(:call, :validate_csv, :delete,
-        :get_batch_data)
+      include Dry::Monads::Do.for(:delete, :get_batch_data)
       include CMT::Batch::Mappable
       include CMT::Batch::Uploadable
       include CMT::Batch::Ingestable
