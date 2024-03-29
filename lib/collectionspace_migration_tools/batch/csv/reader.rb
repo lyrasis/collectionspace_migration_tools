@@ -14,7 +14,7 @@ module CollectionspaceMigrationTools
 
         def initialize(
           data: nil,
-          rewriter: CMT::Batch::Csv::Rewriter.new,
+          rewriter: CMT::Csv::Rewriter.new(CMT.config.client.batch_csv),
           headers: CMT::Batch::Csv::Headers.all_headers
         )
           data = get_data if data.nil?

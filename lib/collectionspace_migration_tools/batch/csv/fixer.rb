@@ -18,7 +18,7 @@ module CollectionspaceMigrationTools
 
         def initialize(
           data: File.read(CMT.config.client.batch_csv),
-          rewriter: CMT::Batch::Csv::Rewriter.new,
+          rewriter: CMT::Csv::Rewriter.new(CMT.config.client.batch_csv),
           headers: CMT::Batch::Csv::Headers.all_headers,
           derived_headers: CMT::Batch::Csv::Headers.derived_headers
         )
