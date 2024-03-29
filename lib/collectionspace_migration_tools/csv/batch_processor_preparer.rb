@@ -5,7 +5,8 @@ require "dry/monads/do"
 
 module CollectionspaceMigrationTools
   module Csv
-    # All the preparatory stuff to successfully spin up a CMT::Csv::BatchProcessor
+    # All the preparatory stuff to successfully spin up a
+    # CMT::Csv::BatchProcessor
     class BatchProcessorPreparer
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)
@@ -21,6 +22,7 @@ module CollectionspaceMigrationTools
       # @param csv [String] path to CSV
       # @param rectype [String] record type for retrieving RecordMapper
       # @param action [String<'CREATE', 'UPDATE', 'DELETE'>]
+      # @param batch [nil, String] batch id
       def initialize(csv_path:, rectype:, action:, batch: nil)
         @csv_path = csv_path
         @rectype = rectype

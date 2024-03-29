@@ -17,6 +17,8 @@ module CollectionspaceMigrationTools
         end
       end
 
+      # @param batch [CMT::Batch::Batch]
+      # @param dir [String]
       def initialize(batch:, dir:)
         @process_type = "mapping"
         @batch = batch
