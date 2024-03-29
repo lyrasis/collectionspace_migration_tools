@@ -24,9 +24,12 @@ module CollectionspaceMigrationTools
       end
 
       def delete
-        _status = yield(to_monad)
-        _del_dir = yield(delete_batch_dir)
-        _del_row = yield(csv.delete_batch(id))
+        _status = yield to_monad
+        _del_dir = yield delete_batch_dir
+        if CMT.config.client.archive_batches && done?
+          _arch = yield CMT::ArchiveCsv::Archiver.call(self)
+        end
+        _del_row = yield csv.delete_batch(id)
 
         Success()
       end
