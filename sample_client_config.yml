@@ -1,165 +1,217 @@
 client:
-  # These are the minimum settings for creating a new instance of
-  #   collectionspace-client
-  # https://github.com/collectionspace/collectionspace-client/blob/master/lib/collectionspace/client/configuration.rb
+  ## -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  ## The settings in this top section are required per client, and
+  ## cannot be set by default. The next section (all commented out)
+  ## explains default settings that you can uncomment and alter to
+  ## change.
+  ##
+  ## THE DATABASE SECTION AT THE BOTTOM NEEDS TO BE SET PER CLIENT
+  ## -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+  ## These are the minimum settings for creating a new instance of
+  ## collectionspace-client corresponding to the instance you are working with.
+  ## https://github.com/collectionspace/collectionspace-client/blob/master/lib/collectionspace/client/configuration.rb
   base_uri: https://core.dev.collectionspace.org/cspace-services
   username: admin@core.collectionspace.org
   password: Administrator
 
-  # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-  # The following settings are defined in the `CLIENT_CONFIG_DEFAULTS` section of
-  #   lib/collectionspace_migration_tools/configuration.rb
-  #
-  # They are included here for documentation purposes, and to make it easy to override
-  #   the default values as needed. The values shown below are the default values. If you
-  #   want to override them, uncomment the setting and change the value.
-  # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-  # Controls page size of result sets returned by collectionspace-client
-  # page_size: 50
-
-  # The release number for the instance, not the UI version or profile version. Replace
-  #   the period in the actual version designation with an underscore. This must be in
-  #   quotes or 7_2 will get interpreted as 70 for some reason.
-  #
-  # This is set as a default so that when all hosted clients are upgraded, it can just
-  #   be updated in one place. Override the default if you are working with an instance
-  #   where version is not in sync with our hosted setup
-  # cs_version: "7_2"
-
-  # Directory in which to store generated xml and reports for each batch. A directory will be
-  #   created within this directory for each batch you process
-  #
-  # If only a directory name is given, this directory will be created as a sub-directory
-  #   inside your `base_dir`. If you give a full path to a directory, that directory is used
-  #   (and it must already exist)
-  # batch_dir: batch_data
-
-  # If true, when you run `thor batch:map`, the first thing that will happen is fresh data for record
-  #   types required by the type and data you are mapping will be pulled from the database and cached.
-  # If commented out or set to false, caches will NOT be cleared and refreshed prior to data mapping
-  #   when called when `thor batch:map` is called. This may be preferable if the scale of the instance
-  #   is very large, so it takes a long time to refresh cache data
-  # Note that you can control whether this happens per-batch via the `--autocache` option on the
-  #   `thor map:batch` command. The default value of this option is whatever you have set here.
-  # auto_refresh_cache_before_mapping: true
-
-  # If true, caches will be cleared before they are auto refreshed. This is the safest option, as it will ensure
-  #   deleted items are not still in the cache, and the correct values are cached for any duplicates since cleaned
-  #   up.
-  # If you know only additions/updates have been made, you can set to false to save a bit of time.
-  # This has no effect if auto_refresh_cache_before_mapping = false
-  # Note that you can control whether this happens per-batch via the `--clearcache` option on the `thor map:batch` command.
-  #   The default value of this option is whatever you have set here.
-  # clear_cache_before_refresh: true
-
-  # column/field delimiter for input "CSV" files
-  # csv_delimiter: ","
-
-  # Delimiter used to encode S3 object keys. Must be the same as the delimiter specified
-  #   for the bucket in the S3/AWS Lambda config, as it is needed to decode the object
-  #   name and send the API call to do the object ingest. Currently is always set to "|"
-  #  s3_delimiter: "|"
-
-  # Controls pause/sleep time after uploading to S3 each media handling procedure record that has an
-  #   associated mediaFileURI. A pause is required with batches over a certain size to minimize
-  #   file storage and derivative generation failures.
-  # The value is in ms.
-  # The value here is based on CS Services code that waits 500 ms for derivatives to be
-  #   generated:
-  # https://cs.github.com/collectionspace/application/blob/5fb3d0ffc750bfdf19e57057ac3dc65827c01df0/cspi-services/src/main/java/org/collectionspace/chain/csp/persistence/services/BlobStorage.java#L95
-  # If you are still seeing blob file storage and derivative generation errors, increase this delay.
-  #   Uploads to S3 are threaded, so {system_config/max_threads} (default = 6) upload queues are happening
-  #   simultaneously. This may increase the time needed for derivative generation.
-  # The lambda process that grabs records out of the S3 bucket and makes the API calls
-  #   to ingest has some limit of how many records are processed at once, but this defaults to making calls
-  #   far faster than CS/Nuxeo can produce and store derivatives.
-  # If your mediaFileURI values point to downloadable files (the usual case), you may be able to decrease this
-  #   number, as there is delay during the download of each file for ingest. If the mediaFileURIs are to
-  #   local file system locations, this might need to be higher to build in the padding you *aren't* getting
-  #   since the files don't have to be downloaded.
-  # media_with_blob_upload_delay: 500
-
-  # Maximum number of threads to use when uploading media-with-blob objects to S3 for ingest. It's
-  #   more straightforward to control the speed of media uploads/ingests here than asking for the
-  #   S3 bucket and/or AWS Lambda parameters to be changed.
-  # The value set here will interact with the `media_with_blob_upload_delay` value set above, and it may
-  #   be worth tweaking them to find a good balance that works.
-  # max_media_upload_threads: 5
-
-  # Whether to write data on batches you delete to an archive CSV. This allows
-  # for passive gathering of rough ingest time stats.
-  # archive_batches: true
-
-  # File name for the batch archive file. This file will be created in the
-  # defined `base_dir`. If `archive_batches` is false, this has no effect.
-  # batch_archive_filename: batches_archive.csv
-  # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-  # The remaining settings are required per client, and cannot be set by default
-  # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-  # The redis_db_number should be unique per config. This allows you to quickly clear the caches
-  #  for one instance, without affecting the caches for other instances.
-  # It's on you to ensure these numbers are unique across your configs. The app doesn't check this.
-  # Run `thor config:redis_dbs` to see what db numbers are in use by existing configs
+  ## The redis_db_number should be unique per config. This allows you
+  ##  to quickly clear the caches for one instance, without affecting
+  ##  the caches for other instances. It's on you to ensure these
+  ##  numbers are unique across your configs. The app doesn't check
+  ##  this. Run `thor config:redis_dbs` to see what db numbers are in
+  ##  use by existing configs
   redis_db_number: 3
 
-  # The next three settings are used to grab required record mapping instructions from
-  #   https://github.com/collectionspace/cspace-config-untangler/tree/main/data/mappers/community_profiles/
-  # Refer to how the mappers (i.e. the mapping instructions for each record type) are organized there
-  #   to find the proper values to put in here
+  ## The next two settings are used, in combination with the
+  ##   `cs_version` setting, to grab the required record mapping
+  ##   instructions from
+  ##   https://github.com/collectionspace/cspace-config-untangler/tree/main/data/mappers/community_profiles/
+  ##   Refer to how the mappers (i.e. the mapping instructions for each
+  ##   record type) are organized there to find the proper values to
+  ##   use here
 
-  # Should match the directory names that organize mappers per release
+  ## Should match the directory names that organize mappers per release
   profile: anthro
 
-  # Should match the form used in file names of individual .json files
+  ## Should match the form used in file names of individual .json files
   profile_version: 5-0-0
 
-  # The settings in the next section control where files for this project will be saved
+  ## The settings in the next section control where files for this
+  ## project will be saved
 
-  # The main directory for the migration project. All other directories can be specified
-  #   relative to this
-  # This directory must already exist on your system.
+  ## The main directory for the migration project. All other
+  ## directories can be specified relative to this. **This directory must
+  ## already exist on your system.**
   base_dir: ~/code/cs/migration_tools/data
 
-  # OPTIONAL SETTING
-  # Path to the default directory for ingestable files for a project. If set, you only need to specify
-  #   the file name of files in this directory when doing `thor batch:add`. You can create batches based
-  #   on files in other directories by giving the full file path in the `thor batch:add` `--csv` option
-  # This directory must already exist on your system.
+  ## OPTIONAL SETTING
+  ## Path to the default directory for ingestable files for a project.
+  ##   If set, you only need to specify the file name of files in this
+  ##   directory when doing `thor batch:add`. You can create batches
+  ##   based on files in other directories by giving the full file path
+  ##   in the `thor batch:add` `--csv` option This directory must
+  ##   already exist on your system.
   ingest_dir: ingest
 
-  # Location of JSON record mappers produced by cspace-config-untangler.
-  #
-  # It is recommended you clone https://github.com/collectionspace/cspace-config-untangler/ and use the path
-  #   for the appropriate profile within that repository
-  #
-  # If only a directory name is given, this directory will be created as a sub-directory
-  #   inside your `base_dir`. If you give a full path to a directory, that directory is used
-  #   (and it must already exist)
-  # For example:
-  #   - entering `mappers` will set this to: `~/code/cs/migration_tools/data/mappers` (the mappers subdirectory will be
-  #     created if it doesn't exist)
-  #   - entering `~/code/cs/untangler/data/mappers/community_profiles/release_7_0/anthro` will set this to that
-  #     directory (this directory must exist when the application is run)
+  ## Location of JSON record mappers produced by
+  ##   cspace-config-untangler. It is recommended you clone
+  ##   https://github.com/collectionspace/cspace-config-untangler/ and
+  ##   use the path for the appropriate profile within that repository.
+  ##   If only a directory name is given, this directory will be
+  ##   created as a sub-directory inside your `base_dir`. If you give a
+  ##   full path to a directory, that directory is used (and it must
+  ##   already exist). For example:
+  ##
+  ##   - entering `mappers` will set this to:
+  ##     `~/code/cs/migration_tools/data/mappers` (the mappers
+  ##     subdirectory will be created if it doesn't exist)
+  ##   - entering
+  ##     `~/code/cs/untangler/data/mappers/community_profiles/release_7_0/anthro`
+  ##     will set this to that directory (this directory must exist
+  ##     when the application is run)
   mapper_dir: record_mappers
 
-  # path to valid JSON batch config for mapping CSV to CSXML
-  # See https://github.com/collectionspace/collectionspace-mapper/blob/migration-tooling/doc/batch_configuration.adoc for options
-  # This is optional and only needed if you need to tweak the mapper options.
-  # When using this application to create CSXML, the following batch config options are always sent to the mapper:
-  #   - `status_check_method` = `cache`
-  #   - `search_if_not_cached` = `false`
-  # If you are NOT providing a custom config, comment out the following line.
+  ## OPTIONAL SETTING
+  ## Path to valid JSON batch config for mapping CSV to CSXML. This is
+  ## optional and only needed if you need to tweak the mapper options.
+  ## For documentation on the available options, see:
+  ## https://github.com/collectionspace/collectionspace-mapper/blob/migration-tooling/doc/batch_configuration.adoc
+  ##
+  ## When using this application to create CSXML, the following batch
+  ## config options are always sent to the mapper:
+  ##
+  ##   - `status_check_method` = `cache`
+  ##   - `search_if_not_cached` = `false`
+  ##
+  ## If you are NOT providing a custom config, comment out the following line.
   # batch_config_path: ~/code/cs/migration_tools/spec/support/fixtures/client_batch_config.json
 
-  # The name of the "Fast Import" S3 bucket set up for use with this client.
-  # This is the bucket we upload CSXML objects into, which uses AWS Lambda to call ingest for
-  #   each object. It is NOT the bucket where client media files are uploaded.
+  ## The name of the "Fast Import" S3 bucket set up for use with this
+  ## client. This is the bucket we upload CSXML objects into, which
+  ## uses AWS Lambda to call ingest for each object. It is NOT the
+  ## bucket where client media files are uploaded.
   s3_bucket: "bucket_name"
-  # The name of the S3 bucket from which client media files will be ingested. This is optional, since some migrations
-  #   do not include media files.
+
+  ## OPTIONAL SETTING
+  ## The name of the S3 bucket from which client media files will be
+  ## ingested. This is optional, since some migrations do not include
+  ## media files.
   media_bucket: "other_bucket_name"
+
+  ## -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  ## The following settings are defined in the
+  ##   `CLIENT_CONFIG_DEFAULTS` section of
+  ##   lib/collectionspace_migration_tools/configuration.rb. They are
+  ##   included here for documentation purposes, and to make it easy
+  ##   to override the default values as needed. The values shown
+  ##   below are the default values. If you want to override them,
+  ##   uncomment the setting and change the value.
+  ##
+  ## MAKE SURE TO SET UP THE DATABASE SETTINGS AT THE BOTTOM OF THE FILE
+  ## -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+  ## Controls page size of result sets returned by collectionspace-client
+  # page_size: 50
+
+  ## The release number for the instance, not the UI version or
+  ##   profile version. Replace the period in the actual version
+  ##   designation with an underscore. **This must be in quotes or 7_2
+  ##   will get interpreted as 70.** This is set as a default so that
+  ##   when all hosted clients are upgraded, it can just be updated in
+  ##   one place. Override the default if you are working with an
+  ##   instance where version is not in sync with our hosted setup
+  # cs_version: "7_2"
+
+  ## Directory in which to store generated xml and reports for each
+  ##   batch. A directory will be created within this directory for
+  ##   each batch you process
+  ## If only a directory name is given, this directory will be created
+  ##   as a sub-directory inside your `base_dir`. If you give a full
+  ##   path to a directory, that directory is used (and it must
+  ##   already exist)
+  # batch_dir: batch_data
+
+  ## If true, when you run `thor batch:map`, the first thing that will
+  ##   happen is fresh data for record types required by the type and
+  ##   data you are mapping will be pulled from the database and
+  ##   cached.
+  ## If commented out or set to false, caches will NOT be cleared and
+  ##   refreshed prior to data mapping when called when `thor
+  ##   batch:map` is called. This may be preferable if the scale of
+  ##   the instance is very large, so it takes a long time to refresh
+  ##   cache data
+  ## Note that you can control whether this happens per-batch via the
+  ##   `--autocache` option on the `thor map:batch` command. The
+  ##   default value of the per-batch option is whatever you have set here.
+  # auto_refresh_cache_before_mapping: true
+
+  ## If true, caches will be cleared before they are auto refreshed.
+  ## This is the safest option, as it will ensure deleted items are
+  ## not still in the cache, and the correct values are cached for any
+  ## duplicates since cleaned up. If you know only additions/updates
+  ## have been made, you can set to false to save a bit of time. This
+  ## has no effect if `auto_refresh_cache_before_mapping = false`.
+  ## Note that you can control whether this happens per-batch via the
+  ## `--clearcache` option on the `thor map:batch` command. The
+  ## default value of the per-batch option is whatever you have set
+  ## here.
+  # clear_cache_before_refresh: true
+
+  ## Column/field delimiter for input "CSV" files
+  # csv_delimiter: ","
+
+  ## Delimiter used to encode S3 object keys. Must be the same as the
+  ## delimiter specified for the bucket in the S3/AWS Lambda config,
+  ## as it is needed to decode the object name and send the API call
+  ## to do the object ingest. Currently is always set to "|"
+  #  s3_delimiter: "|"
+
+  ## Controls pause/sleep time after uploading to S3 each media
+  ## handling procedure record that has an associated mediaFileURI. A
+  ## pause is required with batches over a certain size to minimize
+  ## file storage and derivative generation failures. THE VALUE IS IN
+  ## MS.
+  ##
+  ## The value here is based on CS Services code that waits 500 ms for
+  ## derivatives to be generated:
+  ## https://cs.github.com/collectionspace/application/blob/5fb3d0ffc750bfdf19e57057ac3dc65827c01df0/cspi-services/src/main/java/org/collectionspace/chain/csp/persistence/services/BlobStorage.java#L95
+  ##
+  ## If you are still seeing blob file storage and derivative
+  ## generation errors, increase this delay. Uploads to S3 are
+  ## threaded, so {system_config/max_threads} (default = 5 for media
+  ## with blobs) upload queues are happening simultaneously. This may
+  ## increase the time needed for derivative generation.
+  ##
+  ## The lambda process that grabs records out of the S3 bucket and
+  ## makes the API calls to ingest has some limit of how many records
+  ## are processed at once, but this defaults to making calls far
+  ## faster than CS/Nuxeo can produce and store derivatives.
+  ##
+  ## If your mediaFileURI values point to downloadable files (the
+  ## usual case), you may be able to decrease this number, as there is
+  ## delay during the download of each file for ingest. If the
+  ## mediaFileURIs are to local file system locations, this might need
+  ## to be higher to build in the padding you *aren't* getting since
+  ## the files don't have to be downloaded.
+  # media_with_blob_upload_delay: 500
+
+  ## Maximum number of threads to use when uploading media-with-blob
+  ## objects to S3 for ingest. It's more straightforward to control
+  ## the speed of media uploads/ingests here than asking for the S3
+  ## bucket and/or AWS Lambda parameters to be changed. The value set
+  ## here will interact with the `media_with_blob_upload_delay` value
+  ## set above, and it may be worth tweaking them to find a good
+  ## balance that works.
+  # max_media_upload_threads: 5
+
+  ## Whether to write data on batches you delete to an archive CSV. This allows
+  ## for passive gathering of rough ingest time stats.
+  # archive_batches: true
+
+  ## File name for the batch archive file. This file will be created in the
+  ## defined `base_dir`. If `archive_batches` is false, this has no effect.
+  # batch_archive_filename: batches_archive.csv
 database:
   port: 5432
   db_password: dbpassword
