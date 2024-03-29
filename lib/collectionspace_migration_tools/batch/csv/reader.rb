@@ -155,7 +155,7 @@ module CollectionspaceMigrationTools
           _rewritten = yield(rewrite)
 
           puts "Batch #{bid} deleted.\nRemaining batches:"
-          list
+          to_cli_table
 
           Success()
         end
