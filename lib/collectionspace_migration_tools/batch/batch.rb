@@ -21,8 +21,6 @@ module CollectionspaceMigrationTools
         @id = id
         get_batch_data
         @dirpath = "#{CMT.config.client.batch_dir}/#{dir}" if data && dir
-        @config = set_config
-        @mode = set_mode
       end
 
       def delete
@@ -121,21 +119,7 @@ module CollectionspaceMigrationTools
 
       private
 
-      attr_reader :csv, :id, :data, :dirpath, :config
-
-      def set_config
-        CMT::Parse::BatchConfig.call
-          .either(
-            ->(success) { success },
-            ->(failure) { {} }
-          )
-      end
-
-      def set_mode
-        return config["batch_mode"] if config.key?("batch_mode")
-
-        "full record"
-      end
+      attr_reader :csv, :id, :data, :dirpath
 
       def delete_batch_dir
         return Success() unless dirpath
