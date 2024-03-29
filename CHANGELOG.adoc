@@ -37,6 +37,7 @@ These changes are merged into the `main` branch, but have not been released. Aft
 === Added
 
 * `batch_status` column to batches CSV
+* `batch_mode` column to batches CSV (added in mapping step)
 * `ingest duration` calculated, shown in STDOUT, and recorded in batches CSV if ingest is complete when `batch:ingstat` is run
 
 === Changes

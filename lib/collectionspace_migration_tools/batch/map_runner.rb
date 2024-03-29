@@ -38,10 +38,16 @@ module CollectionspaceMigrationTools
         puts "\n\nMAPPING"
         start_time = Time.now
 
-        processor = yield(CMT::Csv::BatchProcessorPreparer.new(
-          csv_path: batch.source_csv, rectype: batch.mappable_rectype, action: batch.action, batch: batch.id
-        ).call)
-        output_dir = yield(processor.call)
+        preparer = CMT::Csv::BatchProcessorPreparer.new(
+          csv_path: batch.source_csv,
+          rectype: batch.mappable_rectype,
+          action: batch.action,
+          batch: batch.id
+        )
+        _mode = yield batch.populate_field("batch_mode", preparer.mode,
+          overwrite: true)
+        processor = yield preparer.call
+        output_dir = yield processor.call
         puts "Elapsed time for mapping: #{Time.now - start_time}"
 
         report = yield(CMT::Batch::PostMapReporter.new(batch: batch,

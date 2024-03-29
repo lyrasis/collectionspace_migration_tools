@@ -103,6 +103,7 @@ module CollectionspaceMigrationTools
         def header_map
           {
             "id" => "id",
+            "batch_mode" => "mode",
             "batch_status" => "status",
             "action" => "action",
             "rec_ct" => "recs",
