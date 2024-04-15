@@ -19,7 +19,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::CachingPlanner do
         }
       end
 
-      it "returns expected", :aggregate_failures do
+      it "returns expected" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq(expected)
       end
@@ -35,7 +35,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::CachingPlanner do
         }
       end
 
-      it "returns expected", :aggregate_failures do
+      it "returns expected" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq(expected)
       end
@@ -46,7 +46,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::CachingPlanner do
       let(:rndep) { "" }
       let(:expected) { {} }
 
-      it "returns expected", :aggregate_failures do
+      it "returns expected" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq(expected)
       end

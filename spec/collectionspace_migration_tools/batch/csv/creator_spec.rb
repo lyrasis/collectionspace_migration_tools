@@ -17,8 +17,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Creator do
         FileUtils.rm(CMT.config.client.batch_csv)
       end
 
-      it "notifies of existence and does not change file",
-        :aggregate_failures do
+      it "notifies of existence and does not change file" do
         CMT.config.client.batch_csv = File.join(
           Bundler.root, "tmp", "batches.csv"
         )
@@ -43,7 +42,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Creator do
         FileUtils.rm(CMT.config.client.batch_csv) if File.exist?(CMT.config.client.batch_csv)
       end
 
-      it "creates file", :aggregate_failures do
+      it "creates file" do
         result
         expect(File.exist?(path)).to be true
       end

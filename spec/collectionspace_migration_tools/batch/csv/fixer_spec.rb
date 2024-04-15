@@ -64,7 +64,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Fixer do
     context "with up-to-date format and full data" do
       let(:data) { ok_data }
 
-      it "returns message but makes no changes to file", :aggregate_failures do
+      it "returns message but makes no changes to file" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq("Nothing to fix!")
       end
@@ -73,7 +73,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Fixer do
     context "with extra_header" do
       let(:data) { extra_header_data }
 
-      it "returns as expected", :aggregate_failures do
+      it "returns as expected" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq("Updated CSV columns")
         expect(result_data_compare).to be true
@@ -83,7 +83,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Fixer do
     context "with missing_header" do
       let(:data) { missing_header_data }
 
-      it "returns as expected", :aggregate_failures do
+      it "returns as expected" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq("Updated CSV columns")
         expect(result_data_compare).to be true
@@ -94,7 +94,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Fixer do
       let(:data) { missing_derived_data }
 
       context "when derivation of data is success" do
-        it "returns as expected", :aggregate_failures do
+        it "returns as expected" do
           allow(CMT::Batch::CsvRowCounter).to receive(:call).with(path: "csv").and_return(Dry::Monads::Success(10))
           expect(result).to be_a(Dry::Monads::Success)
           expect(result.value!).to eq("Populated missing derived data")
@@ -103,7 +103,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Fixer do
       end
 
       context "when derivation of data is failure" do
-        it "returns as expected", :aggregate_failures do
+        it "returns as expected" do
           allow(CMT::Batch::CsvRowCounter).to receive(:call).with(path: "csv").and_return(Dry::Monads::Failure(:foo))
           expect(result).to be_a(Dry::Monads::Failure)
           expect(result.failure).to eq("rec_ct could not be derived for: 1")
@@ -115,7 +115,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Fixer do
     context "with missing header and derived data" do
       let(:data) { missing_header_and_derived_data }
 
-      it "returns as expected", :aggregate_failures do
+      it "returns as expected" do
         allow(CMT::Batch::CsvRowCounter).to receive(:call).with(path: "csv").and_return(Dry::Monads::Success(10))
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq("Updated CSV columns; Populated missing derived data")

@@ -11,7 +11,7 @@ RSpec.describe CollectionspaceMigrationTools::Parse::RecordMapper do
     context "when no mapper for given rectype" do
       let(:rectype) { "movements" }
 
-      it "is Failure", :aggregate_failures do
+      it "is Failure" do
         expect(result).to be_a(Dry::Monads::Failure)
         expect(result.failure.message).to start_with("No record mapper for #{rectype}")
       end

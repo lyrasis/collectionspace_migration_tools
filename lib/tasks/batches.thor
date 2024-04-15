@@ -8,7 +8,8 @@ class Batches < Thor
   include Dry::Monads[:result]
 
   desc "fix_csv",
-    "Updates batch-tracking CSV to add missing headers and derive automatically generated values"
+    "Updates batch-tracking CSV to add missing headers and derive "\
+    "automatically generated values"
   def fix_csv
     CMT::Batch::Csv::Fixer.call.either(
       ->(ok) {
@@ -23,7 +24,8 @@ class Batches < Thor
   end
 
   desc "init_csv",
-    "Creates new batch-tracking CSV if one does not exist. Checks existing has up-to-date format"
+    "Creates new batch-tracking CSV if one does not exist. Checks existing "\
+    "has up-to-date format"
   def init_csv
     path = CMT.config.client.batch_csv
     CMT::Batch::Csv::Creator.call.either(
@@ -42,7 +44,7 @@ class Batches < Thor
   # @todo fix this so it uses do notation and it cleanly exitable
   desc "delete_done", "Delete completed batches"
   def delete_done
-    done_batches = CMT::Batch::Csv::Reader.new.find_status(:is_done?)
+    done_batches = CMT::Batch::Csv::Reader.new.find_status(:done?, :batches)
     puts done_batches.failure if done_batches.failure?
 
     done_batches.value!.each do |batch|
@@ -53,11 +55,11 @@ class Batches < Thor
 
   desc "done", "Brief listing of batches that are done"
   def done
-    batch_lister(:is_done?)
+    batch_lister(:done?)
   end
 
-  desc "ingstat",
-    "Checks ingest status of all batches that have been uploaded but not successfully ingest checked"
+  desc "ingstat", "Checks ingest status of all batches that have been "\
+    "uploaded but not successfully ingest checked"
   option :sleep, required: false, type: :numeric, default: 1.5
   option :checks, required: false, type: :numeric, default: 1
   option :rechecks, required: false, type: :numeric, default: 1
@@ -92,28 +94,14 @@ class Batches < Thor
     )
   end
 
-  desc "mark_done", "Mark done any batches with all steps completed"
-  def mark_done
-    CMT::Batch::Csv::DoneMarker.call.either(
-      ->(success) {
-        puts "Batches marked done: #{success.join(", ")}"
-        exit(0)
-      },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
-  end
-
   desc "show", "Brief listing of batch ids and info"
   def show
-    CMT::Batch::Csv::Reader.new.list
+    CMT::Batch::Csv::Reader.new.to_cli_table
   end
 
-  desc "to_ingcheck",
-    "Brief listing of batches uploaded and needing ingest check"
-  def to_ingcheck
+  desc "to_ingstat",
+    "Brief listing of batches uploaded and needing ingest status check"
+  def to_ingstat
     batch_lister(:ingestable?)
   end
 
@@ -140,11 +128,10 @@ class Batches < Thor
 
   no_commands do
     def batch_lister(status)
-      CMT::Batch::Csv::Reader.new.find_status(status).either(
+      reader = CMT::Batch::Csv::Reader.new
+      reader.find_status(status).either(
         ->(success) {
-          success.each do |batch|
-            puts batch.printable_row
-          end
+          reader.to_cli_table(success)
           exit(0)
         },
         ->(failure) {

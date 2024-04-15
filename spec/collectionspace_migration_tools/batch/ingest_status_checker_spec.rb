@@ -35,7 +35,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::IngestStatusChecker do
       end
 
       context "when count different on check" do
-        it "behaves as expected", :aggregate_failures do
+        it "behaves as expected" do
           sizes = [
             5, # initial
             3 # first/only check = changed, so failure
@@ -83,7 +83,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::IngestStatusChecker do
           end
 
           context "with third recheck = 3" do
-            it "behaves as expected", :aggregate_failures do
+            it "behaves as expected" do
               sizes = [
                 5, # initial
                 5, # first/only check = same, recheck needed
@@ -138,7 +138,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::IngestStatusChecker do
 
         context "when recheck is different" do
           let(:checks) { 5 }
-          it "behaves as expected", :aggregate_failures do
+          it "behaves as expected" do
             sizes = [
               5, # initial
               4, # on first check, changing
@@ -156,7 +156,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::IngestStatusChecker do
       end
 
       context "when count does not stabilize" do
-        it "behaves as expected", :aggregate_failures do
+        it "behaves as expected" do
           sizes = [
             9, # initial
             8, # on first check, changing

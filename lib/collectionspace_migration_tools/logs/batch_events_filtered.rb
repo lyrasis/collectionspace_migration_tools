@@ -52,17 +52,17 @@ module CollectionspaceMigrationTools
           end_time: end_time
         }.compact
 
-        if streams.empty?
-          unless params.key?(:start_time)
-            params[:start_time] = batch.time(:start)
-          end
-          unless params.key?(:end_time)
-            batch.ingest_complete_time
-            params[:end_time] = batch.time(:end)
-          end
-        else
-          params[:log_stream_names] = streams.map(&:log_stream_name)
+        #        if streams.empty?
+        unless params.key?(:start_time)
+          params[:start_time] = batch.time(:start)
         end
+        unless params.key?(:end_time)
+          batch.ingest_complete_time
+          params[:end_time] = batch.time(:end)
+        end
+        # else
+        #   params[:log_stream_names] = streams.map(&:log_stream_name)
+        # end
         params.compact
       end
 

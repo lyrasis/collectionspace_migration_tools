@@ -11,7 +11,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Id do
     context "with too-long id" do
       let(:str) { "organization23" }
 
-      it "returns failure", :aggregate_failures do
+      it "returns failure" do
         expect(result).to be_a(Dry::Monads::Failure)
         expect(result.failure).to eq("Batch ID must be 6 or fewer characters")
       end
@@ -20,7 +20,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Id do
     context "with disallowed characters" do
       let(:str) { "per_1" }
 
-      it "returns failure", :aggregate_failures do
+      it "returns failure" do
         expect(result).to be_a(Dry::Monads::Failure)
         expect(result.failure).to eq("Batch ID must consist of only letters and numbers")
       end
@@ -29,7 +29,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Id do
     context "when ok" do
       let(:str) { "co1" }
 
-      it "returns success", :aggregate_failures do
+      it "returns success" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq(str)
       end

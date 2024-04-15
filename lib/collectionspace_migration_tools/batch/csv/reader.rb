@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "csv"
+require "tabulo"
 
 module CollectionspaceMigrationTools
   module Batch
@@ -13,7 +14,7 @@ module CollectionspaceMigrationTools
 
         def initialize(
           data: nil,
-          rewriter: CMT::Batch::Csv::Rewriter.new,
+          rewriter: CMT::Csv::Rewriter.new(CMT.config.client.batch_csv),
           headers: CMT::Batch::Csv::Headers.all_headers
         )
           data = get_data if data.nil?
@@ -36,19 +37,38 @@ module CollectionspaceMigrationTools
           Success(result[0])
         end
 
-        # @param status [Symbol] eg. :mappable?, :uploadable?
-        def find_status(status)
-          result = table.map { |row| CMT::Batch::Batch.new(self, row["id"]) }
-            .select(&status)
+        # @param status [:mappable?, :uploadable?, :ingestable?, :done?]
+        # @param format [:table, :batches] to return
+        # @return [CSV::Table] if format == :table
+        # @return [Array<CMT::Batch::Batch>] if format == :batches
+        def find_status(status, format = :table)
+          result = table.delete_if { |row| !to_batch(row).send(status) }
           if result.empty?
             Failure("No #{status.to_s.delete_suffix("?")} batches")
           else
-            Success(result)
+            case format
+            when :table
+              Success(result)
+            when :batches
+              Success(result.map { |row| to_batch(row) })
+            end
           end
+        end
+
+        # @param data [#each] where each returns a CSV Row
+        def to_cli_table(data = table)
+          tt = Tabulo::Table.new(data.by_row, align_header: :left,
+            align_body: :left)
+          header_map.each do |real, cli|
+            tt.add_column(cli) { |row| row[real] }
+          end
+          tt.add_column("source") { |row| File.basename(row["source_csv"]) }
+          puts tt.pack
         end
 
         def list
           table.each do |row|
+            puts %w[id status action recs rectype source].join("\t")
             puts printable_row(row)
           end
         end
@@ -56,6 +76,7 @@ module CollectionspaceMigrationTools
         def printable_row(row)
           [
             row["id"],
+            row["batch_status"],
             row["action"],
             row["rec_ct"],
             row["mappable_rectype"],
@@ -78,6 +99,18 @@ module CollectionspaceMigrationTools
 
         attr_reader :rewriter, :headers
 
+        # Map actual CSV headers to headers for CLI table display
+        def header_map
+          {
+            "id" => "id",
+            "batch_mode" => "mode",
+            "batch_status" => "status",
+            "action" => "action",
+            "rec_ct" => "recs",
+            "mappable_rectype" => "rectype"
+          }
+        end
+
         def check_id_uniqueness
           uniq_ids = ids.uniq
           return Success(self) if ids == uniq_ids
@@ -93,6 +126,10 @@ module CollectionspaceMigrationTools
               read_batches_csv.value!
             }
           )
+        end
+
+        def to_batch(row)
+          CMT::Batch::Batch.new(self, row["id"])
         end
 
         def delete_from_table(bid)
@@ -119,7 +156,7 @@ module CollectionspaceMigrationTools
           _rewritten = yield(rewrite)
 
           puts "Batch #{bid} deleted.\nRemaining batches:"
-          list
+          to_cli_table
 
           Success()
         end

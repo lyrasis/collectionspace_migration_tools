@@ -9,7 +9,7 @@ module CollectionspaceMigrationTools
         module_function
 
         def supplied_headers
-          %w[id source_csv mappable_rectype action]
+          %w[id source_csv mappable_rectype action batch_status]
         end
 
         def dependency_value_lookup(steptype)
@@ -34,7 +34,7 @@ module CollectionspaceMigrationTools
         end
 
         def map_headers
-          %w[mapped? dir map_errs map_oks map_warns missing_terms]
+          %w[batch_mode mapped? dir map_errs map_oks map_warns missing_terms]
         end
 
         # ingest_start_time is considered to be the time the upload was
@@ -48,15 +48,12 @@ module CollectionspaceMigrationTools
         end
 
         def post_ingest_headers
-          %w[ingest_done? ingest_complete_time ingest_errs ingest_oks]
+          %w[ingest_done? ingest_complete_time ingest_duration
+            ingest_errs ingest_oks]
         end
 
         def duplicates_headers
           %w[duplicates_checked? duplicates]
-        end
-
-        def final_headers
-          %w[done?]
         end
 
         def all_headers
@@ -65,8 +62,7 @@ module CollectionspaceMigrationTools
             derived_at_add_headers,
             map_headers,
             upload_headers,
-            ingest_headers,
-            final_headers
+            ingest_headers
           ].flatten
         end
 

@@ -33,7 +33,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::DirPathGetter do
           }
         end
 
-        it "returns Success containing expected path", :aggregate_failures do
+        it "returns Success containing expected path" do
           expect(result).to be_a(Dry::Monads::Success)
           expect(result.value!).to eq(path)
           expect(Dir.exist?(path)).to be true
@@ -54,7 +54,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::DirPathGetter do
           }
         end
 
-        it "returns Success containing expected path", :aggregate_failures do
+        it "returns Success containing expected path" do
           expect(result).to be_a(Dry::Monads::Success)
           expect(result.value!).to eq(path)
           expect(Dir.exist?(path)).to be true
@@ -81,7 +81,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::DirPathGetter do
       end
       let(:result) { described_class.call(mapper, batch) }
 
-      it "returns Success containing expected path", :aggregate_failures do
+      it "returns Success containing expected path" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq(path)
         expect(Dir.exist?(path)).to be true

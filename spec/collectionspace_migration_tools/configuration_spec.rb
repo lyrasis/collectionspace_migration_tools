@@ -8,7 +8,7 @@ RSpec.describe CollectionspaceMigrationTools::Configuration do
   context "with valid config without optional settings" do
     let(:config_file) { valid_config_path }
 
-    it "returns Configuration object", :aggregate_failures do
+    it "returns Configuration object" do
       expect(result).to be_a(CMT::Configuration)
       expect(result.client.base_uri).to eq(
         "https://core.dev.collectionspace.org/cspace-services"
@@ -29,7 +29,7 @@ RSpec.describe CollectionspaceMigrationTools::Configuration do
         "config_valid_with_optional.yml")
     end
 
-    it "returns Configuration object", :aggregate_failures do
+    it "returns Configuration object" do
       batch_cfg = File.expand_path(
         "~/code/cs/migration_tools/spec/support/fixtures/"\
           "client_batch_config.json"

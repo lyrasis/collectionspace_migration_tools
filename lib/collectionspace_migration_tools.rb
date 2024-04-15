@@ -66,8 +66,10 @@ module CollectionspaceMigrationTools
 
     def get_csv_path(csv)
       config = CMT.config.client
-      return csv unless config.respond_to?(:ingest_dir)
-      return csv if ["~", "/"].any? { |char| csv.start_with?(char) }
+      return get_full_path(csv) unless config.respond_to?(:ingest_dir)
+      if ["~", "/"].any? { |char| csv.start_with?(char) }
+        return get_full_path(csv)
+      end
 
       File.join(config.ingest_dir, csv)
     end
@@ -107,6 +109,15 @@ module CollectionspaceMigrationTools
 
   # to identify CMT processes in `top`, `ps`, etc.
   Process.setproctitle("CMT")
+
+  private
+
+  def get_full_path(csv)
+    return File.expand_path(csv) if csv.start_with?("~")
+
+    csv
+  end
+  module_function :get_full_path
 end
 
 CMT.loader

@@ -19,13 +19,6 @@ module CollectionspaceMigrationTools
       Success(batch.dir)
     end
 
-    def done(id)
-      batch = yield(find(id))
-      _rewritten = yield(batch.mark_done)
-
-      Success()
-    end
-
     def find(id)
       csv = yield(CMT::Batch::Csv::Reader.new)
       batch = yield(CMT::Batch::Batch.new(csv, id))

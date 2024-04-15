@@ -20,7 +20,7 @@ RSpec.describe CollectionspaceMigrationTools::ConfigSubdirectoryHandler do
 
       let(:mapper_dir_val) { @path }
 
-      it "does not change config", :aggregate_failures do
+      it "does not change config" do
         result
         expect(config.mapper_dir).to eq(mapper_dir_val)
         expect(Dir.exist?(mapper_dir_val)).to be true
@@ -45,7 +45,7 @@ RSpec.describe CollectionspaceMigrationTools::ConfigSubdirectoryHandler do
       before { FileUtils.mkdir(File.expand_path("~/cs_mig_tools_test")) }
       after { FileUtils.rm_rf(File.expand_path("~/cs_mig_tools_test")) }
 
-      it "updates config to absolute path", :aggregate_failures do
+      it "updates config to absolute path" do
         result
         expect(config.mapper_dir).to eq(File.expand_path(mapper_dir_val))
         expect(Dir.exist?(File.expand_path(mapper_dir_val))).to be true
@@ -80,8 +80,7 @@ RSpec.describe CollectionspaceMigrationTools::ConfigSubdirectoryHandler do
     context "when given dir does not exist" do
       before { @path = File.join(Bundler.root, "spec", "support", "mappers") }
       after { FileUtils.rm_rf(@path) }
-      it "updates config to absolute path and creates directory",
-        :aggregate_failures do
+      it "updates config to absolute path and creates directory" do
         result
         expect(config.mapper_dir).to eq(@path)
         expect(Dir.exist?(@path)).to be true

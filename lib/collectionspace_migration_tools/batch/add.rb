@@ -38,6 +38,7 @@ module CollectionspaceMigrationTools
           "source_csv" => valid_csv[0],
           "mappable_rectype" => valid_rectype,
           "action" => valid_action,
+          "batch_status" => "added",
           "entity_type" => entity_type,
           "rec_ct" => rec_ct
         }

@@ -14,7 +14,7 @@ RSpec.describe CollectionspaceMigrationTools::Csv::MissingHeaderCheck do
     context "when missing a header" do
       let(:csv_name) { "missing_header.csv" }
 
-      it "is Failure", :aggregate_failures do
+      it "is Failure" do
         expect(result).to be_a(Dry::Monads::Failure)
         expect(result.failure).to eq("1 field(s) lack a header value")
       end
@@ -23,7 +23,7 @@ RSpec.describe CollectionspaceMigrationTools::Csv::MissingHeaderCheck do
     context "when all headers present" do
       let(:csv_name) { "unknown_header.csv" }
 
-      it "is Success", :aggregate_failures do
+      it "is Success" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to be_a(CSV::Row)
       end
