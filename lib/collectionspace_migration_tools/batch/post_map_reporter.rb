@@ -17,6 +17,8 @@ module CollectionspaceMigrationTools
         end
       end
 
+      # @param batch [CMT::Batch::Batch]
+      # @param dir [String]
       def initialize(batch:, dir:)
         @process_type = "mapping"
         @batch = batch
@@ -46,6 +48,7 @@ module CollectionspaceMigrationTools
       end
 
       def do_reporting
+        _mode = yield report("batch_mode", batch.batch_mode, overwrite: true)
         _bs = yield report("batch_status", "mapped", overwrite: true)
         _status = yield(report("mapped?", Time.now.strftime("%F_%H_%M")))
         _dir = yield(report("dir", File.basename(dir)))

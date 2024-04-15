@@ -5,7 +5,8 @@ require "dry/monads/do"
 
 module CollectionspaceMigrationTools
   module Csv
-    # All the preparatory stuff to successfully spin up a CMT::Csv::BatchProcessor
+    # All the preparatory stuff to successfully spin up a
+    # CMT::Csv::BatchProcessor
     class BatchProcessorPreparer
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)
@@ -21,6 +22,7 @@ module CollectionspaceMigrationTools
       # @param csv [String] path to CSV
       # @param rectype [String] record type for retrieving RecordMapper
       # @param action [String<'CREATE', 'UPDATE', 'DELETE'>]
+      # @param batch [nil, String] batch id
       def initialize(csv_path:, rectype:, action:, batch: nil)
         @csv_path = csv_path
         @rectype = rectype
@@ -31,13 +33,16 @@ module CollectionspaceMigrationTools
           exit
         end
         @batch = batch
+        @batch_config = CMT::Parse::BatchConfig.call.either(
+          ->(success) { success },
+          ->(failure) { {} }
+        )
       end
 
       def call
         puts "Setting up for batch processing..."
 
         mapper = yield CMT::Parse::RecordMapper.call(rectype)
-        batch_config = yield CMT::Parse::BatchConfig.call
         handler = yield CMT::Build::DataHandler.call(mapper, batch_config)
 
         row_getter = yield CMT::Csv::FirstRowGetter.new(csv_path)
@@ -91,9 +96,15 @@ module CollectionspaceMigrationTools
         Success(processor)
       end
 
+      def mode
+        return batch_config[:batch_mode] if batch_config.key?(:batch_mode)
+
+        "full record"
+      end
+
       private
 
-      attr_reader :csv_path, :rectype, :action, :batch
+      attr_reader :csv_path, :rectype, :action, :batch, :batch_config
     end
   end
 end

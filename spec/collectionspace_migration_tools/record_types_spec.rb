@@ -10,7 +10,7 @@ RSpec.describe CollectionspaceMigrationTools::RecordTypes do
 
     context "with subtype needing remapping" do
       let(:rectype) { "concept-ethculture" }
-      it "returns expected", :aggregate_failures do
+      it "returns expected" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq("concept-ethnographic-culture")
       end
@@ -18,7 +18,7 @@ RSpec.describe CollectionspaceMigrationTools::RecordTypes do
 
     context "with both parts needing remapping" do
       let(:rectype) { "orgauthorities-ulan_oa" }
-      it "returns expected", :aggregate_failures do
+      it "returns expected" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq("organization-ulan")
       end
@@ -26,7 +26,7 @@ RSpec.describe CollectionspaceMigrationTools::RecordTypes do
 
     context "with both parts ok as-is" do
       let(:rectype) { "person-local" }
-      it "returns expected", :aggregate_failures do
+      it "returns expected" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq(rectype)
       end
@@ -34,7 +34,7 @@ RSpec.describe CollectionspaceMigrationTools::RecordTypes do
 
     context "with unmappable" do
       let(:rectype) { "foo-bar" }
-      it "returns expected", :aggregate_failures do
+      it "returns expected" do
         expect(result).to be_a(Dry::Monads::Failure)
       end
     end

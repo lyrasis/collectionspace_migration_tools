@@ -117,6 +117,7 @@ module CollectionspaceMigrationTools
 
     csv
   end
+  module_function :get_full_path
 end
 
 CMT.loader

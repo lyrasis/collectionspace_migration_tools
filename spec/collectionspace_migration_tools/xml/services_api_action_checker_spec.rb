@@ -19,7 +19,7 @@ RSpec.describe CollectionspaceMigrationTools::Xml::ServicesApiActionChecker do
 
       context "when rec status = new" do
         let(:response) { response_new }
-        it "returns CREATE", :aggregate_failures do
+        it "returns CREATE" do
           expect(response).not_to receive(:add_warning)
           expect(result).to be_a(Dry::Monads::Success)
           expect(result.value!).to eq("CREATE")
@@ -28,7 +28,7 @@ RSpec.describe CollectionspaceMigrationTools::Xml::ServicesApiActionChecker do
 
       context "when rec status = existing" do
         let(:response) { response_existing }
-        it "returns UPDATE", :aggregate_failures do
+        it "returns UPDATE" do
           expect(response).to receive(:add_warning)
           expect(result).to be_a(Dry::Monads::Success)
           expect(result.value!).to eq("UPDATE")
@@ -41,7 +41,7 @@ RSpec.describe CollectionspaceMigrationTools::Xml::ServicesApiActionChecker do
 
       context "when rec status = new" do
         let(:response) { response_new }
-        it "returns CREATE", :aggregate_failures do
+        it "returns CREATE" do
           expect(response).to receive(:add_warning)
           expect(result).to be_a(Dry::Monads::Success)
           expect(result.value!).to eq("CREATE")
@@ -50,7 +50,7 @@ RSpec.describe CollectionspaceMigrationTools::Xml::ServicesApiActionChecker do
 
       context "when rec status = existing" do
         let(:response) { response_existing }
-        it "returns UPDATE", :aggregate_failures do
+        it "returns UPDATE" do
           expect(response).not_to receive(:add_warning)
           expect(result).to be_a(Dry::Monads::Success)
           expect(result.value!).to eq("UPDATE")
@@ -63,14 +63,14 @@ RSpec.describe CollectionspaceMigrationTools::Xml::ServicesApiActionChecker do
 
       context "when rec status = new" do
         let(:response) { response_new }
-        it "returns Failure", :aggregate_failures do
+        it "returns Failure" do
           expect(result).to be_a(Dry::Monads::Failure)
         end
       end
 
       context "when rec status = existing" do
         let(:response) { response_existing }
-        it "returns DELETE", :aggregate_failures do
+        it "returns DELETE" do
           expect(response).not_to receive(:add_warning)
           expect(result).to be_a(Dry::Monads::Success)
           expect(result.value!).to eq("DELETE")

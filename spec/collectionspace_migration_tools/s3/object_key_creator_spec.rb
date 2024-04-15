@@ -32,14 +32,14 @@ RSpec.describe CollectionspaceMigrationTools::S3::ObjectKeyCreator do
     context "with CREATE" do
       let(:action) { "CREATE" }
       let(:response) { response_new }
-      it "returns Success containing expected name", :aggregate_failures do
+      it "returns Success containing expected name" do
         expect(result.value!.value).to eq(hashed)
       end
 
       context "with batch passed in" do
         let(:batch) { "co2" }
         let(:klass) { described_class.new(svc_path: svc_path, batch: batch) }
-        it "returns Success containing expected name", :aggregate_failures do
+        it "returns Success containing expected name" do
           expect(result.value!.value).to eq(hashed)
         end
       end
@@ -52,7 +52,7 @@ RSpec.describe CollectionspaceMigrationTools::S3::ObjectKeyCreator do
             orig_data: {"mediafileuri" => blob_uri})
         end
         let(:path) { "#{svc_path}?blobUri=#{blob_uri}" }
-        it "returns Success containing expected name", :aggregate_failures do
+        it "returns Success containing expected name" do
           expect(result.value!.value).to eq(
             "bmF8L21lZGlhP2Jsb2JVcmk9aHR0cCUzQSUyRiUyRnBsYWNlLmlvJTJGaW1nLmpwZ"\
               "3wxMjN8Q1JFQVRF"
@@ -62,7 +62,7 @@ RSpec.describe CollectionspaceMigrationTools::S3::ObjectKeyCreator do
 
         context "with funky mediafileuri" do
           let(:blob_uri) { "http://place.io/img (4).jpg" }
-          it "returns Success containing expected name", :aggregate_failures do
+          it "returns Success containing expected name" do
             res = result.value!
             expect(res.value).to eq("bmF8L21lZGlhP2Jsb2JVcmk9aHR0cCUzQSUyRiUyR"\
                                     "nBsYWNlLmlvJTJGaW1nJTI1MjAlMjg0JTI5LmpwZ"\
@@ -77,7 +77,7 @@ RSpec.describe CollectionspaceMigrationTools::S3::ObjectKeyCreator do
         let(:response) do
           double(status: :new, identifier: rec_id, orig_data: {})
         end
-        it "returns Success containing expected name", :aggregate_failures do
+        it "returns Success containing expected name" do
           expect(result).to be_a(Dry::Monads::Success)
           expect(result.value!.value).to eq(hashed)
         end
@@ -88,7 +88,7 @@ RSpec.describe CollectionspaceMigrationTools::S3::ObjectKeyCreator do
       let(:action) { "UPDATE" }
       let(:response) { response_existing }
       let(:path) { "#{svc_path}/#{csid}" }
-      it "returns Success containing expected name", :aggregate_failures do
+      it "returns Success containing expected name" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!.value).to eq(hashed)
       end
@@ -98,7 +98,7 @@ RSpec.describe CollectionspaceMigrationTools::S3::ObjectKeyCreator do
       let(:action) { "DELETE" }
       let(:response) { response_existing }
       let(:path) { "#{svc_path}/#{csid}" }
-      it "returns Success containing expected name", :aggregate_failures do
+      it "returns Success containing expected name" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!.value).to eq(hashed)
       end

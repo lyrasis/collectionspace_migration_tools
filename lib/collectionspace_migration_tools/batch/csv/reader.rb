@@ -14,7 +14,7 @@ module CollectionspaceMigrationTools
 
         def initialize(
           data: nil,
-          rewriter: CMT::Batch::Csv::Rewriter.new,
+          rewriter: CMT::Csv::Rewriter.new(CMT.config.client.batch_csv),
           headers: CMT::Batch::Csv::Headers.all_headers
         )
           data = get_data if data.nil?
@@ -103,6 +103,7 @@ module CollectionspaceMigrationTools
         def header_map
           {
             "id" => "id",
+            "batch_mode" => "mode",
             "batch_status" => "status",
             "action" => "action",
             "rec_ct" => "recs",
@@ -155,7 +156,7 @@ module CollectionspaceMigrationTools
           _rewritten = yield(rewrite)
 
           puts "Batch #{bid} deleted.\nRemaining batches:"
-          list
+          to_cli_table
 
           Success()
         end

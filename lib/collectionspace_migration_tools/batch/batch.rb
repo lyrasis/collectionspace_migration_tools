@@ -7,27 +7,29 @@ module CollectionspaceMigrationTools
   module Batch
     class Batch
       include Dry::Monads[:result]
-      include Dry::Monads::Do.for(:call, :validate_csv, :delete,
-        :get_batch_data)
+      include Dry::Monads::Do.for(:delete, :get_batch_data)
       include CMT::Batch::Mappable
       include CMT::Batch::Uploadable
       include CMT::Batch::Ingestable
 
       attr_reader :mode
 
+      # @param csv [CMT::Batch::Csv::Reader]
+      # @param id [String] batch id
       def initialize(csv, id)
         @csv = csv
         @id = id
         get_batch_data
         @dirpath = "#{CMT.config.client.batch_dir}/#{dir}" if data && dir
-        @config = set_config
-        @mode = set_mode
       end
 
       def delete
-        _status = yield(to_monad)
-        _del_dir = yield(delete_batch_dir)
-        _del_row = yield(csv.delete_batch(id))
+        _status = yield to_monad
+        _del_dir = yield delete_batch_dir
+        if CMT.config.client.archive_batches && done?
+          _arch = yield CMT::ArchiveCsv::Archiver.call(self)
+        end
+        _del_row = yield csv.delete_batch(id)
 
         Success()
       end
@@ -44,13 +46,14 @@ module CollectionspaceMigrationTools
         Success(val)
       end
 
-      # Each header from batches CSV becomes a method name returning the value for this batch
+      # Each header from batches CSV becomes a method name returning the value
+      # for this batch
       def method_missing(meth, *args)
         str_meth = meth.to_s
         return data[str_meth] if data.key?(str_meth)
 
-        message = "You called #{str_meth} with #{args}. This method doesn't exist."
-        raise NoMethodError, message
+        raise NoMethodError, "You called #{str_meth} with #{args}. This "\
+          "method doesn't exist."
       end
 
       def populate_field(key, value, overwrite: false)
@@ -70,7 +73,7 @@ module CollectionspaceMigrationTools
 
       def prefix
         str = Base64.urlsafe_encode64("#{id}#{CMT.config.client.s3_delimiter}",
-          padding: false)
+                                      padding: false)
         str[0..-2]
       end
 
@@ -119,21 +122,7 @@ module CollectionspaceMigrationTools
 
       private
 
-      attr_reader :csv, :id, :data, :dirpath, :config
-
-      def set_config
-        CMT::Parse::BatchConfig.call
-          .either(
-            ->(success) { success },
-            ->(failure) { {} }
-          )
-      end
-
-      def set_mode
-        return config["batch_mode"] if config.key?("batch_mode")
-
-        "full record"
-      end
+      attr_reader :csv, :id, :data, :dirpath
 
       def delete_batch_dir
         return Success() unless dirpath

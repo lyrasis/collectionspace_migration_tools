@@ -34,7 +34,7 @@ module CollectionspaceMigrationTools
         end
 
         def map_headers
-          %w[mapped? dir map_errs map_oks map_warns missing_terms]
+          %w[batch_mode mapped? dir map_errs map_oks map_warns missing_terms]
         end
 
         # ingest_start_time is considered to be the time the upload was

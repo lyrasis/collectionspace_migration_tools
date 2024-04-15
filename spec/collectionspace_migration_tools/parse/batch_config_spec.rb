@@ -13,7 +13,7 @@ RSpec.describe CollectionspaceMigrationTools::Parse::BatchConfig do
     context "when no batch config file indicated in client config" do
       before { CMT.config.client.batch_config_path = nil }
 
-      it "is Success containing expected hash", :aggregate_failures do
+      it "is Success containing expected hash" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq(base_config)
       end
@@ -26,7 +26,7 @@ RSpec.describe CollectionspaceMigrationTools::Parse::BatchConfig do
         CMT.config.client.batch_config_path = path
       end
 
-      it "is Success containing expected hash", :aggregate_failures do
+      it "is Success containing expected hash" do
         expected = base_config.merge({"delimiter" => "|||",
 "subgroup_delimiter" => "^^"})
         expect(result).to be_a(Dry::Monads::Success)
@@ -42,7 +42,7 @@ RSpec.describe CollectionspaceMigrationTools::Parse::BatchConfig do
       end
       after { CMT.config.client.batch_config_path = nil }
 
-      it "is Failure", :aggregate_failures do
+      it "is Failure" do
         expect(result).to be_a(Dry::Monads::Failure)
         expect(result.failure.message).to start_with("Batch config file does not exist")
       end

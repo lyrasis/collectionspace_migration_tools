@@ -6,6 +6,7 @@ module CollectionspaceMigrationTools
   module Batch
     module Csv
       class Fixer
+        include CMT::Csv::Fixable
         include Dry::Monads[:result]
         include Dry::Monads::Do.for(:call)
 
@@ -17,7 +18,7 @@ module CollectionspaceMigrationTools
 
         def initialize(
           data: File.read(CMT.config.client.batch_csv),
-          rewriter: CMT::Batch::Csv::Rewriter.new,
+          rewriter: CMT::Csv::Rewriter.new(CMT.config.client.batch_csv),
           headers: CMT::Batch::Csv::Headers.all_headers,
           derived_headers: CMT::Batch::Csv::Headers.derived_headers
         )
@@ -95,11 +96,25 @@ module CollectionspaceMigrationTools
           Failure([:populate_derived, fix_cols])
         end
 
+        def call_fix(meth, task)
+          if meth == :update_csv_columns
+            fixed = update_csv_columns(table, headers)
+            if fixed.success?
+              @table = fixed.value!
+              Success("Updated CSV columns")
+            else
+              fixed
+            end
+          else
+            task.empty? ? send(meth) : send(meth, *task)
+          end
+        end
+
         def do_fixes(todos)
           results = todos.map do |todo|
             task = todo.failure
             meth = task.shift
-            task.empty? ? send(meth) : send(meth, *task)
+            call_fix(meth, task)
           end
 
           if results.any?(&:failure?)
@@ -124,20 +139,6 @@ module CollectionspaceMigrationTools
 
         def rows_needing_population(col)
           table.select { |row| row[col].nil? || row[col].empty? }
-        end
-
-        def update_csv_columns
-          new_table = CSV::Table.new([], headers: headers)
-          data = table.values_at(*headers)
-          mapped = data.map { |rowdata| CSV::Row.new(headers, rowdata) }
-          mapped.each { |row| new_table << row }
-          @table = new_table
-        rescue => err
-          msg = "#{err.message} IN #{err.backtrace[0]}"
-          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-            message: msg))
-        else
-          Success("Updated CSV columns")
         end
       end
     end

@@ -59,4 +59,16 @@ module Helpers
     CMT.config.client.batch_config_path = File.join(Bundler.root, "spec",
       "support", "fixtures", "client_batch_config.json")
   end
+
+  def build_test_archive_csv(
+    dir: "tmp", headers: CMT::Batch::Csv::Headers.all_headers, rowct: 1,
+    row: nil
+  )
+    CMT.config.client.base_dir = File.join(Bundler.root, dir)
+    rowdata = row ||= Array.new(headers.length, "x")
+    CSV.open(CMT::ArchiveCsv.path, "w") do |csv|
+      csv << headers
+      rowct.times { csv << rowdata }
+    end
+  end
 end

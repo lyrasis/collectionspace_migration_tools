@@ -8,14 +8,16 @@ module CollectionspaceMigrationTools
         # If you change default values here, update sample_client_config.yml
         @default_values = {
           page_size: 50,
-          cs_version: "7_0",
+          cs_version: "7_2",
           batch_dir: "batch_data",
           auto_refresh_cache_before_mapping: true,
           clear_cache_before_refresh: true,
           csv_delimiter: ",",
           s3_delimiter: "|",
           media_with_blob_upload_delay: 500,
-          max_media_upload_threads: 5
+          max_media_upload_threads: 5,
+          archive_batches: true,
+          batch_archive_filename: "batches_archive.csv"
         }
         @validator = CMT::Validate::ConfigClientContract
         @pathvals = %i[base_dir batch_csv batch_config_path]

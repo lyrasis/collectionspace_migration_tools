@@ -12,32 +12,20 @@ endif::[]
 
 = Changelog
 
-== Unreleased
-These changes are merged into the `main` branch, but have not been released. After merging pull requests (PRs) that are not immediately released into `main`, a tag is added appending the PR# to the current release. For example, if the release version/tag is `v0.0.0`, and PR# 15 is merged without a new release, the state of the codebase after that merge will be tagged as `v0.0.0.pr15`.
-
-=== Breaking
-
-=== Added
-
-=== Bugfixes
-
-=== Changed
-
-=== Deleted
-
-=== Deprecated/Will break in a future version
-
 == 4.0.0 (unreleased)
 
 === Breaking
 
 * `done` as an explicit batch status is removed from the application. Commands to mark batches as done are removed. `batches:done` will now display all batches with batch_status = ingested.
 * `batches:to_ingcheck` command renamed `batches:to_ingstat`, in order to be consistent with `batches:ingstat` and `batch:ingstat` commands.
+* Columns in batches CSV have changed. You will be prompted to run `thor batches:fix_csv` at some point, or you can run it proactively.
 
 === Added
 
 * `batch_status` column to batches CSV
+* `batch_mode` column to batches CSV (added in mapping step)
 * `ingest duration` calculated, shown in STDOUT, and recorded in batches CSV if ingest is complete when `batch:ingstat` is run
+* Batch archiving is enabled by default
 
 === Changes
 

@@ -23,7 +23,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::CsvRowCounter do
   describe "#call" do
     context "with no field given" do
       let(:result) { klass.call }
-      it "returns Success containing total row count", :aggregate_failures do
+      it "returns Success containing total row count" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq(6)
       end
@@ -31,8 +31,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::CsvRowCounter do
 
     context "with field given" do
       let(:result) { klass.call(field: "b") }
-      it "returns Success containing count of rows where field is populated",
-        :aggregate_failures do
+      it "returns Success containing count of rows where field is populated" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq(3)
       end
@@ -40,8 +39,8 @@ RSpec.describe CollectionspaceMigrationTools::Batch::CsvRowCounter do
 
     context "with field and value given" do
       let(:result) { klass.call(field: "b", value: "k") }
-      it "returns Success containing count of rows where field is populated with given value",
-        :aggregate_failures do
+      it "returns Success containing count of rows where field is populated "\
+        "with given value" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq(2)
       end
@@ -49,7 +48,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::CsvRowCounter do
 
     context "with value given without field" do
       let(:result) { klass.call(value: "k") }
-      it "returns Failure", :aggregate_failures do
+      it "returns Failure" do
         expect(result).to be_a(Dry::Monads::Failure)
         expect(result.failure).to eq("CsvRowCounter: you must specify field if you specify value")
       end

@@ -20,7 +20,7 @@ RSpec.describe CollectionspaceMigrationTools::Csv::BatchPreprocessor do
     context "when missing a header" do
       let(:csv_name) { "missing_header.csv" }
 
-      it "is Failure", :aggregate_failures do
+      it "is Failure" do
         expect(result).to be_a(Dry::Monads::Failure)
         expect(result.failure).to eq("1 field(s) lack a header value")
       end
@@ -29,7 +29,7 @@ RSpec.describe CollectionspaceMigrationTools::Csv::BatchPreprocessor do
     context "when missing a required field" do
       let(:csv_name) { "required_field_missing.csv" }
 
-      it "is Failure", :aggregate_failures do
+      it "is Failure" do
         expect(result).to be_a(Dry::Monads::Failure)
         expect(result.failure).to eq("required field missing: objectnumber must be present")
       end

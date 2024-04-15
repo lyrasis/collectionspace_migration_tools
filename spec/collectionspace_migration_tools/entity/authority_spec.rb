@@ -9,7 +9,7 @@ RSpec.describe CollectionspaceMigrationTools::Entity::Authority do
     context "valid rectype with slash" do
       let(:str) { "person/local" }
 
-      it "constructs as expected", :aggregate_failures do
+      it "constructs as expected" do
         expect(result).to be_a(described_class)
         expect(result.type).to eq("person")
         expect(result.subtype).to eq("local")
@@ -20,7 +20,7 @@ RSpec.describe CollectionspaceMigrationTools::Entity::Authority do
     context "valid rectype with hyphen" do
       let(:str) { "person-local" }
 
-      it "constructs as expected", :aggregate_failures do
+      it "constructs as expected" do
         expect(result).to be_a(described_class)
         expect(result.type).to eq("person")
         expect(result.subtype).to eq("local")
@@ -31,7 +31,7 @@ RSpec.describe CollectionspaceMigrationTools::Entity::Authority do
     context "invalid rectype" do
       let(:str) { "person" }
 
-      it "constructs as expected", :aggregate_failures do
+      it "constructs as expected" do
         expect(result).to be_a(described_class)
         expect(result.type).to eq("person")
         expect(result.subtype).to eq("")

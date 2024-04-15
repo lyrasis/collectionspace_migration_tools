@@ -19,7 +19,7 @@ RSpec.describe CollectionspaceMigrationTools::Parse::YamlConfig do
   context "with file that does not exist" do
     let(:config_file) { "config_missing.yml" }
 
-    it "is Failure", :aggregate_failures do
+    it "is Failure" do
       expect(result).to be_a(Dry::Monads::Failure)
       expect(result.failure.message).to start_with("No such file or directory")
     end
@@ -28,7 +28,7 @@ RSpec.describe CollectionspaceMigrationTools::Parse::YamlConfig do
   context "with yaml file that cannot be parsed" do
     let(:config_file) { "config_unparseable.yml" }
 
-    it "is Failure", :aggregate_failures do
+    it "is Failure" do
       expect(result).to be_a(Dry::Monads::Failure)
       expect(result.failure.context).to eq("CollectionspaceMigrationTools::Parse::YamlConfig.parse")
     end

@@ -33,7 +33,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Reader do
     let(:id) { "2" }
 
     context "when single batch found" do
-      it "returns Success containing batch row", :aggregate_failures do
+      it "returns Success containing batch row" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to be_a(CSV::Row)
       end
@@ -42,7 +42,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Reader do
     context "when no batch found" do
       let(:id) { "co99" }
 
-      it "returns failure", :aggregate_failures do
+      it "returns failure" do
         expect(result).to be_a(Dry::Monads::Failure)
         expect(result.failure).to eq("No batch with id: #{id}")
       end
@@ -73,7 +73,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Reader do
     let(:result) { klass.to_monad }
 
     context "with no duplicate ids and headers up to date" do
-      it "is success", :aggregate_failures do
+      it "is success" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to be_a(described_class)
       end
@@ -82,7 +82,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Reader do
     context "with duplicate ids in data" do
       let(:data) { duplicate_ids }
 
-      it "is failure", :aggregate_failures do
+      it "is failure" do
         expect(result).to be_a(Dry::Monads::Failure)
         msg = "Batch ids are not unique. Please manually edit and save CSV where info about batches is recorded."
         expect(result.failure).to eq(msg)
@@ -92,7 +92,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Reader do
     context "with out of date headers" do
       let(:data) { old_headers }
 
-      it "is failure", :aggregate_failures do
+      it "is failure" do
         expect(result).to be_a(Dry::Monads::Failure)
         msg = "Batch CSV headers are not up-to-date, so batch workflows may fail unexpectedly. Run `thor batches:fix_csv` to fix"
         expect(result.failure).to eq(msg)
