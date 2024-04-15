@@ -33,6 +33,10 @@ endif::[]
 * Reset default client config `media_with_blob_upload_delay` value to 500ms in accordance with the sample client config
 * `batches show` now shows headers and batch status
 
+=== Bugfixes
+
+* Fix issue with `vt add` command, in which ampersands in terms were not escaped in the created XML, causing errors (https://github.com/lyrasis/collectionspace_migration_tools/issues/39[#39])
+
 == 3.0.1 (2024-03-11)
 
 === Changes
