@@ -36,7 +36,8 @@ module CollectionspaceMigrationTools
       attr_reader :handler, :reporter
 
       def add_term(row)
-        handler.add_term(vocab: row["vocab"], term: row["term"])
+        term = row["term"].sub("&", "&amp;")
+        handler.add_term(vocab: row["vocab"], term: term)
       end
     end
   end
