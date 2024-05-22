@@ -18,6 +18,10 @@ endif::[]
 
 * Improve map error message when a non-duplicate file name cannot be saved because Mac's default file system (case insensitive) does treat it as a duplicate
 
+=== Bugfixes
+
+* Fixes issue where, if you had somehow gotten into a state where the current config was invalid, you could not switch to another config using the `thor config switch` command.
+
 == 4.0.0 (2024-04-15)
 
 === Breaking

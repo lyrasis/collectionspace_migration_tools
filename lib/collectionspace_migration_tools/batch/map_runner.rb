@@ -16,19 +16,25 @@ module CollectionspaceMigrationTools
         end
       end
 
-      def initialize(
-        batch_id:,
-        autocache: CMT.config.client.auto_refresh_cache_before_mapping,
-        clearcache: CMT.config.client.clear_cache_before_refresh
-      )
+      def initialize(batch_id:, autocache: nil, clearcache: nil)
         @batch_id = batch_id
-        @autocache = autocache
-        @clearcache = clearcache
+        @autocache = if autocache.nil?
+          CMT.config.client.auto_refresh_cache_before_mapping
+        else
+          autocache
+        end
+        @clearcache = if clearcache.nil?
+          CMT.config.client.clear_cache_before_refresh
+        else
+          clearcache
+        end
       end
 
       def call
         batch = yield(CMT::Batch.find(batch_id))
-        return Failure("Batch #{batch_id} is not mappable") unless batch.mappable?
+        unless batch.mappable?
+          return Failure("Batch #{batch_id} is not mappable")
+        end
 
         if autocache
           _cc = yield(CMT::Caches::Clearer.call) if clearcache

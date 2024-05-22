@@ -27,13 +27,13 @@ class Batches < Thor
     "Creates new batch-tracking CSV if one does not exist. Checks existing "\
     "has up-to-date format"
   def init_csv
-    path = CMT.config.client.batch_csv
     CMT::Batch::Csv::Creator.call.either(
       ->(success) {
-        puts "Wrote new file at #{path}"
+        puts "Wrote new file at #{CMT.config.client.batch_csv}"
         exit(0)
       },
       ->(failure) do
+        path = CMT.config.client.batch_csv
         FileUtils.rm(path) if File.exist?(path)
         puts failure
         exit(1)
@@ -80,10 +80,8 @@ class Batches < Thor
   end
 
   desc "map", "Maps all mappable batches to CS XML files"
-  option :autocache, required: false, type: :boolean,
-    default: CMT.config.client.auto_refresh_cache_before_mapping
-  option :clearcache, required: false, type: :boolean,
-    default: CMT.config.client.clear_cache_before_refresh
+  option :autocache, required: false, type: :boolean
+  option :clearcache, required: false, type: :boolean
   def map
     CMT::Batches.map(options[:autocache], options[:clearcache]).either(
       ->(success) { exit(0) },

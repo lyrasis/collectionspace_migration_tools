@@ -104,10 +104,8 @@ class Batch < Thor
   end
 
   desc "map BATCHID", "Maps a batch's source CSV data to CS XML files"
-  option :autocache, required: false, type: :boolean,
-    default: CMT.config.client.auto_refresh_cache_before_mapping
-  option :clearcache, required: false, type: :boolean,
-    default: CMT.config.client.clear_cache_before_refresh
+  option :autocache, required: false, type: :boolean
+  option :clearcache, required: false, type: :boolean
   def map(id)
     CMT::Batch.map(id, options[:autocache], options[:clearcache]).either(
       ->(success) { exit(0) },
