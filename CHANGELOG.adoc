@@ -12,6 +12,12 @@ endif::[]
 
 = Changelog
 
+== Unreleased
+
+=== Changes
+
+* Improve map error message when a non-duplicate file name cannot be saved because Mac's default file system (case insensitive) does treat it as a duplicate
+
 == 4.0.0 (2024-04-15)
 
 === Breaking
