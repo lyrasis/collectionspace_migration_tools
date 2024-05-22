@@ -5,7 +5,7 @@ module CollectionspaceMigrationTools
     # Copies specified .yml file from `repo_dir/config` to client_config.yml
     class Switcher
       include Dry::Monads[:result]
-      include Dry::Monads::Do.for(:call)
+      include Dry::Monads::Do.for(:initialize, :call)
 
       class << self
         def call(...)
@@ -13,14 +13,12 @@ module CollectionspaceMigrationTools
         end
       end
 
-      def initialize(
-        client:,
-        target_path: CMT.config.system.config_name_file,
-        config_dir: CMT.config.system.client_config_dir
-      )
+      def initialize(client:)
         @client = client
-        @target_path = target_path
-        @source_path = File.join(config_dir, "#{client}.yml")
+
+        sysconfig = yield CMT::Config::System.call
+        @target_path = sysconfig.config_name_file
+        @source_path = File.join(sysconfig.client_config_dir, "#{client}.yml")
       end
 
       def call
