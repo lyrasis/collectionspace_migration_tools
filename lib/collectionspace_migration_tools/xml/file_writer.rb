@@ -42,8 +42,10 @@ module CollectionspaceMigrationTools
         end
       end
 
-      def check_existence(path, response)
-        return Failure([:file_already_exists, response]) if File.exist?(path)
+      def check_existence(name, path, response)
+        if File.exist?(path)
+          return Failure([:file_already_exists, response, name])
+        end
 
         Success(response)
       end
@@ -56,7 +58,7 @@ module CollectionspaceMigrationTools
 
         add_key_warnings(key, response) unless key.warnings.empty?
 
-        _checked = yield check_existence(path, response)
+        _checked = yield check_existence(file_name, path, response)
         _written = yield write_file(path, response)
 
         Success([response, file_name, key.value])

@@ -66,7 +66,7 @@ module CollectionspaceMigrationTools
         response = result[1]
         if error == :file_already_exists
           data["CMT_errors"] =
-            "An XML record with identifier #{response.identifier} has already been written. Check for duplicates"
+            "An XML record with filename #{result[2]} has already been written. Check for duplicates"
         elsif error == :error_on_write
           data["CMT_errors"] =
             "Attempt to write XML to file raised error: #{result[2]}"
