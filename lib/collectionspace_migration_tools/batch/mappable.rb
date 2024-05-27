@@ -10,8 +10,8 @@ module CollectionspaceMigrationTools
       include Dry::Monads::Do.for(:rollback_map)
 
       def rollback_map
-        rolled = yield(rollback_step("map"))
-        dir_del = yield(delete_batch_dir)
+        _rolled = yield(rollback_step("map"))
+        _dir_del = yield(delete_batch_dir)
 
         Success("Mapping data rolled back")
       end
