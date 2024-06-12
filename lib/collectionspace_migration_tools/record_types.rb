@@ -95,6 +95,11 @@ module CollectionspaceMigrationTools
     end
 
     def services_api_path(rectype)
+      if rectype == "vocabulary"
+        result = CMT::Entity::Vocabulary.services_api_path
+        return Success(result)
+      end
+
       result = mappable_type_to_service_path_mapping[rectype]
     rescue => err
       msg = "#{err.message} IN #{err.backtrace[0]}"

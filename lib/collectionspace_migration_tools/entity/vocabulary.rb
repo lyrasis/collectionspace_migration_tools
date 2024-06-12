@@ -9,6 +9,10 @@ module CollectionspaceMigrationTools
     class Vocabulary
       include CMT::Cache::Populatable
 
+      class << self
+        def services_api_path = "vocabularies"
+      end
+
       def initialize
       end
 
