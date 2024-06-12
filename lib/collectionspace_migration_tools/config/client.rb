@@ -28,6 +28,7 @@ module CollectionspaceMigrationTools
 
       def manipulate
         add_option(:batch_config_path, nil)
+        add_option(:s3_bucket, nil)
         set_log_group_name
         add_option(:batch_csv, File.join(hash[:base_dir], "batches.csv"))
         add_media_blob_delay

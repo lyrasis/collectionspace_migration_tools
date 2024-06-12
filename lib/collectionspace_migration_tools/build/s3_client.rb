@@ -23,6 +23,8 @@ module CollectionspaceMigrationTools
       end
 
       def call
+        return Failure(:no_S3_bucket_configured) unless bucket
+
         client = yield(create_client)
         _try = yield(try(client))
 

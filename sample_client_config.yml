@@ -91,6 +91,9 @@ client:
   ## client. This is the bucket we upload CSXML objects into, which
   ## uses AWS Lambda to call ingest for each object. It is NOT the
   ## bucket where client media files are uploaded.
+  ##
+  ## This is optional, since there may be use cases for CMT where only
+  ## non-ingest commands are needed
   s3_bucket: "bucket_name"
 
   ## OPTIONAL SETTING
