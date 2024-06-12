@@ -2,10 +2,12 @@
 
 module CollectionspaceMigrationTools
   module Entity
-    # @note There is no `duplicate` method for vocabulary terms at this point because:
-    #   - we are not batch uploading them yet, so there is no opportunity for duplicates to be
-    #     introduced by the S3/Lambda ingest process
-    #   - generally vocabularies are small enough we can take care of any duplicates manually
+    # @note There is no `duplicate` method for vocabulary terms at this point
+    #   because:
+    #   - we are not batch uploading them yet, so there is no opportunity for
+    #   duplicates to be introduced by the S3/Lambda ingest process
+    #   - generally vocabularies are small enough we can take care of any
+    #   duplicates manually
     class Vocabulary
       include CMT::Cache::Populatable
 
