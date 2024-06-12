@@ -66,6 +66,17 @@ RSpec.describe CollectionspaceMigrationTools::Validate::ConfigClientContract do
     end
   end
 
+  context "with no S3 bucket" do
+    let(:client_config) do
+      valid_config.delete(:s3_bucket)
+      valid_config
+    end
+
+    it "returns Success" do
+      expect(result).to be_a(Dry::Monads::Success)
+    end
+  end
+
   context "with existing batch config file" do
     let(:client_config) do
       valid_config.merge(
