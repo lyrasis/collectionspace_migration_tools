@@ -20,7 +20,7 @@
 | /collectionobjects/09f531bd-4f12-4c36-9f92
 
 | procedures
-| /acquisitions/5043d8cc-9437-4bc7-92d1 
+| /acquisitions/5043d8cc-9437-4bc7-92d1
 
 | relations
 | /relations/da044bc2-9fbf-474d-803a
@@ -35,7 +35,7 @@
 |===
 | record type | refname
 
-| authorities
+| authority terms
 | urn:cspace:core.collectionspace.org:conceptauthorities:name(concept):item:name(Associatedconcept11581450962683)'Associated concept 1'
 
 | blobs
@@ -50,36 +50,35 @@
 | relations
 | urn:cspace:core.collectionspace.org:relations:id(da044bc2-9fbf-474d-803a)
 
-| vocabularies
+| vocabulary terms
 | urn:cspace:core.collectionspace.org:vocabularies:name(annotationtype):item:name(additional_taxa)'additional taxa'
 |===
 
 == refName pattern
 
+In this table:
+
+* `services-url` refers to the value configured for that element in `application/tomcat-main/src/main/resources/defaults` files: `base-authority-#{authorityname}.xml`, `base-other-termlist.xml`, `base-collectionobject.xml`, `base-procedure-#{procedurename}.xml`, etc.
+* `web-url` refers to values in `/record/instances/instance/web-url` in `application/tomcat-main/src/main/resources/defaults` files: `base-authority-#{authorityname}.xml` or `base-instance-vocabularies.xml`
+
 [cols="1,3"]
 |===
 | record type | refname pattern
 
-| authority/vocabulary (top level, i.e. the vocabulary itself)
-| urn:cspace:domain:type:name(subtype)'label'
+| authority vocab, vocabulary (top level, i.e. the vocabulary itself)
+| urn:cspace:domain:services-url:name(web-url)'displayName'
 
 | authority term
-| urn:cspace:domain:type:name(subtype):item:name(identifier)'label'
-
-| vocabulary term
-| urn:cspace:domain:type:name(subtype):item:name(identifier)'label'
+| urn:cspace:domain:services-url:name(web-url):item:name(term shortIdentifier)'termDisplayName'
 
 | collectionobjects
-| urn:cspace:domain:type:id(identifier)'label'
+| urn:cspace:domain:services-url:id(csid)'objectNumber'
 
-| blobs
-| urn:cspace:domain:type:id(identifier)
+| blobs, procedures, relations
+| urn:cspace:domain:services-url:id(csid)
 
-| procedures
-| urn:cspace:domain:type:id(identifier)
-
-| relations
-| urn:cspace:domain:type:id(identifier)
+| vocabulary term - identifier is shortidentifier value of term
+| urn:cspace:domain:vocabularies:name(web-url):item:name(term shortIdentifier)'displayName'
 
 |===
 
