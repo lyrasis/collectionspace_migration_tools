@@ -23,9 +23,11 @@ module CollectionspaceMigrationTools
         return status if status.failure?
 
         query = <<~SQL
-          select '#{name}' as type, oap.#{mapper.id_field} as id, cc.refname, h.name as csid
+          select '#{name}' as type, oap.#{mapper.id_field} as id, cc.refname,
+            h.name as csid
           from #{mapper.base_namespace} oap
-          inner join misc on oap.id = misc.id and misc.lifecyclestate != 'deleted'
+          inner join misc on oap.id = misc.id and
+            misc.lifecyclestate != 'deleted'
           inner join hierarchy h on oap.id = h.id
           inner join collectionspace_core cc on oap.id = cc.id
         SQL
@@ -55,7 +57,8 @@ module CollectionspaceMigrationTools
         query = <<~SQL
           select '#{name}' as rectype, h.name as csid
           from #{mapper.base_namespace} oap
-          inner join misc on oap.id = misc.id and misc.lifecyclestate != 'deleted'
+          inner join misc on oap.id = misc.id
+            and misc.lifecyclestate != 'deleted'
           inner join hierarchy h on oap.id = h.id
         SQL
 

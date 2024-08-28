@@ -32,7 +32,6 @@ module CollectionspaceMigrationTools
           end
         end
         threads.each { |thread| thread.join }
-
         Success()
       end
 

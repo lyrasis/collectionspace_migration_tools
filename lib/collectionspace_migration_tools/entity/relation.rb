@@ -2,9 +2,11 @@
 
 module CollectionspaceMigrationTools
   module Entity
-    # @note There is no `duplicate` method for relation because I have been unable to populate an instance
-    #   with any duplicate relations to test such a query. The API seems to be pretty thorough at returning
-    #   409 error instead of creating duplicate relations.
+    # @note There is no `duplicate` method for relation because I have
+    #   been unable to populate an instance with any duplicate
+    #   relations to test such a query. The API seems to be pretty
+    #   thorough at returning 409 error instead of creating duplicate
+    #   relations.
     class Relation
       include CMT::Cache::Populatable
 
@@ -29,8 +31,11 @@ module CollectionspaceMigrationTools
 
       def cacheable_data_query
         query = <<~SQL
-          select rc.subjectcsid, rc.relationshiptype, rc.objectcsid, h.name as csid from relations_common rc
-          inner join misc on rc.id = misc.id and misc.lifecyclestate != 'deleted'
+          select rc.subjectcsid, rc.relationshiptype, rc.objectcsid,
+          h.name as csid
+          from relations_common rc
+          inner join misc on rc.id = misc.id
+            and misc.lifecyclestate != 'deleted'
           inner join hierarchy h on rc.id = h.id
           #{constraint}
           #{predicate}
@@ -45,9 +50,13 @@ module CollectionspaceMigrationTools
 
       def name_constraint_lookup
         {
-          "authorityhierarchy" => "inner join hierarchy hh on rc.subjectcsid = hh.name and hh.primarytype not like 'CollectionObject%'",
+          "authorityhierarchy" => "inner join hierarchy hh "\
+            "on rc.subjectcsid = hh.name "\
+            "and hh.primarytype not like 'CollectionObject%'",
           "nonhierarchicalrelationship" => "",
-          "objecthierarchy" => "inner join hierarchy hh on rc.subjectcsid = hh.name and hh.primarytype like 'CollectionObject%'"
+          "objecthierarchy" => "inner join hierarchy hh "\
+            "on rc.subjectcsid = hh.name "\
+            "and hh.primarytype like 'CollectionObject%'"
         }
       end
 
@@ -72,7 +81,8 @@ module CollectionspaceMigrationTools
           @name = rectype
           @status = Success(self)
         else
-          @status = Failure("#{rectype} is not a valid relation rectype. Do `thor rt:rels` for list of allowed rectypes")
+          @status = Failure("#{rectype} is not a valid relation rectype. Do "\
+                            "`thor rt:rels` for list of allowed rectypes")
         end
       end
 

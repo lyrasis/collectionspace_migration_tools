@@ -28,7 +28,7 @@ RSpec.describe CollectionspaceMigrationTools::Parse::BatchConfig do
 
       it "is Success containing expected hash" do
         expected = base_config.merge({"delimiter" => "|||",
-"subgroup_delimiter" => "^^"})
+          "subgroup_delimiter" => "^^"})
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to eq(expected)
       end
@@ -44,7 +44,9 @@ RSpec.describe CollectionspaceMigrationTools::Parse::BatchConfig do
 
       it "is Failure" do
         expect(result).to be_a(Dry::Monads::Failure)
-        expect(result.failure.message).to start_with("Batch config file does not exist")
+        expect(result.failure.message).to start_with(
+          "Batch config file does not exist"
+        )
       end
     end
   end

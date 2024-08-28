@@ -6,8 +6,9 @@ require "json"
 
 module CollectionspaceMigrationTools
   module Parse
-    # Parses client batch config if present. Starts with empty config if none given.
-    # Merges required `status_check_method` and `search_if_not_cached` values.
+    # Parses client batch config if present. Starts with empty config
+    #   if none given. Merges required `status_check_method` and
+    #   `search_if_not_cached` values.
     class BatchConfig
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)
@@ -27,7 +28,7 @@ module CollectionspaceMigrationTools
         hash = yield(parse(string))
 
         Success(hash.merge({"status_check_method" => "cache",
-"search_if_not_cached" => false}))
+                            "search_if_not_cached" => false}))
       end
 
       private
