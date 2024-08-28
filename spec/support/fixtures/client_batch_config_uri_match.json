@@ -1,0 +1,5 @@
+{
+"delimiter": "|||",
+"subgroup_delimiter": "^^",
+"record_matchpoint": "uri"
+}

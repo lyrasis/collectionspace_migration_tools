@@ -26,9 +26,11 @@ module CollectionspaceMigrationTools
       def call
         string = yield(read)
         hash = yield(parse(string))
+        matchpoint = hash["record_matchpoint"] || "identifier"
 
         Success(hash.merge({"status_check_method" => "cache",
-                            "search_if_not_cached" => false}))
+                            "search_if_not_cached" => false,
+                            "record_matchpoint" => matchpoint}))
       end
 
       private
