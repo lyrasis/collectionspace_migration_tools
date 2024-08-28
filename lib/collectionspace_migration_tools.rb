@@ -5,26 +5,20 @@ require "dry/monads/do"
 require "pry"
 require "zeitwerk"
 
+require_relative "collectionspace_migration_tools/error"
+
+loader = Zeitwerk::Loader.for_gem
+loader.ignore(File.join(Bundler.root, "lib",
+  "collectionspace_migration_tools", "error.rb"))
+loader.ignore(File.join(Bundler.root, "lib", "tasks"))
+loader.enable_reloading
+loader.setup
+
 # Main namespace
 module CollectionspaceMigrationTools
   ::CMT = CollectionspaceMigrationTools
 
   class << self
-    def loader
-      @loader ||= setup_loader
-    end
-
-    private def setup_loader
-      @loader = Zeitwerk::Loader.for_gem
-      @loader.enable_reloading
-      @loader.setup
-      @loader
-    end
-
-    def reload!
-      @loader.reload
-    end
-
     def config
       @config ||= CMT::Configuration.call
     end
@@ -119,5 +113,3 @@ module CollectionspaceMigrationTools
   end
   module_function :get_full_path
 end
-
-CMT.loader

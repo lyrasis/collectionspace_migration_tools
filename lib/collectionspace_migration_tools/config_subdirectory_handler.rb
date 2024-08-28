@@ -24,13 +24,6 @@ module CollectionspaceMigrationTools
       end
     end
 
-    class NonExistentDirectorySpecifiedError < CMT::Error
-      def initialize(setting, path)
-        msg = "The path specified for #{setting} does not exist: #{path}"
-        super(msg)
-      end
-    end
-
     # @param config [Struct]
     # @param setting [Symbol] the setting/method containing the subdirectory
     #   value
@@ -68,13 +61,13 @@ module CollectionspaceMigrationTools
     def handle_absolute_path
       return if Dir.exist?(value)
 
-      raise NonExistentDirectorySpecifiedError.new(setting, value)
+      raise CMT::NonExistentDirectorySpecifiedError.new(setting, value)
     end
 
     def handle_relative_path
       expanded = File.expand_path(value)
       unless Dir.exist?(expanded)
-        raise NonExistentDirectorySpecifiedError.new(setting,
+        raise CMT::NonExistentDirectorySpecifiedError.new(setting,
           expanded)
       end
 

@@ -33,7 +33,7 @@ RSpec.describe CollectionspaceMigrationTools::ConfigSubdirectoryHandler do
       it "raises error" do
         expect do
           result
-        end.to raise_error(CMT::ConfigSubdirectoryHandler::NonExistentDirectorySpecifiedError)
+        end.to raise_error(CMT::NonExistentDirectorySpecifiedError)
       end
     end
   end
@@ -56,7 +56,7 @@ RSpec.describe CollectionspaceMigrationTools::ConfigSubdirectoryHandler do
       it "raises error" do
         expect do
           result
-        end.to raise_error(CMT::ConfigSubdirectoryHandler::NonExistentDirectorySpecifiedError)
+        end.to raise_error(CMT::NonExistentDirectorySpecifiedError)
       end
     end
   end
