@@ -10,8 +10,11 @@ gem "aws-sdk-cloudwatchlogs", "~> 1"
 gem "benchmark-memory", "~> 0.2"
 gem "collectionspace-client", branch: "main", git: "https://github.com/collectionspace/collectionspace-client.git"
 gem "collectionspace-mapper",
- tag: "v5.0.6",
+ branch: "dryd-1507-url-matchpoint",
  git: "https://github.com/collectionspace/collectionspace-mapper.git"
+# gem "collectionspace-mapper",
+#  tag: "v5.0.6",
+#  git: "https://github.com/collectionspace/collectionspace-mapper.git"
 gem "collectionspace-refcache", tag: "v1.0.0", git: "https://github.com/collectionspace/collectionspace-refcache.git"
 gem "dry-monads", "~> 1.4"
 gem "dry-transaction", "~>0.13"

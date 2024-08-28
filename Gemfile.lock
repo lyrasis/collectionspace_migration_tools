@@ -10,11 +10,11 @@ GIT
 
 GIT
   remote: https://github.com/collectionspace/collectionspace-mapper.git
-  revision: 9d66dfec79efd52eb5c999924346ffb25e63b4df
-  tag: v5.0.6
+  revision: 7160e4eb988846c82dfb7c568b78949616c86c73
+  branch: dryd-1507-url-matchpoint
   specs:
-    collectionspace-mapper (5.0.6)
-      activesupport (= 7.0.4.3)
+    collectionspace-mapper (6.0.0)
+      activesupport (= 6.0.4.7)
       chronic
       collectionspace-client (~> 0.15.0)
       collectionspace-refcache (~> 1.0.0)
@@ -48,11 +48,12 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (7.0.4.3)
+    activesupport (6.0.4.7)
       concurrent-ruby (~> 1.0, >= 1.0.2)
-      i18n (>= 1.6, < 2)
-      minitest (>= 5.1)
-      tzinfo (~> 2.0)
+      i18n (>= 0.7, < 2)
+      minitest (~> 5.1)
+      tzinfo (~> 1.1)
+      zeitwerk (~> 2.2, >= 2.2.2)
     amazing_print (1.4.0)
     asciidoctor (2.0.18)
     ast (2.4.2)
@@ -160,7 +161,7 @@ GEM
     httparty (0.21.0)
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
-    i18n (1.14.1)
+    i18n (1.14.5)
       concurrent-ruby (~> 1.0)
     io-console (0.6.0)
     irb (1.6.4)
@@ -179,7 +180,7 @@ GEM
     method_source (1.0.0)
     mime-types-data (3.2021.1115)
     mini_mime (1.1.5)
-    minitest (5.22.2)
+    minitest (5.25.1)
     mock_redis (0.36.0)
       ruby2_keywords
     multi_xml (0.6.0)
@@ -277,10 +278,11 @@ GEM
     thor-hollaback (0.2.1)
       hollaback (~> 0.1)
       thor (>= 0.19.1)
+    thread_safe (0.3.6)
     time_up (0.0.7)
     tty-screen (0.8.2)
-    tzinfo (2.0.6)
-      concurrent-ruby (~> 1.0)
+    tzinfo (1.2.11)
+      thread_safe (~> 0.1)
     unicode-display_width (2.5.0)
     xxhash (0.5.0)
     yard (0.9.34)
