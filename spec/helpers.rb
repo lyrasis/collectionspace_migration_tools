@@ -44,9 +44,9 @@ module Helpers
   def setup_handler(rectype)
     setup_mapping
     mapper = CMT::Parse::RecordMapper.call(rectype)
-    config = CMT::Parse::BatchConfig.call
-    if mapper.success? && config.success?
-      CMT::Build::DataHandler.call(mapper.value!, config.value!).value!
+    config = CMT.batch_config
+    if mapper.success? && config
+      CMT::Build::DataHandler.call(mapper.value!, config).value!
     end
   end
 

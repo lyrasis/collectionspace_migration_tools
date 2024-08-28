@@ -31,7 +31,7 @@ module CollectionspaceMigrationTools
           headers: first_row.headers,
           mapper: mapper
         )
-        batch_config = yield CMT::Parse::BatchConfig.call
+        batch_config = CMT.batch_config
         if batch_config.dig("batch_mode") == "date details"
           rn_deps << "vocabularies"
         end

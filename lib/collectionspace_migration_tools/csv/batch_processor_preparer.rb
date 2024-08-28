@@ -33,10 +33,7 @@ module CollectionspaceMigrationTools
           exit
         end
         @batch = batch
-        @batch_config = CMT::Parse::BatchConfig.call.either(
-          ->(success) { success },
-          ->(failure) { {} }
-        )
+        @batch_config = CMT.batch_config
       end
 
       def call

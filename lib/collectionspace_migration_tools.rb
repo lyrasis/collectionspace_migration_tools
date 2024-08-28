@@ -23,6 +23,22 @@ module CollectionspaceMigrationTools
       @config ||= CMT::Configuration.call
     end
 
+    def batch_config
+      return @batch_config if instance_variable_defined?(:@batch_config)
+
+      CMT::Parse::BatchConfig.call
+        .either(
+          ->(success) do
+            @batch_config = success
+            success
+          end,
+          ->(failure) do
+            puts failure
+            exit
+          end
+        )
+    end
+
     def client
       return @client if instance_variable_defined?(:@client)
 

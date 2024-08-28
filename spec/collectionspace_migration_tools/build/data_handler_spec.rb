@@ -7,7 +7,7 @@ RSpec.describe CollectionspaceMigrationTools::Build::DataHandler do
 
   describe "#call" do
     let(:mapper) { CMT::Parse::RecordMapper.call("collectionobject").value! }
-    let(:config) { CMT::Parse::BatchConfig.call.value! }
+    let(:config) { CMT.batch_config }
     let(:result) { described_class.call(mapper, config) }
 
     context "with supported record type" do
