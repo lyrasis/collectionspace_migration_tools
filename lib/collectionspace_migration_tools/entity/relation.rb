@@ -31,33 +31,35 @@ module CollectionspaceMigrationTools
 
       def cacheable_data_query
         query = <<~SQL
-          select rc.subjectcsid, rc.relationshiptype, rc.objectcsid,
-          h.name as csid
+          select rc.subjectcsid, ccsub.uri as subjecturi,
+            rc.relationshiptype,
+            rc.objectcsid, ccobj.uri as objecturi,
+            h.name as csid
           from relations_common rc
           inner join misc on rc.id = misc.id
             and misc.lifecyclestate != 'deleted'
           inner join hierarchy h on rc.id = h.id
+          inner join hierarchy hsub on rc.subjectcsid = hsub.name
+          inner join hierarchy hobj on rc.objectcsid = hobj.name
+          inner join collectionspace_core ccsub on ccsub.id = hsub.id
+          inner join collectionspace_core ccobj on ccobj.id = hobj.id
           #{constraint}
-          #{predicate}
         SQL
 
         Success(query)
       end
 
       def constraint
-        name_constraint_lookup[name]
-      end
-
-      def name_constraint_lookup
-        {
-          "authorityhierarchy" => "inner join hierarchy hh "\
-            "on rc.subjectcsid = hh.name "\
-            "and hh.primarytype not like 'CollectionObject%'",
-          "nonhierarchicalrelationship" => "",
-          "objecthierarchy" => "inner join hierarchy hh "\
-            "on rc.subjectcsid = hh.name "\
-            "and hh.primarytype like 'CollectionObject%'"
-        }
+        case name
+        when "authorityhierarchy"
+          "where rc.relationshiptype = 'hasBroader' "\
+          "and hsub.primarytype not like 'CollectionObject%'"
+        when "nonhierarchicalrelationship"
+          "where rc.relationshiptype = 'affects' "
+        when "objecthierarchy"
+          "where rc.relationshiptype = 'hasBroader' "\
+            "and hsub.primarytype like 'CollectionObject%'"
+        end
       end
 
       def name_type_lookup
@@ -66,10 +68,6 @@ module CollectionspaceMigrationTools
           "nonhierarchicalrelationship" => :nhr,
           "objecthierarchy" => :hier
         }
-      end
-
-      def predicate
-        type_predicate_lookup[type]
       end
 
       def rectype_mixin
@@ -90,13 +88,6 @@ module CollectionspaceMigrationTools
         return if status.failure?
 
         @type = name_type_lookup[name]
-      end
-
-      def type_predicate_lookup
-        {
-          hier: "where rc.relationshiptype = 'hasBroader'",
-          nhr: "where rc.relationshiptype = 'affects'"
-        }
       end
     end
   end

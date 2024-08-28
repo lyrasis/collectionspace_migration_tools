@@ -27,7 +27,8 @@ module CollectionspaceMigrationTools
 
       def cacheable_data_query
         query = <<~SQL
-          select obj.objectnumber as id, cc.refname, h.name as csid
+          select obj.objectnumber as id, cc.refname, h.name as csid,
+            cc.uri
           from collectionobjects_common obj
           inner join misc on obj.id = misc.id and
             misc.lifecyclestate != 'deleted'

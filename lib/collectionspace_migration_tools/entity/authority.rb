@@ -55,13 +55,14 @@ module CollectionspaceMigrationTools
           )
 
           select '#{service_path}' as type, acv.shortidentifier as subtype,
-            t.termdisplayname as term, ac.refname, h.name as csid
+            t.termdisplayname as term, ac.refname, h.name as csid, cc.uri
             from #{db_term_table} ac
             inner join misc on ac.id = misc.id
               and misc.lifecyclestate != 'deleted'
             inner join auth_vocab_csid acv on ac.inauthority = acv.csid
             inner join terms t on ac.id = t.id
             inner join hierarchy h on ac.id = h.id
+            inner join collectionspace_core cc on ac.id = cc.id
         SQL
 
         Success(query)

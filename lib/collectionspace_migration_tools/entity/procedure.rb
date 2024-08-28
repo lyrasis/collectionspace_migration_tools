@@ -24,7 +24,7 @@ module CollectionspaceMigrationTools
 
         query = <<~SQL
           select '#{name}' as type, oap.#{mapper.id_field} as id, cc.refname,
-            h.name as csid
+            h.name as csid, cc.uri
           from #{mapper.base_namespace} oap
           inner join misc on oap.id = misc.id and
             misc.lifecyclestate != 'deleted'
