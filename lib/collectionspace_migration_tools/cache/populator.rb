@@ -8,11 +8,16 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
 
       class << self
+        # @param cache_type [:refname, :csid]
+        # @param rec_type [String] e.g. "Procedures", "Relations"
+        # @param data [PG::Result, #each]
         def call(cache_type:, rec_type:, data:)
           new(cache_type: cache_type, rec_type: rec_type).call(data)
         end
       end
 
+      # @param cache_type [:refname, :csid]
+      # @param rec_type [String] e.g. "Procedures", "Relations"
       def initialize(cache_type:, rec_type:)
         @cache_type = cache_type
         @cache = CMT.send("#{cache_type}_cache".to_sym)

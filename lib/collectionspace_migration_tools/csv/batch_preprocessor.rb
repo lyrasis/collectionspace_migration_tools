@@ -18,7 +18,7 @@ module CollectionspaceMigrationTools
 
       # @param handler [CollectionSpace::Mapper::DataHandler]
       # @param first_row [CSV::Row]
-      # @param batch [CMT::Csv::BatchProcessor
+      # @param batch [CMT::Csv::BatchProcessor]
       def initialize(handler:, first_row:, batch:)
         @handler = handler
         @row = first_row

@@ -44,6 +44,8 @@ module CollectionspaceMigrationTools
       end
 
       def populate_cache(type)
+        # @todo This returns a CMT::RecordMapper. Why is it named status?
+        #   Why is it here?
         _status = yield(self)
         query = yield(cacheable_data_query)
 
