@@ -20,9 +20,6 @@ module CollectionspaceMigrationTools
       # @param rec_type [String] e.g. "Procedures", "Relations"
       def initialize(cache_type:, rec_type:)
         @cache_type = cache_type
-        @cache = CMT.send("#{cache_type}_cache".to_sym)
-        @redis = cache.instance_variable_get(:@cache)
-          .instance_variable_get(:@c)
         @cache_name = cache_type.upcase
         @rec_type = rec_type
         extend record_type_mixin
@@ -44,7 +41,9 @@ module CollectionspaceMigrationTools
 
       private
 
-      attr_reader :cache_type, :cache, :redis, :cache_name, :rec_type
+      attr_reader :cache_type, :cache_name, :rec_type
+
+      def cache = @cache ||= CMT.send("#{cache_type}_cache".to_sym)
 
       def before_report(data)
         puts "Populating #{cache_name} cache (current size: #{cache.size}) "\
@@ -54,6 +53,11 @@ module CollectionspaceMigrationTools
       def after_report
         puts "#{cache_name} populated. Resulting size: #{cache.size}"
         Success("ok")
+      end
+
+      def redis
+        @redis ||= cache.instance_variable_get(:@cache)
+          .instance_variable_get(:@c)
       end
 
       def do_population(data)
