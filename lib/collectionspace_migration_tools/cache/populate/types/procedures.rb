@@ -5,6 +5,8 @@ module CollectionspaceMigrationTools
     module Populate
       module Types
         module Procedures
+          include UriCacheable
+
           def command
             :put_procedure
           end
@@ -20,7 +22,14 @@ module CollectionspaceMigrationTools
             type = CMT::RecordTypes.mappable_type_to_service_path_mapping[
               row["type"]
             ]
-            key = cache.send(:procedure_key, type, row["id"])
+
+            key = case cache_type
+            when "refname"
+              cache.send(:procedure_key, type, row["id"])
+            when "csid"
+              cache.send(:procedure_key, type, row[csid_id_field])
+            end
+
             [key, row[cache_type.to_s]]
           end
         end
