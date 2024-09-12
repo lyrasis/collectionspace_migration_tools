@@ -23,6 +23,7 @@ endif::[]
 
 * `s3_bucket` is now optional in client configs, since this tool may be used in some cases to interact directly with an instance via its REST API, without use of Fast Import Bucket.
 * Improve map error message when a non-duplicate file name cannot be saved because Mac's default file system (case insensitive) does treat it as a duplicate
+
 === Bugfixes
 
 * Fixes issue where, if you had somehow gotten into a state where the current config was invalid, you could not switch to another config using the `thor config switch` command.
