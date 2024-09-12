@@ -41,16 +41,15 @@ class Batches < Thor
     )
   end
 
-  # @todo fix this so it uses do notation and it cleanly exitable
   desc "delete_done", "Delete completed batches"
   def delete_done
-    done_batches = CMT::Batch::Csv::Reader.new.find_status(:done?, :batches)
-    puts done_batches.failure if done_batches.failure?
-
-    done_batches.value!.each do |batch|
-      del = batch.delete
-      puts del.failure if del.failure?
-    end
+    CMT::Batches.delete_done.either(
+      ->(success) { exit(0) },
+      ->(failure) {
+        puts failure
+        exit(1)
+      }
+    )
   end
 
   desc "done", "Brief listing of batches that are done"

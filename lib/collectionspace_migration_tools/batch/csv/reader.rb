@@ -42,13 +42,13 @@ module CollectionspaceMigrationTools
         # @return [CSV::Table] if format == :table
         # @return [Array<CMT::Batch::Batch>] if format == :batches
         def find_status(status, format = :table)
-          result = table.delete_if { |row| !to_batch(row).send(status) }
+          result = table.select { |row| to_batch(row).send(status) }
           if result.empty?
             Failure("No #{status.to_s.delete_suffix("?")} batches")
           else
             case format
             when :table
-              Success(result)
+              Success(CSV::Table.new(result))
             when :batches
               Success(result.map { |row| to_batch(row) })
             end
