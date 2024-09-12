@@ -10,7 +10,7 @@ module CollectionspaceMigrationTools
       include Dry::Monads::Do.for(:rollback_upload)
 
       def rollback_upload
-        rolled = yield(rollback_step("upload"))
+        _rolled = yield(rollback_step("upload"))
 
         Success("Upload information rolled back. Note this does NOT undo any ingest operations triggered by an upload")
       end
