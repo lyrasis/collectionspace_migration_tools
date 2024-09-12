@@ -14,6 +14,7 @@ endif::[]
 
 == Unreleased
 
+== 4.1.0 (2024-09-12)
 === Added
 
 * Support for deleting vocabularies via `thor csid delete`
@@ -25,6 +26,7 @@ endif::[]
 === Bugfixes
 
 * Fixes issue where, if you had somehow gotten into a state where the current config was invalid, you could not switch to another config using the `thor config switch` command.
+* Fixes issue where `batches delete_done` command deleted non-done batches
 
 == 4.0.0 (2024-04-15)
 
