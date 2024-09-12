@@ -28,6 +28,48 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Reader do
   end
   let(:data) { ok_data }
 
+  describe "#find_status" do
+    let(:headers) do
+      %w[id source_csv mappable_rectype action batch_status rec_ct
+        batch_mode mapped? dir map_errs map_oks map_warns missing_terms
+        uploaded? upload_errs upload_oks batch_prefix ingest_start_time
+        ingest_done? ingest_complete_time ingest_duration ingest_errs
+        ingest_oks duplicates_checked? duplicates]
+    end
+    let(:data) do
+      <<~CSV
+        id,source_csv,mappable_rectype,action,batch_status,rec_ct,batch_mode,mapped?,dir,map_errs,map_oks,map_warns,missing_terms,uploaded?,upload_errs,upload_oks,batch_prefix,ingest_start_time,ingest_done?,ingest_complete_time,ingest_duration,ingest_errs,ingest_oks,duplicates_checked?,duplicates
+        plc,/path1,place-local,create,ingested,1259,full record,2024-09-11_17_25,plc_2024-09-11_17_25,0,1259,1156,0,2024-09-11_18_25,0,1259,cGxjf,2024-09-11_18_25,2024-09-11 17_35,2024-09-11 17:26:17.612,17:26:18,0,1259,2024-09-11_17_36,0
+        sub,/path2,concept-associated,create,mapped,3072,full record,2024-09-11_17_38,sub_2024-09-11_17_38,0,3072,0,0,,,,,,,,,,,,
+        mat,/path3,concept-material,create,uploaded,1,full record,2024-09-11_17_39,mat_2024-09-11_17_39,0,1,0,0,2024-09-11_17_42,0,1,bWF0f,2024-09-11 17:42:02.315,,,,,,,
+        nom,/path4,concept-nomenclature,create,added,1000,,,,,,,,,,,,,,,,,,,
+      CSV
+    end
+    let(:result) { klass.find_status(status, format).value! }
+
+    context "when finding done, returning batches" do
+      let(:status) { :done? }
+      let(:format) { :batches }
+
+      it "returns expected batches" do
+        expect(result.length).to eq(1)
+        expect(result.first).to be_a(CMT::Batch::Batch)
+        expect(result.first.id).to eq("plc")
+        expect(result.first.instance_variable_get(:@csv).table.size).to eq(4)
+      end
+    end
+
+    context "when finding done, returning table" do
+      let(:status) { :done? }
+      let(:format) { :table }
+
+      it "returns expected batches" do
+        expect(result).to be_a(CSV::Table)
+        expect(result.size).to eq(1)
+      end
+    end
+  end
+
   describe "#find_batch" do
     let(:result) { klass.find_batch(id) }
     let(:id) { "2" }

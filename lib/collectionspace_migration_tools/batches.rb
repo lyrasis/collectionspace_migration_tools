@@ -21,6 +21,15 @@ module CollectionspaceMigrationTools
       Success(ids)
     end
 
+    def delete_done
+      done = yield by_status(:done?)
+      delete_results = done.map { |batch| batch.delete }
+        .select { |res| res.failure? }
+      return Failure(delete_results.map(&:failure)) unless delete_results.empty?
+
+      Success()
+    end
+
     def ingstat(wait: 1.5, checks: 1, rechecks: 1, autodelete: false)
       ids = yield(ids_by_status(:ingestable?))
       results = ids.map do |id|
