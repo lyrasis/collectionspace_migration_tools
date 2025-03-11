@@ -27,7 +27,7 @@ module CollectionspaceMigrationTools
 
         envkey = "COLLECTIONSPACE_MIGRATION_TOOLS_#{type.upcase}_CONFIG"
         envpath = ENV[envkey]
-        return envpath if envpath && File.exist?(envpath)
+        return envpath if envpath
 
         File.join(Bundler.root, name)
       end
