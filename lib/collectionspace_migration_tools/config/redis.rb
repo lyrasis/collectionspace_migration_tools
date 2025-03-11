@@ -3,10 +3,10 @@
 module CollectionspaceMigrationTools
   module Config
     class Redis < CMT::Config::Section
-      DEFAULT_PATH = File.join(Bundler.root, "redis.yml")
+      DEFAULT_PATH = CMT::Configuration.config_file_path(:redis)
 
       # @param path [String]
-      def initialize(path: DEFAULT_PATH)
+      def initialize(path: DEFAULT_PATH, hash: nil)
         super
         @validator = CMT::Validate::ConfigRedisContract
       end

@@ -23,6 +23,24 @@ RSpec.describe CollectionspaceMigrationTools::Configuration do
     end
   end
 
+  context "when redis config file is missing" do
+    let(:config_file) { nil }
+    before do
+      ENV["COLLECTIONSPACE_MIGRATION_TOOLS_REDIS_CONFIG"] =
+        File.expand_path("~/fake/redis.yml")
+    end
+    after do
+      ENV.delete("COLLECTIONSPACE_MIGRATION_TOOLS_REDIS_CONFIG")
+    end
+
+    it "outputs error message and exits" do
+      expect { result }
+        .to output(/Could not create config/).to_stdout.and raise_error(
+          SystemExit
+        )
+    end
+  end
+
   context "with valid config with optional settings" do
     let(:config_file) do
       File.join(Bundler.root, "spec", "support", "fixtures",
