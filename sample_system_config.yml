@@ -3,5 +3,5 @@ max_threads: 10
 max_processes: 6
 aws_profile: collectionspacemigrationtools
 aws_media_ingest_profile: cs-media
-client_config_dir: ~/code/cs/migration_tools/config
-config_name_file: ~/code/cs/migration_tools/current_config
+client_config_dir: thisappdir/config
+config_name_file: thisappdir/current_config

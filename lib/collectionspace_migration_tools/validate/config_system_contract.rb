@@ -12,10 +12,12 @@ module CollectionspaceMigrationTools
         required(:max_threads).filled(:integer)
         required(:aws_profile).filled(:string)
         optional(:aws_media_ingest_profile).maybe(:string)
+        optional(:term_manager_config_dir).maybe(:string)
       end
 
       rule(:client_config_dir).validate(:dir_exists)
       rule(:config_name_file).validate(:file_exists)
+      rule(:term_manager_config_dir).validate(:dir_exists)
     end
   end
 end
