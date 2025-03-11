@@ -80,7 +80,14 @@ module CollectionspaceMigrationTools
         val = hash[key]
         return unless val
 
-        hash[key] = File.expand_path(val).delete_suffix("/")
+        if val.start_with?("thisappdir")
+          replacedval = val.sub("thisappdir", Bundler.root.to_s)
+        else
+          replacedval = val
+        end
+
+        hash[key] = File.expand_path(replacedval)
+          .delete_suffix("/")
       end
 
       def handle_subdirs(struct)

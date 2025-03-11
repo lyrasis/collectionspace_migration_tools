@@ -16,6 +16,8 @@ module CollectionspaceMigrationTools
       end
 
       register_macro(:dir_exists) do
+        next if value.nil?
+
         full = File.expand_path(value)
         unless Dir.exist?(full)
           key.failure("#{full} does not exist")
@@ -23,6 +25,8 @@ module CollectionspaceMigrationTools
       end
 
       register_macro(:file_exists) do
+        next if value.nil?
+
         full = File.expand_path(value)
         unless File.exist?(full)
           key.failure("#{full} does not exist")

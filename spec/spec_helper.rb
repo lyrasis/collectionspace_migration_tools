@@ -25,7 +25,7 @@ RSpec.configure do |config|
   config.order = :random
   config.shared_context_metadata_behavior = :apply_to_host_groups
   config.warnings = true
-  config.before(:each) { CMT.reset_config }
+  config.after(:each) { CMT.reset_config }
 
   config.expect_with(:rspec) do |expectations|
     expectations.syntax = :expect

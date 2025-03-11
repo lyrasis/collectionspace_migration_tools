@@ -9,9 +9,27 @@ module CollectionspaceMigrationTools
     include Dry::Monads[:result]
     include Dry::Monads::Do.for(:derive_config)
 
+    DEFAULT_FILE_OR_DIR_NAMES = {
+      system: "system_config.yml",
+      redis: "redis.yml",
+      term_manager: "term_manager"
+    }
     class << self
       def call(...)
         new(...).call
+      end
+
+      def config_file_path(type)
+        name = DEFAULT_FILE_OR_DIR_NAMES[type]
+        dotfile = File.join(File.expand_path("~"), ".config", "collectionspace_migration_tools",
+                            name)
+        return dotfile if File.exist?(dotfile)
+
+        envkey = "COLLECTIONSPACE_MIGRATION_TOOLS_#{type.upcase}_CONFIG"
+        envpath = ENV[envkey]
+        return envpath if envpath && File.exist?(envpath)
+
+        File.join(Bundler.root, name)
       end
     end
 
@@ -19,11 +37,13 @@ module CollectionspaceMigrationTools
 
     def initialize(
       client: nil,
-      system: File.join(Bundler.root, "system_config.yml"),
-      redis: File.join(Bundler.root, "redis.yml"),
+      system: self.class.config_file_path(:system),
+      redis: self.class.config_file_path(:redis),
       mode: :prod
     )
       @client = client
+      @system_path = system
+      @redis_path = redis
       @mode = mode
     end
 
@@ -36,11 +56,11 @@ module CollectionspaceMigrationTools
 
     private
 
-    attr_reader :mode
+    attr_reader :system_path, :redis_path, :mode
 
     def derive_config
-      @system = yield CMT::Config::System.call
-      @redis = yield CMT::Config::Redis.call
+      @system = yield CMT::Config::System.call(path: system_path)
+      @redis = yield CMT::Config::Redis.call(path: redis_path)
       instance = yield CMT::Parse::YamlConfig.call(client_path)
       @client = yield CMT::Config::Client.call(hash: instance[:client])
       @database = yield CMT::Config::Database.call(hash: instance[:database])
