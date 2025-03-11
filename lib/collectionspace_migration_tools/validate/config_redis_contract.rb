@@ -13,7 +13,9 @@ module CollectionspaceMigrationTools
 
       rule(:refname_port, :csid_port) do
         checked = check_connection(value)
-        key.failure("Redis not available on port #{value}") unless checked == "PONG"
+        unless checked == "PONG"
+          key.failure("Redis not available on port #{value}")
+        end
       end
 
       private
