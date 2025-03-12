@@ -1,2 +1,2 @@
 inherit_gem:
-    almost_standard: .rubocop.yml
+  almost_standard: .rubocop.yml
