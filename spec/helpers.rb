@@ -11,6 +11,8 @@ end
 module Helpers
   module_function
 
+  def fixtures_base = File.join(Bundler.root, "spec", "support", "fixtures")
+
   # returns system config parsed as hash
   def sys_config_hash
     CMT::Parse::YamlConfig.call(sys_config_path).value!
@@ -33,12 +35,12 @@ module Helpers
 
   # returns path to valid test config (core.dev)
   def valid_config_path
-    File.join(Bundler.root, "spec", "support", "fixtures", "config_valid.yml")
+    File.join(fixtures_base, "config_valid.yml")
   end
 
   # returns path to valid test config (core.dev)
   def invalid_config_path
-    File.join(Bundler.root, "spec", "support", "fixtures", "config_invalid.yml")
+    File.join(fixtures_base, "config_invalid.yml")
   end
 
   def setup_handler(rectype)
