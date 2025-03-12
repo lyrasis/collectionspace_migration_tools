@@ -1,0 +1,105 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+= Term Manager functionality
+
+The Term Manager functionality fits the use case where:
+
+* You have one or more lists of vocabulary terms and/or authority terms that need to be loaded and kept synchronized...
+* ...**across multiple instances of CollectionSpace**
+
+Term Manager gives you a way to:
+
+* Configure the instances that share the term lists
+* Configure the term list source files
+* Run a command to check all instances against all term lists and run any required updates
+* Run a command to check all instances against a single term list and run any required updates
+* Run a command to check a single instance against all term lists and run any required updates
+
+toc::[]
+
+== Requirements
+
+Does NOT require Fast Import S3 Buckets or individual client configs be set up for the instances in the project.
+
+Uses the services API to do all its work.
+
+Your AWS config must be set up as described in the README so that authentication details can be fetched as needed.
+
+== Setup
+
+If you are going to use Term Manager, you must add a `term_manager_config_dir` property to your system config YML file. The value of this property is the path to the directory containing individual Term Manager project configs.
+
+=== Project config
+
+TIP: The Term Manager commands will require a `project` argument, so the tool knows what project config to load. The `project` argument should match the name of the project config file, without the `.yml` suffix.
+
+**As an example in this documentation, I will create a project named "napo".**
+
+I will create a `#{term_manager_config_dir}/napo.yml` file containing:
+
+[source,yaml]
+----
+instances:
+  napostaging: <1>
+    uri: https://napo.staging.collectionspace.org <2>
+  munstead: <3>
+    uri: https://munsteaaaaad.collectionspace.org <4>
+    username: myemail@lyrasis.org <5>
+    password: mypassword <5>
+  vern: <6>
+term_list_sources: <7>
+  - ~/napoproject/shared_controlled_vocabularies/dynamic_term_lists.xlsx
+authority_sources: <8>
+  - ~/napoproject/shared_controlled_vocabularies/authorities_ANIMAL.xlsx
+  - ~/napoproject/shared_controlled_vocabularies/authorities_BIRD.xlsx
+----
+<1> The instance keys should be the name used in the AWS SSM parameter storing each instance's admin password. See TODO: makelink
+<2> We provide a `uri` value here, because we cannot derive the pattern from the instance key. We don't provide any other properties for this instance, because the user name will be the standard `admin@collectionspace.org` and the password will be fetched from ASW SSM.
+<3> We are providing all the details for this instance, and will not be looking up parameters, so technically the key could be anything.
+<4> This instance has chosen a weird subdomain that doesn't match its hosted tenant name, so we need to provide the `uri`.
+<5> They also want any changes made to their instance to be tied to a user associated with a known individual. This is the only type of case where you should hard-code authentication credentials in your configs. (Try hard not to do this!)
+<6> BEST CASE! The tenant name in the parameter name is the subdomain of the instance, and we'll use the standard admin username and fetched password.
+<7> List paths to any Excel workbooks containing shared dynamic term lists (aka vocabularies, term lists). This key can be omitted if you only have shared authority terms.
+<8> List paths to any Excel workbooks containing shared authority term lists. This key can be omitted if you only have shared term list terms.
+
+In this example, we have multiple authority sources because we potentially expect a future `cat` project. Instances in this project will need all the ANIMAL authorities loaded, but not BIRD terms. We would need to create an `authorities_CAT.xlsx` workbook for the cat-specific authority terms.
+
+
+
+== Term source .xlsx format
+
+These are Excel workbooks because they are developed by and shared with the Program staff.
+
+Each .xlsx workbook must have, at minimum, 1 sheet named `termData`. Any other sheets will be ignored in processing.
+
+WARNING: Do not add any sheet named `loadData`. A sheet with this name will be created the first time a Term Manager command makes term additions to an instance.
+
+The `termData` sheet has:
+
+* The term data
+* Details required for creating/loading/editing/deleting terms
+* Columns related to analyzing and versioning the term lists
+
+The first two bullets in that list vary for term list vs. authority sources and will be discussed in separate sections below.
+
+The final bullet is the same for term list and authority sources, and is used in combination with data in the `loadData` sheet to enable us to run one command that can (1) add all the shared terms to a newly created instance; and (2) load any changes to existing instances that haven't been updated since the terms changed.
+
+`loadData` is where Term Manager records its operations for each instance, if no `termData` `loadVersion` values are greater than 3, and the `napostaging` instance has a row with `loadVersion` = 3, then our commands know there's nothing to do for `napostaging`. If there is no row for the `munstead` instance, our commands know to figure out the term state for `loadVersion` 3, and load everything in that state.
+
+=== Shared `termData` sheet format, or, How the versioning works
+
+todo
+
+=== `loadData` format
+
+todo
