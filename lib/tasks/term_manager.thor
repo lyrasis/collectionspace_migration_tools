@@ -16,10 +16,10 @@ class TermManager < Thor
           pp(success)
           exit(0)
         },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
+        ->(failure) {
+          puts failure
+          exit(1)
+        }
+      )
   end
 end

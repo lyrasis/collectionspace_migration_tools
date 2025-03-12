@@ -9,7 +9,7 @@ module CollectionspaceMigrationTools
       def initialize(path: DEFAULT_PATH, hash: nil)
         super
         @pathvals = %i[client_config_dir config_name_file
-                       term_manager_config_dir]
+          term_manager_config_dir]
         @validator = CMT::Validate::ConfigSystemContract
       end
     end

@@ -80,10 +80,10 @@ module CollectionspaceMigrationTools
         val = hash[key]
         return unless val
 
-        if val.start_with?("thisappdir")
-          replacedval = val.sub("thisappdir", Bundler.root.to_s)
+        replacedval = if val.start_with?("thisappdir")
+          val.sub("thisappdir", Bundler.root.to_s)
         else
-          replacedval = val
+          val
         end
 
         hash[key] = File.expand_path(replacedval)
