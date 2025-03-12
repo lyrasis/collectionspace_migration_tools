@@ -22,7 +22,8 @@ module CollectionspaceMigrationTools
         parsed = yield CMT::Parse::YamlConfig.call(path)
         result = yield CMT.config.add_config(:term_manager, parsed)
 
-        binding.pry
+        @config = result.term_manager
+        Success(result.term_manager)
       end
 
       def config_path

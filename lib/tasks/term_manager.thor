@@ -12,7 +12,10 @@ class TermManager < Thor
   def config
     CMT::TermManager.config(options[:project])
       .either(
-      ->(success) { exit(0) },
+        ->(success) {
+          pp(success)
+          exit(0)
+        },
       ->(failure) {
         puts failure
         exit(1)
