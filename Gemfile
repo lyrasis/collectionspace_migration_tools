@@ -30,19 +30,16 @@ gem "thor", "~> 1"
 gem "thor-hollaback", "~> 0"
 gem "zeitwerk", "~> 2.5"
 
-group :code_quality do
-  gem "bundler-leak", "~> 0.2"
-  gem "dead_end", "~> 3.0"
-  gem "reek", "~> 6.1"
-  gem "almost_standard", github: "kspurgin/almost_standard", branch: "main"
-  gem "simplecov", "~> 0.21"
-end
-
 group :development do
   gem "asciidoctor", "~> 2.0"
+  gem "almost_standard", github: "kspurgin/almost_standard", branch: "main"
+  gem "bundler-leak", "~> 0.2"
+  gem "dead_end", "~> 3.0"
   gem "rake", "~> 13.0"
-  gem "yard", "~> 0.9"
+  gem "reek", "~> 6.1"
+  gem "simplecov", "~> 0.21"
   gem "time_up"
+  gem "yard", "~> 0.9"
 end
 
 group :test do
