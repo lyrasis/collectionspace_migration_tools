@@ -33,7 +33,7 @@ module CollectionspaceMigrationTools
         def call
           check_connection = CMT.connection
 
-          if check_connection && check_connection.open?
+          if check_connection&.open?
             puts "DB connection already open. Using existing."
             Success(check_connection)
           else

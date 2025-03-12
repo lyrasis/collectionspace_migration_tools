@@ -37,8 +37,7 @@ module CollectionspaceMigrationTools
       def count_xml_files
         result = Dir.new(dir)
           .children
-          .select { |file| File.extname(file) == ".xml" }
-          .length
+          .count { |file| File.extname(file) == ".xml" }
       rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
@@ -54,7 +53,7 @@ module CollectionspaceMigrationTools
         _dir = yield(report("dir", File.basename(dir)))
         successes = yield(count_xml_files)
         _successes = yield(report("map_oks", successes))
-        total = batch.rec_ct.to_i
+        batch.rec_ct.to_i
         failures = yield(CMT::Batch::CsvRowCounter.call(path: report_path,
           field: "cmt_outcome", value: "failure"))
         _failures = yield(report("map_errs", failures))

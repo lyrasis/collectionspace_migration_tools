@@ -26,8 +26,7 @@ module CollectionspaceMigrationTools
 
         in_path = CMT.get_csv_path(csv_path)
         row_getter = yield CMT::Csv::FirstRowGetter.new(in_path)
-        csvchecker = yield CMT::Csv::FileChecker.call(in_path, row_getter)
-        first_row = csvchecker[1]
+        _csvchecker = yield CMT::Csv::FileChecker.call(in_path, row_getter)
 
         processed = yield CMT::Csid::DeleteProcessor.call(
           deleter: deleter,

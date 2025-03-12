@@ -65,7 +65,7 @@ module Helpers
     row: nil
   )
     CMT.config.client.base_dir = File.join(Bundler.root, dir)
-    rowdata = row ||= Array.new(headers.length, "x")
+    rowdata = row || Array.new(headers.length, "x")
     CSV.open(CMT::ArchiveCsv.path, "w") do |csv|
       csv << headers
       rowct.times { csv << rowdata }

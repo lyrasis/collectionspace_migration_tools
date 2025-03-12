@@ -236,9 +236,9 @@ class Batch < Thor
     end
 
     def report_warnings_with_counts(warnings)
-      max_val_length = warnings.values.map(&:to_s).sort_by do |val|
+      max_val_length = warnings.values.map(&:to_s).max_by do |val|
         val.length
-      end.last.length
+      end.length
 
       warnings.sort_by { |_key, val| val }
         .reverse_each { |key, val| puts "#{val.to_s.rjust(max_val_length)} : #{key}" }

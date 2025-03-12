@@ -20,12 +20,11 @@ module CollectionspaceMigrationTools
 
     def base_namespace
       config["ns_uri"].keys
-        .select do |ns|
+        .find do |ns|
         ns.end_with?("_common") && (
           ns[type_label] || ns[service_path] || ns[document_name]
         )
       end
-        .first
     end
 
     def db_term_group_table_name
@@ -145,8 +144,7 @@ module CollectionspaceMigrationTools
 
     def term_group_list_key
       to_h["docstructure"][base_namespace].keys
-        .select { |key| key.end_with?("TermGroupList") }
-        .first
+        .find { |key| key.end_with?("TermGroupList") }
     end
   end
 end

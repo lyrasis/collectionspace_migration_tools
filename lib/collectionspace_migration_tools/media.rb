@@ -13,8 +13,8 @@ module CollectionspaceMigrationTools
       query = CMT::Database::Query.blobs_on_media
       puts "\nQuerying for media blob details..."
       rows = yield(CMT::Database::ExecuteQuery.call(query))
-      CMT.connection.close if CMT.connection
-      CMT.tunnel.close if CMT.tunnel
+      CMT.connection&.close
+      CMT.tunnel&.close
 
       Success(rows)
     end
