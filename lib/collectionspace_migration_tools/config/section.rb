@@ -70,7 +70,7 @@ module CollectionspaceMigrationTools
       def expand_paths
         pathvals.each { |pathkey| expand_path(pathkey) }
       rescue => err
-        Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
           message: err.message))
       else
         Success()
@@ -99,7 +99,7 @@ module CollectionspaceMigrationTools
       def to_struct
         result = Struct.new(*hash.keys).new(*hash.values)
       rescue => err
-        Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
+        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
           message: err.message))
       else
         Success(result)
