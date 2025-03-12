@@ -2,7 +2,7 @@
 
 module CollectionspaceMigrationTools
   module TermManager
-    ::TM = CMT::TermManager
+    ::CMT::TM = CollectionspaceMigrationTools::TermManager
 
     module_function
 
