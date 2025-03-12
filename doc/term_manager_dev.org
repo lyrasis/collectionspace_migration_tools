@@ -1,35 +1,35 @@
  - [X] Add project config setting for vocab first run: additive (adds non-existing terms from term lists) vs. exact (also removes terms NOT in the shared term lists)
- - [ ] Read project config / create Project class to orchestrate the rest
-  - [ ] .new(config)
-  - [ ] #instances
-  - [ ] #term_sources(Array[path])
-  - [ ] #version_log(path)
+ - [-] Read project config / create Project class to orchestrate the rest
+   - [X] .new(config)
+   - [ ] #instances
+   - [ ] #term_sources(Array[path])
+   - [ ] #version_log(path)
  - [ ] Instance class
-  - [ ] gets password if needed
-  - [ ] creates connection
+   - [ ] gets password if needed
+   - [ ] creates connection
  - [ ] TermSource
-  - [ ] handle extraction of current version of term list
-  - [ ] (eventually) produce version-to-version delta term/action set
-  - [ ] group on vocab (or auth type/subtype)
+   - [ ] handle extraction of current version of term list
+   - [ ] (eventually) produce version-to-version delta term/action set
+   - [ ] group on vocab (or auth type/subtype)
  - [ ] VersionLog
-  - [ ] create new file if path passed in intialize does not exist
-  - [ ] #current_version(source, instance) ➡️ Integer (version number), nil (indicates first run)
-  - [ ] #record_action(source, instance, version, date)
+   - [ ] create new file if path passed in intialize does not exist
+   - [ ] #current_version(source, instance) ➡️ Integer (version number), nil (indicates first run)
+   - [ ] #record_action(source, instance, version, date)
  - [ ] TermSourceJob
-  - [ ] responsible for setting up/spinning off the jobs for individual vocabularies or authority vocabularies, collating responses, reporting any issues, and recording successful runs to VersionLog
-  - [ ] .new(Instance, TermSource, VersionLog)
+   - [ ] responsible for setting up/spinning off the jobs for individual vocabularies or authority vocabularies, collating responses, reporting any issues, and recording successful runs to VersionLog
+   - [ ] .new(Instance, TermSource, VersionLog)
  - [ ] VocabSourceJob < TermSourceJob
-  - [ ] check each vocab exists
-  - [ ] spin off a VocabJob for each existing vocab
-  - [ ] collates results (adds, deletes) returned from all VocabJobs
-  - [ ] write terms to add to temp CSV in format for https://github.com/lyrasis/collectionspace_migration_tools/blob/term-manager/doc/add_vocabulary_terms.adoc
-  - [ ] does term deletions
+   - [ ] check each vocab exists
+   - [ ] spin off a VocabJob for each existing vocab
+   - [ ] collates results (adds, deletes) returned from all VocabJobs
+   - [ ] write terms to add to temp CSV in format for https://github.com/lyrasis/collectionspace_migration_tools/blob/term-manager/doc/add_vocabulary_terms.adoc
+   - [ ] does term deletions
  - [ ] AuthoritySourceJob < TermSourceJob
  - [ ] VocabJob
-  - [ ] .new(Instance, TermSource.delta, VersionLog)
-  - [ ] pull existing terms
-  - [ ] identify terms to add
-  - [ ] if first run, and mode is exact, identify terms to delete
+   - [ ] .new(Instance, TermSource.delta, VersionLog)
+   - [ ] pull existing terms
+   - [ ] identify terms to add
+   - [ ] if first run, and mode is exact, identify terms to delete
  - [ ] AuthorityJob
-- Later
-  - [ ] Derive database login, use cache population instead of fully relying on API calls
+ - Later
+   - [ ] Derive database login, use cache population instead of fully relying on API calls
