@@ -1,13 +1,11 @@
 # frozen_string_literal: true
 
-require "dry/monads"
-require "dry/monads/do"
 require "fileutils"
 
 module CollectionspaceMigrationTools
   class Configuration
     include Dry::Monads[:result]
-    include Dry::Monads::Do.for(:derive_config)
+    include Dry::Monads::Do.for(:add_config, :derive_config)
 
     DEFAULT_FILE_OR_DIR_NAMES = {
       system: "system_config.yml",
@@ -33,7 +31,7 @@ module CollectionspaceMigrationTools
       end
     end
 
-    attr_reader :client, :database, :system, :redis
+    attr_reader :client, :database, :system, :redis, :term_manager
 
     def initialize(
       client: nil,
@@ -54,6 +52,14 @@ module CollectionspaceMigrationTools
       )
     end
 
+    def add_config(type, hash)
+      if type == :term_manager
+        @term_manager = yield CMT::Config::TermManager.call(hash: hash)
+      end
+
+      Success(self)
+    end
+
     private
 
     attr_reader :system_path, :redis_path, :mode
@@ -64,6 +70,7 @@ module CollectionspaceMigrationTools
       instance = yield CMT::Parse::YamlConfig.call(client_path)
       @client = yield CMT::Config::Client.call(hash: instance[:client])
       @database = yield CMT::Config::Database.call(hash: instance[:database])
+      @term_manager = nil
 
       Success()
     end
