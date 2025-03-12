@@ -20,7 +20,7 @@ module CollectionspaceMigrationTools
       def config_file_path(type)
         name = DEFAULT_FILE_OR_DIR_NAMES[type]
         dotfile = File.join(File.expand_path("~"), ".config", "collectionspace_migration_tools",
-                            name)
+          name)
         return dotfile if File.exist?(dotfile)
 
         envkey = "COLLECTIONSPACE_MIGRATION_TOOLS_#{type.upcase}_CONFIG"
