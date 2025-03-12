@@ -34,7 +34,7 @@ module CollectionspaceMigrationTools
       def any_terms?
         readable = File.open(path)
         csv = CSV.new(readable, headers: true)
-        result = csv.shift.nil? ? false : true
+        result = !csv.shift.nil?
         readable.close
         result
       end

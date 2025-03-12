@@ -33,7 +33,7 @@ module CollectionspaceMigrationTools
         msg = "collectionspace-client does not have a service configured for #{err.message}"
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
           message: msg))
-      rescue CollectionSpace::Mapper::IdFieldNotInMapperError => err
+      rescue CollectionSpace::Mapper::IdFieldNotInMapperError
         msg = "Cannot determine the unique ID field for this record type. RecordMapper needs correction"
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
           message: msg))

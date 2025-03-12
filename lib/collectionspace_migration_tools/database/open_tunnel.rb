@@ -12,7 +12,7 @@ module CollectionspaceMigrationTools
         def call
           check_tunnel = CMT.tunnel
 
-          if check_tunnel && check_tunnel.open?
+          if check_tunnel&.open?
             puts "DB SSH tunnel already open. Using existing."
             Success(check_tunnel)
           else

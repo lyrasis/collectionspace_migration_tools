@@ -15,9 +15,6 @@ module CollectionspaceMigrationTools
         end
       end
 
-      def initialize
-      end
-
       def call
         result = CollectionSpace::Mapper::VocabularyTerms::Handler.new(
           client: CMT.client

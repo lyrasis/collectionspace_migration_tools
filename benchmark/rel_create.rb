@@ -150,9 +150,9 @@ def set_up(reltype)
 end
 
 def abort_setup(term_data_by_class, reltype)
-  puts '#{reltype}: Cannot continue because person records for the following could not be created:'
+  puts "#{reltype}: Cannot continue because person records for the following could not be created:"
   puts term_data_by_class[String].map { |str| "  #{str}" }
-  puts '#{reltype}: Starting teardown...'
+  puts "#{reltype}: Starting teardown..."
   tear_down(term_data_by_class[TermData])
   exit
 end

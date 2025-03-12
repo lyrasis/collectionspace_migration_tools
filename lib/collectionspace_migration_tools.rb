@@ -46,7 +46,7 @@ module CollectionspaceMigrationTools
 
     # @param connection_obj [CMT::Connection]
     def connection=(connection_obj)
-      return connection if connection && connection.open?
+      return connection if connection&.open?
 
       @connection = connection_obj
     end
@@ -92,8 +92,8 @@ module CollectionspaceMigrationTools
     end
 
     def safe_exit
-      connection.close if connection
-      tunnel.close if tunnel
+      connection&.close
+      tunnel&.close
       exit
     end
 
@@ -101,7 +101,7 @@ module CollectionspaceMigrationTools
 
     # @param tunnel_obj [CMT::Tunnel]
     def tunnel=(tunnel_obj)
-      return tunnel if tunnel && tunnel.open?
+      return tunnel if tunnel&.open?
 
       @tunnel = tunnel_obj
     end

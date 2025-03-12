@@ -63,10 +63,11 @@ module CollectionspaceMigrationTools
 
       def add_xml_writer_errors(result, data)
         error = result[0]
-        response = result[1]
+
         if error == :file_already_exists
           data["CMT_errors"] =
-            "An XML record with filename #{result[2]} has already been written. Check for duplicates"
+            "An XML record with filename #{result[2]} has already been "\
+            "written. Check for duplicates"
         elsif error == :error_on_write
           data["CMT_errors"] =
             "Attempt to write XML to file raised error: #{result[2]}"

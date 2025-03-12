@@ -46,11 +46,11 @@ module CollectionspaceMigrationTools
           strings_as_keys: true
         }) do |chunk|
           if field && value
-            add_count(chunk.select do |row|
+            add_count(chunk.count do |row|
                         row.key?(field) && row[field] == value
-                      end.length)
+                      end)
           elsif field
-            add_count(chunk.select { |row| row.key?(field) }.length)
+            add_count(chunk.count { |row| row.key?(field) })
           else
             add_count(chunk.length)
           end
