@@ -72,4 +72,66 @@ RSpec.describe CollectionspaceMigrationTools::Configuration do
         )
     end
   end
+
+  describe "#add_config" do
+    let(:config_file) { valid_config_path }
+    let(:config_hash) { YAML.safe_load(config_str).transform_keys!(&:to_sym) }
+    let(:result) do
+      config = described_class.call(client: config_file)
+      config.add_config(configtype, config_hash)
+    end
+
+    context "with term_manager addition" do
+      let(:configtype) { :term_manager }
+
+      context "with valid term manager config" do
+        # rubocop:disable Layout/LineLength
+        let(:config_str) do
+          <<~STR
+            instances:
+              napostaging:
+            term_list_sources:
+              - ~/napoproject/shared_controlled_vocabularies/dynamic_term_lists.xlsx
+            authority_sources:
+              - ~/napoproject/shared_controlled_vocabularies/authorities_ANIMAL.xlsx
+              - ~/napoproject/shared_controlled_vocabularies/authorities_BIRD.xlsx
+            version_log: ~/napoproject/shared_controlled_vocabularies/version_log.csv
+          STR
+        end
+        # rubocop:enable Layout/LineLength
+
+        it "adds term manager config" do
+          expect(result).to be_a(Dry::Monads::Success)
+          val = result.value!
+          expect(val).to be_a(CMT::Configuration)
+          expect(val.term_manager).to be_a(Struct)
+        end
+      end
+
+      context "with valid term manager config" do
+        # rubocop:disable Layout/LineLength
+        let(:config_str) do
+          <<~STR
+            instances:
+              napostaging:
+            term_list_sources:
+              - ~/napoproject/shared_controlled_vocabularies/dynamic_term_lists.xlsx
+            authority_sources:
+              - ~/napoproject/shared_controlled_vocabularies/authorities_ANIMAL.xlsx
+              - ~/napoproject/shared_controlled_vocabularies/authorities_BIRD.xlsx
+            version_log: ~/napoproject/shared_controlled_vocabularies/version_log.csv
+            initial_term_list_load_mode: invalid
+          STR
+        end
+        # rubocop:enable Layout/LineLength
+
+        it "returns failure" do
+          expect(result).to be_a(Dry::Monads::Failure)
+          expect(result.failure).to match(
+            /initial_term_list_load_mode must be one of: additive, exact/
+          )
+        end
+      end
+    end
+  end
 end
