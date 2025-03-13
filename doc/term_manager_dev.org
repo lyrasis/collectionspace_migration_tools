@@ -1,7 +1,7 @@
  - [X] Add project config setting for vocab first run: additive (adds non-existing terms from term lists) vs. exact (also removes terms NOT in the shared term lists)
- - [-] Read project config / create Project class to orchestrate the rest
+ - [X] Read project config / create Project class to orchestrate the rest
    - [X] .new(config)
-   - [ ] #instances
+   - [X] #instances
    - [X] #term_sources(Array[path])
    - [ ] #version_log(path)
  - [ ] Instance class
