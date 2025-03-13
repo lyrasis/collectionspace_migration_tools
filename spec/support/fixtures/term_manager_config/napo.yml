@@ -1,0 +1,15 @@
+instances:
+  napostaging:
+    uri: https://napo.staging.collectionspace.org
+  munstead:
+    uri: https://munsteaaaaad.collectionspace.org
+    username: myemail@lyrasis.org
+    password: mypassword
+  vern:
+term_list_sources:
+  - ~/napoproject/shared_controlled_vocabularies/dynamic_term_lists.xlsx
+authority_sources:
+  - ~/napoproject/shared_controlled_vocabularies/authorities_ANIMAL.xlsx
+  - ~/napoproject/shared_controlled_vocabularies/authorities_BIRD.xlsx
+version_log: ~/napoproject/shared_controlled_vocabularies/version_log.csv
+initial_term_list_load_mode: exact
