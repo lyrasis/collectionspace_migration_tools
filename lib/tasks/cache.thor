@@ -24,7 +24,7 @@ class Cache < Thor
   # @todo refactor these to Cache module methods
   no_commands do
     def get_cache(type)
-      cache_method = "#{type}_cache".to_sym
+      cache_method = :"#{type}_cache"
       CMT.method(cache_method).call
     end
 

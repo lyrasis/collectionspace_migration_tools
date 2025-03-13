@@ -15,7 +15,7 @@ module CollectionspaceMigrationTools
 
       def initialize(cache_type:, rec_type:)
         @cache_type = cache_type
-        @cache = CMT.send("#{cache_type}_cache".to_sym)
+        @cache = CMT.send(:"#{cache_type}_cache")
         @redis = cache.instance_variable_get(:@cache)
           .instance_variable_get(:@c)
         @cache_name = cache_type.upcase

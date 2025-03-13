@@ -126,7 +126,7 @@ module CollectionspaceMigrationTools
 
         def populate_derived(cols)
           results = cols.map do |col|
-            send("derive_#{col}".to_sym, rows_needing_population(col))
+            send(:"derive_#{col}", rows_needing_population(col))
           end
 
           if results.any?(&:failure?)

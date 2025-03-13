@@ -6,7 +6,7 @@ Bundler.require(:tools)
 require "simplecov"
 SimpleCov.start { enable_coverage :branch }
 
-require_relative "./helpers"
+require_relative "helpers"
 require "collectionspace_migration_tools"
 require "collectionspace/mapper"
 require "pry"

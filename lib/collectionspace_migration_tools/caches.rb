@@ -5,7 +5,7 @@ module CollectionspaceMigrationTools
     module_function
 
     def get_cache(type)
-      cache_method = "#{type}_cache".to_sym
+      cache_method = :"#{type}_cache"
       CMT.send(cache_method)
     end
 

@@ -6,7 +6,7 @@ module CollectionspaceMigrationTools
     class DerivData
       DERIV_TYPES = %w[small medium thumbnail originaljpeg fullhd].freeze
       DERIV_TYPES.each do |type|
-        define_method("#{type}?") { derivs.any?(type) }
+        define_method(:"#{type}?") { derivs.any?(type) }
       end
 
       attr_reader :deriv_ct, :derivs

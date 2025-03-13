@@ -35,8 +35,11 @@ module CollectionspaceMigrationTools
       end
 
       def mappable? = batch_status == "added"
+
       def uploadable? = batch_status == "mapped"
+
       def ingestable? = batch_status == "uploaded"
+
       def done? = batch_status == "ingested"
 
       def get(field)
@@ -73,7 +76,7 @@ module CollectionspaceMigrationTools
 
       def prefix
         str = Base64.urlsafe_encode64("#{id}#{CMT.config.client.s3_delimiter}",
-                                      padding: false)
+          padding: false)
         str[0..-2]
       end
 
