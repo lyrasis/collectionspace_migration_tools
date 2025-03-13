@@ -43,7 +43,7 @@ module CollectionspaceMigrationTools
       private :dependency_present?
 
       def not_yet_done?(steptype)
-        meth = "#{steptype}_step_headers".to_sym
+        meth = :"#{steptype}_step_headers"
         to_chk = send(meth).first
         val = send(to_chk)
         return true if val.nil? || val.empty?
@@ -53,7 +53,7 @@ module CollectionspaceMigrationTools
       private :not_yet_done?
 
       def clear_step_fields(steptype)
-        meth = "#{steptype}_step_headers".to_sym
+        meth = :"#{steptype}_step_headers"
         send(meth).each do |header|
           data[header] = "" if data.key?(header)
         end
@@ -67,7 +67,7 @@ module CollectionspaceMigrationTools
       private :clear_step_fields
 
       def rollback_status(steptype)
-        meth = "#{steptype}_previous_status".to_sym
+        meth = :"#{steptype}_previous_status"
         data["batch_status"] = send(meth)
       rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
@@ -78,7 +78,7 @@ module CollectionspaceMigrationTools
       end
 
       def delete_step_reports(steptype)
-        meth = "#{steptype}_step_report_paths".to_sym
+        meth = :"#{steptype}_step_report_paths"
         send(meth).each do |path|
           FileUtils.rm(path) if File.exist?(path)
         end
@@ -92,7 +92,7 @@ module CollectionspaceMigrationTools
       private :delete_step_reports
 
       def rollbackable?(steptype)
-        next_step = send("#{steptype}_next_step".to_sym)
+        next_step = send(:"#{steptype}_next_step")
         value = data[next_step]
         return Success() if value.nil? || value.empty?
 

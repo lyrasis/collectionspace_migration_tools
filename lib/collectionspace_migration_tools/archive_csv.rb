@@ -14,7 +14,7 @@ module CollectionspaceMigrationTools
     # @return [String]
     def path
       File.join(CMT.config.client.base_dir,
-                CMT.config.client.batch_archive_filename)
+        CMT.config.client.batch_archive_filename)
     end
 
     # @return [Boolean]
@@ -35,7 +35,7 @@ module CollectionspaceMigrationTools
     rescue => err
       msg = "#{err.message} IN #{err.backtrace[0]}"
       Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-                               message: msg))
+        message: msg))
     else
       Success(table)
     end

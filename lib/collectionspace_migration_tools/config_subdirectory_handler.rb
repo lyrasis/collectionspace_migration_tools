@@ -39,7 +39,7 @@ module CollectionspaceMigrationTools
 
       @config = config
       @setting = setting
-      @updater = "#{setting}=".to_sym
+      @updater = :"#{setting}="
       @base = config.base_dir
       @value = config.send(setting)
     end

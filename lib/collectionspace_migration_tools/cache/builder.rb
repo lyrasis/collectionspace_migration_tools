@@ -69,7 +69,7 @@ module CollectionspaceMigrationTools
 
       def get_port(cache_type)
         redis_config = CMT.config.redis
-        key = "#{cache_type}_port".to_sym
+        key = :"#{cache_type}_port"
 
         begin
           value = redis_config.send(key)

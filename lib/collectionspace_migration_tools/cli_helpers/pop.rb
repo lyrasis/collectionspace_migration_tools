@@ -31,7 +31,7 @@ module CollectionspaceMigrationTools
           meth = if cache_type.nil?
             :populate_both_caches
           else
-            "populate_#{cache_type}_cache".to_sym
+            :"populate_#{cache_type}_cache"
           end
 
           rectype.send(meth).either(

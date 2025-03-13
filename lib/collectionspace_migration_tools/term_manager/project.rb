@@ -3,10 +3,10 @@
 module CollectionspaceMigrationTools
   module TermManager
     class Project
-    include Dry::Monads[:result]
-    include Dry::Monads::Do.for(:set_up_config)
+      include Dry::Monads[:result]
+      include Dry::Monads::Do.for(:set_up_config)
 
-    attr_reader :id
+      attr_reader :id
 
       # @param projectname [String]
       def initialize(projectname)
@@ -17,8 +17,8 @@ module CollectionspaceMigrationTools
 
       def term_sources = @term_sources ||=
         [config.term_list_sources, config.authority_sources].compact
-          .flatten
-          .map { |path| CMT::TM::TermSource.new(path) }
+        .flatten
+        .map { |path| CMT::TM::TermSource.new(path) }
 
       private
 
@@ -39,7 +39,7 @@ module CollectionspaceMigrationTools
         return Success(File.join(base, file)) if file
 
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-                                        message: "Term manager config not found for #{id}"))
+          message: "Term manager config not found for #{id}"))
       end
     end
   end
