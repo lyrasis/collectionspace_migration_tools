@@ -15,6 +15,11 @@ module CollectionspaceMigrationTools
 
       def config = @config ||= set_up_config
 
+      def term_sources = @term_sources ||=
+        [config.term_list_sources, config.authority_sources].compact
+          .flatten
+          .map { |path| CMT::TM::TermSource.new(path) }
+
       private
 
       def set_up_config
