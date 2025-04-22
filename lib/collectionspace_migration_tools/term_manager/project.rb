@@ -19,9 +19,15 @@ module CollectionspaceMigrationTools
         .map { |instance, cfg| CMT::TM::Instance.new(instance, cfg) }
 
       def term_sources = @term_sources ||=
-        [config.term_list_sources, config.authority_sources].compact
-        .flatten
-        .map { |path| CMT::TM::TermSource.new(path) }
+                           [config.term_list_sources,
+                             config.authority_sources].compact
+                             .flatten
+                             .map do |path|
+                             CMT::TM::TermSource.new(path)
+                           end
+
+      def version_log = @version_log ||=
+                          CMT::TM::VersionLog.new(config.version_log)
 
       private
 
@@ -42,7 +48,7 @@ module CollectionspaceMigrationTools
         return Success(File.join(base, file)) if file
 
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-                                 message: "Term manager config not found for #{id}"))
+          message: "Term manager config not found for #{id}"))
       end
     end
   end

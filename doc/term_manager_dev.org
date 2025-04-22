@@ -1,10 +1,10 @@
  - [ ] Extract path expansion (~ and thisappdir)
  - [X] Add project config setting for vocab first run: additive (adds non-existing terms from term lists) vs. exact (also removes terms NOT in the shared term lists)
- - [-] Read project config / create Project class to orchestrate the rest
+ - [X] Read project config / create Project class to orchestrate the rest
    - [X] .new(config)
    - [X] #instances
    - [X] #term_sources(Array[path])
-   - [ ] #version_log(path)
+   - [X] #version_log(path)
  - [ ] Instance class
    - [ ] gets password if needed
    - [ ] creates connection
@@ -13,7 +13,8 @@
    - [ ] handle extraction of current version of term list
    - [ ] (eventually) produce version-to-version delta term/action set
    - [ ] group on vocab (or auth type/subtype)
- - [ ] VersionLog
+ - [-] VersionLog
+   - [X] create class
    - [ ] create new file if path passed in intialize does not exist
    - [ ] #current_version(source, instance) ➡️ Integer (version number), nil (indicates first run)
    - [ ] #record_action(source, instance, version, date)

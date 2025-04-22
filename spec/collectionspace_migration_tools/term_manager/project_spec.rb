@@ -10,6 +10,7 @@ RSpec.describe CollectionspaceMigrationTools::TermManager::Project do
   before(:all) do
     ENV["COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG"] =
       File.join(fixtures_base, "sys_config_w_term_manager.yml")
+    CMT.reset_config
   end
 
   after(:all) do
@@ -47,6 +48,14 @@ RSpec.describe CollectionspaceMigrationTools::TermManager::Project do
     it "returns as expected" do
       expect(result).to be_a(Array)
       expect(result.first).to be_a(CMT::TM::TermSource)
+    end
+  end
+
+  describe "#version_log" do
+    let(:result) { project.version_log }
+
+    it "returns as expected" do
+      expect(result).to be_a(CMT::TM::VersionLog)
     end
   end
 end
