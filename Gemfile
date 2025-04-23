@@ -8,16 +8,24 @@ source "https://rubygems.org"
 gem "aws-sdk-s3", "~> 1"
 gem "aws-sdk-cloudwatchlogs", "~> 1"
 gem "benchmark-memory", "~> 0.2"
-gem "collectionspace-client", branch: "main", git: "https://github.com/collectionspace/collectionspace-client.git"
+gem "collectionspace-client",
+  branch: "main",
+  github: "collectionspace/collectionspace-client"
 gem "collectionspace-mapper",
   tag: "v5.0.6",
-  git: "https://github.com/collectionspace/collectionspace-mapper.git"
-gem "collectionspace-refcache", tag: "v1.0.0", git: "https://github.com/collectionspace/collectionspace-refcache.git"
+  github: "collectionspace/collectionspace-mapper"
+gem "collectionspace-refcache",
+  tag: "v1.0.0",
+  github: "collectionspace/collectionspace-refcache"
+gem "cspace_hosted_instance_access",
+  github: "dts-hosting/cspace_hosted_instance_access",
+  branch: "main"
 gem "dry-monads", "~> 1.4"
 gem "dry-transaction", "~>0.13"
 gem "dry-validation", "~> 1.7"
 # @todo See https://github.com/mime-types/mime-types-data/pull/50
-# `mime-types-data` is a dependency of `mime-types` < `httparty` < `collectionspace-client`
+# `mime-types-data` is a dependency of `mime-types` < `httparty` <
+#   `collectionspace-client`
 gem "mime-types-data", "3.2021.1115"
 gem "parallel", "~> 1.22"
 gem "pg", "~> 1.4"
@@ -31,10 +39,12 @@ gem "thor-hollaback", "~> 0"
 gem "zeitwerk", "~> 2.5"
 
 group :development do
+  gem "amazing_print", "~> 1.4"
   gem "asciidoctor", "~> 2.0"
   gem "almost_standard", github: "kspurgin/almost_standard", branch: "main"
   gem "bundler-leak", "~> 0.2"
   gem "dead_end", "~> 3.0"
+  gem "debug", "~> 1.4"
   gem "rake", "~> 13.0"
   gem "reek", "~> 6.1"
   gem "simplecov", "~> 0.21"
@@ -46,11 +56,6 @@ group :test do
   gem "guard-rspec", require: false
   gem "mock_redis"
   gem "rspec"
-end
-
-group :tools do
-  gem "amazing_print", "~> 1.4"
-  gem "debug", "~> 1.4"
 end
 
 gem "pry", "~> 0.14", groups: [:development, :test]
