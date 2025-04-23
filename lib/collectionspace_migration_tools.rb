@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "cspace_hosted_instance_access"
 require "dry/monads"
 require "dry/monads/do"
 require "pry"

@@ -35,6 +35,16 @@ GIT
       zache (~> 0.12.0)
 
 GIT
+  remote: https://github.com/dts-hosting/cspace_hosted_instance_access.git
+  revision: 66ca0631dd7f9821bbb4386049cda208c33a1545
+  branch: main
+  specs:
+    cspace_hosted_instance_access (0.0.1)
+      aws-sdk-ssm
+      rexml
+      zeitwerk
+
+GIT
   remote: https://github.com/kspurgin/almost_standard.git
   revision: 418bea721ba1c0144d55f2588a4120c1eb4d4b1c
   branch: main
@@ -73,6 +83,9 @@ GEM
       aws-sdk-core (~> 3, >= 3.165.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.4)
+    aws-sdk-ssm (1.150.0)
+      aws-sdk-core (~> 3, >= 3.165.0)
+      aws-sigv4 (~> 1.1)
     aws-sigv4 (1.5.2)
       aws-eventstream (~> 1, >= 1.0.2)
     benchmark-memory (0.2.0)
@@ -301,6 +314,7 @@ DEPENDENCIES
   collectionspace-client!
   collectionspace-mapper!
   collectionspace-refcache!
+  cspace_hosted_instance_access!
   dead_end (~> 3.0)
   debug (~> 1.4)
   dry-monads (~> 1.4)
