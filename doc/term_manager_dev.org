@@ -5,14 +5,19 @@
    - [X] #instances
    - [X] #term_sources(Array[path])
    - [X] #version_log(path)
- - [ ] Instance class
+ - [-] Instance class
+   - [X] create initial class
    - [ ] gets password if needed
    - [ ] creates connection
  - [-] TermSource
    - [X] determine type of self (:term_source or :authority)
-   - [ ] handle extraction of current version of term list
-   - [ ] (eventually) produce version-to-version delta term/action set
-   - [ ] group on vocab (or auth type/subtype)
+   - [X] group on vocab (or auth type/subtype)
+ - [-] AuthorityVocab - Behavior related to identifying current terms/delta for an authority vocab, etc
+   - [X] identify current/first set of terms to load
+   - [ ] identify delta between 2 versions
+ - [-] TermListVocab - Behavior related to identifying current terms/delta for a term list vocab, etc
+   - [X] identify current/first set of terms to load
+   - [ ] identify delta between 2 versions
  - [-] VersionLog
    - [X] create class
    - [ ] create new file if path passed in intialize does not exist
