@@ -12,6 +12,7 @@ module CollectionspaceMigrationTools
         required(:max_threads).filled(:integer)
         required(:aws_profile).filled(:string)
         optional(:aws_media_ingest_profile).maybe(:string)
+        optional(:bastion_user).maybe(:string)
         optional(:term_manager_config_dir).maybe(:string)
       end
 
