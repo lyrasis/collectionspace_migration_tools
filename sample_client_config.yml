@@ -8,8 +8,17 @@ client:
   ## THE DATABASE SECTION AT THE BOTTOM NEEDS TO BE SET PER CLIENT
   ## -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-  ## These are the minimum settings for creating a new instance of
-  ## collectionspace-client corresponding to the instance you are working with.
+  ## For Lyrasis-hosted client sites, this is all you need to record in the
+  ##   config. URLs and connection credentials are handled auto-magically.
+  ##   This should be a site name present in the file list at
+  ##   https://github.com/dts-hosting/deployments/tree/main/sites/collectionspace/config
+  tenant_name: examplesite
+
+
+  ## FOR LYRASIS-HOSTED CLIENT SITES, DELETE THESE FROM YOUR CONFIG
+  ## FOR OTHER SITES, These are the minimum settings for creating a new instance
+  ## of collectionspace-client corresponding to the instance you are working
+  ## with.
   ## https://github.com/collectionspace/collectionspace-client/blob/master/lib/collectionspace/client/configuration.rb
   base_uri: https://core.dev.collectionspace.org/cspace-services
   username: admin@core.collectionspace.org
@@ -35,7 +44,7 @@ client:
   profile: anthro
 
   ## Should match the form used in file names of individual .json files
-  profile_version: 5-0-0
+  profile_version: 9-0-0
 
   ## The settings in the next section control where files for this
   ## project will be saved
@@ -124,7 +133,7 @@ client:
   ##   when all hosted clients are upgraded, it can just be updated in
   ##   one place. Override the default if you are working with an
   ##   instance where version is not in sync with our hosted setup
-  # cs_version: "7_2"
+  # cs_version: "8_1_1"
 
   ## Directory in which to store generated xml and reports for each
   ##   batch. A directory will be created within this directory for
@@ -215,6 +224,10 @@ client:
   ## File name for the batch archive file. This file will be created in the
   ## defined `base_dir`. If `archive_batches` is false, this has no effect.
   # batch_archive_filename: batches_archive.csv
+
+## FOR LYRASIS-HOSTED CLIENT SITES, delete the whole database section and set
+##   `bastion_user` in system config file. FOR OTHER SITES, populate these
+##   settings
 database:
   port: 5432
   db_password: dbpassword
