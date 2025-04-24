@@ -1,0 +1,14 @@
+client:
+  tenant_name: ohc
+  page_size: 50
+  redis_db_number: 3
+  profile: anthro
+  profile_version: 7-0-0
+  base_dir: ~/code/cs/migration_tools/data
+  mapper_dir: ~/code/cs/migration_tools/spec/support/fixtures/record_mappers
+  batch_dir: batch_data
+  csv_delimiter: ","
+  s3_bucket: "bucket_name"
+  s3_delimiter: "|"
+  media_with_blob_upload_delay: 250
+  max_media_upload_threads: 5

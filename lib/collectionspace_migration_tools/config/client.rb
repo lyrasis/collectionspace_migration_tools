@@ -26,6 +26,18 @@ module CollectionspaceMigrationTools
 
       private
 
+      def pre_manipulate
+        return unless hosted?
+
+        tenant = CHIA.tenant_for(hash.dig(:tenant_name))
+        add_option(:base_uri, tenant.services_url)
+        add_option(:username, tenant.user_name)
+        add_option(:password, tenant.admin_password)
+        hash[:base_uri] = hash[:base_uri].delete_suffix("/")
+      end
+
+      def hosted? = !hash.dig(:tenant_name).nil?
+
       def manipulate
         add_option(:batch_config_path, nil)
         add_option(:s3_bucket, nil)

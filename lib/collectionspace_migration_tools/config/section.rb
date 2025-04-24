@@ -29,6 +29,7 @@ module CollectionspaceMigrationTools
         end
         apply_default_values if default_values
         _paths_expanded = yield expand_paths
+        pre_manipulate if private_methods.include?(:pre_manipulate)
         _validated = yield validate
         manipulate if private_methods.include?(:manipulate)
         struct = yield to_struct
