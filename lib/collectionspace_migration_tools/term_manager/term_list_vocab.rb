@@ -9,9 +9,11 @@ module CollectionspaceMigrationTools
 
       # @param vocab [String]
       # @param rows [Array<Hash>]
-      def initialize(vocab, rows)
+      # @param source_version [Integer]
+      def initialize(vocab, rows, source_version)
         @vocabname = vocab
         @rows = rows
+        @source_version = source_version
       end
 
       private

@@ -73,12 +73,14 @@ module CollectionspaceMigrationTools
         rows.group_by do |row|
           "#{row["authorityType"]}/#{row["authoritySubtype"]}"
         end
-          .map { |vocab, rows| AuthorityVocab.new(vocab, rows) }
+          .map do |vocab, rows|
+            AuthorityVocab.new(vocab, rows, current_version)
+          end
       end
 
       def build_term_list_vocabs
         rows.group_by { |row| row["term_list_shortIdentifier"] }
-          .map { |vocab, rows| TermListVocab.new(vocab, rows) }
+          .map { |vocab, rows| TermListVocab.new(vocab, rows, current_version) }
       end
     end
   end

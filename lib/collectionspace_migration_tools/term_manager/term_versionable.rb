@@ -12,6 +12,11 @@ module CollectionspaceMigrationTools
           .reject { |r| r["loadAction"] == "delete" }
       end
 
+      def vocab_version
+        @vocab_version ||= rows.map { |row| row["loadVersion"].to_i }
+          .max
+      end
+
       # @return [Array<String>] field names related to versioning
       def version_fields = %w[loadVersion loadAction id prevterm origterm
         sort-dedupe]
