@@ -1,8 +1,8 @@
 instances:
   napostaging:
-    uri: https://napo.staging.collectionspace.org
+    base_uri: https://napo.staging.collectionspace.org/cspace-services
   munstead:
-    uri: https://munsteaaaaad.collectionspace.org
+    base_uri: https://munsteaaaaad.collectionspace.org/cspace-services
     username: myemail@lyrasis.org
     password: mypassword
   vern:

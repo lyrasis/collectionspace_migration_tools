@@ -5,11 +5,11 @@
    - [X] #instances
    - [X] #term_sources(Array[path])
    - [X] #version_log(path)
- - [-] Instance class
+ - [X] Instance class
    - [X] create initial class
-   - [ ] gets password if needed
-   - [ ] creates connection
- - [-] TermSource
+   - [X] gets password if needed
+   - [X] creates connection
+ - [X] TermSource
    - [X] determine type of self (:term_source or :authority)
    - [X] group on vocab (or auth type/subtype)
  - [-] AuthorityVocab - Behavior related to identifying current terms/delta for an authority vocab, etc

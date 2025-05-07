@@ -51,9 +51,9 @@ I will create a `#{term_manager_config_dir}/napo.yml` file containing:
 ----
 instances:
   napostaging: <1>
-    uri: https://napo.staging.collectionspace.org <2>
+    base_uri: https://napo.staging.collectionspace.org <2>
   munstead: <3>
-    uri: https://munsteaaaaad.collectionspace.org <4>
+    base_uri: https://munsteaaaaad.collectionspace.org <4>
     username: myemail@lyrasis.org <5>
     password: mypassword <5>
   vern: <6>
