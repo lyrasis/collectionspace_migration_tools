@@ -19,7 +19,7 @@ RSpec.describe CollectionspaceMigrationTools::Client do
       it "returns a Failure with expected message" do
         expect(result).to be_a(Dry::Monads::Failure)
         expect(result.failure.context).to eq("CollectionspaceMigrationTools::Client.verify")
-        msg = "lacks valid authentication credentials for the target"
+        msg = "Client cannot authenticate to CS instance"
         expect(result.failure.message).to include(msg)
       end
     end
