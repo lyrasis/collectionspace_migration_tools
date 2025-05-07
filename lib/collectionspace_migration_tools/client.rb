@@ -49,12 +49,14 @@ module CollectionspaceMigrationTools
       end
 
       def verify(client)
-        client.domain
+        result = client.can_authenticate?
+        return Success(client) if result
+
+        Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
+          message: "Client cannot authenticate to CS instance"))
       rescue => err
         Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
           message: err.message))
-      else
-        Success(client)
       end
     end
   end
