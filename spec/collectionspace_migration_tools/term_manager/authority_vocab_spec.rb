@@ -52,4 +52,26 @@ RSpec.describe CollectionspaceMigrationTools::TermManager::AuthorityVocab do
       end
     end
   end
+
+  describe "#vocab_version" do
+    let(:result) { vocab.vocab_version }
+
+    context "when concept/material" do
+      let(:type) { "concept" }
+      let(:subtype) { "material" }
+
+      it "returns as expected" do
+        expect(result).to eq(1)
+      end
+    end
+
+    context "when concept/ethfilecode" do
+      let(:type) { "concept" }
+      let(:subtype) { "ethfilecode" }
+
+      it "returns as expected" do
+        expect(result).to eq(2)
+      end
+    end
+  end
 end

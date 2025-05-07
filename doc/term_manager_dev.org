@@ -15,9 +15,11 @@
    - [X] #current_version
  - [-] AuthorityVocab - Behavior related to identifying current terms/delta for an authority vocab, etc
    - [X] identify current/first set of terms to load
+   - [X] #vocab_version
    - [ ] identify delta between 2 versions
  - [-] TermListVocab - Behavior related to identifying current terms/delta for a term list vocab, etc
    - [X] identify current/first set of terms to load
+   - [X] #vocab_version
    - [ ] identify delta between 2 versions
  - [-] VersionLog
    - [X] create class
