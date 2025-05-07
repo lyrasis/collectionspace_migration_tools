@@ -83,6 +83,19 @@ RSpec.describe CollectionspaceMigrationTools::TermManager::TermSource do
     end
   end
 
+  describe "#current_version" do
+    before(:each) do
+      CMT::TM::Project.new("napo").config
+      CMT.config.term_manager.term_list_sources << path
+    end
+    let(:path) { authority_path }
+    let(:result) { source.current_version }
+
+    it "returns as expected" do
+      expect(result).to eq(2)
+    end
+  end
+
   describe "#rows" do
     let(:path) { termlist_path }
 

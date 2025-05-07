@@ -34,6 +34,13 @@ module CollectionspaceMigrationTools
         @rows ||= get_rows
       end
 
+      def current_version
+        return nil if missing?
+
+        @current_version ||= rows.map { |row| row["loadVersion"].to_i }
+          .max
+      end
+
       def vocabs
         return [] if missing?
 
