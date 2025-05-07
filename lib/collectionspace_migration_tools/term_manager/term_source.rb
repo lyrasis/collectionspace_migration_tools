@@ -5,6 +5,8 @@ require "roo"
 module CollectionspaceMigrationTools
   module TermManager
     class TermSource
+      attr_reader :path
+
       # @param path [String]
       def initialize(path)
         @path = path
@@ -39,8 +41,6 @@ module CollectionspaceMigrationTools
       end
 
       private
-
-      attr_reader :path
 
       def get_type
         return :authority if CMT.config

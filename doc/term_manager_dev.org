@@ -21,8 +21,8 @@
  - [-] VersionLog
    - [X] create class
    - [ ] create new file if path passed in intialize does not exist
-   - [ ] #current_version(source, instance) ➡️ Integer (version number), nil (indicates first run)
-   - [ ] #record_action(source, instance, version, date)
+   - [X] #version_for(source, instance) ➡️ Integer (version number), nil (indicates first run)
+   - [ ] #record_load(source, instance, version, date)
  - [ ] TermSourceJob
    - [ ] responsible for setting up/spinning off the jobs for individual vocabularies or authority vocabularies, collating responses, reporting any issues, and recording successful runs to VersionLog
    - [ ] .new(Instance, TermSource, VersionLog)
