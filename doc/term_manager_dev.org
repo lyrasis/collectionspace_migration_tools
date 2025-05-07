@@ -12,6 +12,7 @@
  - [X] TermSource
    - [X] determine type of self (:term_source or :authority)
    - [X] group on vocab (or auth type/subtype)
+   - [X] #current_version
  - [-] AuthorityVocab - Behavior related to identifying current terms/delta for an authority vocab, etc
    - [X] identify current/first set of terms to load
    - [ ] identify delta between 2 versions
