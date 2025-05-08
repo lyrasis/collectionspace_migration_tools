@@ -30,7 +30,7 @@ RSpec.describe CollectionspaceMigrationTools::TermManager::TermListVocab do
       it "returns as expected" do
         expect(result).to be_a(Array)
         expect(result.length).to eq(18)
-        terms = result.map { |r| r["term"] }
+        terms = result.map { |r| r["displayName"] }
         expect(terms).not_to include("human remains")
         expect(terms).to include("human remains, unmodified")
       end
@@ -42,9 +42,61 @@ RSpec.describe CollectionspaceMigrationTools::TermManager::TermListVocab do
       it "returns as expected" do
         expect(result).to be_a(Array)
         expect(result.length).to eq(2)
-        terms = result.map { |r| r["term"] }
+        terms = result.map { |r| r["displayName"] }
         expect(terms).not_to include("Omeka")
         expect(terms).to include("none")
+      end
+    end
+  end
+
+  describe "#delta" do
+    let(:result) do
+      vocab.delta(load_version).sort_by { |r| r["termDisplayName"] }
+    end
+    let(:terms) { result.map { |r| r["displayName"] }.sort }
+    let(:type) { "objectcategory" }
+
+    context "when vocab has not been loaded" do
+      let(:load_version) { nil }
+
+      it "returns as expected" do
+        expected = ["debitage", "ethnographic", "faunal remains, modified",
+          "faunal remains, unmodified", "floral remains, modified",
+          "floral remains, unmodified", "historics",
+          "human remains, commingled", "human remains, modified",
+          "human remains, unmodified", "mineral, modified",
+          "mineral, unmodified", "shell, modified",
+          "shell, unmodified", "soil", "stone, modified",
+          "stone, unmodified", "unidentified object"]
+        expect(terms).to eq(expected)
+      end
+    end
+
+    context "when load_version equal to vocab_version" do
+      let(:load_version) { 3 }
+
+      it "returns as expected" do
+        expect(result).to eq([])
+      end
+    end
+
+    context "when load_version greater than vocab_version" do
+      let(:load_version) { 4 }
+
+      it "returns as expected" do
+        expect(result).to eq([])
+      end
+    end
+
+    context "when 0 to 3" do
+      let(:load_version) { 0 }
+
+      it "returns as expected" do
+        expect(result.length).to eq(13)
+        t0 = result[0]
+        expect(t0["displayName"]).to eq("human remains, unmodified")
+        expect(t0["loadAction"]).to eq("update")
+        expect(t0["prevterm"]).to eq("human remains")
       end
     end
   end
