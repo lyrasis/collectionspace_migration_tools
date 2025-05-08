@@ -3,7 +3,7 @@
 module CollectionspaceMigrationTools
   module TermManager
     class AuthorityVocab
-      attr_reader :type, :subtype
+      attr_reader :type, :subtype, :term_field_name
 
       include TermVersionable
 
@@ -16,6 +16,7 @@ module CollectionspaceMigrationTools
         @subtype = vocab_parts.last
         @rows = rows
         @source_version = source_version
+        @term_field_name = "termDisplayName"
       end
 
       private

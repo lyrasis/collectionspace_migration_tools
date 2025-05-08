@@ -92,7 +92,7 @@ RSpec.describe CollectionspaceMigrationTools::TermManager::TermSource do
     let(:result) { source.current_version }
 
     it "returns as expected" do
-      expect(result).to eq(2)
+      expect(result).to eq(10)
     end
   end
 
