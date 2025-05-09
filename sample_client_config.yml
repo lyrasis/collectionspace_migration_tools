@@ -23,13 +23,17 @@ client:
   base_uri: https://core.dev.collectionspace.org/cspace-services
   username: admin@core.collectionspace.org
   password: Administrator
+  db_host: db.domain.org
+  db_username: admin
+  db_password: yourdbpassword
+  db_name: examplesite_examplesite
 
-  ## The redis_db_number should be unique per config. This allows you
-  ##  to quickly clear the caches for one instance, without affecting
-  ##  the caches for other instances. It's on you to ensure these
-  ##  numbers are unique across your configs. The app doesn't check
-  ##  this. Run `thor config:redis_dbs` to see what db numbers are in
-  ##  use by existing configs
+  ## The redis_db_number should be unique per config. Use an integer 0
+  ##  - 15. This allows you to quickly clear the caches for one
+  ##  instance, without affecting the caches for other instances. It's
+  ##  on you to ensure these numbers are unique across your configs.
+  ##  The app doesn't check this. Run `thor config:redis_dbs` to see
+  ##  what db numbers are in use by existing configs
   redis_db_number: 3
 
   ## The next two settings are used, in combination with the
@@ -224,16 +228,3 @@ client:
   ## File name for the batch archive file. This file will be created in the
   ## defined `base_dir`. If `archive_batches` is false, this has no effect.
   # batch_archive_filename: batches_archive.csv
-
-## FOR LYRASIS-HOSTED CLIENT SITES, delete the whole database section and set
-##   `bastion_user` in system config file. FOR OTHER SITES, populate these
-##   settings
-database:
-  port: 5432
-  db_password: dbpassword
-  db_name: cs_cs
-  db_host: cs_staging_db.cs-instance.org
-  db_user: dbadminuser
-  db_connect_host: localhost
-  bastion_user: user_for_ssh_tunneling_through_bastion
-  bastion_host: cs_staging_db-bastion.cs-instance.org

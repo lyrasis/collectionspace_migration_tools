@@ -41,12 +41,12 @@ module CollectionspaceMigrationTools
         end
 
         def tunnel_command
-          port = CMT.config.database.port
-          db_host = CMT.config.database.db_host
-          user = CMT.config.database.bastion_user
-          host = CMT.config.database.bastion_host
+          tenant = CHIA.tenant_for(CMT.config.client.tenant_name)
 
-          %(ssh -N -L #{port}:#{db_host}:#{port} #{user}@#{host})
+          tenant.db_tunnel_command(
+            CMT.config.system.bastion_user,
+            CMT.config.system.db_port
+          )
         end
       end
     end

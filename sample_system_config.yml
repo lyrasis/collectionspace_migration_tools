@@ -6,3 +6,6 @@ aws_media_ingest_profile: cs-media
 client_config_dir: thisappdir/config
 config_name_file: thisappdir/current_config
 bastion_user: yourusername
+# The following are set by default but you can change them by uncommenting
+# db_port: 5432
+# db_connect_host: localhost

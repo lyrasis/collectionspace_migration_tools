@@ -69,7 +69,6 @@ module CollectionspaceMigrationTools
       @redis = yield CMT::Config::Redis.call(path: redis_path)
       instance = yield CMT::Parse::YamlConfig.call(client_path)
       @client = yield CMT::Config::Client.call(hash: instance[:client])
-      @database = yield CMT::Config::Database.call(hash: instance[:database])
       @term_manager = nil
 
       Success()

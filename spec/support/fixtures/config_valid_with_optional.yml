@@ -3,6 +3,10 @@ client:
   username: admin@core.collectionspace.org
   password: Administrator
   page_size: 50
+  db_host: db.domain.org
+  db_username: admin
+  db_password: yourdbpassword
+  db_name: examplesite_examplesite
 
   # The redis_db_number should be unique per config. This allows you to quickly clear the caches
   #  for one instance, without affecting the caches for other instances.
