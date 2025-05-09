@@ -23,9 +23,14 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
 
     it "returns Success" do
       mock_tenant = double("Tenant",
-        services_url: "https://ohiohistory.collectionspace.org/cspace-services/",
+        services_url: "https://ohiohistory.collectionspace.org/cspace-services",
         user_name: "admin@collectionspace.org",
-        admin_password: "abcdefgh")
+        admin_password: "abcdefgh",
+        db_host: "hostname",
+        db_user_name: "admin",
+        db_password: "pw",
+        db_name: "name_name")
+
       allow(CHIA).to receive(:tenant_for) { mock_tenant }
       expect(result).to be_a(Dry::Monads::Success)
     end

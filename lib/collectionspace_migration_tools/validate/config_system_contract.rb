@@ -11,8 +11,10 @@ module CollectionspaceMigrationTools
         required(:csv_chunk_size).filled(:integer)
         required(:max_threads).filled(:integer)
         required(:aws_profile).filled(:string)
+        required(:bastion_user).filled(:string)
+        required(:db_port).filled(:integer)
+        required(:db_connect_host).filled(:string)
         optional(:aws_media_ingest_profile).maybe(:string)
-        optional(:bastion_user).maybe(:string)
         optional(:term_manager_config_dir).maybe(:string)
       end
 

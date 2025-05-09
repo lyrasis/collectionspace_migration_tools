@@ -30,6 +30,10 @@ module CollectionspaceMigrationTools
         required(:max_media_upload_threads).filled(:integer)
         required(:media_with_blob_upload_delay).filled(:integer)
         optional(:media_bucket).maybe(:string)
+        optional(:db_host).filled(:string)
+        optional(:db_username).filled(:string)
+        optional(:db_password).filled(:string)
+        optional(:db_name).filled(:string)
       end
 
       register_macro(:subdir_exists) do

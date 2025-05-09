@@ -33,7 +33,10 @@ module CollectionspaceMigrationTools
         add_option(:base_uri, tenant.services_url)
         add_option(:username, tenant.user_name)
         add_option(:password, tenant.admin_password)
-        hash[:base_uri] = hash[:base_uri].delete_suffix("/")
+        add_option(:db_host, tenant.db_host)
+        add_option(:db_username, tenant.db_user_name)
+        add_option(:db_password, tenant.db_password)
+        add_option(:db_name, tenant.db_name)
       end
 
       def hosted? = !hash.dig(:tenant_name).nil?
@@ -44,6 +47,10 @@ module CollectionspaceMigrationTools
         set_log_group_name
         add_option(:batch_csv, File.join(hash[:base_dir], "batches.csv"))
         add_media_blob_delay
+        add_option(:db_host, nil)
+        add_option(:db_username, nil)
+        add_option(:db_password, nil)
+        add_option(:db_name, nil)
       end
 
       def set_log_group_name

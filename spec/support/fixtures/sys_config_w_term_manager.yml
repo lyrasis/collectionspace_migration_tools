@@ -5,4 +5,5 @@ aws_profile: collectionspacemigrationtools
 aws_media_ingest_profile: cs-media
 client_config_dir: thisappdir/config
 config_name_file: thisappdir/current_config
+bastion_user: name
 term_manager_config_dir: thisappdir/spec/support/fixtures/term_manager_config

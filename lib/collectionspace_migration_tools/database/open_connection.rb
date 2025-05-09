@@ -6,6 +6,14 @@ require "pg"
 module CollectionspaceMigrationTools
   module Database
     class PG::Connection
+      def open?
+        status
+      rescue PG::ConnectionBad
+        false
+      else
+        true
+      end
+
       def close
         if open?
           finish
@@ -14,14 +22,6 @@ module CollectionspaceMigrationTools
           puts "DB connection already closed"
         end
         CMT.tunnel.close
-      end
-
-      def open?
-        status
-      rescue PG::ConnectionBad
-        false
-      else
-        true
       end
     end
 
@@ -47,11 +47,11 @@ module CollectionspaceMigrationTools
 
         def db_info
           {
-            host: CMT.config.database.db_connect_host,
-            port: CMT.config.database.port,
-            dbname: CMT.config.database.db_name,
-            user: CMT.config.database.db_user,
-            password: CMT.config.database.db_password
+            host: CMT.config.system.db_connect_host,
+            port: CMT.config.system.db_port,
+            dbname: CMT.config.client.db_name,
+            user: CMT.config.client.db_username,
+            password: CMT.config.client.db_password
           }
         end
 

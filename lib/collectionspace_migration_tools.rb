@@ -11,6 +11,9 @@ module CollectionspaceMigrationTools
   ::CMT = CollectionspaceMigrationTools
 
   class << self
+    attr_reader :tunnel
+    attr_reader :connection
+
     def loader
       @loader ||= setup_loader
     end
@@ -42,8 +45,6 @@ module CollectionspaceMigrationTools
       puts client.failure
       exit
     end
-
-    attr_reader :connection
 
     # @param connection_obj [CMT::Connection]
     def connection=(connection_obj)
@@ -97,8 +98,6 @@ module CollectionspaceMigrationTools
       tunnel&.close
       exit
     end
-
-    attr_reader :tunnel
 
     # @param tunnel_obj [CMT::Tunnel]
     def tunnel=(tunnel_obj)
