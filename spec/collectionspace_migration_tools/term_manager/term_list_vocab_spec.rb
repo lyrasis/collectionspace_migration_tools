@@ -21,6 +21,18 @@ RSpec.describe CollectionspaceMigrationTools::TermManager::TermListVocab do
     src.vocabs.find { |vocab| vocab.vocabname == type }
   end
 
+  describe "#present_in_version?" do
+    let(:result) { vocab.present_in_version?(load_version) }
+    let(:type) { "newvocab" }
+
+    context "when vocab added after last load" do
+      let(:load_version) { 2 }
+
+      it "returns false" do
+        expect(result).to be false
+      end
+    end
+
   describe "#current" do
     let(:result) { vocab.current }
 
