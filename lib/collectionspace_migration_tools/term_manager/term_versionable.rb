@@ -33,6 +33,21 @@ module CollectionspaceMigrationTools
           .max
       end
 
+      def work_plan(load_version)
+        todo = delta(load_version)
+        return nil if todo.empty?
+
+        plan = {vocab_type: vocab_type, vocab_name: vocabname, rows: todo}
+        return plan unless respond_to?(:not_yet_loaded?)
+
+        status = not_yet_loaded?(load_version) ? :initial : :update
+        plan[:term_list_status] = status
+        return plan unless status == :initial
+
+        plan[:init_load_mode] = init_load_mode
+        plan
+      end
+
       # @return [Array<String>] field names related to versioning
       def version_fields = %w[loadVersion loadAction id prevterm origterm
         sort-dedupe]

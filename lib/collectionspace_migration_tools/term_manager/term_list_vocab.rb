@@ -5,7 +5,7 @@ module CollectionspaceMigrationTools
     class TermListVocab
       include TermVersionable
 
-      attr_reader :vocabname, :source_version, :term_field_name
+      attr_reader :vocabname, :source_version, :term_field_name, :vocab_type
 
       # @param vocab [String]
       # @param rows [Array<Hash>]
@@ -15,6 +15,7 @@ module CollectionspaceMigrationTools
         @vocabname = vocab
         @source_version = source_version
         @term_field_name = "displayName"
+        @vocab_type = "term list"
       end
 
       def init_load_mode = @init_load_mode ||= set_init_load_mode

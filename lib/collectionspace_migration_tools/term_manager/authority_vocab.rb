@@ -3,7 +3,7 @@
 module CollectionspaceMigrationTools
   module TermManager
     class AuthorityVocab
-      attr_reader :type, :subtype, :term_field_name
+      attr_reader :type, :subtype, :term_field_name, :vocab_type
 
       include TermVersionable
 
@@ -17,7 +17,10 @@ module CollectionspaceMigrationTools
         @rows = rows
         @source_version = source_version
         @term_field_name = "termDisplayName"
+        @vocab_type = "authority"
       end
+
+      def vocabname = "#{type}/#{subtype}"
 
       def to_s
         "<##{self.class}:#{object_id.to_s(8)} type: #{type} "\
