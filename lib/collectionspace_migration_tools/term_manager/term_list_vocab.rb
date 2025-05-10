@@ -18,6 +18,10 @@ module CollectionspaceMigrationTools
       end
 
 
+      def not_yet_loaded?(load_version) = last_load_rows(load_version).empty?
+
+      def present_in_version?(load_version) = !not_yet_loaded?(load_version)
+
       def to_s
         "<##{self.class}:#{object_id.to_s(8)} vocab: #{vocabname}>"
       end
