@@ -10,16 +10,12 @@ class TermManager < Thor
   desc "config", "Display config for project"
   option :project, required: true, type: :string, aliases: "-p"
   def config
-    CMT::TermManager.config(options[:project])
-      .either(
-        ->(success) {
-          pp(success)
-          exit(0)
-        },
-        ->(failure) {
-          puts failure
-          exit(1)
-        }
-      )
+    cfg = CMT::TermManager.config(options[:project])
+    unless cfg
+      puts "Cannot parse/set up config"
+      exit(1)
+    end
+    pp(cfg)
+  end
   end
 end
