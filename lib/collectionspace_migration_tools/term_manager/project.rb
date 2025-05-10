@@ -20,21 +20,22 @@ module CollectionspaceMigrationTools
         @config
       end
 
-      def instances = @instances ||= config.instances
-        .map { |instance, cfg| CMT::TM::Instance.new(instance, cfg) }
+      def instances = @instances ||=
+                        CMT::TermManager.build_instances(config.instances)
 
       def term_sources = @term_sources ||=
-                           [config.term_list_sources,
-                             config.authority_sources].compact
-                             .flatten
-                             .map do |path|
-                             CMT::TM::TermSource.new(path)
-                           end
+                           CMT::TermManager.build_term_sources(
+                             config_term_sources
+                           )
 
       def version_log = @version_log ||=
                           CMT::TM::VersionLog.new(config.version_log)
 
       private
+
+      def config_term_sources = [config.term_list_sources,
+        config.authority_sources].compact
+        .flatten
 
       def set_up_config
         path = yield config_path
