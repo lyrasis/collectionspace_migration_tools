@@ -12,4 +12,3 @@ authority_sources:
   - ~/napoproject/shared_controlled_vocabularies/authorities_ANIMAL.xlsx
   - ~/napoproject/shared_controlled_vocabularies/authorities_BIRD.xlsx
 version_log: ~/napoproject/shared_controlled_vocabularies/version_log.csv
-initial_term_list_load_mode: exact
