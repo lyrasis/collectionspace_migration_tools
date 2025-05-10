@@ -7,7 +7,8 @@ module CollectionspaceMigrationTools
     module_function
 
     def config(project)
-      TM::Project.new(project).config
+      @config ||= TM::Project.new(project).config
+    end
     end
   end
 end

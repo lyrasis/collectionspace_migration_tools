@@ -13,7 +13,12 @@ module CollectionspaceMigrationTools
         @id = projectname
       end
 
-      def config = @config ||= set_up_config
+      def config
+        return @config if instance_variable_defined?(:@config)
+
+        @config = set_up_config
+        @config
+      end
 
       def instances = @instances ||= config.instances
         .map { |instance, cfg| CMT::TM::Instance.new(instance, cfg) }
@@ -36,7 +41,7 @@ module CollectionspaceMigrationTools
         parsed = yield CMT::Parse::YamlConfig.call(path)
         result = yield CMT.config.add_config(:term_manager, parsed)
 
-        @config = result.term_manager
+        result.term_manager
       end
 
       def config_path
