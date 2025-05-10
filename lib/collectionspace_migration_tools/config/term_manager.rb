@@ -8,7 +8,8 @@ module CollectionspaceMigrationTools
       def initialize(hash:)
         super
         @default_values = {
-          initial_term_list_load_mode: "additive"
+          initial_term_list_load_mode: "additive",
+          initial_term_list_load_mode_overrides: []
         }
         @validator = CMT::Validate::ConfigTermManagerContract
       end

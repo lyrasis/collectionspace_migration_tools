@@ -6,7 +6,11 @@ RSpec.describe CollectionspaceMigrationTools::TermManager::TermListVocab do
   before(:all) do
     ENV["COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG"] =
       File.join(fixtures_base, "sys_config_w_term_manager.yml")
+  end
+
+  before(:each) do
     CMT.reset_config
+    CMT::TM::Project.new("napo").config
   end
 
   after(:all) do
@@ -15,10 +19,60 @@ RSpec.describe CollectionspaceMigrationTools::TermManager::TermListVocab do
 
   subject(:vocab) do
     path = File.join(fixtures_base, "shared_term_lists.xlsx")
-    CMT::TM::Project.new("napo").config
     CMT.config.term_manager.term_list_sources << path
     src = CMT::TM::TermSource.new(path)
     src.vocabs.find { |vocab| vocab.vocabname == type }
+  end
+
+  describe "#init_load_mode" do
+    let(:result) { vocab.init_load_mode }
+
+    context "with default setting (additive)" do
+      before(:each) do
+        CMT.config.term_manager.initial_term_list_load_mode_overrides <<
+          "newvocab"
+      end
+
+      context "with newvocab overriding main setting" do
+        let(:type) { "newvocab" }
+
+        it "returns exact" do
+          expect(result).to eq("exact")
+        end
+      end
+
+      context "with annotationtype not overridden" do
+        let(:type) { "annotationtype" }
+
+        it "returns additive" do
+          expect(result).to eq("additive")
+        end
+      end
+    end
+
+    context "with init_load_mode = exact" do
+      before(:each) do
+        CMT.config.term_manager.initial_term_list_load_mode = "exact"
+        CMT.config.term_manager.initial_term_list_load_mode_overrides <<
+          "newvocab"
+      end
+
+      context "with newvocab overriding main setting" do
+        let(:type) { "newvocab" }
+
+        it "returns additive" do
+          expect(result).to eq("additive")
+        end
+      end
+
+      context "with annotationtype not overridden" do
+        let(:type) { "annotationtype" }
+
+        it "returns exact" do
+          expect(result).to eq("exact")
+        end
+      end
+    end
   end
 
   describe "#present_in_version?" do
@@ -32,6 +86,23 @@ RSpec.describe CollectionspaceMigrationTools::TermManager::TermListVocab do
         expect(result).to be false
       end
     end
+
+    context "when vocab added in last load" do
+      let(:load_version) { 4 }
+
+      it "returns true" do
+        expect(result).to be true
+      end
+    end
+
+    context "when vocab added before last load" do
+      let(:load_version) { 5 }
+
+      it "returns true" do
+        expect(result).to be true
+      end
+    end
+  end
 
   describe "#current" do
     let(:result) { vocab.current }

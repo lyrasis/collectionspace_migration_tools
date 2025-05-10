@@ -13,6 +13,7 @@ module CollectionspaceMigrationTools
         required(:initial_term_list_load_mode).filled(:string)
         optional(:term_list_sources).maybe(:array)
         optional(:authority_sources).maybe(:array)
+        optional(:initial_term_list_load_mode_overrides).maybe(:array)
       end
 
       rule(:initial_term_list_load_mode) do
