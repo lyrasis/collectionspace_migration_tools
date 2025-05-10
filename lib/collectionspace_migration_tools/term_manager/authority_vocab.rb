@@ -19,6 +19,12 @@ module CollectionspaceMigrationTools
         @term_field_name = "termDisplayName"
       end
 
+      def to_s
+        "<##{self.class}:#{object_id.to_s(8)} type: #{type} "\
+          "subtype: #{subtype}>"
+      end
+      alias_method :inspect, :to_s
+
       private
 
       attr_reader :rows
