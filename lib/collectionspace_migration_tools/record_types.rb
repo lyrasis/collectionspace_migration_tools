@@ -94,6 +94,7 @@ module CollectionspaceMigrationTools
       @service_path_to_mappable_type_mapping ||= get_service_path_to_mappable_type_mapping
     end
 
+    # @param rectype [String]
     def services_api_path(rectype)
       if rectype == "vocabulary"
         result = CMT::Entity::Vocabulary.services_api_path
