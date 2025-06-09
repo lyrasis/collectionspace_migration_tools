@@ -20,7 +20,7 @@ module CollectionspaceMigrationTools
         optional(:batch_csv).maybe(:string)
         required(:mapper_dir).filled(:string)
         required(:batch_dir).filled(:string)
-        required(:redis_db_number).filled(:integer)
+        optional(:redis_db_number).maybe(:integer)
         optional(:batch_config_path).maybe(:string)
         optional(:auto_refresh_cache_before_mapping).filled(:bool)
         optional(:clear_cache_before_refresh).filled(:bool)
