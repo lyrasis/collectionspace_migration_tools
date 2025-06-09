@@ -5,6 +5,8 @@ aws_profile: collectionspace
 aws_media_ingest_profile: shared
 # Create a directory to hold your client configs, and enter the path to it
 client_config_dir: thisappdir/config
+# Path to file that will hold the name of the client config you are currently
+#   working on.
 config_name_file: thisappdir/current_config
 bastion_user: yourusername
 # The following are set by default but you can change them by uncommenting

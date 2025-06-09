@@ -32,6 +32,21 @@ module CollectionspaceMigrationTools
           key.failure("#{full} does not exist")
         end
       end
+
+      register_macro(:file_exists_or_gets_created) do
+        next if value.nil?
+
+        full = File.expand_path(value)
+        create_file(full, key) unless File.exist?(full)
+      end
+
+      private
+
+      def create_file(full_path, key)
+        File.open(full_path, "w") { |file| file << "" }
+      rescue
+        key.failure("#{full} does not exist and cannot be created")
+      end
     end
   end
 end

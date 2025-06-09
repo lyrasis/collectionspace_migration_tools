@@ -67,8 +67,10 @@ module CollectionspaceMigrationTools
     def derive_config
       @system = yield CMT::Config::System.call(path: system_path)
       @redis = yield CMT::Config::Redis.call(path: redis_path)
-      instance = yield CMT::Parse::YamlConfig.call(client_path)
-      @client = yield CMT::Config::Client.call(hash: instance[:client])
+      if client_path
+        instance = yield CMT::Parse::YamlConfig.call(client_path)
+        @client = yield CMT::Config::Client.call(hash: instance[:client])
+      end
       @term_manager = nil
 
       Success()
@@ -86,6 +88,8 @@ module CollectionspaceMigrationTools
     def path_from_config_name_file
       current = File.read(File.expand_path(system.config_name_file))
       case current
+      when ""
+        nil
       when "sample"
         File.join(Bundler.root, "sample_client_config.yml")
       else
