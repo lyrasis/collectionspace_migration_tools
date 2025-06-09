@@ -42,13 +42,21 @@ class Config < Thor
   desc "show", "print name of active config to screen"
   method_option :verbose,
     aliases: "-v",
-    desc: "Print full active config to screen"
+    desc: "Print full active config to screen",
+    type: :boolean,
+    default: false
   def show
-    verbose = options[:verbose]
-    if verbose
-      pp(CMT.config)
+    config = CMT.config
+    if config.client.nil?
+      puts "No client config found. Try doing:\n"\
+        "  thor config switch {yourconfigname}. "
+      exit(1)
+    end
+
+    if options[:verbose]
+      pp(config)
     else
-      puts File.read(CMT.config.system.config_name_file)
+      puts File.read(config.system.config_name_file)
     end
     exit(0)
   end

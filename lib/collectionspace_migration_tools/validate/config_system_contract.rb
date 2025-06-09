@@ -19,7 +19,7 @@ module CollectionspaceMigrationTools
       end
 
       rule(:client_config_dir).validate(:dir_exists)
-      rule(:config_name_file).validate(:file_exists)
+      rule(:config_name_file).validate(:file_exists_or_gets_created)
       rule(:term_manager_config_dir).validate(:dir_exists)
     end
   end
