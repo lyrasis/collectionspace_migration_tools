@@ -12,6 +12,8 @@ endif::[]
 
 = Term Manager functionality
 
+WARNING: This functionality is not yet fully implemented. Do not attempt to use.
+
 The Term Manager functionality fits the use case where:
 
 * You have one or more lists of vocabulary terms and/or authority terms that need to be loaded and kept synchronized...
