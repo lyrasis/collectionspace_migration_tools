@@ -3,7 +3,7 @@
 require "thor"
 require "thor/hollaback"
 
-# tasks targeting CS XML payloads
+# tasks to cache authority data
 class Auth < Thor
   include CMT::CliHelpers::Pop
   namespace :"pop:auth"
