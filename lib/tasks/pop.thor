@@ -5,6 +5,7 @@ require "thor/hollaback"
 
 # Tasks to populate caches
 class Pop < Thor
+  include CMT::CliHelpers
   include CMT::CliHelpers::Pop
 
   class_option :debug, desc: "Sets up debug mode", aliases: ["-d"],
