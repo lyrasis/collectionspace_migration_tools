@@ -1,8 +1,9 @@
 csv_chunk_size: 50
 max_threads: 10
 max_processes: 6
-aws_profile: collectionspacemigrationtools
-aws_media_ingest_profile: cs-media
+aws_profile: collectionspace
+aws_media_ingest_profile: shared
+# Create a directory to hold your client configs, and enter the path to it
 client_config_dir: thisappdir/config
 config_name_file: thisappdir/current_config
 bastion_user: yourusername
