@@ -1,17 +1,20 @@
 client:
   ## -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
   ## The settings in this top section are required per client, and
-  ## cannot be set by default. The next section (all commented out)
+  ## cannot be set by default. The subsequent section (all commented out)
   ## explains default settings that you can uncomment and alter to
   ## change.
   ##
-  ## THE DATABASE SECTION AT THE BOTTOM NEEDS TO BE SET PER CLIENT
+  ## There is no more database section. If we need to use this to
+  ## connect to a non-hosted client's database through SSH tunnel,
+  ## we'll have to figure that out later
   ## -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-  ## For Lyrasis-hosted client sites, this is all you need to record in the
-  ##   config. URLs and connection credentials are handled auto-magically.
-  ##   This should be a site name present in the file list at
-  ##   https://github.com/dts-hosting/deployments/tree/main/sites/collectionspace/config
+  ## For Lyrasis-hosted client sites, this is all you need to record
+  ##   in the config in order to connect to the site and database.
+  ##   URLs and connection credentials are handled auto-magically.
+  ##   This should be a name present in `CHIA.tenant_names` list available in
+  ##   console of dts-hosting/cspace_hosted_instance_access
   tenant_name: examplesite
 
 

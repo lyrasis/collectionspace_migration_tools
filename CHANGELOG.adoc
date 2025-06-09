@@ -14,6 +14,31 @@ endif::[]
 
 == Unreleased
 
+== 5.0.0 (2025-06-09)
+
+=== Breaking
+
+Now requires login credentials for instances to be fetched via AWS SSM.
+
+To upgrade:
+
+* System config:
+** Set the new `bastion_user` value if you will be doing anything that needs to connect to CollectionSpace databases
+** Change `aws_profile` value from `collectionspacemigrationtools` to `collectionspace` unless you are maintaining entry for same profile under different name in credentials file
+** Change `aws_media_ingest_profile` from `cs-media` to `shared` unless you are maintaining entry for same profile under different name in credentials file
+* Client config:
+** *For hosted clients:* Populate new `tenant_name` setting. See README's Per-instance setup. Delete `base_uri`, `username`, and `password` entries/values. Also delete the whole database config section. See sample_client_config.yml for more detail.
+
+=== Added
+* Write refname report for a list of authority vocabularies to CSV via `rr write list` thor command. The ability to produce this is handy if your project runs into this https://collectionspace.atlassian.net/wiki/spaces/CUD/pages/3566862447/CSV+Importer+Known+Limitations#Repeatable-fields-populated-by-multiple-authorities---order-of-terms-from-different-authorities[ingest limitation/bug]
+
+* Initial work/documentation of TermManager functionality, not yet complete
+
+=== Changed
+
+* You can now indicate the location of your system config file via setting an environment variable, via dotfile convention. See the README section on System config for details.
+
+
 == 4.1.0 (2024-09-12)
 === Added
 

@@ -62,9 +62,16 @@ If you want to change the Redis ports, you need to update them in two places:
 Nothing in `./redis.yml` is sensitive, as it's all just on your local machine.
 
 === System config
-Copy `./sample_system_config.yml` to `./system_config.yml`
 
-You may wish to tweak the settings in `system_config.yml`. These include:
+==== Location of file
+
+You have three options for where to put your system config file. These will be checked in the following order. The first one found will be used:
+
+1. Custom filename and location indicated in `COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG` environment variable. You can set this environment variable per-session or permanently in your shell/terminal config.
+2. `~/.config/collectionspace_migration_tools/system_config.yml`
+3. `system_config.yml` file in the base directory of this repository
+
+==== File contents/settings
 
 csv_chunk_size:: The use/purpose of reading CSVs in chunks is explained in https://xjlin0.github.io/tech/2015/05/25/faster-parsing-csv-with-parallel-processing/[Faster Parsing CSV With Parallel Processing]. Each chunk is sent to a parallel worker for processing. A chunk with more rows will take longer to process, but I have not investigated the tradeoff between queueing up/passing on more chunks vs. larger chunks.
 max_threads:: Maximum number of threads that will be spun up for a given https://github.com/grosser/parallel[parallel] process run in threads.
