@@ -12,7 +12,7 @@ RSpec.describe CollectionspaceMigrationTools::RecordTypes do
       let(:rectype) { "concept-ethculture" }
       it "returns expected" do
         expect(result).to be_a(Dry::Monads::Success)
-        expect(result.value!).to eq("concept-ethnographic-culture")
+        expect(result.value!).to eq("concept-cultural-group")
       end
     end
 
