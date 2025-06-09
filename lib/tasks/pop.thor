@@ -21,11 +21,11 @@ class Pop < Thor
       exit(1)
     end
 
-    query_and_populate(authorities)
+    query_and_populate(CMT::Entity.authorities)
     query_and_populate([CMT::Entity::Vocabulary.new])
     query_and_populate([CMT::Entity::Collectionobject.new])
-    query_and_populate(procedures)
-    query_and_populate(relations, :csid)
+    query_and_populate(CMT::Entity.procedures)
+    query_and_populate(CMT::Entity.relations, :csid)
 
     puts "Total time: #{Time.now - start_time}"
   end
@@ -37,7 +37,7 @@ class Pop < Thor
 
   desc "terms", "populate caches with all authority and vocabulary terms"
   def terms
-    query_and_populate(authorities)
+    query_and_populate(CMT::Entity.authorities)
     query_and_populate([CMT::Entity::Vocabulary.new])
   end
 
