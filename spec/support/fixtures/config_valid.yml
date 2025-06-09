@@ -17,13 +17,13 @@ client:
   # The release number for the instance, not the UI version or profile version
   # Replace the period with an underscore
   # This must be in quotes or 7_0 will get interpreted as 70 for some reason.
-  cs_version: "7_2"
+  cs_version: "8_0"
 
   # Should match the directory names that organize mappers per release
   profile: anthro
 
   # Should match the form used in file names of individual .json files
-  profile_version: 7-0-0
+  profile_version: 9-0-0
 
   # The settings in the next section control where files for this project will be saved
 
