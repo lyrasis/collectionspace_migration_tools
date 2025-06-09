@@ -39,10 +39,11 @@ See doc/decisions.adoc for more info/background on some of the decisions made
 * link:https://www.ruby-lang.org[Ruby] 3.1.0.
 * Docker and docker-compose.
 ** Running the required docker-compose command will by default set up two instances of Redis on ports 6380 and 6381. The port numbers used are configurable as https://github.com/lyrasis/collectionspace_migration_tools#redis-config[described below]
+* The user of this tool will have set up the Github and AWS CLI as detailed in https://github.com/lyrasis/data-migration-docs/tree/main/general#tech-setup[our team technical documentation].
 * For each CS instance this tool will be used to manipulate:
-** The user of this tool must be able to connect directly to the CollectionSpace database and perform read-only/select queries
-** There must be an AWS S3 bucket set up for ingesting into the instance, and the user of this tool must have permission to add and delete objects to that bucket, as well as list objects in the bucket.
-** There is an AWS Lambda set up to perform a Services API call for each object added to the S3 bucket
+** The user of this tool must be able to connect directly to the CollectionSpace database and perform read-only/select queries. Should be handled by correct assignment of user to the AWS MigrationsRole by Hosting team.
+** If you plan to do batch ingests, there must be an AWS S3 bucket (Fast Import Bucket) set up for ingesting into the instance, and the user of this tool must have permission to add and delete objects to that bucket, as well as list objects in the bucket. Should be handled by correct assignment of user to the AWS MigrationsRole by Hosting team.
+
 
 == One-time setup
 === Add `bin` to PATH (optional)
@@ -59,33 +60,6 @@ If you want to change the Redis ports, you need to update them in two places:
 - the `./redis.yml` file (which tells the application which port/Redis instance to use for storing RefNames vs. CSIDs)
 
 Nothing in `./redis.yml` is sensitive, as it's all just on your local machine.
-
-=== AWS config
-You will need to create an AWS profile that this tool will use to interact with S3 Fast Import Buckets (and eventually CloudWatchLogs) and S3 buckets set up to hold client media files for ingest.
-
-- You will need personal user credentials to the CollectionSpace AWS account. Mark (or whoever admins that account) will need to set that up and ensure your user has the "MigrationsRole"
-- If you do not already have an `~/.aws/credentials` file, create that file.
-- In that file, add the following:
-
-....
-[csdefault]
-aws_access_key_id = {your user key id}
-aws_secret_access_key = {your user secret access key}
-
-[collectionspacemigrationtools]
-role_arn = arn:aws:iam::163800758780:role/MigrationsRole
-source_profile = csdefault
-region = us-west-2
-
-[cs-media]
-role_arn = arn:aws:iam::005622933699:role/MigrationsRole
-source_profile = csdefault
-region = us-west-2
-....
-
-Your personal user credentials go in the `[csdefault]` entry. The `[collectionspacemigrationtools]` entry uses those credentials to access the account where the fast import buckets are created. The `[cs-media]` uses those credentials to access the account where client media buckets are created.
-
-You can change the profile names in brackets as you wish. Just note that the first profile name is the value of `source_profile` in the second profile.
 
 === System config
 Copy `./sample_system_config.yml` to `./system_config.yml`
@@ -105,9 +79,11 @@ TIP: You can find what uses threads vs. processes by searching this codebase for
 
 You will need to have:
 
-* admin-level credentials to the CS instance
-* login info for connecting to the database for the CS instance
-* the name of the S3 Fast Import bucket for the CS instance (currently we need to request that Mark set this bucket up)
+* The tenant name for the instance. These can be found via https://github.com/dts-hosting/cspace_hosted_instance_access[CHIA]. Do `bin/console`, and then `CHIA.tenant_names` to get a list of current tenant names.
+* Record mappers for the instance, downloaded from https://github.com/collectionspace/cspace-config-untangler/tree/main/data/mappers/[the cspace-config-untangler repo]. Instances without their own UI plugin use community-supported profile mappers for the latest release of CollectionSpace. Mappers for hosted clients with their own UI plugins are in Lyrasis-hosted profiles.
+* The domain profile and profile version used by the site. These should match the file name prefixes of the mappers for the instance.
+* If planning to ingest into the instance, the name of the S3 Fast Import bucket for the CS instance (currently we need to request that Mark set this bucket up)
+* If planning to map data into CS XML, an unused Redis db number. Do `thor config:redis_dbs` to see which Redis dbs are already in use.
 
 See https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/client_config_management.adoc[client config management documentation] for more details.
 
@@ -117,6 +93,8 @@ Once you have done the one-time config and set up at least one instance, you can
 
 [source,bash]
 ----
+thor config switch #{instance config filename without .yml on the end}
+
 bin/console
 CMT::Build::S3Client.call
 ----
