@@ -3,7 +3,7 @@
 require "thor"
 require "thor/hollaback"
 
-# tasks populating caches with object/procedure data
+# tasks populating caches with relation data
 class Relation < Thor
   include CMT::CliHelpers::Pop
   namespace :"pop:rel"

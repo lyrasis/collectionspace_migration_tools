@@ -3,7 +3,7 @@
 require "thor"
 require "thor/hollaback"
 
-# tasks targeting CS XML payloads
+# Tasks to populate caches
 class Pop < Thor
   include CMT::CliHelpers::Pop
 
