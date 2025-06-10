@@ -34,7 +34,7 @@ class TermManager < Thor
     pp(CMT::TermManager::ProjectWorkPlanner.new(**params).call)
   end
 
-  no_command do
+  no_commands do
     def work_in_progress
       puts "WARNING! This functionality is not fully implemented yet."
     end
