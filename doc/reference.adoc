@@ -207,6 +207,11 @@ n/a
  :term=>"displayName"}
 ----
 
+== Database
+=== Authority term variables
+
+See `database_authority_variables.csv` file in the same directory as this document.
+
 == Finding via `collectionspace-client`
 === authorities
 
