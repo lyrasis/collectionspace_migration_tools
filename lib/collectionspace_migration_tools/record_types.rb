@@ -12,6 +12,7 @@ module CollectionspaceMigrationTools
       splitdata = rectype.split("-")
       type = splitdata.shift
       subtype = splitdata.join("-")
+      subtype = "field_collection" if subtype == "fieldcollection"
 
       newtype = if service_path_to_mappable_type_mapping.key?(type)
         service_path_to_mappable_type_mapping[type]
