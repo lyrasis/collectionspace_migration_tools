@@ -63,6 +63,8 @@ Nothing in `./redis.yml` is sensitive, as it's all just on your local machine.
 
 === System config
 
+Use the commented `sample_system_config.yml` as an example or starting point.
+
 ==== Location of file
 
 You have three options for where to put your system config file. These will be checked in the following order. The first one found will be used:
@@ -84,6 +86,10 @@ TIP: You can find what uses threads vs. processes by searching this codebase for
 
 == Per-instance setup
 
+Use the commented `sample_client_config.yml` as an example or starting point.
+
+See https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/client_config_management.adoc[client config management documentation] for more details.
+
 You will need to have:
 
 * The tenant name for the instance. These can be found via https://github.com/dts-hosting/cspace_hosted_instance_access[CHIA]. Do `bin/console`, and then `CHIA.tenant_names` to get a list of current tenant names.
@@ -92,7 +98,6 @@ You will need to have:
 * If planning to ingest into the instance, the name of the S3 Fast Import bucket for the CS instance (currently we need to request that Mark set this bucket up)
 * If planning to map data into CS XML, an unused Redis db number. Do `thor config:redis_dbs` to see which Redis dbs are already in use.
 
-See https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/client_config_management.adoc[client config management documentation] for more details.
 
 == Test your setup
 
