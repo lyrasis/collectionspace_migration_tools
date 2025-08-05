@@ -13,7 +13,7 @@ class RefnameReport < Thor
 
   option :rectypes, type: :array, aliases: "-r"
   desc "list --rectypes place-local work-cona",
-    "populate caches with refnames and csids for list of authority record types"
+    "write refname report that includes terms in listed authority record types"
   def list
     rectypes = options[:rectypes].map do |rectype|
       CMT::Entity::Authority.from_str(rectype)
