@@ -11,12 +11,6 @@ class RefnameReport < Thor
 
   class_around :safe_db
 
-  # desc "one RECTYPE",
-  #   "populate caches with refnames and csids for ONE authority record type"
-  # def one(rectype)
-  #   query_and_populate([CMT::Entity::Authority.from_str(rectype)])
-  # end
-
   option :rectypes, type: :array, aliases: "-r"
   desc "list --rectypes place-local work-cona",
     "populate caches with refnames and csids for list of authority record types"
@@ -26,10 +20,4 @@ class RefnameReport < Thor
     end
     CMT::RefnameReport.write(rectypes)
   end
-
-  # desc "all",
-  #   "populate caches with refnames and csids for all authority record types"
-  # def all
-  #   query_and_populate(authorities)
-  # end
 end
