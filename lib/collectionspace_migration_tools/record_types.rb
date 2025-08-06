@@ -123,6 +123,10 @@ module CollectionspaceMigrationTools
 
     def to_obj(rectype)
       return Success(CMT::Entity::Vocabulary.new) if rectype == "vocabulary"
+
+      chk = valid_mappable?(rectype)
+      return chk unless chk.success?
+
       return Success(CMT::Entity::Collectionobject.new) if rectype == "collectionobject"
       return Success(CMT::Entity::Relation.new(rectype)) if relations.any?(rectype)
       return Success(CMT::Entity::Procedure.new(rectype)) if procedures.any?(rectype)
