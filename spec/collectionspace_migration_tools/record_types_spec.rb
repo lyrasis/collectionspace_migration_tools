@@ -109,7 +109,7 @@ RSpec.describe CollectionspaceMigrationTools::RecordTypes do
     end
 
     context "with remappable authority" do
-      let(:rectype) { "concept-ethculture" }
+      let(:rectype) { "concept-cultural-group" }
       it "returns expected" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to be_a(CMT::Entity::Authority)
