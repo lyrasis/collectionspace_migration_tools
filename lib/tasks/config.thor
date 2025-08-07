@@ -33,7 +33,7 @@ class Config < Thor
       end
     end
 
-    vals.sort_by { |_key, val| val }
+    vals.compact.sort_by { |_key, val| val }
       .each { |key, val| puts "#{val}\t#{key}" }
 
     (fails == 0) ? exit(0) : exit(1)
