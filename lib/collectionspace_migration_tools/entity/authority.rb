@@ -5,9 +5,8 @@ module CollectionspaceMigrationTools
     class Authority
       include CMT::Cache::Populatable
       include CMT::Duplicate::Checkable
-      include CMT::Entity::DeleteAllable
       include CMT::Mappable
-      include Dry::Monads[:result]
+      include CMT::Entity::DeleteAllable
 
       class << self
         def from_str(str)

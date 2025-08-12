@@ -5,14 +5,13 @@ module CollectionspaceMigrationTools
     class Collectionobject
       include CMT::Cache::Populatable
       include CMT::Duplicate::Checkable
+      include CMT::Mappable
       include CMT::Entity::DeleteAllable
 
-      def status
-        to_monad
-      end
+      attr_reader :name, :status
 
-      def to_monad
-        Success()
+      def initialize
+        get_mapper
       end
 
       def to_s
@@ -24,6 +23,8 @@ module CollectionspaceMigrationTools
       end
 
       private
+
+      attr_reader :mapper
 
       def cacheable_data_query
         query = <<~SQL

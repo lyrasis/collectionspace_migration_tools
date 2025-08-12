@@ -7,16 +7,17 @@ module CollectionspaceMigrationTools
     #   409 error instead of creating duplicate relations.
     class Relation
       include CMT::Cache::Populatable
+      include CMT::Mappable
 
       attr_reader :status
 
       def initialize(rectype)
-        set_name(rectype)
-        set_type
-      end
+        @name = rectype
+        check_name(rectype)
+        return if status
 
-      def to_monad
-        status
+        get_mapper
+        set_type
       end
 
       def to_s
@@ -25,7 +26,7 @@ module CollectionspaceMigrationTools
 
       private
 
-      attr_reader :name, :type
+      attr_reader :name, :mapper, :type
 
       def cacheable_data_query
         query = <<~SQL
@@ -67,13 +68,11 @@ module CollectionspaceMigrationTools
         "Relations"
       end
 
-      def set_name(rectype)
-        if CMT::RecordTypes.relations.any?(rectype)
-          @name = rectype
-          @status = Success(self)
-        else
-          @status = Failure("#{rectype} is not a valid relation rectype. Do `thor rt:rels` for list of allowed rectypes")
-        end
+      def check_name(rectype)
+        return unless CMT::RecordTypes.relations.none?(rectype)
+
+        @status = Failure("#{rectype} is not a valid relation rectype. Do "\
+                          "`thor rt:rels` for list of allowed rectypes")
       end
 
       def set_type
