@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 module CollectionspaceMigrationTools
-  # mixin module for mappable entities - sets :@mapper and :@status instance variables
+  # Mixin module for mappable entities that sets :@mapper and :@status instance
+  #   variables and delegates missing methods to successfully parsed record
+  #   mapper class
   #
   # Classes mixing this in need to have the following methods:
   #   - name
