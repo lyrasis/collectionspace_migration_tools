@@ -2,14 +2,11 @@
 
 module CollectionspaceMigrationTools
   module Duplicate
-    # mixin module with cache population
+    # mixin module to check for duplicate record types
     #
     # Classes mixing this in need to have the following methods:
-    #   - cacheable_data_query
     #   - name
-    #   - rectype_mixin
-    #   - to_monad
-    #   - to_s
+    #   - duplicates_query
     module Checkable
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:duplicates)
