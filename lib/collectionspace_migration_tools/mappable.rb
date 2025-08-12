@@ -15,6 +15,7 @@ module CollectionspaceMigrationTools
           @status = Success(mapper)
         end,
         ->(failure) do
+          @mapper = nil
           @status = Failure(failure)
         end
       )
