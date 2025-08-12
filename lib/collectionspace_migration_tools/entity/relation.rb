@@ -2,9 +2,14 @@
 
 module CollectionspaceMigrationTools
   module Entity
-    # @note There is no `duplicate` method for relation because I have been unable to populate an instance
-    #   with any duplicate relations to test such a query. The API seems to be pretty thorough at returning
-    #   409 error instead of creating duplicate relations.
+    # @note There is no `duplicate` method for relation because I have
+    #   been unable to populate an instance with any duplicate
+    #   relations to test such a query. The API seems to be pretty
+    #   thorough at returning 409 error instead of creating duplicate
+    #   relations.
+    # @note CollectionSpace itself handles deleting relationships between
+    #   records when one of the records is deleted, so DeleteAllable is not
+    #   mixed in here.
     class Relation
       include CMT::Cache::Populatable
       include CMT::Mappable
