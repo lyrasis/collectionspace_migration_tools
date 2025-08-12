@@ -264,6 +264,18 @@ RSpec.describe CollectionspaceMigrationTools::RecordMapper do
       end
     end
 
+    describe "#object?" do
+      it "returns true" do
+        expect(mapper.object?).to be true
+      end
+    end
+
+    describe "#procedure?" do
+      it "returns false" do
+        expect(mapper.procedure?).to be false
+      end
+    end
+
     describe "#type_subtype" do
       it "returns collectionobject" do
         expect(mapper.type_subtype).to eq("collectionobject")
