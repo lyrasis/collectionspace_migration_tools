@@ -27,7 +27,7 @@ module CollectionspaceMigrationTools
       end
 
       result = [newtype, newsubtype].join("-")
-      mappable.any?(result) ? Success(result) : Failure("Cannot derive valid rectype from #{rectype}")
+      mappable.any?(result) ? Success(result) : Failure()
     end
 
     def authorities
