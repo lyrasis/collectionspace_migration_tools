@@ -14,9 +14,7 @@ module CollectionspaceMigrationTools
       @mappings = to_h["mappings"]
     end
 
-    def authority?
-      service_type == "authority"
-    end
+    def authority? = service_type == "authority"
 
     def base_namespace
       config["ns_uri"].keys
@@ -31,9 +29,7 @@ module CollectionspaceMigrationTools
       term_group_list_key.delete_suffix("List").downcase
     end
 
-    def document_name
-      config["document_name"]
-    end
+    def document_name = config["document_name"]
 
     def existence_check_method
       if object?
@@ -47,17 +43,13 @@ module CollectionspaceMigrationTools
       end
     end
 
-    def name
-      config["mapper_name"]
-    end
+    def name = config["mapper_name"]
 
     def object? = service_type == "object"
 
     def procedure? = service_type == "procedure"
 
-    def id_field
-      config["identifier_field"]
-    end
+    def id_field = config["identifier_field"]
 
     def mappable_to_service_path
       if authority?
@@ -72,49 +64,33 @@ module CollectionspaceMigrationTools
       mappings.select { |mapping| requires_refname?(mapping) }
     end
 
-    def relation?
-      service_type == "relation"
-    end
+    def relation? = service_type == "relation"
 
     def type
       authority? ? config["authority_type"] : service_path
     end
 
-    def type_subtype
-      [type_label, subtype].compact.join("_")
-    end
+    def type_subtype = [type_label, subtype].compact.join("_")
 
-    def type_label
-      config["recordtype"]
-    end
+    def type_label = config["recordtype"]
 
-    def search_field
-      config["search_field"]
-    end
+    def search_field = config["search_field"]
 
     def subtype
       config["authority_subtype"] if authority?
     end
 
-    def service_path
-      config["service_path"]
-    end
+    def service_path = config["service_path"]
 
     def service_path_to_mappable
       {service_path => config["recordtype"]}
     end
 
-    def service_type
-      config["service_type"]
-    end
+    def service_type = config["service_type"]
 
-    def to_monad
-      Success(self)
-    end
+    def to_monad = Success(self)
 
-    def to_s
-      "<##{self.class}:#{object_id.to_s(8)} #{config}>"
-    end
+    def to_s = "<##{self.class}:#{object_id.to_s(8)} #{config}>"
 
     def vocabs
       return {} unless authority?

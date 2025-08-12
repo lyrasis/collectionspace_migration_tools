@@ -18,8 +18,6 @@ module CollectionspaceMigrationTools
       )
     end
 
-    def to_monad
-      status
-    end
+    def to_monad = status
   end
 end
