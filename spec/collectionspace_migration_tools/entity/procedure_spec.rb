@@ -5,8 +5,6 @@ require_relative "../../spec_helper"
 RSpec.describe CollectionspaceMigrationTools::Entity::Procedure do
   subject(:procedure) { described_class.new(str) }
 
-
-
   context "with exit" do
     let(:str) { "exit" }
 

@@ -20,7 +20,9 @@ module CollectionspaceMigrationTools
         type
       end
 
-      newsubtype = if authority_subtype_machine_to_human_label_mapping.key?(subtype)
+      newsubtype = if authority_subtype_machine_to_human_label_mapping.key?(
+        subtype
+      )
         authority_subtype_machine_to_human_label_mapping[subtype]
       else
         subtype
@@ -35,12 +37,13 @@ module CollectionspaceMigrationTools
     end
 
     def authority_subtype_machine_to_human_label_mapping
-      @authority_subtype_machine_to_human_label_mapping ||= get_authority_subtype_machine_to_human_label_mapping
+      @authority_subtype_machine_to_human_label_mapping ||=
+        get_authority_subtype_machine_to_human_label_mapping
     end
 
     def get_authority_subtype_machine_to_human_label_mapping
-      # since each authority vocabulary record mapper lists all vocabs for that authority,
-      #   we just take one per authority
+      # Since each authority vocabulary record mapper lists all vocabs
+      #   for that authority, we just take one per authority
       authorities.map { |rectype| [rectype.split("-").first, rectype] }
         .to_h
         .values
@@ -66,7 +69,11 @@ module CollectionspaceMigrationTools
     def mappable
       @mappable ||= Dir.new(CMT.config.client.mapper_dir)
         .children
-        .map { |fn| fn.delete_prefix("#{CMT.config.client.profile}_#{CMT.config.client.profile_version}_") }
+        .map do |fn|
+          fn.delete_prefix(
+            "#{CMT.config.client.profile}_#{CMT.config.client.profile_version}_"
+          )
+        end
         .map { |fn| fn.delete_suffix(".json") }
         .sort
     end
@@ -92,7 +99,8 @@ module CollectionspaceMigrationTools
     end
 
     def service_path_to_mappable_type_mapping
-      @service_path_to_mappable_type_mapping ||= get_service_path_to_mappable_type_mapping
+      @service_path_to_mappable_type_mapping ||=
+        get_service_path_to_mappable_type_mapping
     end
 
     # @param rectype [String]
@@ -118,7 +126,8 @@ module CollectionspaceMigrationTools
     end
 
     def mappable_type_to_service_path_mapping
-      @mappable_type_to_service_path_mapping ||= get_mappable_type_to_service_path_mapping
+      @mappable_type_to_service_path_mapping ||=
+        get_mappable_type_to_service_path_mapping
     end
 
     def to_obj(rectype)
@@ -127,13 +136,23 @@ module CollectionspaceMigrationTools
       chk = valid_mappable?(rectype)
       return chk unless chk.success?
 
-      return Success(CMT::Entity::Collectionobject.new) if rectype == "collectionobject"
-      return Success(CMT::Entity::Relation.new(rectype)) if relations.any?(rectype)
-      return Success(CMT::Entity::Procedure.new(rectype)) if procedures.any?(rectype)
-      return Success(CMT::Entity::Authority.from_str(rectype)) if authorities.any?(rectype)
+      if rectype == "collectionobject"
+        return Success(CMT::Entity::Collectionobject.new)
+      end
+      if relations.any?(rectype)
+        return Success(CMT::Entity::Relation.new(rectype))
+      end
+      if procedures.any?(rectype)
+        return Success(CMT::Entity::Procedure.new(rectype))
+      end
+      if authorities.any?(rectype)
+        return Success(CMT::Entity::Authority.from_str(rectype))
+      end
 
       alt_auth_rectype_form(rectype).bind do |alt_form|
-        return Success(CMT::Entity::Authority.from_str(alt_form)) if authorities.any?(alt_form)
+        if authorities.any?(alt_form)
+          return Success(CMT::Entity::Authority.from_str(alt_form))
+        end
       end
 
       Failure("#{rectype} cannot be converted to a CMT CS Entity object")
@@ -142,7 +161,8 @@ module CollectionspaceMigrationTools
     def valid_mappable?(rectype)
       return Success(rectype) if mappable.any?(rectype)
 
-      Failure("Invalid rectype: #{rectype}. Do `thor rt:all` to see allowed values")
+      Failure("Invalid rectype: #{rectype}. Do `thor rt:all` to see allowed "\
+              "values")
     end
   end
 end
