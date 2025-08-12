@@ -51,13 +51,9 @@ module CollectionspaceMigrationTools
       config["mapper_name"]
     end
 
-    def object?
-      service_type == "procedure"
-    end
+    def object? = service_type == "object"
 
-    def procedure?
-      service_type == "object"
-    end
+    def procedure? = service_type == "procedure"
 
     def id_field
       config["identifier_field"]
