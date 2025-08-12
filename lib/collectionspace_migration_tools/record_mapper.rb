@@ -76,9 +76,7 @@ module CollectionspaceMigrationTools
 
     def search_field = config["search_field"]
 
-    def subtype
-      config["authority_subtype"] if authority?
-    end
+    def subtype = config["authority_subtype"]
 
     def service_path = config["service_path"]
 
