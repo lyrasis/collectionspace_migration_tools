@@ -10,11 +10,13 @@ module CollectionspaceMigrationTools
 
     def get_mapper
       CMT::Parse::RecordMapper.call(name).either(
-        ->(mapper) {
+        ->(mapper) do
           @mapper = mapper
           @status = Success(mapper)
-        },
-        ->(failure) { @status = Failure(failure) }
+        end,
+        ->(failure) do
+          @status = Failure(failure)
+        end
       )
     end
 
