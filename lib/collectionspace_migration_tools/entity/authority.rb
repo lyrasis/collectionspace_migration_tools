@@ -117,12 +117,6 @@ module CollectionspaceMigrationTools
         "AuthTerms"
       end
 
-      def service_path
-        return status if status.failure?
-
-        mapper.service_path
-      end
-
       def all_csids_query
         return status if status.failure?
 
