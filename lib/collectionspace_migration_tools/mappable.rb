@@ -21,6 +21,16 @@ module CollectionspaceMigrationTools
       )
     end
 
+    def method_missing(sym, *args)
+      return status if status.failure?
+
+      begin
+        mapper.send(sym)
+      rescue
+        super(sym, *args)
+      end
+    end
+
     def to_monad = status
   end
 end
