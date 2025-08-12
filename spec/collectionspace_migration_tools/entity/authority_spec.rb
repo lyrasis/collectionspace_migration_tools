@@ -14,6 +14,7 @@ RSpec.describe CollectionspaceMigrationTools::Entity::Authority do
         expect(result.type).to eq("person")
         expect(result.subtype).to eq("local")
         expect(result.status.success?).to be true
+        expect(result.service_path).to eq("personauthorities")
       end
     end
 
