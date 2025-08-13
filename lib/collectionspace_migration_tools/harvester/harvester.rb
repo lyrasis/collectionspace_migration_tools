@@ -21,7 +21,7 @@ module CollectionspaceMigrationTools
         def call
           @client = yield CMT::Client.call
           @entity = yield CMT::RecordTypes.to_obj(rec_type)
-          @service_path = entity.service_path
+          @service_path = entity.service_path_full
 
           result = yield harvest
 
