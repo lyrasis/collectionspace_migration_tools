@@ -44,7 +44,7 @@ RSpec.describe CMT::Cache::Populate::Types::Procedures do
       end
 
       it "returns as expected" do
-        expect(result).to eq(["exits:1", "123"])
+        expect(result).to eq(["exits:1", "csid"])
       end
     end
   end
