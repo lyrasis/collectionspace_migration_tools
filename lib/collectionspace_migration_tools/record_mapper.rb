@@ -51,13 +51,17 @@ module CollectionspaceMigrationTools
 
     def id_field = config["identifier_field"]
 
+    # @return [String] used for interacting directly with API
+    def service_path_full
+      return service_path unless authority?
+
+      "#{service_path}/urn:cspace:name(#{subtype})/items"
+    end
+
     def mappable_to_service_path
-      if authority?
-        path = "#{service_path}/urn:cspace:name(#{subtype})/items"
-        {name => path}
-      else
-        {config["recordtype"] => service_path}
-      end
+      return {config["recordtype"] => service_path_full} unless authority?
+
+      {name => service_path_full}
     end
 
     def refname_columns
@@ -78,6 +82,8 @@ module CollectionspaceMigrationTools
 
     def subtype = config["authority_subtype"]
 
+    # @return [String] base service path value defined for record type in UI
+    #   config; used in database queries
     def service_path = config["service_path"]
 
     def service_path_to_mappable
