@@ -16,6 +16,7 @@ RSpec.describe CollectionspaceMigrationTools::Entity::Procedure do
       expect(procedure.subtype).to be_nil
       expect(procedure.status.success?).to be true
       expect(procedure.service_path).to eq("exits")
+      expect(procedure.service_path_full).to eq("exits")
     end
   end
 end
