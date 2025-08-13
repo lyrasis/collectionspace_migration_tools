@@ -3,8 +3,6 @@
 require "thor"
 
 class Harvest < Thor
-  include CMT::Harvester
-
   class_option :debug, desc: "Sets up debug mode", aliases: ["-d"],
     type: :boolean
 
