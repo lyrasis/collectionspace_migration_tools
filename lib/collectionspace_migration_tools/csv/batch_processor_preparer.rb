@@ -42,14 +42,15 @@ module CollectionspaceMigrationTools
       def call
         puts "Setting up for batch processing..."
 
-        mapper = yield CMT::Parse::RecordMapper.call(rectype)
+        entity = yield CMT::RecordTypes.to_obj(rectype)
+        mapper = entity.instance_variable_get(:@mapper)
         handler = yield CMT::Build::DataHandler.call(mapper, batch_config)
 
         row_getter = yield CMT::Csv::FirstRowGetter.new(csv_path)
         checker = yield CMT::Csv::FileChecker.call(csv_path, row_getter)
         row = checker[1]
 
-        services_path = yield CMT::Xml::ServicesApiPathGetter.call(mapper)
+        services_path = entity.service_path_full
         action_checker = yield CMT::Xml::ServicesApiActionChecker.new(action)
         obj_key_creator = yield CMT::S3::ObjectKeyCreator.new(
           svc_path: services_path,
