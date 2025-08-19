@@ -152,14 +152,20 @@ module CollectionspaceMigrationTools
     end
 
     def valid_mappable(rectype)
-      return Success(rectype) if rectype == "vocabulary" ||
-        mappable.any?(rectype)
+      rt = if rectype.match?("/")
+        rectype.tr("/", "-")
+      else
+        rectype
+      end
 
-      alt_auth_rectype_form(rectype).bind do |alt_form|
+      return Success(rt) if rt == "vocabulary" ||
+        mappable.any?(rt)
+
+      alt_auth_rectype_form(rt).bind do |alt_form|
         return Success(alt_form) if authorities.any?(alt_form)
       end
 
-      Failure("Invalid rectype: #{rectype}. Do `thor rt:all` to see allowed "\
+      Failure("Invalid rt: #{rt}. Do `thor rt:all` to see allowed "\
               "values")
     end
   end
