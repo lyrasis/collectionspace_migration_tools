@@ -25,7 +25,7 @@ module CollectionspaceMigrationTools
         valid_id = yield(validate_id(id))
         csvpath = CMT.get_csv_path(csv)
         valid_csv = yield(validate_csv(csvpath))
-        valid_rectype = yield(CMT::RecordTypes.valid_mappable?(rectype))
+        valid_rectype = yield(CMT::RecordTypes.valid_mappable(rectype))
         valid_action = yield(validate_action(action))
 
         mapper = yield(CMT::Parse::RecordMapper.call(valid_rectype))
