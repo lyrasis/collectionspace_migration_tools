@@ -4,7 +4,7 @@ require "dry/monads"
 
 module CollectionspaceMigrationTools
   module RecordTypes
-    extend Dry::Monads[:result]
+    extend Dry::Monads[:result, :do]
 
     module_function
 
@@ -131,35 +131,33 @@ module CollectionspaceMigrationTools
     end
 
     def to_obj(rectype)
-      return Success(CMT::Entity::Vocabulary.new) if rectype == "vocabulary"
+      rt = yield valid_mappable(rectype)
 
-      chk = valid_mappable(rectype)
-      return chk unless chk.success?
+      return Success(CMT::Entity::Vocabulary.new) if rt == "vocabulary"
 
-      if rectype == "collectionobject"
+      if rt == "collectionobject"
         return Success(CMT::Entity::Collectionobject.new)
       end
-      if relations.any?(rectype)
-        return Success(CMT::Entity::Relation.new(rectype))
+      if relations.any?(rt)
+        return Success(CMT::Entity::Relation.new(rt))
       end
-      if procedures.any?(rectype)
-        return Success(CMT::Entity::Procedure.new(rectype))
+      if procedures.any?(rt)
+        return Success(CMT::Entity::Procedure.new(rt))
       end
-      if authorities.any?(rectype)
-        return Success(CMT::Entity::Authority.from_str(rectype))
-      end
-
-      alt_auth_rectype_form(rectype).bind do |alt_form|
-        if authorities.any?(alt_form)
-          return Success(CMT::Entity::Authority.from_str(alt_form))
-        end
+      if authorities.any?(rt)
+        return Success(CMT::Entity::Authority.from_str(rt))
       end
 
       Failure("#{rectype} cannot be converted to a CMT CS Entity object")
     end
 
     def valid_mappable(rectype)
-      return Success(rectype) if mappable.any?(rectype)
+      return Success(rectype) if rectype == "vocabulary" ||
+        mappable.any?(rectype)
+
+      alt_auth_rectype_form(rectype).bind do |alt_form|
+        return Success(alt_form) if authorities.any?(alt_form)
+      end
 
       Failure("Invalid rectype: #{rectype}. Do `thor rt:all` to see allowed "\
               "values")
