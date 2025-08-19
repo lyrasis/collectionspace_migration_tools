@@ -65,6 +65,8 @@ module CollectionspaceMigrationTools
       end
 
       def last_load_rows(load_version)
+        return [] unless load_version
+
         current(rows.select { |row| row["loadVersion"] <= load_version })
       end
 
