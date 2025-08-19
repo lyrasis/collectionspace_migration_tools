@@ -15,7 +15,7 @@ module CollectionspaceMigrationTools
 
       # @param svc_path [String]
       def initialize(svc_path:, batch: nil)
-        @svc_path = svc_path
+        @svc_path = svc_path.start_with?("/") ? svc_path : "/#{svc_path}"
         @batch = batch.nil? ? "na" : batch
         @separator = CMT.config.client.s3_delimiter
       end
