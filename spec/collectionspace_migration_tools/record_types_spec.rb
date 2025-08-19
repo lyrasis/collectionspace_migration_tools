@@ -16,6 +16,14 @@ RSpec.describe CollectionspaceMigrationTools::RecordTypes do
       end
     end
 
+    context "with chronology-fieldcollection" do
+      let(:rectype) { "chronology-fieldcollection" }
+      it "returns expected" do
+        expect(result).to be_a(Dry::Monads::Success)
+        expect(result.value!).to eq("chronology-field-collection")
+      end
+    end
+
     context "with both parts needing remapping" do
       let(:rectype) { "orgauthorities-ulan_oa" }
       it "returns expected" do
@@ -56,6 +64,90 @@ RSpec.describe CollectionspaceMigrationTools::RecordTypes do
       it "returns expected" do
         expect(result).to be_a(Dry::Monads::Failure)
         expect(result.failure.message).to eq("No services path found for `foo`")
+      end
+    end
+  end
+
+  describe "#valid_mappable" do
+    let(:result) { klass.valid_mappable(rectype) }
+
+    context "with vocabulary" do
+      let(:rectype) { "vocabulary" }
+
+      it "returns expected" do
+        expect(result).to be_a(Dry::Monads::Success)
+        expect(result.value!).to eq(rectype)
+      end
+    end
+
+    context "with collectionobject" do
+      let(:rectype) { "collectionobject" }
+
+      it "returns expected" do
+        expect(result).to be_a(Dry::Monads::Success)
+        expect(result.value!).to eq(rectype)
+      end
+    end
+
+    context "with relation" do
+      let(:rectype) { "authorityhierarchy" }
+
+      it "returns expected" do
+        expect(result).to be_a(Dry::Monads::Success)
+        expect(result.value!).to eq(rectype)
+      end
+    end
+
+    context "with procedure" do
+      let(:rectype) { "group" }
+
+      it "returns expected" do
+        expect(result).to be_a(Dry::Monads::Success)
+        expect(result.value!).to eq(rectype)
+      end
+    end
+
+    context "with ok as-is authority" do
+      let(:rectype) { "person-local" }
+
+      it "returns expected" do
+        expect(result).to be_a(Dry::Monads::Success)
+        expect(result.value!).to eq(rectype)
+      end
+    end
+
+    context "with concept-cultural-group authority" do
+      let(:rectype) { "concept-cultural-group" }
+
+      it "returns expected" do
+        expect(result).to be_a(Dry::Monads::Success)
+        expect(result.value!).to eq(rectype)
+      end
+    end
+
+    context "with concept-ethculture authority" do
+      let(:rectype) { "concept-ethculture" }
+
+      it "returns expected" do
+        expect(result).to be_a(Dry::Monads::Success)
+        expect(result.value!).to eq("concept-cultural-group")
+      end
+    end
+
+    context "with chronology-fieldcollection" do
+      let(:rectype) { "chronology-fieldcollection" }
+
+      it "returns expected" do
+        expect(result).to be_a(Dry::Monads::Success)
+        expect(result.value!).to eq("chronology-field-collection")
+      end
+    end
+
+    context "with unmappable rectype" do
+      let(:rectype) { "foo-bar" }
+
+      it "returns expected" do
+        expect(result).to be_a(Dry::Monads::Failure)
       end
     end
   end
@@ -110,6 +202,15 @@ RSpec.describe CollectionspaceMigrationTools::RecordTypes do
 
     context "with remappable authority" do
       let(:rectype) { "concept-cultural-group" }
+      it "returns expected" do
+        expect(result).to be_a(Dry::Monads::Success)
+        expect(result.value!).to be_a(CMT::Entity::Authority)
+        expect(result.value!.status.success?).to be true
+      end
+    end
+
+    context "with chronology-field-collection" do
+      let(:rectype) { "chronology-field-collection" }
       it "returns expected" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!).to be_a(CMT::Entity::Authority)
