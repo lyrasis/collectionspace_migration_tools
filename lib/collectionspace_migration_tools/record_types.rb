@@ -133,7 +133,7 @@ module CollectionspaceMigrationTools
     def to_obj(rectype)
       return Success(CMT::Entity::Vocabulary.new) if rectype == "vocabulary"
 
-      chk = valid_mappable?(rectype)
+      chk = valid_mappable(rectype)
       return chk unless chk.success?
 
       if rectype == "collectionobject"
@@ -158,7 +158,7 @@ module CollectionspaceMigrationTools
       Failure("#{rectype} cannot be converted to a CMT CS Entity object")
     end
 
-    def valid_mappable?(rectype)
+    def valid_mappable(rectype)
       return Success(rectype) if mappable.any?(rectype)
 
       Failure("Invalid rectype: #{rectype}. Do `thor rt:all` to see allowed "\
