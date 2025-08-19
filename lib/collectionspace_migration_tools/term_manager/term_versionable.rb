@@ -15,7 +15,7 @@ module CollectionspaceMigrationTools
       # @param load_version [Integer, nil] last loaded term source version
       # @return [Array<Hash>] rows to load to update since last load
       def delta(load_version)
-        return current unless load_version
+        return current.map { |t| clean_term(t) } unless load_version
         return [] if load_version >= vocab_version
 
         raw_delta = rows_since_load(load_version)
@@ -26,6 +26,7 @@ module CollectionspaceMigrationTools
 
         raw_delta.map { |term| prep_delta_term(term, prev) }
           .compact
+          .map { |t| clean_term(t) }
       end
 
       def vocab_version
@@ -53,6 +54,11 @@ module CollectionspaceMigrationTools
         sort-dedupe]
 
       private
+
+      def clean_term(term)
+        %w[loadVersion id sort-dedupe].each { |key| term.delete(key) }
+        term
+      end
 
       def select_current(vrows)
         return vrows.first if vrows.length == 1
@@ -84,12 +90,22 @@ module CollectionspaceMigrationTools
       end
 
       def prep_delta_create(term, prev_term)
-        return term unless prev_term
+        return cleaned_create_term(term) unless prev_term
         return if same_term?(term, prev_term)
 
         term["loadAction"] = "update"
         term["prevterm"] = term_id(prev_term)
-        term
+        cleaned_update_term(term)
+      end
+
+      def cleaned_create_term(term)
+        term.delete("origterm")
+        term.compact
+      end
+
+      def cleaned_update_term(term)
+        term.delete("origterm")
+        term.compact
       end
 
       def prep_delta_update(term, prev_term)
@@ -97,17 +113,18 @@ module CollectionspaceMigrationTools
 
         if prev_term
           term["prevterm"] = term_id(prev_term)
+          cleaned_update_term(term)
         else
           term["loadAction"] = "create"
+          cleaned_create_term(term)
         end
-        term
       end
 
       def prep_delta_delete(term, prev_term)
         return unless prev_term
 
         term["prevterm"] = term_id(prev_term)
-        term
+        cleaned_update_term(term)
       end
 
       def previous(term, prev) = prev.find do |row|
