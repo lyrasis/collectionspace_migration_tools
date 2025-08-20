@@ -9,8 +9,12 @@ module CollectionspaceMigrationTools
       attr_reader :id
 
       # @param projectname [String]
-      def initialize(projectname)
+      # @param instances [:all, Array[<String>]]
+      # @param term_sources [:all, Array[<String>]]
+      def initialize(projectname, instances: nil, term_sources: nil)
         @id = projectname
+        @given_instances = instances
+        @given_term_sources = term_sources
         @run_log_path = File.expand_path(config.run_log)
         File.delete(run_log_path) if File.exist?(run_log_path)
       end
@@ -22,13 +26,9 @@ module CollectionspaceMigrationTools
         @config
       end
 
-      def instances = @instances ||=
-                        CMT::TermManager.build_instances(config.instances)
+      def instances = @instances ||= build_instances
 
-      def term_sources = @term_sources ||=
-                           CMT::TermManager.build_term_sources(
-                             config_term_sources
-                           )
+      def term_sources = @term_sources ||= build_term_sources
 
       def version_log = @version_log ||=
                           CMT::TM::VersionLog.new(config.version_log)
@@ -37,10 +37,65 @@ module CollectionspaceMigrationTools
 
       private
 
-      def config_term_sources = [config.term_list_sources,
-        config.authority_sources].compact
-        .flatten
-      attr_reader :run_log_path
+      attr_reader :given_instances, :given_term_sources, :run_log_path
+
+      def build_instances
+        if given_instances
+          build_given_instances
+        else
+          CMT::TermManager.build_instances(config.instances)
+        end
+      end
+
+      def build_given_instances
+        known = config.instances.keys.map(&:to_s)
+        chk = given_instances.group_by { |i| known.include?(i) }
+
+        if chk.key?(false)
+          puts "\nWARNING: "\
+            "The following instances are not configured for this project: "\
+            "#{chk[false].join(", ")}.\n"\
+            "Configured instances include: #{known.join(", ")}"
+        end
+
+        return unless chk.key?(true)
+
+        CMT::TM.build_instances(chk[true])
+      end
+
+      def build_term_sources
+        if given_term_sources
+          build_given_term_sources
+        else
+          CMT::TermManager.build_term_sources(config_term_sources)
+        end
+      end
+
+      def build_given_term_sources
+        chk = given_term_sources.group_by do |i|
+          config_term_sources.any? { |src| File.basename(src) == i }
+        end
+
+        if chk.key?(false)
+          puts "\nWARNING: "\
+            "The following term sources are not configured for this "\
+            "project: #{chk[false].join(", ")}.\n"\
+            "Configured instances include: "\
+            "#{config_term_sources.map { |s| File.basename(s) }.join(", ")}"
+        end
+        return unless chk.key?(true)
+
+        to_build = chk[true].map do |i|
+          config_term_sources.select { |src| File.basename(src) == i }
+        end.flatten
+
+        CMT::TermManager.build_term_sources(to_build)
+      end
+
+      def config_term_sources = @config_term_sources ||=
+                                  [config.term_list_sources,
+                                    config.authority_sources].compact
+                                    .flatten
 
       def set_up_config
         path = yield config_path
