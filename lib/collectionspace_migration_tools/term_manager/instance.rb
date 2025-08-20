@@ -9,27 +9,28 @@ module CollectionspaceMigrationTools
       # @param config [Hash]
       def initialize(id, config)
         @id = id
-        @config = config
+        @orig_config = config
       end
 
       def client = @client ||= build_client
 
       private
 
-      attr_reader :config
+      attr_reader :orig_config
 
       def build_client
-        setup_config
         CollectionSpace::Client.new(
-          CollectionSpace::Configuration.new(**config)
+          CollectionSpace::Configuration.new(**setup_config)
         )
       end
 
       def setup_config
-        if config.empty?
-          @config = CHIA.client_config_for(id)
-        elsif config.keys.length < 3
-          @config = CHIA.client_config_for(id).merge(config)
+        if orig_config.nil? || orig_config.empty?
+          CHIA.client_config_for(id)
+        elsif orig_config.keys.length < 3
+          CHIA.client_config_for(id).merge(orig_config)
+        else
+          orig_config
         end
       end
     end
