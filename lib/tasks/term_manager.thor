@@ -27,11 +27,10 @@ class TermManager < Thor
   option :term_sources, required: false, type: :array, aliases: "-s"
   def work_plan
     work_in_progress
-
-    params = {project: CMT::TermManager::Project.new(options[:project]),
-              instances: options[:instances],
+    params = {instances: options[:instances],
               term_sources: options[:term_sources]}.compact
-    pp(CMT::TermManager::ProjectWorkPlanner.new(**params).call)
+    project = CMT::TermManager::Project.new(options[:project], **params)
+    pp(CMT::TermManager::ProjectWorkPlanner.new(project).call)
   end
 
   no_commands do
