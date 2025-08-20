@@ -58,4 +58,12 @@ RSpec.describe CollectionspaceMigrationTools::TermManager::Project do
       expect(result).to be_a(CMT::TM::VersionLog)
     end
   end
+
+  describe "#run_log" do
+    let(:result) { project.run_log }
+
+    it "returns as expected" do
+      expect(result).to be_a(File)
+    end
+  end
 end
