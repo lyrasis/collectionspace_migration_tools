@@ -11,6 +11,8 @@ module CollectionspaceMigrationTools
       # @param projectname [String]
       def initialize(projectname)
         @id = projectname
+        @run_log_path = File.expand_path(config.run_log)
+        File.delete(run_log_path) if File.exist?(run_log_path)
       end
 
       def config
@@ -31,11 +33,14 @@ module CollectionspaceMigrationTools
       def version_log = @version_log ||=
                           CMT::TM::VersionLog.new(config.version_log)
 
+      def run_log = @run_log ||= File.open(run_log_path, "w")
+
       private
 
       def config_term_sources = [config.term_list_sources,
         config.authority_sources].compact
         .flatten
+      attr_reader :run_log_path
 
       def set_up_config
         path = yield config_path
