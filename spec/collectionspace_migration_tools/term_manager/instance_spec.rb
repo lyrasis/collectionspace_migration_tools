@@ -44,7 +44,7 @@ RSpec.describe CollectionspaceMigrationTools::TermManager::Instance do
 
       it "returns config" do
         expect(result).to be_a(CollectionSpace::Client)
-        expect(instance.send(:config)).to eq(base_config)
+        expect(instance.send(:setup_config)).to eq(base_config)
       end
     end
 
@@ -61,7 +61,7 @@ RSpec.describe CollectionspaceMigrationTools::TermManager::Instance do
           password: "pw"
         }
         expect(result).to be_a(CollectionSpace::Client)
-        expect(instance.send(:config)).to eq(expected)
+        expect(instance.send(:setup_config)).to eq(expected)
       end
     end
 
@@ -77,7 +77,7 @@ RSpec.describe CollectionspaceMigrationTools::TermManager::Instance do
 
       it "returns config" do
         expect(result).to be_a(CollectionSpace::Client)
-        expect(instance.send(:config)).to eq(cfg)
+        expect(instance.send(:setup_config)).to eq(cfg)
       end
     end
   end
