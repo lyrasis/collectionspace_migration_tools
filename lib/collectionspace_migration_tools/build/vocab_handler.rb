@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "collectionspace/mapper"
-require "dry/monads"
 
 module CollectionspaceMigrationTools
   module Build
@@ -20,7 +19,8 @@ module CollectionspaceMigrationTools
           client: CMT.client
         )
       rescue CollectionSpace::Mapper::NoClientServiceError => err
-        msg = "collectionspace-client does not have a service configured for #{err.message}"
+        msg = "collectionspace-client does not have a service configured "\
+          "for #{err.message}"
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
           message: msg))
       rescue => err
