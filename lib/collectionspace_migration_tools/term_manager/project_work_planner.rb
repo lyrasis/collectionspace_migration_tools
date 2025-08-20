@@ -11,7 +11,7 @@ module CollectionspaceMigrationTools
       def initialize(project:, instances: nil, term_sources: nil)
         @project = project
         @instances = if instances
-          CMT::TM.build_instances(instances)
+          build_instances(instances)
         else
           project.instances
         end
@@ -23,6 +23,8 @@ module CollectionspaceMigrationTools
       end
 
       def call
+        return unless instances
+
         instances.map do |instance|
           [
             instance,
@@ -36,6 +38,21 @@ module CollectionspaceMigrationTools
       private
 
       attr_reader :project
+
+      def build_instances(instances)
+        known = project.config.instances.keys.map(&:to_s)
+        chk = instances.group_by { |i| known.include?(i) }
+
+        if chk.key?(false)
+          puts "The following instances are not configured for this project: "\
+            "#{chk[false].join(", ")}.\n"\
+            "Configured instances include: #{known.join(", ")}"
+        end
+
+        return unless chk.key?(true)
+
+        CMT::TM.build_instances(chk[true])
+      end
     end
   end
 end
