@@ -33,9 +33,25 @@ class TermManager < Thor
     pp(CMT::TermManager::ProjectWorkPlanner.new(project).call)
   end
 
+  desc "run", "Run TermManager project"
+  option :project, required: true, type: :string, aliases: "-p"
+  option :instances, required: false, type: :array, aliases: "-i"
+  option :term_sources, required: false, type: :array, aliases: "-s"
+  def run
+    work_in_progress
+
+    params = {instances: options[:instances],
+              term_sources: options[:term_sources]}.compact
+    p = CMT::TermManager::Project.new(options[:project], **params)
+    CMT::TermManager::ProjectWorkRunner.new(p).call
+  end
+
   no_commands do
     def work_in_progress
-      puts "WARNING! This functionality is not fully implemented yet."
+      puts "WARNING! This functionality is not fully implemented yet. \n"\
+        "- Only handles dynamic term list adds and deletes\n"\
+        "- Does NOT handle authorities yet\n"\
+        "- Does not yet add updated lines to version log"
     end
   end
 end
