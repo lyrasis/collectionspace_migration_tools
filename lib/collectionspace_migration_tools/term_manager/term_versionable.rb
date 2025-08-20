@@ -34,7 +34,7 @@ module CollectionspaceMigrationTools
           .max
       end
 
-      def work_plan(load_version)
+      def work_plan(load_version, client)
         todo = delta(load_version)
         return nil if todo.empty?
 
@@ -46,6 +46,12 @@ module CollectionspaceMigrationTools
         return plan unless status == :initial
 
         plan[:init_load_mode] = init_load_mode
+        return plan unless init_load_mode == "exact"
+
+        exact_deletes = get_exact_deletes(todo, client, vocabname)
+        return plan if exact_deletes.empty?
+
+        plan[:rows] = todo + exact_deletes
         plan
       end
 
@@ -54,6 +60,30 @@ module CollectionspaceMigrationTools
         sort-dedupe]
 
       private
+
+      def get_exact_deletes(todo, client, vocabname)
+        adding = todo.map { |t| t["term"] }
+        svc_path = CollectionSpace::Service.get(
+          type: "vocabularies", subtype: vocabname
+        )[:path]
+        existing = client.all(svc_path)
+          .map { |t| t["displayName"] }
+          .to_a
+        deleting = existing - adding
+        return [] if deleting.empty?
+
+        deleting.map { |t| create_exact_delete(t, todo.first) }
+      end
+
+      def create_exact_delete(t, example)
+        {
+          "loadAction" => "delete",
+          "term_list_displayName" => example["term_list_displayName"],
+          "term_list_shortIdentifier" => example["term_list_shortIdentifier"],
+          "term" => t,
+          "origterm" => t
+        }
+      end
 
       def clean_term(term)
         %w[loadVersion id sort-dedupe].each { |key| term.delete(key) }
