@@ -9,14 +9,14 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
 
       class << self
-        def call
-          new.call
+        def call(...)
+          new.call(...)
         end
       end
 
-      def call
+      def call(client = nil)
         result = CollectionSpace::Mapper::VocabularyTerms::Handler.new(
-          client: CMT.client
+          client: client || CMT.client
         )
       rescue CollectionSpace::Mapper::NoClientServiceError => err
         msg = "collectionspace-client does not have a service configured "\
