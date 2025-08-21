@@ -87,7 +87,7 @@ module CollectionspaceMigrationTools
 
       def clean_term(term)
         %w[loadVersion id sort-dedupe].each { |key| term.delete(key) }
-        term
+        term.compact
       end
 
       def select_current(vrows)
