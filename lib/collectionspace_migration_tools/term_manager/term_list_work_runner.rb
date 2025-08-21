@@ -11,6 +11,7 @@ module CollectionspaceMigrationTools
         rows_by_action["create"]&.each { |t| create_term(t) }
         rows_by_action["update"]&.each { |t| update_term(t) }
         rows_by_action["delete"]&.each { |t| delete_term(t) }
+        finish
       end
 
       private
@@ -42,6 +43,7 @@ module CollectionspaceMigrationTools
         entry = result.either(
           ->(success) { "#{prefix}SUCCESS|#{success}\n" },
           ->(failure) do
+            add_error
             message = if failure.is_a?(String)
               failure
             elsif failure.is_a?(CollectionSpace::Response)
@@ -53,7 +55,6 @@ module CollectionspaceMigrationTools
           end
         )
         log << entry
-        puts entry
       end
     end
   end

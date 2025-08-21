@@ -20,10 +20,11 @@ module CollectionspaceMigrationTools
       def call
         return if work_plan.nil? || work_plan.empty?
 
-        run_term_list_plans if term_lists?
-        run_authority_plans if authorities?
-
-
+        [run_term_list_plans, run_authority_plans].flatten
+          .uniq.each do |report|
+            puts "\n#{instance.id} is now at version #{report[:version]} of "\
+              "#{report[:source]}"
+          end
       end
 
       private
@@ -38,9 +39,11 @@ module CollectionspaceMigrationTools
         !grouped_plans["authority"].empty?
 
       def run_term_list_plans
+        return [] unless term_lists?
+
         handler = yield CMT::Build::VocabHandler.call(instance.client)
 
-        grouped_plans["term list"].each do |plan|
+        grouped_plans["term list"].map do |plan|
           TermListWorkRunner.new(
             plan: plan,
             instance: instance,
@@ -51,7 +54,9 @@ module CollectionspaceMigrationTools
       end
 
       def run_authority_plans
-        grouped_plans["authority"].each do |plan|
+        return [] unless authorities?
+
+        grouped_plans["authority"].map do |plan|
           AuthorityWorkRunner.new(
             plan: plan,
             instance: instance,

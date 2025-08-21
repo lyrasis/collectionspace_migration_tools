@@ -5,15 +5,17 @@ module CollectionspaceMigrationTools
     class TermListVocab
       include TermVersionable
 
-      attr_reader :vocabname, :source_version, :term_field_name, :vocab_type
+      attr_reader :vocabname, :source_version, :source_path, :term_field_name,
+        :vocab_type
 
       # @param vocab [String]
       # @param rows [Array<Hash>]
-      # @param source_version [Integer]
-      def initialize(vocab, rows, source_version)
+      # @param source [CMT::TermManager::TermSource]
+      def initialize(vocab, rows, source)
         @rows = rows
         @vocabname = vocab
-        @source_version = source_version
+        @source_version = source.current_version
+        @source_path = source.path
         @term_field_name = "displayName"
         @vocab_type = "term list"
       end
