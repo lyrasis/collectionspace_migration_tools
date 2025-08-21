@@ -7,7 +7,6 @@ module CollectionspaceMigrationTools
     # Handles writing duplicate report CSV
     class CsvWriter
       include Dry::Monads[:result]
-      include Dry::Monads::Do.for(:report)
 
       class << self
         def call(...)
