@@ -5,6 +5,8 @@ module CollectionspaceMigrationTools
     # Mixin containing logic for identifying most-recent terms for a vocab
     #   and deltas between versions of a vocab
     module TermVersionable
+      def not_yet_loaded?(load_version) = last_load_rows(load_version).empty?
+
       # @return [Array<Hash>] rows to load if starting from scratch
       def current(rowset = rows)
         rowset.group_by { |r| r["id"] }

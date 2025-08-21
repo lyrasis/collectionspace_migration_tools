@@ -20,8 +20,6 @@ module CollectionspaceMigrationTools
 
       def init_load_mode = @init_load_mode ||= set_init_load_mode
 
-      def not_yet_loaded?(load_version) = last_load_rows(load_version).empty?
-
       def present_in_version?(load_version) = !not_yet_loaded?(load_version)
 
       def to_s
