@@ -7,7 +7,7 @@ module CollectionspaceMigrationTools
   # completed ingest (with or without errors). Rows for batches deleted at an
   # earlier workflow stage are not added to the archive CSV.
   module ArchiveCsv
-    extend Dry::Monads[:result, :do]
+    extend Dry::Monads[:result]
 
     module_function
 

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "dry/monads"
-
 module CollectionspaceMigrationTools
   module Database
     # Executes query and returns result if successful
