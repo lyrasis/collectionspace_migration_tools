@@ -41,11 +41,9 @@ module CollectionspaceMigrationTools
         return nil if todo.empty?
 
         plan = {vocab_type: vocab_type, vocab_name: vocabname, rows: todo}
-        return plan unless respond_to?(:not_yet_loaded?)
-
-        status = not_yet_loaded?(load_version) ? :initial : :update
+        status = not_yet_loaded?(load_version) ? :initial : :subsequent
         plan[:term_list_status] = status
-        return plan unless status == :initial
+        return plan unless vocab_type == "term list" && status == :initial
 
         plan[:init_load_mode] = init_load_mode
         return plan unless init_load_mode == "exact"
