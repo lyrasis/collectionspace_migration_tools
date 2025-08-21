@@ -8,7 +8,7 @@ module CollectionspaceMigrationTools
       def subtype = plan["authoritySubtype"]
 
       def call
-        # placeholder
+        finish
       end
     end
   end

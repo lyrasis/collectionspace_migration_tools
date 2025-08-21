@@ -36,12 +36,20 @@ module CollectionspaceMigrationTools
           .max
       end
 
+      # @param load_version [nil, Integer] last loaded version of vocab
+      # @param client [CollectionSpace::Client]
       def work_plan(load_version, client)
         todo = delta(load_version)
         return nil if todo.empty?
 
-        plan = {vocab_type: vocab_type, vocab_name: vocabname, rows: todo}
-        status = not_yet_loaded?(load_version) ? :initial : :subsequent
+        plan = {
+          vocab_type: vocab_type,
+          vocab_name: vocabname,
+          rows: todo,
+          term_source_version: source_version,
+          term_source_path: source_path
+        }
+        status = not_yet_loaded?(load_version) ? :initial : load_version
         plan[:term_list_status] = status
         return plan unless vocab_type == "term list" && status == :initial
 

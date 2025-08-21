@@ -5,18 +5,19 @@ module CollectionspaceMigrationTools
     class AuthorityVocab
       include TermVersionable
 
-      attr_reader :type, :subtype, :term_field_name, :vocab_type,
-        :init_load_mode
+      attr_reader :type, :subtype, :source_version, :source_path,
+        :term_field_name, :vocab_type, :init_load_mode
 
       # @param vocab [String]
       # @param rows [Array<Hash>]
-      # @param source_version [Integer]
-      def initialize(vocab, rows, source_version)
+      # @param source [CMT::TermManager::TermSource]
+      def initialize(vocab, rows, source)
         vocab_parts = vocab.split("/")
         @type = vocab_parts.first
         @subtype = vocab_parts.last
         @rows = rows
-        @source_version = source_version
+        @source_version = source.current_version
+        @source_path = source.path
         @term_field_name = "termDisplayName"
         @vocab_type = "authority"
         @init_load_mode = nil

@@ -51,7 +51,7 @@ class TermManager < Thor
       puts "WARNING! This functionality is not fully implemented yet. \n"\
         "- Only handles dynamic term list adds and deletes\n"\
         "- Does NOT handle authorities yet\n"\
-        "- Does not yet add updated lines to version log"
+        "- Does not yet add updated lines to version log\n"
     end
   end
 end
