@@ -12,7 +12,7 @@ gem "collectionspace-client",
   branch: "main",
   github: "collectionspace/collectionspace-client"
 gem "collectionspace-mapper",
-  tag: "v5.0.6",
+  branch: "migration-tools",
   github: "collectionspace/collectionspace-mapper"
 gem "collectionspace-refcache",
   tag: "v1.0.0",
@@ -20,9 +20,9 @@ gem "collectionspace-refcache",
 gem "cspace_hosted_instance_access",
   github: "dts-hosting/cspace_hosted_instance_access",
   branch: "main"
-gem "dry-monads", "~> 1.4"
-gem "dry-transaction", "~>0.13"
-gem "dry-validation", "~> 1.7"
+gem "dry-monads"
+gem "dry-transaction"
+gem "dry-validation", "~> 1.11.1"
 # @todo See https://github.com/mime-types/mime-types-data/pull/50
 # `mime-types-data` is a dependency of `mime-types` < `httparty` <
 #   `collectionspace-client`
@@ -54,7 +54,8 @@ end
 
 group :test do
   gem "guard-rspec", require: false
-  gem "mock_redis"
+  # Pinning mock_redis version because updating to 0.48.0 caused rspec errors
+  gem "mock_redis", "0.36.0"
   gem "rspec"
 end
 
