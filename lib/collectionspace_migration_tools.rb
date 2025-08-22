@@ -10,6 +10,14 @@ require "zeitwerk"
 module CollectionspaceMigrationTools
   ::CMT = CollectionspaceMigrationTools
 
+  at_exit do
+    if CMT.connection&.open?
+      CMT.connection.close
+    else
+      CMT.tunnel&.close
+    end
+  end
+
   class << self
     attr_reader :tunnel
     attr_reader :connection
