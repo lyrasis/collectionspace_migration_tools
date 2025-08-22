@@ -24,20 +24,19 @@ module CollectionspaceMigrationTools
 
         def open_tunnel
           tunnel_pid = spawn(CMT::Database.tunnel_command)
+          Process.detach(tunnel_pid)
+
+          unless tunnel_pid.is_a?(Integer)
+            return Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
+              message: "Tunnel not created"))
+          end
+
+          tunnel_obj = CMT::Tunnel.new(tunnel_pid)
+          CMT.tunnel = tunnel_obj
+          Success(tunnel_obj)
         rescue => err
           Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
             message: err))
-        else
-          Process.detach(tunnel_pid)
-
-          if tunnel_pid.is_a?(Integer)
-            tunnel_obj = CMT::Tunnel.new(tunnel_pid)
-            CMT.tunnel = tunnel_obj
-            Success(tunnel_obj)
-          else
-            Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
-              message: "Tunnel not created"))
-          end
         end
       end
     end
