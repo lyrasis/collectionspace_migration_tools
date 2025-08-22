@@ -7,8 +7,11 @@ module CollectionspaceMigrationTools
 
     module_function
 
-    def tunnel_command
-      tenant = CHIA.tenant_for(CMT.config.client.tenant_name)
+    # @param tenant_name [nil, String]
+    # @return [String]
+    def tunnel_command(tenant_name = nil)
+      name = tenant_name || CMT.config.client.tenant_name
+      tenant = CHIA.tenant_for(name)
 
       tenant.db_tunnel_command(
         CMT.config.system.bastion_user,
