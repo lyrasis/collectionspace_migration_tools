@@ -23,7 +23,7 @@ module CollectionspaceMigrationTools
         private
 
         def open_tunnel
-          tunnel_pid = spawn(tunnel_command)
+          tunnel_pid = spawn(CMT::Database.tunnel_command)
         rescue => err
           Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
             message: err))
@@ -38,15 +38,6 @@ module CollectionspaceMigrationTools
             Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
               message: "Tunnel not created"))
           end
-        end
-
-        def tunnel_command
-          tenant = CHIA.tenant_for(CMT.config.client.tenant_name)
-
-          tenant.db_tunnel_command(
-            CMT.config.system.bastion_user,
-            CMT.config.system.db_port
-          )
         end
       end
     end
