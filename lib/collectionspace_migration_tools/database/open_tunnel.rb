@@ -9,21 +9,27 @@ module CollectionspaceMigrationTools
       class << self
         include Dry::Monads[:result]
 
-        def call
+        # @param tenant_name [String]
+        def call(tenant_name = nil)
+          tunnel_command = CMT::Database.tunnel_command(tenant_name)
           check_tunnel = CMT.tunnel
 
           if check_tunnel&.open?
-            puts "DB SSH tunnel already open. Using existing."
-            Success(check_tunnel)
-          else
-            open_tunnel.fmap { |tunnel| tunnel }
+            if check_tunnel&.command == tunnel_command
+              puts "DB SSH tunnel already open. Using existing."
+              return Success(check_tunnel)
+            else
+              check_tunnel.close
+            end
           end
+
+          open_tunnel(tunnel_command).fmap { |tunnel| tunnel }
         end
 
         private
 
-        def open_tunnel
-          tunnel_pid = spawn(CMT::Database.tunnel_command)
+        def open_tunnel(tunnel_command)
+          tunnel_pid = spawn(tunnel_command)
           Process.detach(tunnel_pid)
 
           unless tunnel_pid.is_a?(Integer)
@@ -31,7 +37,7 @@ module CollectionspaceMigrationTools
               message: "Tunnel not created"))
           end
 
-          tunnel_obj = CMT::Tunnel.new(tunnel_pid)
+          tunnel_obj = CMT::Tunnel.new(tunnel_pid, tunnel_command)
           CMT.tunnel = tunnel_obj
           Success(tunnel_obj)
         rescue => err
