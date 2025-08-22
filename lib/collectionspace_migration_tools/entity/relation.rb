@@ -29,10 +29,6 @@ module CollectionspaceMigrationTools
         name
       end
 
-      private
-
-      attr_reader :name, :mapper, :type
-
       def cacheable_data_query
         query = <<~SQL
           select rc.subjectcsid, rc.relationshiptype, rc.objectcsid, h.name as csid from relations_common rc
@@ -44,6 +40,10 @@ module CollectionspaceMigrationTools
 
         Success(query)
       end
+
+      private
+
+      attr_reader :name, :mapper, :type
 
       def constraint
         name_constraint_lookup[name]

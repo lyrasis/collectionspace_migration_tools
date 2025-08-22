@@ -22,10 +22,6 @@ module CollectionspaceMigrationTools
         to_s
       end
 
-      private
-
-      attr_reader :mapper
-
       def cacheable_data_query
         query = <<~SQL
           select obj.objectnumber as id, cc.refname, h.name as csid
@@ -38,6 +34,10 @@ module CollectionspaceMigrationTools
 
         Success(query)
       end
+
+      private
+
+      attr_reader :mapper
 
       def duplicates_query
         query = <<~SQL
