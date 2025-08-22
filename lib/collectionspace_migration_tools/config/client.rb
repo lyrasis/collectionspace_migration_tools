@@ -33,10 +33,11 @@ module CollectionspaceMigrationTools
         add_option(:base_uri, tenant.services_url)
         add_option(:username, tenant.user_name)
         add_option(:password, tenant.admin_password)
-        add_option(:db_host, tenant.db_host)
-        add_option(:db_username, tenant.db_user_name)
-        add_option(:db_password, tenant.db_password)
-        add_option(:db_name, tenant.db_name)
+
+        db_creds = CMT::Database.db_credentials_for(tenant)
+        %i[db_host db_username db_password db_name].each do |sym|
+          add_option(sym, db_creds[sym])
+        end
       end
 
       def hosted? = !hash.dig(:tenant_name).nil?
