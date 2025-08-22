@@ -29,7 +29,7 @@ module CollectionspaceMigrationTools
       begin
         mapper.send(sym)
       rescue
-        super(sym, *args)
+        super
       end
     end
 
