@@ -30,8 +30,6 @@ module CollectionspaceMigrationTools
         "vocabularies"
       end
 
-      private
-
       def cacheable_data_query
         query = <<~SQL
           with vocab_csids as (
@@ -48,6 +46,8 @@ module CollectionspaceMigrationTools
 
         Success(query)
       end
+
+      private
 
       def rectype_mixin
         "VocabTerms"

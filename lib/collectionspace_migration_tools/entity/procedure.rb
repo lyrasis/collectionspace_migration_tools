@@ -15,10 +15,6 @@ module CollectionspaceMigrationTools
         get_mapper
       end
 
-      private
-
-      attr_reader :mapper
-
       def cacheable_data_query
         return status if status.failure?
 
@@ -32,6 +28,10 @@ module CollectionspaceMigrationTools
 
         Success(query)
       end
+
+      private
+
+      attr_reader :mapper
 
       def duplicates_query
         return status if status.failure?
