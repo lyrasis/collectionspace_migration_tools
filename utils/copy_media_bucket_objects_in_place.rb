@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Lint/UselessAssignment, Lint/Void
 require "bundler/inline"
 
 gemfile do
@@ -44,3 +45,4 @@ File.open(outfile, "w") do |log|
     end
   end
 end
+# rubocop:enable Lint/UselessAssignment, Lint/Void
