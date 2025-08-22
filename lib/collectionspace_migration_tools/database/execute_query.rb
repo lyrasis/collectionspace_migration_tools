@@ -4,24 +4,26 @@ module CollectionspaceMigrationTools
   module Database
     # Executes query and returns result if successful
     class ExecuteQuery
-      class << self
-        include Dry::Monads[:result]
+      extend Dry::Monads[:result, :do]
 
-        def call(query)
-          CMT::Database::OpenConnection.call.bind do |db|
-            execute_query(db, query)
-          end
+      class << self
+        # @param query [String]
+        # @param tenant_name [nil, String]
+        def call(query, tenant_name = nil)
+          db = yield CMT::Database::OpenConnection.call(tenant_name)
+          result = yield execute_query(db, query)
+
+          Success(result)
         end
 
         private
 
         def execute_query(db, query)
           result = db.exec(query)
+          Success(result)
         rescue => err
           Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
             message: err.message))
-        else
-          Success(result)
         end
       end
     end
