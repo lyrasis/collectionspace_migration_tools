@@ -3,17 +3,18 @@
 # Main namespace
 module CollectionspaceMigrationTools
   class Tunnel
-    attr_reader :pid
+    attr_reader :pid, :command
 
-    def initialize(pid)
+    def initialize(pid, command)
       @pid = pid
+      @command = command
     end
 
     def close
       return unless open?
 
       result = Process.kill("HUP", pid)
-      puts "Closed DB SSH tunnel" if result == 1
+      puts "Closed DB SSH tunnel for #{command}" if result == 1
     end
 
     def open?
