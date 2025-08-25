@@ -16,7 +16,7 @@ RSpec.describe CollectionspaceMigrationTools::TermManager::AuthorityVocab do
   subject(:vocab) do
     path = File.join(fixtures_base, "shared_authorities.xlsx")
     CMT::TM::Project.new("napo").config
-    CMT.config.term_manager.authority_sources << path
+    CMT.config.term_manager.authority_sources[path] = "auth"
     src = CMT::TM::TermSource.new(path)
     src.vocabs.find { |vocab| vocab.type == type && vocab.subtype == subtype }
   end

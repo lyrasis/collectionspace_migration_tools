@@ -8,7 +8,7 @@ module CollectionspaceMigrationTools
       include TermVersionable
 
       attr_reader :vocabname, :type, :subtype, :source_version, :source_path,
-        :term_field_name, :vocab_type, :init_load_mode
+        :source_code, :term_field_name, :vocab_type, :init_load_mode
 
       # @param vocab [String]
       # @param rows [Array<Hash>]
@@ -21,6 +21,7 @@ module CollectionspaceMigrationTools
         @rows = rows
         @source_version = source.current_version
         @source_path = source.path
+        @source_code = source.code
         @term_field_name = "termDisplayName"
         @vocab_type = "authority"
         @init_load_mode = nil

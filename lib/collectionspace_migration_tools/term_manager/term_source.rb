@@ -5,11 +5,17 @@ require "roo"
 module CollectionspaceMigrationTools
   module TermManager
     class TermSource
-      attr_reader :path
+      attr_reader :path, :code
 
       # @param path [String]
       def initialize(path)
-        @path = path
+        @path = path.to_s
+        return unless File.exist?(@path)
+
+        @code = nil
+        return if CMT.config.term_manager.term_list_sources&.include?(path)
+
+        @code = CMT.config.term_manager.authority_sources[path]
       end
 
       def missing? = @missing ||= !File.exist?(path)
@@ -50,11 +56,12 @@ module CollectionspaceMigrationTools
       private
 
       def get_type
-        return :authority if CMT.config
-          .term_manager.authority_sources
-          .include?(path)
+        return :term_list if CMT.config
+          .term_manager
+          &.term_list_sources
+          &.include?(path)
 
-        :term_list
+        :authority
       end
 
       def get_rows

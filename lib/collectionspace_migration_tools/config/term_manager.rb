@@ -13,6 +13,14 @@ module CollectionspaceMigrationTools
         }
         @validator = CMT::Validate::ConfigTermManagerContract
       end
+
+      private
+
+      def pre_manipulate
+        return unless hash.key?(:authority_sources)
+
+        hash[:authority_sources].transform_keys!(&:to_s)
+      end
     end
   end
 end
