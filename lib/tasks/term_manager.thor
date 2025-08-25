@@ -30,7 +30,8 @@ class TermManager < Thor
     params = {instances: options[:instances],
               term_sources: options[:term_sources]}.compact
     project = CMT::TermManager::Project.new(options[:project], **params)
-    pp(CMT::TermManager::ProjectWorkPlanner.new(project).call)
+    result = CMT::TermManager::ProjectWorkPlanner.new(project).call
+    pp(result)
   end
 
   desc "run", "Run TermManager project"

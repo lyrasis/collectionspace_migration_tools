@@ -4,21 +4,22 @@ module CollectionspaceMigrationTools
   module TermManager
     # Abstract class with shared logic for term list and authority work
     #   runners.
-    # @note Concrete classes must define the following methods: type,
-    #   subtype, call
+    # @note Concrete classes must define the following methods: call
     class VocabWorkRunner
-      attr_reader :instance, :plan, :log
+      attr_reader :instance, :plan, :log, :type, :subtype
 
-      # @param plan [Hash]
-      # @param instance [CMT::TM::Instance]
+      # @param plan [CMT::TM::WorkPlan]
       # @param log [File]
       # @param handler [nil, CollectionSpace::Mapper::VocabularyTerms::Handler]
-      def initialize(plan:, instance:, log:, handler: nil)
+      def initialize(plan:, log:, handler: nil)
         @plan = plan
-        @instance = instance
+        @vocab = plan.vocab
+        @type = vocab.type
+        @subtype = vocab.subtype
+        @instance = plan.instance
         @log = log
         @handler = handler
-        @log_prefix = "#{instance.id}|#{plan[:vocab_type]}|"
+        @log_prefix = "#{instance.id}|#{plan.vocab_type}|#{type}|#{subtype}|"
         @error_count = 0
       end
 
@@ -28,11 +29,7 @@ module CollectionspaceMigrationTools
 
       private
 
-      attr_reader :handler, :log_prefix, :error_count
-
-      def rows_by_action
-        @rows_by_action ||= plan[:rows].group_by { |r| r["loadAction"] }
-      end
+      attr_reader :handler, :vocab, :log_prefix, :error_count
 
       def add_error = @error_count += 1
 
@@ -40,15 +37,15 @@ module CollectionspaceMigrationTools
         warn_of_errors
 
         {
-          source: plan[:term_source_path],
-          version: plan[:term_source_version]
+          source: plan.term_source_path,
+          version: plan.term_source_version
         }
       end
 
       def warn_of_errors
         return if error_count == 0
 
-        puts "#{error_count} errors for #{instance.id} #{type}/#{subtype}."
+        puts "#{error_count} errors for #{instance.id} #{type}/#{subtype}"
       end
     end
   end

@@ -3,6 +3,8 @@
 module CollectionspaceMigrationTools
   module TermManager
     class TermListVocab
+      include Dry::Monads[:result]
+      include Dry::Monads::Do.for(:get_current_terms_query)
       include TermVersionable
 
       attr_reader :vocabname, :source_version, :source_path, :term_field_name,
@@ -20,9 +22,28 @@ module CollectionspaceMigrationTools
         @vocab_type = "term list"
       end
 
+      def type = "vocabulary"
+
+      def subtype = vocabname
+
       def init_load_mode = @init_load_mode ||= set_init_load_mode
 
       def present_in_version?(load_version) = !not_yet_loaded?(load_version)
+
+      def current_terms_query = @current_terms_query ||=
+                                  get_current_terms_query
+
+      def convert_query_result_to_terms(rows)
+        result = rows.map do |row|
+          if row["vocab"] == vocabname
+            row["term"]
+          end
+        end.compact.sort
+        Success(result)
+      rescue => err
+        Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
+          message: err.message))
+      end
 
       def to_s
         "<##{self.class}:#{object_id.to_s(8)} vocab: #{vocabname}>"
@@ -32,6 +53,24 @@ module CollectionspaceMigrationTools
       private
 
       attr_reader :rows
+
+      def get_current_terms_query
+        entity = yield CMT::RecordTypes.to_obj(type)
+        query = yield entity.cacheable_data_query
+
+        Success(query)
+      end
+
+      def misc
+        terms = result.map do |row|
+          if row["vocab"] == vocabname
+            row["term"]
+          end
+        end.compact.sort
+        @current_terms[tenant_name] = terms
+
+        Success(terms)
+      end
 
       def set_init_load_mode
         config = CMT.config.term_manager
