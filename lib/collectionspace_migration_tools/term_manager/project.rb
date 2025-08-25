@@ -92,10 +92,15 @@ module CollectionspaceMigrationTools
         CMT::TermManager.build_term_sources(to_build)
       end
 
-      def config_term_sources = @config_term_sources ||=
-                                  [config.term_list_sources,
-                                    config.authority_sources].compact
-                                    .flatten
+      def config_term_sources
+        return @config_term_sources if instance_variable_defined?(
+          :@config_term_sources
+        )
+
+        [config.term_list_sources,
+          config.authority_sources.keys].compact
+          .flatten
+      end
 
       def set_up_config
         path = yield config_path

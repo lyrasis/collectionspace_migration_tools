@@ -62,8 +62,8 @@ instances:
 term_list_sources: <7>
   - ~/napoproject/shared_controlled_vocabularies/dynamic_term_lists.xlsx
 authority_sources: <8>
-  - ~/napoproject/shared_controlled_vocabularies/authorities_ANIMAL.xlsx
-  - ~/napoproject/shared_controlled_vocabularies/authorities_BIRD.xlsx
+  ~/napoproject/shared_controlled_vocabularies/authorities_ANIMAL.xlsx: ani
+  ~/napoproject/shared_controlled_vocabularies/authorities_BIRD.xlsx: brd
 version_log: ~/napoproject/shared_controlled_vocabularies/version_log.csv <9>
 initial_term_list_load_mode: exact <10>
 initial_term_list_load_mode_overrides: <11>
@@ -76,7 +76,7 @@ initial_term_list_load_mode_overrides: <11>
 <5> They also want any changes made to their instance to be tied to a user associated with a known individual. This is the only type of case where you should hard-code authentication credentials in your configs. (Try hard not to do this!)
 <6> BEST CASE! The tenant name in the parameter name is the subdomain of the instance, and we'll use the standard admin username and fetched password.
 <7> List paths to any Excel workbooks containing shared dynamic term lists (aka vocabularies, term lists). This key can be omitted if you only have shared authority terms.
-<8> List paths to any Excel workbooks containing shared authority term lists. This key can be omitted if you only have shared term list terms.
+<8> List paths to any Excel workbooks containing shared authority term lists as keys, with values being "codes" used to uniquely identify individual authority vocabularies which may get terms added in both sources. For example, we might include Taxon terms in both of these sources, and we will need to create separate initial load batches for taxon-common (ani) and taxon-common (brd). The `authority_sources` key can be omitted if you only have shared term list terms.
 <9> Path to CSV file where version log should be created on first run (and where it can be found for subsequent runs)
 <10> By default, when term list values are loaded to an instance for the first time, they are loaded in `additive` mode. This means any shared terms not present will be added, but no terms are deleted. If you also want the initial load to delete terms in the instance that are not included in the shared term list source, set this to `exact`. This setting will apply to all term lists not listed in `initial_term_list_load_mode_overrides` setting.
 <11> List the term list shortIdentifier values of any term lists that should be loaded in the opposite manner as indicated in `initial_term_list_load_mode`. If `initial_term_list_load_mode: exact` is not explicitly specified, its value will be `additive` and any term lists indicated here will be treated as `exact`. If `initial_term_list_load_mode: exact` is specified, any term lists indicated here will be treated as `additive`.

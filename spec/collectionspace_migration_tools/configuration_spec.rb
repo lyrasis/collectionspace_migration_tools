@@ -94,8 +94,8 @@ RSpec.describe CollectionspaceMigrationTools::Configuration do
             term_list_sources:
               - ~/napoproject/shared_controlled_vocabularies/dynamic_term_lists.xlsx
             authority_sources:
-              - ~/napoproject/shared_controlled_vocabularies/authorities_ANIMAL.xlsx
-              - ~/napoproject/shared_controlled_vocabularies/authorities_BIRD.xlsx
+              ~/napoproject/shared_controlled_vocabularies/authorities_ANIMAL.xlsx: ani
+              ~/napoproject/shared_controlled_vocabularies/authorities_BIRD.xlsx: brd
             version_log: ~/napoproject/shared_controlled_vocabularies/version_log.csv
           STR
         end
@@ -118,8 +118,8 @@ RSpec.describe CollectionspaceMigrationTools::Configuration do
             term_list_sources:
               - ~/napoproject/shared_controlled_vocabularies/dynamic_term_lists.xlsx
             authority_sources:
-              - ~/napoproject/shared_controlled_vocabularies/authorities_ANIMAL.xlsx
-              - ~/napoproject/shared_controlled_vocabularies/authorities_BIRD.xlsx
+              ~/napoproject/shared_controlled_vocabularies/authorities_ANIMAL.xlsx: ani
+              ~/napoproject/shared_controlled_vocabularies/authorities_BIRD.xlsx: brd
             version_log: ~/napoproject/shared_controlled_vocabularies/version_log.csv
             initial_term_list_load_mode: invalid
           STR

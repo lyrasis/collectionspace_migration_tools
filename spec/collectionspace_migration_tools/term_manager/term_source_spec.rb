@@ -28,7 +28,10 @@ RSpec.describe CollectionspaceMigrationTools::TermManager::TermSource do
   end
 
   describe "#workbook" do
-    let(:result) { source.workbook }
+    let(:result) do
+      CMT::TM::Project.new("napo").config
+      source.workbook
+    end
 
     context "with non-existent path" do
       let(:path) { bad_path }
@@ -54,7 +57,7 @@ RSpec.describe CollectionspaceMigrationTools::TermManager::TermSource do
     end
 
     context "when term list source" do
-      let(:path) { puts CMT.config.term_manager.term_list_sources.first }
+      let(:path) { CMT.config.term_manager.term_list_sources.first }
 
       it "returns as expected" do
         expect(result).to eq(:term_list)
@@ -62,7 +65,7 @@ RSpec.describe CollectionspaceMigrationTools::TermManager::TermSource do
     end
 
     context "when authority source" do
-      let(:path) { CMT.config.term_manager.authority_sources.first }
+      let(:path) { CMT.config.term_manager.authority_sources.keys.first }
 
       it "returns as expected" do
         expect(result).to eq(:authority)
@@ -117,7 +120,7 @@ RSpec.describe CollectionspaceMigrationTools::TermManager::TermSource do
     context "when authority source" do
       before(:each) do
         CMT::TM::Project.new("napo").config
-        CMT.config.term_manager.authority_sources << path
+        CMT.config.term_manager.authority_sources[path] = "auth"
       end
 
       let(:path) { authority_path }
@@ -125,6 +128,7 @@ RSpec.describe CollectionspaceMigrationTools::TermManager::TermSource do
       it "returns as expected" do
         expect(result).to be_a(Array)
         expect(result.first).to be_a(CMT::TM::AuthorityVocab)
+        expect(result.first.source_code).to eq("auth")
       end
     end
 
