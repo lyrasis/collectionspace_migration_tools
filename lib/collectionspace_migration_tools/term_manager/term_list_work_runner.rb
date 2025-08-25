@@ -3,14 +3,10 @@
 module CollectionspaceMigrationTools
   module TermManager
     class TermListWorkRunner < VocabWorkRunner
-      def type = "vocabularies"
-
-      def subtype = plan[:vocab_name]
-
       def call
-        rows_by_action["create"]&.each { |t| create_term(t) }
-        rows_by_action["update"]&.each { |t| update_term(t) }
-        rows_by_action["delete"]&.each { |t| delete_term(t) }
+        plan.creates.each { |t| create_term(t) }
+        plan.updates.each { |t| update_term(t) }
+        plan.deletes.each { |t| delete_term(t) }
         finish
       end
 
@@ -39,7 +35,7 @@ module CollectionspaceMigrationTools
       end
 
       def to_log(result, action, term)
-        prefix = "#{log_prefix}#{subtype}|#{action}|#{term}|"
+        prefix = "#{log_prefix}#{action}|#{term}|"
         entry = result.either(
           ->(success) { "#{prefix}SUCCESS|#{success}\n" },
           ->(failure) do

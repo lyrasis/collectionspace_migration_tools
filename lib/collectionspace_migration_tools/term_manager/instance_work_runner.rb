@@ -9,7 +9,7 @@ module CollectionspaceMigrationTools
       attr_reader :instance, :work_plan, :log
 
       # @param instance [CMT::TM::Instance]
-      # @param work_plan [Array<Hash>]
+      # @param work_plan [Array<CMT::TM::WorkPlan>]
       # @param log [File]
       def initialize(instance:, work_plan:, log:)
         @instance = instance
@@ -18,7 +18,10 @@ module CollectionspaceMigrationTools
       end
 
       def call
-        return if work_plan.nil? || work_plan.empty?
+        if work_plan.nil? || work_plan.empty?
+          puts "\nNothing to do for #{instance.id}"
+          return
+        end
 
         [run_term_list_plans, run_authority_plans].flatten
           .uniq.each do |report|
@@ -30,7 +33,7 @@ module CollectionspaceMigrationTools
       private
 
       def grouped_plans = @grouped_plans ||=
-                            work_plan.group_by { |p| p[:vocab_type] }
+                            work_plan.group_by { |plan| plan.vocab_type }
 
       def term_lists? = grouped_plans.key?("term list") &&
         !grouped_plans["term list"].empty?
@@ -46,7 +49,6 @@ module CollectionspaceMigrationTools
         grouped_plans["term list"].map do |plan|
           TermListWorkRunner.new(
             plan: plan,
-            instance: instance,
             log: log,
             handler: handler
           ).call
@@ -59,7 +61,6 @@ module CollectionspaceMigrationTools
         grouped_plans["authority"].map do |plan|
           AuthorityWorkRunner.new(
             plan: plan,
-            instance: instance,
             log: log
           ).call
         end

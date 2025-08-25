@@ -9,22 +9,30 @@ module CollectionspaceMigrationTools
       def initialize(project:, instance:, term_sources:)
         @project = project
         @instance = instance
-        @client = instance.client
         @term_sources = term_sources
       end
 
       def call
-        term_sources.map do |source|
-          load_version = project.version_log.version_for(source, instance)
-          source.vocabs
-            .map { |vocab| vocab.work_plan(load_version, client) }
-            .compact
-        end.flatten
+        term_sources.map { |ts| plans_for_term_source(ts) }
+          .flatten
+          .reject(&:nothing_to_do?)
       end
 
       private
 
-      attr_reader :project, :instance, :client, :term_sources
+      attr_reader :project, :instance, :term_sources
+
+      def plans_for_term_source(source)
+        load_version = project.version_log.version_for(source, instance)
+        source.vocabs
+          .map do |vocab|
+            CMT::TermManager::WorkPlan.new(
+              instance: instance,
+              load_version: load_version,
+              vocab: vocab
+            ).call
+          end
+      end
     end
   end
 end
