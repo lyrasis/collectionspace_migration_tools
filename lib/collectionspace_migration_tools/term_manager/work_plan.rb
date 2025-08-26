@@ -80,12 +80,18 @@ module CollectionspaceMigrationTools
 
           instance_variable_set(:"@#{action}s", grouped[action])
         end
+        return unless term_list_status == :initial
+
+        @creates = creates + updates
+        @updates = []
       end
 
       def clean_creates
         return if current_terms.empty?
 
-        @creates = creates.reject { |t| current_terms.include?(t[term_key]) }
+        @creates = creates.reject do |t|
+          current_terms.include?(t[term_key].split("|").first)
+        end
       end
 
       def add_exact_deletes

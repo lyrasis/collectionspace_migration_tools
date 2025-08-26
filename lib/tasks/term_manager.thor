@@ -50,9 +50,10 @@ class TermManager < Thor
   no_commands do
     def work_in_progress
       puts "WARNING! This functionality is not fully implemented yet. \n"\
-        "- Only handles dynamic term list adds and deletes\n"\
-        "- Does NOT handle authorities yet\n"\
-        "- Does not yet add updated lines to version log\n"
+        "- Does NOT handle dynamic term list updates\n"\
+        "- Does NOT handle authority updates where primary "\
+        "termDisplayName value is changed\n"\
+        "- Does not handle subsequent authority loads via API only"
     end
   end
 end
