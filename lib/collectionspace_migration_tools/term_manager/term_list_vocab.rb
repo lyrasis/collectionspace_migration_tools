@@ -15,7 +15,10 @@ module CollectionspaceMigrationTools
       # @param source [CMT::TermManager::TermSource]
       def initialize(vocab, rows, source)
         @term_field_name = "displayName"
-        @rows = rows.map { |r| r[term_field_name] = r["term"]; r }
+        @rows = rows.map do |r|
+          r[term_field_name] = r["term"]
+          r
+        end
         @vocabname = vocab
         @source_version = source.current_version
         @source_path = source.path

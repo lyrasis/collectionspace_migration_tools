@@ -23,7 +23,7 @@ module CollectionspaceMigrationTools
             InstanceWorkPlanner.new(project: project,
               instance: instance,
               term_sources: term_sources,
-                                   mode: mode).call
+              mode: mode).call
           ]
         end.to_h
       end
