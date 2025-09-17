@@ -39,7 +39,7 @@ module CollectionspaceMigrationTools
           reporter: term_reporter
         )
 
-        Success()
+        Success(adder)
       end
 
       private
