@@ -23,9 +23,18 @@ module CollectionspaceMigrationTools
       end
 
       def add_opt_fields = @add_opt_fields ||=
-                             CollectionSpace::Mapper::VocabularyTerms::ADD_OPT_FIELDS
+        CollectionSpace::Mapper::VocabularyTerms::ADD_OPT_FIELDS
 
-      def update_term(term)
+      def update_term(termhash)
+        term = termhash["origterm"]
+        opt_fields = add_opt_fields.map { |fld| [fld, termhash[fld]] }
+          .to_h
+          .compact
+        opts = opt_fields.empty? ? nil : opt_fields
+        result = handler.update_term(
+          vocab: subtype, term: term, opt_fields: opts
+        )
+        to_log(result, :update, term)
       end
 
       def delete_term(termhash)
@@ -41,12 +50,12 @@ module CollectionspaceMigrationTools
           ->(failure) do
             add_error
             message = if failure.is_a?(String)
-              failure
-            elsif failure.is_a?(CollectionSpace::Response)
-              "#{failure.status_code} #{failure.parsed}"
-            else
-              "UNHANDLED_FAILURE_TYPE: #{failure.inspect}"
-            end
+                        failure
+                      elsif failure.is_a?(CollectionSpace::Response)
+                        "#{failure.status_code} #{failure.parsed}"
+                      else
+                        "UNHANDLED_FAILURE_TYPE: #{failure.inspect}"
+                      end
             "#{prefix}FAILURE|#{message}\n"
           end
         )

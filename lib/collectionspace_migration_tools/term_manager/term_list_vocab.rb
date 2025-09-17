@@ -14,11 +14,11 @@ module CollectionspaceMigrationTools
       # @param rows [Array<Hash>]
       # @param source [CMT::TermManager::TermSource]
       def initialize(vocab, rows, source)
-        @rows = rows
+        @term_field_name = "displayName"
+        @rows = rows.map { |r| r[term_field_name] = r["term"]; r }
         @vocabname = vocab
         @source_version = source.current_version
         @source_path = source.path
-        @term_field_name = "displayName"
         @vocab_type = "term list"
       end
 
@@ -59,17 +59,6 @@ module CollectionspaceMigrationTools
         query = yield entity.cacheable_data_query
 
         Success(query)
-      end
-
-      def misc
-        terms = result.map do |row|
-          if row["vocab"] == vocabname
-            row["term"]
-          end
-        end.compact.sort
-        @current_terms[tenant_name] = terms
-
-        Success(terms)
       end
 
       def set_init_load_mode

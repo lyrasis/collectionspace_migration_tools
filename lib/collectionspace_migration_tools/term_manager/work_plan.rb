@@ -13,11 +13,13 @@ module CollectionspaceMigrationTools
       # @param instance [CMT::TM::Instance]
       # @param load_version [nil, Integer] last loaded version of vocab
       # @param vocab [CMT::TM::TermListVocab, CMT::TM::AuthorityVocab]
+      # @param mode [nil, :force_current]
       def initialize(instance: instance, load_version: load_version,
-                     vocab: vocab)
+                     vocab: vocab, mode: nil)
         @instance = instance
         @load_version = load_version
         @vocab = vocab
+        @mode = mode
         @vocab_type = vocab.vocab_type
         @vocab_name = vocab.vocabname
         @term_source_version = vocab.source_version
@@ -29,17 +31,11 @@ module CollectionspaceMigrationTools
       end
 
       def call
-        return self if delta.empty?
-
-        populate_action_instance_variables
-
-        if term_list_status == :initial && init_load_mode == "exact"
-          add_exact_deletes
+        if mode == :force_current
+          forced_work_plan
+        else
+          default_work_plan
         end
-
-        clean_creates unless creates.empty?
-
-        self
       end
 
       def anything_to_do? = !nothing_to_do?
@@ -69,7 +65,56 @@ module CollectionspaceMigrationTools
 
       private
 
-      attr_reader :load_version, :init_load_mode
+      attr_reader :load_version, :mode, :init_load_mode
+
+      def forced_work_plan
+        terms = vocab.current
+        if init_load_mode == "exact"
+          forced_exact_work_plan(terms)
+        else
+          forced_additive_work_plan(terms)
+        end
+      end
+
+      def forced_exact_work_plan(terms)
+        forced_additive_work_plan(terms)
+        add_exact_deletes
+        self
+      end
+
+      def forced_additive_work_plan(terms)
+        terms.each { |term| assign_term(term) }
+        self
+      end
+
+      def assign_term(term)
+        return if current_terms.include?(term["term"])
+
+        if term["term"] == term["origterm"]
+          creates << term
+          return
+        end
+
+        if current_terms.include?(term["origterm"])
+          updates << term
+        else
+          creates << term
+        end
+      end
+
+      def default_work_plan
+        return self if delta.empty?
+
+        populate_action_instance_variables
+
+        if term_list_status == :initial && init_load_mode == "exact"
+          add_exact_deletes
+        end
+
+        clean_creates unless creates.empty?
+
+        self
+      end
 
       def delta = @delta ||= vocab.delta(load_version)
 
@@ -94,10 +139,23 @@ module CollectionspaceMigrationTools
         end
       end
 
+      def terms_to_keep
+        keeping = []
+        [creates, updates].each do |terms|
+          terms.each do |term|
+            keeping << term[term_key]
+            keeping << term["origterm"]
+          end
+        end
+        keeping.compact.uniq
+      end
+
       def add_exact_deletes
-        adding = creates.map { |t| t[term_key] }
+        ok = vocab.current.map { |r| r["term"] }
+        keeping = terms_to_keep
         current_terms.each do |term|
-          next if adding.include?(term)
+          next if keeping.include?(term)
+          next if ok.include?(term)
 
           deletes << {
             "loadAction" => "delete",
@@ -136,7 +194,7 @@ module CollectionspaceMigrationTools
 
       def get_current_terms
         query = yield vocab.current_terms_query
-        result = yield CMT::Database::ExecuteQuery.call(query, instance.id)
+        result = yield CMT::Database::ExecuteQuery.call(query, instance.id.to_s)
         terms = yield vocab.convert_query_result_to_terms(result)
 
         Success(terms)
