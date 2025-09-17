@@ -49,6 +49,10 @@ module CollectionspaceMigrationTools
         Success(val)
       end
 
+      def respond_to_missing?(meth, include_private)
+        data.key?(meth.to_s) || super
+      end
+
       # Each header from batches CSV becomes a method name returning the value
       # for this batch
       def method_missing(meth, *args)
