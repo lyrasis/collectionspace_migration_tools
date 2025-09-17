@@ -38,7 +38,7 @@ module CollectionspaceMigrationTools
           end
 
           tunnel_obj = CMT::Tunnel.new(tunnel_pid, tunnel_command)
-          CMT.tunnel = tunnel_obj
+          CMT.set_tunnel(tunnel_obj)
           Success(tunnel_obj)
         rescue => err
           Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
