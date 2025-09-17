@@ -14,8 +14,7 @@ module CollectionspaceMigrationTools
       # @param load_version [nil, Integer] last loaded version of vocab
       # @param vocab [CMT::TM::TermListVocab, CMT::TM::AuthorityVocab]
       # @param mode [nil, :force_current]
-      def initialize(instance: instance, load_version: load_version,
-                     vocab: vocab, mode: nil)
+      def initialize(instance:, load_version:, vocab:, mode: nil)
         @instance = instance
         @load_version = load_version
         @vocab = vocab
