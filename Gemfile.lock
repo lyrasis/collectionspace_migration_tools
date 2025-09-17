@@ -37,7 +37,7 @@ GIT
 
 GIT
   remote: https://github.com/dts-hosting/cspace_hosted_instance_access.git
-  revision: 4fd32833c92cc4785c5c87aa7621a14001e49672
+  revision: a130426c0fd6fd3cb7b7391e954b6324c46a9207
   branch: main
   specs:
     cspace_hosted_instance_access (0.0.1)
