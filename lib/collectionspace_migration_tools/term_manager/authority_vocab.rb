@@ -28,7 +28,9 @@ module CollectionspaceMigrationTools
       end
 
       def mappable_rectype_name = @mappable_rectype_name ||=
-        CMT::RecordTypes.valid_mappable(vocabname).value_or(nil)
+                                    CMT::RecordTypes.valid_mappable(
+                                      vocabname
+                                    ).value_or(nil)
 
       def current_terms_query = @current_terms_query ||=
                                   get_current_terms_query

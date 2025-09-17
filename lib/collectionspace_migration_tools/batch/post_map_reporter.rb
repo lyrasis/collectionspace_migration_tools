@@ -61,12 +61,12 @@ module CollectionspaceMigrationTools
           field: "cmt_warnings"))
         _warns = yield(report("map_warns", warns))
         missing_term_report = "#{dir}/missing_terms.csv"
-        if File.exist?(missing_term_report)
-          missing_term_ct = yield CMT::Batch::CsvRowCounter.call(
+        missing_term_ct = if File.exist?(missing_term_report)
+          yield CMT::Batch::CsvRowCounter.call(
             path: missing_term_report
           )
         else
-          missing_term_ct = 0
+          0
         end
         _missing_term = yield(report("missing_terms", missing_term_ct))
 

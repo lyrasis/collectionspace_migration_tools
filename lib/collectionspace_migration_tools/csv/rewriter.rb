@@ -44,7 +44,7 @@ module CollectionspaceMigrationTools
       rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-                                 message: msg))
+          message: msg))
       else
         Success()
       end
@@ -54,7 +54,7 @@ module CollectionspaceMigrationTools
       rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-                                 message: msg))
+          message: msg))
       else
         Success()
       end
@@ -73,7 +73,7 @@ module CollectionspaceMigrationTools
             "update.\nACTION FOR YOU: none\nError received was:\n"\
             "#{failure.message}"
           @status = Failure(CMT::Failure.new(context: failure.context,
-                                             message: msg))
+            message: msg))
         elsif failure.context.end_with?("write_new")
           msg = "Backed up existing batches CSV. Update write failed. To "\
             "protect the data we did not revert to the backup automatically."\
