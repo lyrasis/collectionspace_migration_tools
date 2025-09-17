@@ -25,8 +25,6 @@ module CollectionspaceMigrationTools
 
         [run_term_list_plans, run_authority_plans].flatten
           .uniq.each do |report|
-            binding.pry if report.is_a?(Dry::Monads::Failure)
-
             puts "\n#{instance.id} is now at version #{report[:version]} of "\
               "#{report[:source]}"
           end

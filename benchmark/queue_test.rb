@@ -19,5 +19,3 @@ def populate_csv_chunks(csv_path, csv_chunks)
 end
 
 populate_csv_chunks(csv_path, csv_chunks)
-
-debugger

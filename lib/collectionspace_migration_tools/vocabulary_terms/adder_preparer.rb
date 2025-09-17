@@ -39,17 +39,6 @@ module CollectionspaceMigrationTools
           reporter: term_reporter
         )
 
-        binding.pry
-
-        # processor = yield(CMT::Csv::BatchProcessor.new(
-        #   csv_path: csv_path,
-        #   handler: handler,
-        #   first_row: row,
-        #   row_processor: row_processor,
-        #   term_reporter: term_reporter,
-        #   output_dir: output_dir
-        # ))
-
         Success()
       end
 
