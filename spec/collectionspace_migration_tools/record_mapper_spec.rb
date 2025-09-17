@@ -13,7 +13,8 @@ RSpec.describe CollectionspaceMigrationTools::RecordMapper do
       "service_type" => "authority",
       "object_name" => "Organization",
       "ns_uri" =>
-        {"organizations_common" => "http://collectionspace.org/services/organization",
+        {"organizations_common" =>
+           "http://collectionspace.org/services/organization",
          "contacts_common" => "http://collectionspace.org/services/contact"},
       "identifier_field" => "shortIdentifier",
       "search_field" => "organizationTermGroupList/0/termDisplayName",
@@ -22,7 +23,14 @@ RSpec.describe CollectionspaceMigrationTools::RecordMapper do
           {"name" => "ULAN", "subtype" => "ulan_oa"}],
       "authority_type" => "orgauthorities",
       "authority_subtype" => "organization"},
-     "docstructure" => {"organizations_common" => {"orgTermGroupList" => {"orgTermGroup" => {}}}}}
+      "docstructure" => {
+        "organizations_common" => {
+          "orgTermGroupList" => {
+            "orgTermGroup" => {}
+          }
+        }
+      }
+    }
   end
   let(:person_ulan_hash) do
     {"config" =>
@@ -62,7 +70,9 @@ RSpec.describe CollectionspaceMigrationTools::RecordMapper do
       "service_path" => "taxonomyauthority",
       "service_type" => "authority",
       "object_name" => "Taxon",
-      "ns_uri" => {"taxon_common" => "http://collectionspace.org/services/taxonomy"},
+      "ns_uri" => {
+        "taxon_common" => "http://collectionspace.org/services/taxonomy"
+      },
       "identifier_field" => "shortIdentifier",
       "search_field" => "taxonTermGroupList/0/termDisplayName",
       "authority_subtypes" =>
@@ -239,8 +249,11 @@ RSpec.describe CollectionspaceMigrationTools::RecordMapper do
           "service_type" => "object",
           "service_path" => "collectionobjects",
           "ns_uri" => {
-            "collectionobjects_annotation" => "http://collectionspace.org/services/collectionobject/domain/annotation",
-            "collectionobjects_common" => "http://collectionspace.org/services/collectionobject"
+            "collectionobjects_annotation" =>
+              "http://collectionspace.org/services/collectionobject/"\
+              "domain/annotation",
+            "collectionobjects_common" =>
+              "http://collectionspace.org/services/collectionobject"
           }
         }
       }

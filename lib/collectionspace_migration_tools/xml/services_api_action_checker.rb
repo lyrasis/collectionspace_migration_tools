@@ -5,7 +5,8 @@ require "dry/monads"
 
 module CollectionspaceMigrationTools
   module Xml
-    # Determines actual action to use in file name, based on given action and record status
+    # Determines actual action to use in file name, based on given action and
+    #   record status
     class ServicesApiActionChecker
       include Dry::Monads[:result]
 
@@ -72,7 +73,8 @@ module CollectionspaceMigrationTools
       def warning(status, actual_action)
         {
           category: :services_api_transfer_action_mismatch,
-          message: "API TRANSFER ACTION MISMATCH: Given: #{action}. Record status: #{status}. Will transfer as: #{actual_action}"
+          message: "API TRANSFER ACTION MISMATCH: Given: #{action}. Record "\
+            "status: #{status}. Will transfer as: #{actual_action}"
         }
       end
     end

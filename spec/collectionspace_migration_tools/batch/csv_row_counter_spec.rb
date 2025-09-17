@@ -50,7 +50,8 @@ RSpec.describe CollectionspaceMigrationTools::Batch::CsvRowCounter do
       let(:result) { klass.call(value: "k") }
       it "returns Failure" do
         expect(result).to be_a(Dry::Monads::Failure)
-        expect(result.failure).to eq("CsvRowCounter: you must specify field if you specify value")
+        expect(result.failure).to eq("CsvRowCounter: you must specify field "\
+                                     "if you specify value")
       end
     end
   end

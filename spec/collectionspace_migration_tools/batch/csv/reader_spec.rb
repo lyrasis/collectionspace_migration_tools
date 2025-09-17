@@ -37,6 +37,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Reader do
         ingest_oks duplicates_checked? duplicates]
     end
     let(:data) do
+      # rubocop:disable Layout/LineLength
       <<~CSV
         id,source_csv,mappable_rectype,action,batch_status,rec_ct,batch_mode,mapped?,dir,map_errs,map_oks,map_warns,missing_terms,uploaded?,upload_errs,upload_oks,batch_prefix,ingest_start_time,ingest_done?,ingest_complete_time,ingest_duration,ingest_errs,ingest_oks,duplicates_checked?,duplicates
         plc,/path1,place-local,create,ingested,1259,full record,2024-09-11_17_25,plc_2024-09-11_17_25,0,1259,1156,0,2024-09-11_18_25,0,1259,cGxjf,2024-09-11_18_25,2024-09-11 17_35,2024-09-11 17:26:17.612,17:26:18,0,1259,2024-09-11_17_36,0
@@ -44,6 +45,7 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Reader do
         mat,/path3,concept-material,create,uploaded,1,full record,2024-09-11_17_39,mat_2024-09-11_17_39,0,1,0,0,2024-09-11_17_42,0,1,bWF0f,2024-09-11 17:42:02.315,,,,,,,
         nom,/path4,concept-nomenclature,create,added,1000,,,,,,,,,,,,,,,,,,,
       CSV
+      # rubocop:enable Layout/LineLength
     end
     let(:result) { klass.find_status(status, format).value! }
 
@@ -106,7 +108,8 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Reader do
     end
 
     it "calls rewriter as expected" do
-      expect(rewriter).to receive(:call).with(klass.instance_variable_get(:@table))
+      expect(rewriter).to receive(:call)
+        .with(klass.instance_variable_get(:@table))
       klass.rewrite
     end
   end
@@ -126,7 +129,8 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Reader do
 
       it "is failure" do
         expect(result).to be_a(Dry::Monads::Failure)
-        msg = "Batch ids are not unique. Please manually edit and save CSV where info about batches is recorded."
+        msg = "Batch ids are not unique. Please manually edit and save CSV "\
+          "where info about batches is recorded."
         expect(result.failure).to eq(msg)
       end
     end
@@ -136,7 +140,8 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Reader do
 
       it "is failure" do
         expect(result).to be_a(Dry::Monads::Failure)
-        msg = "Batch CSV headers are not up-to-date, so batch workflows may fail unexpectedly. Run `thor batches:fix_csv` to fix"
+        msg = "Batch CSV headers are not up-to-date, so batch workflows may "\
+          "fail unexpectedly. Run `thor batches:fix_csv` to fix"
         expect(result.failure).to eq(msg)
       end
     end

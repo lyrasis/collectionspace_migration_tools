@@ -23,7 +23,11 @@ module CollectionspaceMigrationTools
       # @param response [CollectionSpace::Mapper::Response]
       def call(response, action)
         id = response.identifier
-        base_path = (action == "CREATE") ? svc_path : "#{svc_path}/#{response.csid}"
+        base_path = if (action == "CREATE")
+                      svc_path
+                    else
+                      "#{svc_path}/#{response.csid}"
+                    end
         warnings = []
         final_path = get_final_path(response, base_path, warnings)
         result = Base64.urlsafe_encode64(

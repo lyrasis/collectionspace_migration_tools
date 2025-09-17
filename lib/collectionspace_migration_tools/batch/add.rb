@@ -58,13 +58,15 @@ module CollectionspaceMigrationTools
       def ensure_id_uniqueness(id)
         return Success(id) unless ids.any?(id)
 
-        Failure("There is already a batch with id: #{id}. Please choose another id")
+        Failure("There is already a batch with id: #{id}. Please choose "\
+                "another id")
       end
 
       def validate_action(action)
         return Success(action) if allowed_actions.any?(action)
 
-        Failure("Invalid action: #{action}. Must be one of: #{allowed_actions.join(", ")}")
+        Failure("Invalid action: #{action}. Must be one of: "\
+                "#{allowed_actions.join(", ")}")
       end
 
       def validate_csv(csv)

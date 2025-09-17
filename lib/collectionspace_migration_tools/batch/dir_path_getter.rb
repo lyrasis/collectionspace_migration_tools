@@ -4,7 +4,8 @@ require "fileutils"
 
 module CollectionspaceMigrationTools
   module Batch
-    # Returns directory path for batch and creates directory if it does not exist
+    # Returns directory path for batch and creates directory if it does not
+    #   exist
     class DirPathGetter
       include Dry::Monads[:result]
 

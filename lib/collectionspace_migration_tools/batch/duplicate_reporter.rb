@@ -20,7 +20,8 @@ module CollectionspaceMigrationTools
         @dir = "#{CMT.config.client.batch_dir}/#{batch.dir}"
         @report_path = "#{@dir}/duplicate_report.csv"
         @updated = {}
-        @status = Failure("WARN: #{process_type} reporting did not complete successfully")
+        @status = Failure("WARN: #{process_type} reporting did not complete "\
+                          "successfully")
       end
 
       def call

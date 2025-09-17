@@ -6,7 +6,8 @@ module CollectionspaceMigrationTools
   module Batch
     # Mixin containing methods for dealing with data about batch workflow step
     #
-    # Mixed in by individual step mixin modules (e.g. Mappable, Uploadable), which are mixed in by Batch
+    # Mixed in by individual step mixin modules (e.g. Mappable, Uploadable),
+    #   which are mixed in by Batch
     #
     # Modules mixing in this module must define the following methods:
     #   - :#{steptype}_step_headers

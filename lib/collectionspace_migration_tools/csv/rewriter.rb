@@ -44,7 +44,7 @@ module CollectionspaceMigrationTools
       rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
+                                 message: msg))
       else
         Success()
       end
@@ -54,7 +54,7 @@ module CollectionspaceMigrationTools
       rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
+                                 message: msg))
       else
         Success()
       end
@@ -69,17 +69,22 @@ module CollectionspaceMigrationTools
 
       def process_rewrite_failure(failure)
         if failure.context.end_with?("backup_old")
-          new_msg = "Could not back up existing batches CSV. Did not not update.\nACTION FOR YOU: none\nError received was:"
-          msg = "#{new_msg}\n#{failure.message}"
+          msg = "Could not back up existing batches CSV. Did not not "\
+            "update.\nACTION FOR YOU: none\nError received was:\n"\
+            "#{failure.message}"
           @status = Failure(CMT::Failure.new(context: failure.context,
-            message: msg))
+                                             message: msg))
         elsif failure.context.end_with?("write_new")
-          new_msg = "Backed up existing batches CSV. Update write failed. To protect the data we did not revert to the backup automatically.\nACTION FOR YOU: Manually verify the existing file was not rewritten or corrupted, and delete the backup.\nError received was:"
-          msg = "#{new_msg}\n#{failure.message}"
+          msg = "Backed up existing batches CSV. Update write failed. To "\
+            "protect the data we did not revert to the backup automatically."\
+            "\nACTION FOR YOU: Manually verify the existing file was not "\
+            "rewritten or corrupted, and delete the backup.\n"\
+            "Error received was:\n#{failure.message}"
           @status = Failure(CMT::Failure.new(context: failure.context,
             message: msg))
         else
-          warn("Batches csv successfully updated, but we could not delete the backup. You may wish to manually delete it.")
+          warn("Batches csv successfully updated, but we could not delete the "\
+               "backup. You may wish to manually delete it.")
         end
 
         status

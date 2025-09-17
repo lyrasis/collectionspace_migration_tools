@@ -51,12 +51,14 @@ module CollectionspaceMigrationTools
         total_results = client.count(service_path)
         Success(total_results)
       rescue CollectionSpace::RequestError => err
-        msg = "Request failure getting count for #{rec_type} (#{service_path}): #{err.message}"
+        msg = "Request failure getting count for #{rec_type} "\
+          "(#{service_path}): #{err.message}"
         Failure(CMT::Failure.new(
           context: "#{self.class.name}.#{__callee__}", message: msg
         ))
       rescue => err
-        msg = "Unexpected error getting count for #{rec_type} (#{service_path}): #{err.message}"
+        msg = "Unexpected error getting count for #{rec_type} "\
+          "(#{service_path}): #{err.message}"
         Failure(CMT::Failure.new(
           context: "#{self.class.name}.#{__callee__}", message: msg
         ))
@@ -75,7 +77,8 @@ module CollectionspaceMigrationTools
 
           harvested += 1
           if harvested % 100 == 0
-            puts "Harvested #{harvested} of #{total_results} records (#{harvested / total_results * 100}%)"
+            puts "Harvested #{harvested} of #{total_results} records "\
+              "(#{harvested / total_results * 100}%)"
           end
 
           yield write_xml(record, result)

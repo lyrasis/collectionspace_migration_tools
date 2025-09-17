@@ -66,8 +66,11 @@ module CollectionspaceMigrationTools
             vocab = row[:vocabulary]
             next if vocab.start_with?("vocabularies-")
 
-            by_auth.key?(vocab) ? by_auth[vocab] << row[:term] : by_auth[vocab] =
-                                                                   [row[:term]]
+            if by_auth.key?(vocab)
+              by_auth[vocab] << row[:term]
+            else
+              by_auth[vocab] = [row[:term]]
+            end
           end
         rescue => err
           msg = "#{err.message} IN #{err.backtrace[0]}"

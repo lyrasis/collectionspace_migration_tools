@@ -25,7 +25,9 @@ module CollectionspaceMigrationTools
       result = `ps -o pid -o ppid -o command`
         .split("\n")
         .map(&:strip)
-        .select { |process| process.start_with?(/#{pid} +#{Process.pid} +ssh -N -L/) }
+        .select do |process|
+          process.start_with?(/#{pid} +#{Process.pid} +ssh -N -L/)
+        end
       result.empty? ? :closed : :open
     end
   end

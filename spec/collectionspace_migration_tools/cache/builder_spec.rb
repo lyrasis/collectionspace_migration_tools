@@ -42,7 +42,9 @@ RSpec.describe CollectionspaceMigrationTools::Cache::Builder do
         let(:cache_type) { :foo }
         it "returns a Failure with expected context and message" do
           expect(result).to be_a(Dry::Monads::Failure)
-          expect(result.failure.context).to eq("CollectionspaceMigrationTools::Cache::Builder.get_port")
+          expect(result.failure.context).to eq(
+            "CollectionspaceMigrationTools::Cache::Builder.get_port"
+          )
           msg = ":foo is not a valid cache_type value. Use :refname or :csid"
           expect(result.failure.message).to include(msg)
         end

@@ -22,7 +22,8 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Id do
 
       it "returns failure" do
         expect(result).to be_a(Dry::Monads::Failure)
-        expect(result.failure).to eq("Batch ID must consist of only letters and numbers")
+        expect(result.failure).to eq("Batch ID must consist of only letters "\
+                                     "and numbers")
       end
     end
 

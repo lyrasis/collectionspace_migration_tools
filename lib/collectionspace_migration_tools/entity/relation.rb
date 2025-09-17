@@ -30,6 +30,7 @@ module CollectionspaceMigrationTools
       end
 
       def cacheable_data_query
+        # rubocop:disable Layout/LineLength
         query = <<~SQL
           select rc.subjectcsid, rc.relationshiptype, rc.objectcsid, h.name as csid from relations_common rc
           inner join misc on rc.id = misc.id and misc.lifecyclestate != 'deleted'
@@ -37,6 +38,7 @@ module CollectionspaceMigrationTools
           #{constraint}
           #{predicate}
         SQL
+        # rubocop:enable Layout/LineLength
 
         Success(query)
       end
@@ -50,11 +52,15 @@ module CollectionspaceMigrationTools
       end
 
       def name_constraint_lookup
+        # rubocop:disable Layout/LineLength
         {
-          "authorityhierarchy" => "inner join hierarchy hh on rc.subjectcsid = hh.name and hh.primarytype not like 'CollectionObject%'",
+          "authorityhierarchy" =>
+            "inner join hierarchy hh on rc.subjectcsid = hh.name and hh.primarytype not like 'CollectionObject%'",
           "nonhierarchicalrelationship" => "",
-          "objecthierarchy" => "inner join hierarchy hh on rc.subjectcsid = hh.name and hh.primarytype like 'CollectionObject%'"
+          "objecthierarchy" =>
+            "inner join hierarchy hh on rc.subjectcsid = hh.name and hh.primarytype like 'CollectionObject%'"
         }
+        # rubocop:enable Layout/LineLength
       end
 
       def name_type_lookup

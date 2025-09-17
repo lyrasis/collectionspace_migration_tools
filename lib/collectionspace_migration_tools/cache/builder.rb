@@ -18,7 +18,8 @@ module CollectionspaceMigrationTools
       # @todo specify Do.for(:call)
       include Dry::Monads::Do
 
-      # @param cache_type [Symbol] the type of RefCache to return: :refname or :csid
+      # @param cache_type [Symbol] the type of RefCache to return: :refname or
+      #   :csid
       def call(cache_type)
         port = yield(get_port(cache_type))
         db = yield(get_db)
@@ -76,7 +77,8 @@ module CollectionspaceMigrationTools
         rescue NoMethodError
           Failure(CMT::Failure.new(
             context: "#{self.class}.#{__callee__}",
-            message: ":#{cache_type} is not a valid cache_type value. Use :refname or :csid"
+            message: ":#{cache_type} is not a valid cache_type value. Use "\
+              ":refname or :csid"
           ))
         else
           return Success(value) if value

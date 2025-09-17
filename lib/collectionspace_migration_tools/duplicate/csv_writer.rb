@@ -16,7 +16,8 @@ module CollectionspaceMigrationTools
 
       attr_reader :path
 
-      # PG::Result allows you to enumerate over query result rows, where each row is a Hash
+      # PG::Result allows you to enumerate over query result rows, where each
+      #   row is a Hash
       # @param path [String] path to write report to
       # @param duplicates [PG::Result] keys of objects still in S3 bucket
       def initialize(path:, duplicates:)

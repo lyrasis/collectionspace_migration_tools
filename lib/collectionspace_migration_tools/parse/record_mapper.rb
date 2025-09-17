@@ -45,7 +45,8 @@ module CollectionspaceMigrationTools
       end
 
       def mapper_path
-        filename = "#{CMT.config.client.profile}_#{CMT.config.client.profile_version}_#{rectype}.json"
+        filename = "#{CMT.config.client.profile}_"\
+          "#{CMT.config.client.profile_version}_#{rectype}.json"
         File.join(CMT.config.client.mapper_dir, filename)
       end
 
@@ -70,7 +71,8 @@ module CollectionspaceMigrationTools
       def validate_rectype
         return Success(rectype) if CMT::RecordTypes.mappable.any?(rectype)
 
-        msg = "No record mapper for #{rectype} in #{CMT.config.client.mapper_dir}"
+        msg = "No record mapper for #{rectype} in "\
+          "#{CMT.config.client.mapper_dir}"
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
           message: msg))
       end

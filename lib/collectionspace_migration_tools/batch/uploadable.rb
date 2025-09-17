@@ -12,7 +12,8 @@ module CollectionspaceMigrationTools
       def rollback_upload
         _rolled = yield(rollback_step("upload"))
 
-        Success("Upload information rolled back. Note this does NOT undo any ingest operations triggered by an upload")
+        Success("Upload information rolled back. Note this does NOT undo any "\
+                "ingest operations triggered by an upload")
       end
 
       def upload_step_headers

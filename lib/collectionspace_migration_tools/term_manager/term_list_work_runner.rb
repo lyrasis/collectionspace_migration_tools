@@ -22,8 +22,10 @@ module CollectionspaceMigrationTools
         to_log(result, :create, term)
       end
 
-      def add_opt_fields = @add_opt_fields ||=
-                             CollectionSpace::Mapper::VocabularyTerms::ADD_OPT_FIELDS
+      def add_opt_fields
+        @add_opt_fields ||=
+          CollectionSpace::Mapper::VocabularyTerms::ADD_OPT_FIELDS
+        end
 
       def update_term(termhash)
         term = termhash["origterm"]

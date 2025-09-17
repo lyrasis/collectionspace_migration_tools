@@ -86,7 +86,7 @@ class Batch < Thor
   desc "ingstat BATCHID",
     "Checks ingest status, plus. Do `thor help batch:ingstat` for details"
   long_desc(File.read(File.join(Bundler.root, "lib", "tasks",
-    "batch_ingstat.txt")))
+                                "batch_ingstat.txt")))
   def ingstat(id)
     CMT::Batch::IngestCheckRunner.call(
       batch_id: id,
@@ -122,7 +122,11 @@ class Batch < Thor
   def map_warnings(id)
     CMT::Batch::MapWarningsReporter.call(batch_id: id).either(
       ->(warnings) {
-        options[:with_counts] ? report_warnings_with_counts(warnings) : report_warnings(warnings)
+        if options[:with_counts]
+          report_warnings_with_counts(warnings)
+        else
+          report_warnings(warnings)
+        end
       },
       ->(failure) {
         puts failure
@@ -155,7 +159,8 @@ class Batch < Thor
   end
 
   desc "rb_ingstat BATCHID",
-    "Clears the ingest-related columns for the batch in batches CSV and deletes any ingest reports"
+    "Clears the ingest-related columns for the batch in batches CSV and "\
+      "deletes any ingest reports"
   def rb_ingstat(id)
     CMT::Batch.rollback_ingest(id).either(
       ->(success) {
@@ -170,7 +175,8 @@ class Batch < Thor
   end
 
   desc "rb_map BATCHID",
-    "Clears the mapping-related columns for the batch in batches CSV and deletes mapping reports"
+    "Clears the mapping-related columns for the batch in batches CSV and "\
+      "deletes mapping reports"
   def rb_map(id)
     CMT::Batch.rollback_map(id).either(
       ->(success) {
@@ -185,7 +191,9 @@ class Batch < Thor
   end
 
   desc "rb_upload BATCHID",
-    "Clears the upload-related columns for the batch in batches CSV and deletes upload report. NOTE this does NOT undo any ingest operations triggered by successfully uploaded records"
+    "Clears the upload-related columns for the batch in batches CSV and "\
+    "deletes upload report. NOTE this does NOT undo any ingest operations "\
+    "triggered by successfully uploaded records"
   def rb_upload(id)
     CMT::Batch.rollback_upload(id).either(
       ->(success) {
@@ -241,7 +249,9 @@ class Batch < Thor
       end.length
 
       warnings.sort_by { |_key, val| val }
-        .reverse_each { |key, val| puts "#{val.to_s.rjust(max_val_length)} : #{key}" }
+        .reverse_each do |key, val|
+          puts "#{val.to_s.rjust(max_val_length)} : #{key}"
+        end
       exit(0)
     end
   end

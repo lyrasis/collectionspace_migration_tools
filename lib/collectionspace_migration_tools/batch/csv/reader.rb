@@ -25,7 +25,9 @@ module CollectionspaceMigrationTools
         end
 
         def delete_batch(bid)
-          return Failure("No batch with id: #{bid}. Cannot delete") unless ids.any?(bid)
+          unless ids.any?(bid)
+            return Failure("No batch with id: #{bid}. Cannot delete")
+          end
 
           do_delete(bid)
         end
@@ -115,7 +117,8 @@ module CollectionspaceMigrationTools
           uniq_ids = ids.uniq
           return Success(self) if ids == uniq_ids
 
-          Failure("Batch ids are not unique. Please manually edit and save CSV where info about batches is recorded.")
+          Failure("Batch ids are not unique. Please manually edit and save "\
+                  "CSV where info about batches is recorded.")
         end
 
         def get_data
@@ -146,7 +149,8 @@ module CollectionspaceMigrationTools
         def header_check
           return Success() if table.headers == headers
 
-          problem = "Batch CSV headers are not up-to-date, so batch workflows may fail unexpectedly."
+          problem = "Batch CSV headers are not up-to-date, so batch workflows "\
+            "may fail unexpectedly."
           fix = "Run `thor batches:fix_csv` to fix"
           Failure("#{problem} #{fix}")
         end

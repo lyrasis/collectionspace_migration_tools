@@ -3,8 +3,9 @@
 require "dry/monads"
 require "thor"
 
-# @note Commented out stuff was toward ensuring relevant caches were automatically updated prior to mapping
-# tasks targeting CS XML payloads
+# @note Commented out stuff was toward ensuring relevant caches were
+#   automatically updated prior to mapping tasks targeting CS XML
+#   payloads
 class Map < Thor
   include Dry::Monads[:result]
   include CMT::CliHelpers::Map
@@ -16,7 +17,9 @@ class Map < Thor
   #  option :involved, required: false, type: :array
   def csv
     rectype = options[:rectype]
-    CMT::Batch::MapRunner.call(csv: options[:csv], rectype: rectype, action: options[:action]).either(
+    CMT::Batch::MapRunner.call(
+      csv: options[:csv], rectype: rectype, action: options[:action]
+    ).either(
       ->(success) {
         puts "Processing complete"
         exit(0)

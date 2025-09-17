@@ -14,7 +14,8 @@ module CollectionspaceMigrationTools
 
       def call(row)
         result = validate(row)
-        return result if result.failure? # i.e. if sending handler.validate barfs
+        # i.e. if sending handler.validate barfs
+        return result if result.failure?
 
         response = result.value!
         response.valid? ? Success(response) : Failure(response)
