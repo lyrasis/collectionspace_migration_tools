@@ -96,7 +96,9 @@ module CollectionspaceMigrationTools
       end
 
       def public_policy
+        # rubocop:disable Layout/LineLength
         "{\"Version\": \"2008-10-17\", \"Statement\": [ { \"Sid\": \"AllowPublicRead\", \"Effect\": \"Allow\", \"Principal\": { \"AWS\": \"*\" }, \"Action\": \"s3:GetObject\", \"Resource\": \"arn:aws:s3:::#{bucket}/*\" }, { \"Sid\": \"Stmt1546414471931\", \"Effect\": \"Allow\", \"Principal\": { \"AWS\": \"*\" }, \"Action\": \"s3:ListBucket\", \"Resource\": \"arn:aws:s3:::#{bucket}\" } ]}"
+        # rubocop:enable Layout/LineLength
       end
     end
   end

@@ -52,7 +52,9 @@ module CollectionspaceMigrationTools
       end
 
       def deduplicate
-        return Success("No need to deduplicate empty report") if status == :deleted
+        if status == :deleted
+          return Success("No need to deduplicate empty report")
+        end
 
         puts "Deduplicating missing term report for batch..."
 

@@ -25,7 +25,8 @@ module CollectionspaceMigrationTools
         unknown = result[:unknown_fields]
 
         unless unknown.empty?
-          warn("\nWARNING: #{unknown.length} unknown fields in data will be ignored: #{unknown.join(", ")}")
+          warn("\nWARNING: #{unknown.length} unknown fields in data will be "\
+               "ignored: #{unknown.join(", ")}")
         end
 
         Success()
@@ -37,7 +38,8 @@ module CollectionspaceMigrationTools
 
       def report_known(result)
         known = result[:known_fields]
-        puts "INFO: #{known.length} known fields in data will be processed: #{known.join(", ")}"
+        puts "INFO: #{known.length} known fields in data will be processed: "\
+          "#{known.join(", ")}"
       end
     end
   end

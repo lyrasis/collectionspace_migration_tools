@@ -60,7 +60,9 @@ module CollectionspaceMigrationTools
 
         def add_batch(path, idx)
           rectype = get_rectype(path)
-          return Failure("Cannot get mappable rectype from #{path}") if rectype.nil?
+          if rectype.nil?
+            return Failure("Cannot get mappable rectype from #{path}")
+          end
 
           batch_adder.call(
             id: create_id(idx),

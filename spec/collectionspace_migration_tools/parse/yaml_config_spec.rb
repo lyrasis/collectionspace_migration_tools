@@ -30,7 +30,9 @@ RSpec.describe CollectionspaceMigrationTools::Parse::YamlConfig do
 
     it "is Failure" do
       expect(result).to be_a(Dry::Monads::Failure)
-      expect(result.failure.context).to eq("CollectionspaceMigrationTools::Parse::YamlConfig.parse")
+      expect(result.failure.context).to eq(
+        "CollectionspaceMigrationTools::Parse::YamlConfig.parse"
+      )
     end
   end
 end

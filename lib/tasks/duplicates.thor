@@ -33,7 +33,10 @@ class Duplicates < Thor
   no_commands do
     def do_check(rectype)
       obj = yield(CMT::RecordTypes.to_obj(rectype))
-      return Failure("#{rectype} is not duplicate-checkable") unless obj.respond_to?(:duplicates)
+      unless obj.respond_to?(:duplicates)
+        return Failure("#{rectype} is not duplicate-checkable")
+      end
+
       results = yield(obj.duplicates)
 
       Success(results)

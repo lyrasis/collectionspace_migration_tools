@@ -6,7 +6,8 @@ require "json"
 
 module CollectionspaceMigrationTools
   module Parse
-    # Parses client batch config if present. Starts with empty config if none given.
+    # Parses client batch config if present. Starts with empty config if none
+    #   given.
     # Merges required `status_check_method` and `search_if_not_cached` values.
     class BatchConfig
       include Dry::Monads[:result]

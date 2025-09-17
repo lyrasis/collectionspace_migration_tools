@@ -17,7 +17,8 @@ RSpec.describe CollectionspaceMigrationTools::Csv::MissingRequiredFieldsCheck do
 
       it "is Failure" do
         expect(result).to be_a(Dry::Monads::Failure)
-        expect(result.failure).to eq("required field missing: objectnumber must be present")
+        expect(result.failure).to eq("required field missing: objectnumber "\
+                                     "must be present")
       end
     end
 

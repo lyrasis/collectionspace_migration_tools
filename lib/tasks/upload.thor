@@ -21,7 +21,9 @@ class Upload < Thor
     else
       uploader.value!.call.either(
         ->(uploader) {
-          puts "Uploading completed. Remember this does NOT mean all files successfully uploaded, OR that all uploaded files were successfully ingested"
+          puts "Uploading completed. Remember this does NOT mean all files "\
+            "successfully uploaded, OR that all uploaded files were "\
+            "successfully ingested"
           exit(0)
         },
         ->(uploader) {

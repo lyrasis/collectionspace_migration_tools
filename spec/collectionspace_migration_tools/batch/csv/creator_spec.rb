@@ -36,10 +36,14 @@ RSpec.describe CollectionspaceMigrationTools::Batch::Csv::Creator do
 
     context "when file does not exist" do
       before(:all) do
-        FileUtils.rm(CMT.config.client.batch_csv) if File.exist?(CMT.config.client.batch_csv)
+        FileUtils.rm(CMT.config.client.batch_csv) if File.exist?(
+          CMT.config.client.batch_csv
+        )
       end
       after(:all) do
-        FileUtils.rm(CMT.config.client.batch_csv) if File.exist?(CMT.config.client.batch_csv)
+        FileUtils.rm(CMT.config.client.batch_csv) if File.exist?(
+          CMT.config.client.batch_csv
+        )
       end
 
       it "creates file" do

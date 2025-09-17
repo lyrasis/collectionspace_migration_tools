@@ -79,7 +79,9 @@ module CollectionspaceMigrationTools
 
       def process(response)
         yield(compile(response))
-        yield(continuation(response.next_continuation_token)) if response.is_truncated
+        if response.is_truncated
+          yield(continuation(response.next_continuation_token))
+        end
 
         Success()
       end

@@ -15,7 +15,9 @@ RSpec.describe CollectionspaceMigrationTools::Batch::IngestStatusChecker do
     let(:result) { klass.call }
     context "no objects left on initial check" do
       it "behaves as expected" do
-        allow(klass).to receive(:get_size).exactly(1).times.and_return(Dry::Monads::Success(0))
+        allow(klass).to receive(:get_size)
+          .exactly(1).times
+          .and_return(Dry::Monads::Success(0))
         expect(result).to be_a(Dry::Monads::Success)
       end
     end
@@ -44,7 +46,8 @@ RSpec.describe CollectionspaceMigrationTools::Batch::IngestStatusChecker do
                             Dry::Monads::Success(sizes.shift)
                           }
           expect(result).to be_a(Dry::Monads::Failure)
-          expect(result.failure).to eq("Ingest is still being processed: 3 remaining")
+          expect(result.failure).to eq("Ingest is still being processed: "\
+                                       "3 remaining")
         end
       end
 
@@ -95,7 +98,8 @@ RSpec.describe CollectionspaceMigrationTools::Batch::IngestStatusChecker do
                                 Dry::Monads::Success(sizes.shift)
                               }
               expect(result).to be_a(Dry::Monads::Failure)
-              expect(result.failure).to eq("Ingest is still being processed: 3 remaining")
+              expect(result.failure).to eq("Ingest is still being processed: "\
+                                           "3 remaining")
             end
           end
         end
@@ -150,7 +154,8 @@ RSpec.describe CollectionspaceMigrationTools::Batch::IngestStatusChecker do
                               Dry::Monads::Success(sizes.shift)
                             }
             expect(result).to be_a(Dry::Monads::Failure)
-            expect(result.failure).to eq("Ingest is still being processed: 2 remaining")
+            expect(result.failure).to eq("Ingest is still being processed: "\
+                                         "2 remaining")
           end
         end
       end
@@ -169,7 +174,8 @@ RSpec.describe CollectionspaceMigrationTools::Batch::IngestStatusChecker do
                             Dry::Monads::Success(sizes.shift)
                           }
           expect(result).to be_a(Dry::Monads::Failure)
-          expect(result.failure).to eq("Ingest is still being processed: 4 remaining")
+          expect(result.failure).to eq("Ingest is still being processed: "\
+                                       "4 remaining")
         end
       end
     end

@@ -10,7 +10,8 @@ module CollectionspaceMigrationTools
     #   :process_type [String]
     #   :do_reporting [Method] returns Success or Failure
     #   :status [String] for reporting on screen
-    #   :updated [Hash] capturing the values written to batches CSV for onscreen summary
+    #   :updated [Hash] capturing the values written to batches CSV for
+    #     onscreen summary
     module Reportable
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:report)

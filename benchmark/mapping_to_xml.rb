@@ -6,7 +6,8 @@ require "benchmark"
 require "debug"
 
 processor = CMT::Csv::BatchProcessorPreparer.new(
-  csv_path: "/Users/kristina/data/CSWS/cs/collectionobject.csv", rectype: "collectionobject", action: "create"
+  csv_path: "/Users/kristina/data/CSWS/cs/collectionobject.csv",
+  rectype: "collectionobject", action: "create"
 ).call.value!
 
 Benchmark.bm do |x|

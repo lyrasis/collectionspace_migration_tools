@@ -56,7 +56,9 @@ module CollectionspaceMigrationTools
       rule(:mapper_dir).validate(:subdir_exists)
 
       rule(:base_uri) do
-        key.failure(%(must end with "/cspace-services")) unless value.end_with?("/cspace-services")
+        unless value.end_with?("/cspace-services")
+          key.failure(%(must end with "/cspace-services"))
+        end
       end
 
       rule(:batch_config_path) do

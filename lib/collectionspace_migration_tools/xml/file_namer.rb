@@ -6,9 +6,11 @@ require "dry/monads/do"
 
 module CollectionspaceMigrationTools
   module Xml
-    # Generates safe filename from a Base64 hash of the record identifier. We use a hashed value because:
+    # Generates safe filename from a Base64 hash of the record identifier. We
+    #   use a hashed value because:
     #   - record ids can contain characters not allowed in filenames
-    #   - we don't want false duplicate IDs reported because we stripped some data from the IDs out or changed it
+    #   - we don't want false duplicate IDs reported because we stripped some
+    #     data from the IDs out or changed it
     class FileNamer
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)
@@ -45,7 +47,8 @@ module CollectionspaceMigrationTools
         id = response.identifier
         if id.blank?
           return Failure(CMT::Failure.new(
-            context: "#{self.class.name}.#{__callee__}", message: "no id found for record"
+            context: "#{self.class.name}.#{__callee__}",
+            message: "no id found for record"
           ))
         end
 

@@ -88,14 +88,16 @@ module CollectionspaceMigrationTools
         case name
         when "authorityhierarchy"
           @type_lookup = CMT::RecordTypes.service_path_to_mappable_type_mapping
-          @subtype_lookup = CMT::RecordTypes.authority_subtype_machine_to_human_label_mapping
+          @subtype_lookup =
+            CMT::RecordTypes.authority_subtype_machine_to_human_label_mapping
         when "nonhierarchicalrelationship"
           @type_lookup = CMT::RecordTypes.service_path_to_mappable_type_mapping
         end
       end
 
       def extract_authority_hierarchy_rectypes
-        puts "Analyzing authority_hierarchy source CSV for record types to csid-cache..."
+        puts "Analyzing authority_hierarchy source CSV for record types to "\
+          "csid-cache..."
         stime = Time.now
         res = Parallel.map(chunks,
           in_processes: CMT.config.system.max_processes) do |chunk|
@@ -112,7 +114,8 @@ module CollectionspaceMigrationTools
       end
 
       def extract_nhr_rectypes
-        puts "Analyzing nonhierarchicalrelationship source CSV for record types to csid-cache..."
+        puts "Analyzing nonhierarchicalrelationship source CSV for record "\
+          "types to csid-cache..."
         stime = Time.now
         res = Parallel.map(chunks,
           in_processes: CMT.config.system.max_processes) do |chunk|

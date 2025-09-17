@@ -22,10 +22,15 @@ module CollectionspaceMigrationTools
         @counts = []
       end
 
-      # If given a field and a value, count of rows where that field is populated with that value will be returned
-      # If given a field, count of rows where that field is populated will be returned
+      # If given a field and a value, count of rows where that field is
+      #   populated with that value will be returned
+      # If given a field, count of rows where that field is populated will be
+      #   returned
       def call(field: nil, value: nil)
-        return Failure("CsvRowCounter: you must specify field if you specify value") if value && !field
+        if value && !field
+          return Failure("CsvRowCounter: you must specify field if you "\
+                         "specify value")
+        end
 
         _processed = yield(process(field, value))
         Success(counts.sum)

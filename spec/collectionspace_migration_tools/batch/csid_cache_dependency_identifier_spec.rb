@@ -2,7 +2,9 @@
 
 require_relative "../../spec_helper"
 
+# rubocop:disable Layout/LineLength
 RSpec.describe CollectionspaceMigrationTools::Batch::CsidCacheDependencyIdentifier do
+  # rubocop:enable Layout/LineLength
   let(:klass) { described_class.new(path: path, mapper: mapper) }
 
   describe "#call" do
@@ -39,7 +41,10 @@ RSpec.describe CollectionspaceMigrationTools::Batch::CsidCacheDependencyIdentifi
 
       it "returns expected" do
         expect(result).to be_a(Dry::Monads::Success)
-        expected = "authorityhierarchy|citation-local|citation-worldcat|concept-activity|concept-associated|location-local|location-offsite|organization-local|organization-ulan|person-local|person-ulan|place-local|place-tgn|work-cona|work-local"
+        expected = "authorityhierarchy|citation-local|citation-worldcat|"\
+          "concept-activity|concept-associated|location-local|"\
+          "location-offsite|organization-local|organization-ulan|person-local|"\
+          "person-ulan|place-local|place-tgn|work-cona|work-local"
         expect(result.value!).to eq(expected)
       end
     end
@@ -55,7 +60,8 @@ RSpec.describe CollectionspaceMigrationTools::Batch::CsidCacheDependencyIdentifi
 
       it "returns expected" do
         expect(result).to be_a(Dry::Monads::Success)
-        expected = "acquisition|collectionobject|exhibition|group|loanin|nonhierarchicalrelationship"
+        expected = "acquisition|collectionobject|exhibition|group|loanin|"\
+          "nonhierarchicalrelationship"
         expect(result.value!).to eq(expected)
       end
     end

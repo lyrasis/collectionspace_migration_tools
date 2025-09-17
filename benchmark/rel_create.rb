@@ -16,6 +16,7 @@ RelData = Struct.new(:sbj, :obj)
 RelBundle = Struct.new(:xml, :reldata, :post_result, :rel_uri)
 
 def csid_xml(subject:, object:)
+  # rubocop:disable Layout/LineLength
   <<~XML
     <?xml version="1.0" encoding="utf-8" standalone="yes"?>
     <document name="relations">
@@ -26,25 +27,29 @@ def csid_xml(subject:, object:)
         </ns2:relations_common>
     </document>
   XML
+  # rubocop:enable Layout/LineLength
 end
 
 def person_xml(term)
+  # rubocop:disable Layout/LineLength
   <<~XML
     <?xml version="1.0" encoding="UTF-8"?>
-    <document name="persons">    
+    <document name="persons">
         <ns2:persons_common xmlns:ns2="http://collectionspace.org/services/person"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">        
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <personTermGroupList>
                 <personTermGroup>
                 <termDisplayName>#{term}</termDisplayName>
                 </personTermGroup>
-            </personTermGroupList>        
-        </ns2:persons_common>    
+            </personTermGroupList>
+        </ns2:persons_common>
     </document>
   XML
+  # rubocop:enable Layout/LineLength
 end
 
 def refname_xml(subject:, object:)
+  # rubocop:disable Layout/LineLength
   <<~XML
     <?xml version="1.0" encoding="utf-8" standalone="yes"?>
     <document name="relations">
@@ -55,6 +60,7 @@ def refname_xml(subject:, object:)
         </ns2:relations_common>
     </document>
   XML
+  # rubocop:enable Layout/LineLength
 end
 
 def random_term(size = 6)
@@ -136,7 +142,8 @@ def set_up(reltype)
   terms = term_list
   write(terms, file_path(:created, :person, reltype))
 
-  puts "#{reltype}: Creating and loading #{NUM_RECS_IN_TEST} terms starting with #{terms.first}..."
+  puts "#{reltype}: Creating and loading #{NUM_RECS_IN_TEST} terms starting "\
+    "with #{terms.first}..."
   results = terms.map { |term| put_term(person_xml(term), term) }
   results_by_class = results.group_by(&:class)
   unless results_by_class[TermData].empty?
@@ -150,7 +157,8 @@ def set_up(reltype)
 end
 
 def abort_setup(term_data_by_class, reltype)
-  puts "#{reltype}: Cannot continue because person records for the following could not be created:"
+  puts "#{reltype}: Cannot continue because person records for the following "\
+    "could not be created:"
   puts term_data_by_class[String].map { |str| "  #{str}" }
   puts "#{reltype}: Starting teardown..."
   tear_down(term_data_by_class[TermData])
@@ -243,7 +251,8 @@ end
 def tear_down_rels(data, type)
   puts "#{type}: Tearing down relations..."
   did_not_post = data.select do |relbundle|
-    relbundle.post_result.is_a?(String) || !relbundle.post_result.result.success?
+    relbundle.post_result.is_a?(String) ||
+      !relbundle.post_result.result.success?
   end
   puts "#{type}: WARNING: SOME RELS DID NOT POST" unless did_not_post.empty?
 
@@ -258,17 +267,6 @@ def tear_down_rels(data, type)
   end
 end
 
-# [
-# ].each do |rel_csid|
-#   do_delete("/relations/#{rel_csid}")
-# end
-
-# [
-# ].each{ |term|
-#   puts "deleting #{term}"
-#   delete_term(get_term_data(term))
-# }
-
 # Refname first, CSID second
 ref_first_term_data = set_up(:refname)
 ref_first_rel_xml = make_rel_xml(ref_first_term_data.dup, :refname)
@@ -276,9 +274,11 @@ ref_first_rel_xml = make_rel_xml(ref_first_term_data.dup, :refname)
 csid_second_term_data = set_up(:csid)
 csid_second_rel_xml = make_rel_xml(csid_second_term_data.dup, :csid)
 
-puts "Transferring (and benchmarking) transfer of #{NUM_RECS_IN_TEST / 2} relations and receipt of response\n\n"
+puts "Transferring (and benchmarking) transfer of #{NUM_RECS_IN_TEST / 2} "\
+  "relations and receipt of response\n\n"
 Benchmark.bm do |x|
-  puts "Running refname first, csid second, #{NUM_RECS_IN_TEST / 2} records each"
+  puts "Running refname first, csid second, #{NUM_RECS_IN_TEST / 2} records"\
+    "each"
   x.report("refname rel creation") do
     ref_first_rel_xml.map do |rel|
       put_rel(rel)
@@ -306,9 +306,11 @@ csid_first_rel_xml = make_rel_xml(csid_first_term_data.dup, :csid)
 ref_second_term_data = set_up(:refname)
 ref_second_rel_xml = make_rel_xml(ref_second_term_data.dup, :refname)
 
-puts "Transferring (and benchmarking) transfer of #{NUM_RECS_IN_TEST / 2} relations and receipt of response\n\n"
+puts "Transferring (and benchmarking) transfer of #{NUM_RECS_IN_TEST / 2} "\
+  "relations and receipt of response\n\n"
 Benchmark.bm do |x|
-  puts "Running csid first, refname second, #{NUM_RECS_IN_TEST / 2} records each"
+  puts "Running csid first, refname second, #{NUM_RECS_IN_TEST / 2} records "\
+    "each"
   x.report("csid rel creation") do
     csid_first_rel_xml.map do |rel|
       put_rel(rel)

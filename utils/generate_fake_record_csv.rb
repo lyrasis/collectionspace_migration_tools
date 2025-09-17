@@ -98,7 +98,12 @@ class InventoryStatus
 
     def values
       ["unknown", "accession status unclear", "accessioned", "deaccessioned",
-        "destroyed", "destructive analysis", "discarded", "exchanged", "intended for transfer", "irregular museum number", "missing", "missing in inventory", "not cataloged", "not located", "not received", "number not used", "object mount", "on loan", "partially deaccessioned", "partially exchanged", "partially recataloged", "returned loan object", "sold", "stolen", "transferred"]
+       "destroyed", "destructive analysis", "discarded", "exchanged",
+       "intended for transfer", "irregular museum number", "missing",
+       "missing in inventory", "not cataloged", "not located", "not received",
+       "number not used", "object mount", "on loan", "partially deaccessioned",
+       "partially exchanged", "partially recataloged", "returned loan object",
+       "sold", "stolen", "transferred"]
     end
   end
 end
@@ -110,8 +115,10 @@ class Language
 
     def values
       [
-        "Arabic", "Armenian", "Chinese", "English", "French", "German", "Ancient Greek", "Hebrew", "Indonesian", "Italian",
-        "Japanese", "Korean", "Latin", "Malaysian", "Middle English", "Old English", "Portuguese", "Romanian", "Russian",
+        "Arabic", "Armenian", "Chinese", "English", "French", "German",
+        "Ancient Greek", "Hebrew", "Indonesian", "Italian",
+        "Japanese", "Korean", "Latin", "Malaysian", "Middle English",
+        "Old English", "Portuguese", "Romanian", "Russian",
         "Spanish", "Swahili", "Swedish", "Tagalog", "Yoruba"
       ]
     end
@@ -125,7 +132,8 @@ class ResponsibleDepartment
 
     def values
       %w[antiquities architecture-design decorative-arts ethnography
-        herpetology media-performance-art paintings-sculpture paleobotany photographs prints-drawings]
+         herpetology media-performance-art paintings-sculpture paleobotany
+         photographs prints-drawings]
     end
   end
 end
@@ -249,7 +257,8 @@ class DimensionSubGroup
           length running-time target volume weight width].sample,
         "measuredbypersonlocal" => Person.call,
         "measurementunit" => %w[carats centimeters cubic-centimeters feet
-          inches kilograms liters meters millimeters minutes ounces pixels pounds square-feet stories tons].sample,
+                                inches kilograms liters meters millimeters minutes ounces pixels
+                                pounds square-feet stories tons].sample,
         "value" => [
           Faker::Number.number(digits: rand(1..3)),
           Faker::Number.decimal(l_digits: rand(1..3), r_digits: rand(1..3))
@@ -372,7 +381,9 @@ class AnnotationList < FieldGroupList
     def template
       {
         "annotationType" => ["additional taxa", "deaccession",
-          "holotype location", "image made", "nomenclature", "number collision", "population biology", "type", "Vegetation Type Map Project", ""].sample,
+          "holotype location", "image made", "nomenclature", "number collision",
+          "population biology", "type", "Vegetation Type Map Project",
+          ""].sample,
         "annotationNote" => Faker::Lorem.paragraph(sentence_count: 1,
           random_sentences_to_add: 2),
         "annotationDate" => Date.call,
@@ -581,7 +592,8 @@ class ObjectHigh < CSObject
       ObjectName.headers => ObjectName.call,
       "copyNumber" => [Faker::Number.number(digits: 2), ""].sample,
       "objectStatus" => Multi.call(2) do
-                          ["copy", "forgery", "holotype", "paralectotype", "paratype", "type",
+        ["copy", "forgery", "holotype", "paralectotype",
+         "paratype", "type",
                             ""].sample
                         end,
       "sex" => ["female", "male", ""].sample,
@@ -690,7 +702,9 @@ end
 class Creator
   def initialize(type:, complexity:, suffix:, path:, num:)
     @suffix = suffix
-    @klass = Object.const_get("#{type.capitalize}#{complexity.capitalize}").new(suffix)
+    @klass = Object.const_get(
+      "#{type.capitalize}#{complexity.capitalize}"
+    ).new(suffix)
     @path = path
     @num = num
   end

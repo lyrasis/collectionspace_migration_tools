@@ -46,7 +46,8 @@ module CollectionspaceMigrationTools
         elsif fields
           report
         else
-          Failure("#{self.class.name} could not get headers from source file: #{source}")
+          Failure("#{self.class.name} could not get headers from source "\
+                  "file: #{source}")
         end
       end
 
