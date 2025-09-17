@@ -8,7 +8,7 @@ module CollectionspaceMigrationTools
       include CMT::Mappable
       include CMT::Entity::DeleteAllable
 
-      attr_reader :name, :status
+      attr_reader :status
 
       def initialize
         get_mapper
