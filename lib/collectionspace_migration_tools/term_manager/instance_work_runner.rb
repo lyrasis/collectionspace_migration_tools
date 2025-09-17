@@ -25,6 +25,8 @@ module CollectionspaceMigrationTools
 
         [run_term_list_plans, run_authority_plans].flatten
           .uniq.each do |report|
+            binding.pry if report.is_a?(Dry::Monads::Failure)
+
             puts "\n#{instance.id} is now at version #{report[:version]} of "\
               "#{report[:source]}"
           end
@@ -44,6 +46,7 @@ module CollectionspaceMigrationTools
       def run_term_list_plans
         return [] unless term_lists?
 
+        instance.client.config.include_deleted = true
         handler = yield CMT::Build::VocabHandler.call(instance.client)
 
         grouped_plans["term list"].map do |plan|
@@ -53,6 +56,7 @@ module CollectionspaceMigrationTools
             handler: handler
           ).call
         end
+        instance.client.config.include_deleted = false
       end
 
       def run_authority_plans

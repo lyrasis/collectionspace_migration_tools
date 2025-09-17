@@ -6,11 +6,13 @@ module CollectionspaceMigrationTools
       attr_reader :instances, :term_sources, :log
 
       # @param project [CMT::TM::Project]
-      def initialize(project)
+      # @param mode [nil, :force_current]
+      def initialize(project, mode = nil)
         @project = project
         @instances = project.instances
         @term_sources = project.term_sources
         @log = project.run_log
+        @mode = mode
       end
 
       def call
@@ -20,7 +22,8 @@ module CollectionspaceMigrationTools
           work_plan = InstanceWorkPlanner.new(
             project: project,
             instance: instance,
-            term_sources: term_sources
+            term_sources: term_sources,
+            mode: mode
           ).call
 
           InstanceWorkRunner.new(
@@ -35,7 +38,7 @@ module CollectionspaceMigrationTools
 
       private
 
-      attr_reader :project
+      attr_reader :project, :mode
     end
   end
 end

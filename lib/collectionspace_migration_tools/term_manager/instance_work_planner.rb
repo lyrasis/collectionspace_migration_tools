@@ -6,10 +6,12 @@ module CollectionspaceMigrationTools
       # @param project [CMT::TM::Project]
       # @param instance [CMT::TM::Instance]
       # @param term_sources [Array<CMT::TM::TermSource>]
-      def initialize(project:, instance:, term_sources:)
+      # @param mode [nil, :force_current]
+      def initialize(project:, instance:, term_sources:, mode: nil)
         @project = project
         @instance = instance
         @term_sources = term_sources
+        @mode = mode
       end
 
       def call
@@ -20,7 +22,7 @@ module CollectionspaceMigrationTools
 
       private
 
-      attr_reader :project, :instance, :term_sources
+      attr_reader :project, :instance, :term_sources, :mode
 
       def plans_for_term_source(source)
         load_version = project.version_log.version_for(source, instance)
@@ -29,7 +31,8 @@ module CollectionspaceMigrationTools
             CMT::TermManager::WorkPlan.new(
               instance: instance,
               load_version: load_version,
-              vocab: vocab
+              vocab: vocab,
+              mode: mode
             ).call
           end
       end
