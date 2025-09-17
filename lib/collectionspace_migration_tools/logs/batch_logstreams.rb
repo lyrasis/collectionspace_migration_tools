@@ -66,7 +66,7 @@ module CollectionspaceMigrationTools
         if max_ts
           ->(logstream) do
             creation = logstream.creation_time
-            creation >= min_ts && creation <= max_ts
+            creation.between?(min_ts, max_ts)
           end
         else
           ->(logstream) { logstream.creation_time >= min_ts }
