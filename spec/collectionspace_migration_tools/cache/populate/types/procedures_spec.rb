@@ -2,22 +2,22 @@
 
 require_relative "../../../../spec_helper"
 
+class Cash
+  def procedure_key(type, id) = "#{type}:#{id}"
+end
+
+class Foo
+  include CMT::Cache::Populate::Types::Procedures
+
+  attr_reader :cache, :cache_type
+
+  def initialize(cache_type)
+    @cache = Cash.new
+    @cache_type = cache_type
+  end
+end
+
 RSpec.describe CMT::Cache::Populate::Types::Procedures do
-  class Cash
-    def procedure_key(type, id) = "#{type}:#{id}"
-  end
-
-  class Foo
-    include CMT::Cache::Populate::Types::Procedures
-
-    attr_reader :cache, :cache_type
-
-    def initialize(cache_type)
-      @cache = Cash.new
-      @cache_type = cache_type
-    end
-  end
-
   subject(:klass) { Foo.new(:csid) }
 
   describe "#signature" do
