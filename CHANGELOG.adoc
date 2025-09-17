@@ -15,7 +15,8 @@ endif::[]
 == Unreleased
 
 * Add initial record harvesting functionality. See `thor harvest`
-* Add initial Term Manager functionality
+* Add initial Term Manager functionality (`thor tm`)
+* Add `thor tm reset_exact_term_lists` command
 
 == 5.0.1 (2025-06-10)
 
