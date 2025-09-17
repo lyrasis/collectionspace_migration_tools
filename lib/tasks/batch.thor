@@ -86,7 +86,7 @@ class Batch < Thor
   desc "ingstat BATCHID",
     "Checks ingest status, plus. Do `thor help batch:ingstat` for details"
   long_desc(File.read(File.join(Bundler.root, "lib", "tasks",
-                                "batch_ingstat.txt")))
+    "batch_ingstat.txt")))
   def ingstat(id)
     CMT::Batch::IngestCheckRunner.call(
       batch_id: id,

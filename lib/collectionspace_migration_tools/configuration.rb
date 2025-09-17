@@ -24,7 +24,7 @@ module CollectionspaceMigrationTools
 
         name = DEFAULT_FILE_OR_DIR_NAMES[type]
         dotfile = File.join(File.expand_path("~"), ".config",
-                            "collectionspace_migration_tools", name)
+          "collectionspace_migration_tools", name)
         return dotfile if File.exist?(dotfile)
 
         File.join(Bundler.root, name)

@@ -23,14 +23,13 @@ RSpec.describe CollectionspaceMigrationTools::RecordMapper do
           {"name" => "ULAN", "subtype" => "ulan_oa"}],
       "authority_type" => "orgauthorities",
       "authority_subtype" => "organization"},
-      "docstructure" => {
-        "organizations_common" => {
-          "orgTermGroupList" => {
-            "orgTermGroup" => {}
-          }
-        }
-      }
-    }
+     "docstructure" => {
+       "organizations_common" => {
+         "orgTermGroupList" => {
+           "orgTermGroup" => {}
+         }
+       }
+     }}
   end
   let(:person_ulan_hash) do
     {"config" =>
