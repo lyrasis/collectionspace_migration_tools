@@ -23,12 +23,16 @@ module CollectionspaceMigrationTools
       )
     end
 
+    def respond_to_missing?(name, include_private)
+      mapper.respond_to?(name) || super
+    end
+
     def method_missing(sym, *args)
       return status if status.failure?
 
-      begin
+      if mapper.respond_to?(sym)
         mapper.send(sym)
-      rescue
+      else
         super
       end
     end
