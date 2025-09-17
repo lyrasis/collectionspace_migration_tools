@@ -55,9 +55,10 @@ module CollectionspaceMigrationTools
     end
 
     # @param connection_obj [CMT::Connection]
-    def connection=(connection_obj)
+    def set_connection(connection_obj)
       return connection if connection&.open?
 
+      puts "New DB connection created for #{connection_obj.db}"
       @connection = connection_obj
     end
 
@@ -108,7 +109,7 @@ module CollectionspaceMigrationTools
     end
 
     # @param tunnel_obj [CMT::Tunnel]
-    def tunnel=(tunnel_obj)
+    def set_tunnel(tunnel_obj)
       return tunnel if tunnel&.open?
 
       @tunnel = tunnel_obj

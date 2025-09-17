@@ -87,8 +87,7 @@ module CollectionspaceMigrationTools
         def get_connection(creds)
           sleep(3)
           connection = PG::Connection.new(**creds)
-          CMT.connection = connection
-          puts "New DB connection created for #{connection.db}"
+          CMT.set_connection(connection)
           Success(connection)
         rescue => err
           Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
