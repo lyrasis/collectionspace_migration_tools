@@ -38,7 +38,7 @@ module CollectionspaceMigrationTools
 
       # @return [Array<String>] field names related to versioning
       def version_fields = %w[loadVersion loadAction id prevterm origterm
-                              sort-dedupe]
+        sort-dedupe]
 
       private
 

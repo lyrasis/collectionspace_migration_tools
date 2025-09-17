@@ -6,4 +6,3 @@ module CollectionspaceMigrationTools
     ::CMT::Harvester = CollectionspaceMigrationTools::Harvester
   end
 end
-  
