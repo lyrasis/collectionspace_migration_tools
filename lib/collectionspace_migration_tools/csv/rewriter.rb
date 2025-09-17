@@ -78,7 +78,7 @@ module CollectionspaceMigrationTools
           msg = "#{new_msg}\n#{failure.message}"
           @status = Failure(CMT::Failure.new(context: failure.context,
             message: msg))
-        elsif failure.context.end_with?("write_new")
+        else
           warn("Batches csv successfully updated, but we could not delete the backup. You may wish to manually delete it.")
         end
 
