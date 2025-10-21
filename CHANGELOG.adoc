@@ -14,9 +14,19 @@ endif::[]
 
 == Unreleased
 
-* Add initial record harvesting functionality. See `thor harvest`
-* Add initial Term Manager functionality (`thor tm`)
-* Add `thor tm reset_exact_term_lists` command
+
+== 5.1.0 (2025-10-21)
+
+=== Added
+
+* Initial record harvesting functionality. See `thor harvest`
+* Initial Term Manager functionality (`thor tm`)
+* `thor tm reset_exact_term_lists` command
+
+=== Bugfix
+
+* Fix for ruby/openssl bug
+* Do not hit CHIA if getting non-verbose current client config (Resolves https://github.com/lyrasis/collectionspace_migration_tools/issues/73[#73])
 
 == 5.0.1 (2025-06-10)
 
