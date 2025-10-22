@@ -12,3 +12,4 @@ tmp
 system_config.yml
 /logstream_report.txt
 /spec/support/fixtures/~$shared_term_lists.xlsx
+/docs/
