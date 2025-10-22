@@ -23,7 +23,7 @@ module CollectionspaceMigrationTools
 
       def call
         _chk = yield check_source_exists
-        valid = yield CMT::Configuration.call(client: client, mode: :check)
+        valid = yield CMT::Configuration.call(client: client, mode: :switch)
         _copy = yield set_source
 
         Success(valid)
