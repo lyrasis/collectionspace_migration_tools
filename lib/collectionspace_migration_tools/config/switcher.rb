@@ -2,17 +2,21 @@
 
 module CollectionspaceMigrationTools
   module Config
-    # Copies specified .yml file from `repo_dir/config` to client_config.yml
+    # Validates the indicated client, and, if successful, writes it to the
+    # system config name file and returns the {Configuration} object
     class Switcher
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:initialize, :call)
 
       class << self
+        # @param (see #initialize)
+        # @return (see #call)
         def call(...)
           new(...).call
         end
       end
 
+      # @param client [String]
       def initialize(client:)
         @client = client
 
@@ -21,6 +25,8 @@ module CollectionspaceMigrationTools
         @source_path = File.join(sysconfig.client_config_dir, "#{client}.yml")
       end
 
+      # @return [Dry::Monads::Success<Configuration>,
+      #   Dry::Monads::Failure<Failure>]
       def call
         _chk = yield check_source_exists
         valid = yield CMT::Configuration.call(client: client, mode: :switch)
