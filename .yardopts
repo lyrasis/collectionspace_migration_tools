@@ -1,0 +1,6 @@
+-o docs
+--no-private
+--readme README.adoc
+--title 'CMT Documentation'
+--charset utf-8
+--markup asciidoc
