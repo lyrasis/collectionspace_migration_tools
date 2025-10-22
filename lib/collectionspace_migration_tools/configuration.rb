@@ -52,6 +52,8 @@ module CollectionspaceMigrationTools
       )
     end
 
+    def current_client = File.read(File.expand_path(system.config_name_file))
+
     def add_config(type, hash)
       if type == :term_manager
         @term_manager = yield CMT::Config::TermManager.call(hash: hash)
@@ -67,9 +69,12 @@ module CollectionspaceMigrationTools
     def derive_config
       @system = yield CMT::Config::System.call(path: system_path)
       @redis = yield CMT::Config::Redis.call(path: redis_path)
-      if client_path
-        instance = yield CMT::Parse::YamlConfig.call(client_path)
-        @client = yield CMT::Config::Client.call(hash: instance[:client])
+
+      unless mode == :check
+        if client_path
+          instance = yield CMT::Parse::YamlConfig.call(client_path)
+          @client = yield CMT::Config::Client.call(hash: instance[:client])
+        end
       end
       @term_manager = nil
 
@@ -86,38 +91,31 @@ module CollectionspaceMigrationTools
     end
 
     def path_from_config_name_file
-      current = File.read(File.expand_path(system.config_name_file))
-      case current
+      case current_client
       when ""
         nil
       when "sample"
         File.join(Bundler.root, "sample_client_config.yml")
       else
         File.expand_path(
-          File.join(system.client_config_dir, "#{current}.yml")
+          File.join(system.client_config_dir, "#{current_client}.yml")
         )
       end
     end
 
     def handle_success(success)
-      case mode
-      when :prod
-        self
-      else
-        Success(self)
-      end
+      return self if %i[check prod].include?(mode)
+
+      Success(self)
     end
 
     def handle_failure(failure)
-      case mode
-      when :prod
-        puts("Could not create config.")
-        puts failure
-        puts("Exiting...")
-        exit
-      else
-        Failure(failure)
-      end
+      return Failure(failure) unless %i[check prod].include?(mode)
+
+      puts("Could not create config.")
+      puts failure
+      puts("Exiting...")
+      exit
     end
   end
 end
