@@ -46,17 +46,19 @@ class Config < Thor
     type: :boolean,
     default: false
   def show
-    config = CMT.config
-    if config.client.nil?
-      puts "No client config found. Try doing:\n"\
-        "  thor config switch {yourconfigname}. "
-      exit(1)
-    end
+    mode = options[:verbose] ? :prod : :check
+    config = CMT::Configuration.call(mode: mode)
 
     if options[:verbose]
-      pp(config)
+      if config.client.nil?
+        puts "No client config found. Try doing:\n"\
+          "  thor config switch {yourconfigname}. "
+        exit(1)
+      else
+        pp(config)
+      end
     else
-      puts File.read(config.system.config_name_file)
+      puts config.current_client
     end
     exit(0)
   end
