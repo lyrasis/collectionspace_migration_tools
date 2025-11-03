@@ -47,7 +47,7 @@ module CollectionspaceMigrationTools
         instance.client.config.include_deleted = true
         handler = yield CMT::Build::VocabHandler.call(instance.client)
 
-        grouped_plans["term list"].map do |plan|
+        results = grouped_plans["term list"].map do |plan|
           TermListWorkRunner.new(
             plan: plan,
             log: log,
@@ -55,6 +55,7 @@ module CollectionspaceMigrationTools
           ).call
         end
         instance.client.config.include_deleted = false
+        results
       end
 
       def run_authority_plans
