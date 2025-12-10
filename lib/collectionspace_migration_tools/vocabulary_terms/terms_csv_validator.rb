@@ -23,7 +23,7 @@ module CollectionspaceMigrationTools
         if row.key?("vocab") && row.key?("term")
           Success()
         else
-          Failure("Terms ingest CSV must have headers: vocab, terms")
+          Failure("Terms ingest CSV must have headers: vocab, term")
         end
       end
 
