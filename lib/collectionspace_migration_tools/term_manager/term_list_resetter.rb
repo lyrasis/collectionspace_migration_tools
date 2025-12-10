@@ -4,7 +4,6 @@ module CollectionspaceMigrationTools
   module TermManager
     class TermListResetter
       include Dry::Monads[:result]
-      # include Dry::Monads::Do.for()
 
       attr_reader :instances, :log
 
