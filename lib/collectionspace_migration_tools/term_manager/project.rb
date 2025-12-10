@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "logger"
+
 module CollectionspaceMigrationTools
   module TermManager
     class Project
@@ -16,7 +18,6 @@ module CollectionspaceMigrationTools
         @given_instances = instances
         @given_term_sources = term_sources
         @run_log_path = File.expand_path(config.run_log)
-        File.delete(run_log_path) if File.exist?(run_log_path)
       end
 
       def config
@@ -33,7 +34,7 @@ module CollectionspaceMigrationTools
       def version_log = @version_log ||=
                           CMT::TM::VersionLog.new(config.version_log)
 
-      def run_log = @run_log ||= File.open(run_log_path, "w")
+      def run_log = @run_log ||= Logger.new(run_log_path)
 
       private
 

@@ -32,8 +32,6 @@ module CollectionspaceMigrationTools
             log: log
           ).call
         end
-      ensure
-        log.close
       end
 
       private

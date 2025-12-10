@@ -10,7 +10,7 @@ module CollectionspaceMigrationTools
 
       # @param instance [CMT::TM::Instance]
       # @param work_plan [Array<CMT::TM::WorkPlan>]
-      # @param log [File]
+      # @param log [Logger]
       def initialize(instance:, work_plan:, log:)
         @instance = instance
         @work_plan = work_plan

@@ -63,7 +63,7 @@ RSpec.describe CollectionspaceMigrationTools::TermManager::Project do
     let(:result) { project.run_log }
 
     it "returns as expected" do
-      expect(result).to be_a(File)
+      expect(result).to be_a(Logger)
     end
   end
 end
