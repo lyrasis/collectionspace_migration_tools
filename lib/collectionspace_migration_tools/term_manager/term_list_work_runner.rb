@@ -47,8 +47,8 @@ module CollectionspaceMigrationTools
 
       def to_log(result, action, term)
         prefix = "#{log_prefix}#{action}|#{term}|"
-        entry = result.either(
-          ->(success) { "#{prefix}SUCCESS|#{success}\n" },
+        result.either(
+          ->(success) { log.info("#{prefix}#{success}") },
           ->(failure) do
             add_error
             message = if failure.is_a?(String)
@@ -58,10 +58,9 @@ module CollectionspaceMigrationTools
             else
               "UNHANDLED_FAILURE_TYPE: #{failure.inspect}"
             end
-            "#{prefix}FAILURE|#{message}\n"
+            log.error("#{prefix}#{message}")
           end
         )
-        log << entry
       end
     end
   end

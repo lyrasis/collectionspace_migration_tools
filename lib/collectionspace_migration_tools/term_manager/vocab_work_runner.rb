@@ -9,7 +9,7 @@ module CollectionspaceMigrationTools
       attr_reader :instance, :plan, :log, :type, :subtype
 
       # @param plan [CMT::TM::WorkPlan]
-      # @param log [File]
+      # @param log [Logger]
       # @param handler [nil, CollectionSpace::Mapper::VocabularyTerms::Handler]
       def initialize(plan:, log:, handler: nil)
         @plan = plan
