@@ -7,8 +7,8 @@ module CollectionspaceMigrationTools
     module_function
 
     def db_disconnect
-      CMT.connection.close
-      CMT.tunnel.close
+      CMT.connection&.close
+      CMT.tunnel&.close
     end
 
     def safe_db
