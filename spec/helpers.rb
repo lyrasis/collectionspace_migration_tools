@@ -66,7 +66,9 @@ module Helpers
     dir: "tmp", headers: CMT::Batch::Csv::Headers.all_headers, rowct: 1,
     row: nil
   )
-    CMT.config.client.base_dir = File.join(Bundler.root, dir)
+    tmppath = File.join(Bundler.root, dir)
+    FileUtils.mkdir_p(tmppath)
+    CMT.config.client.base_dir = tmppath
     rowdata = row || Array.new(headers.length, "x")
     CSV.open(CMT::ArchiveCsv.path, "w") do |csv|
       csv << headers
