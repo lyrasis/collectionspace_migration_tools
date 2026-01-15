@@ -12,3 +12,9 @@ bastion_user: yourusername
 # The following are set by default but you can change them by uncommenting
 # db_port: 5432
 # db_connect_host: localhost
+# Number of seconds to wait between getting new DB tunnel and attempting to
+#   get database connection. Will be set by default, but can be overridden
+#   by uncommenting in your config. Increase this number if this tool is
+#   failing to create a database connection, but you can make the connection
+#   via psql or pgAdmin with the same credentials.
+# db_tunnel_connection_pause: 3

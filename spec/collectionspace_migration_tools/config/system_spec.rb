@@ -12,10 +12,11 @@ RSpec.describe CollectionspaceMigrationTools::Config::System do
 
     it "returns Success" do
       expect(result).to be_a(Dry::Monads::Success)
+      expect(result.value!.db_tunnel_connection_pause).to eq(3)
     end
   end
 
-  context "when bastion_user given" do
+  context "when bastion_user overridden" do
     let(:config) do
       data = sys_config_hash.dup
       data[:bastion_user] = "name"
@@ -25,6 +26,19 @@ RSpec.describe CollectionspaceMigrationTools::Config::System do
     it "returns Success" do
       expect(result).to be_a(Dry::Monads::Success)
       expect(result.value!.bastion_user).to eq("name")
+    end
+  end
+
+  context "when db_tunnel_connection_pause overridden" do
+    let(:config) do
+      data = sys_config_hash.dup
+      data[:db_tunnel_connection_pause] = 6
+      data
+    end
+
+    it "returns Success" do
+      expect(result).to be_a(Dry::Monads::Success)
+      expect(result.value!.db_tunnel_connection_pause).to eq(6)
     end
   end
 

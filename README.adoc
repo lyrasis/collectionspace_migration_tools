@@ -113,6 +113,12 @@ CMT::Build::S3Client.call
 
 If you get `Success(#<Aws::S3::Client>)`, good. If you get a `Failure`, something is not right.
 
+== Troubleshooting your setup
+
+=== Cannot make database connection with this tool, though you can do so manually
+
+Uncomment `db_tunnel_connection_pause` in your system config file and set it to greater than 3.
+
 == Usage
 Ensure desired config is in place (See <<one-time-setup>> and <<per-instance-setup>> sections above)
 

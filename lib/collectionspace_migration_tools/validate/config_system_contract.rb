@@ -14,6 +14,7 @@ module CollectionspaceMigrationTools
         required(:bastion_user).filled(:string)
         required(:db_port).filled(:integer)
         required(:db_connect_host).filled(:string)
+        required(:db_tunnel_connection_pause).filled(:integer)
         optional(:aws_media_ingest_profile).maybe(:string)
         optional(:term_manager_config_dir).maybe(:string)
       end
