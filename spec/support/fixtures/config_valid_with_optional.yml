@@ -62,12 +62,3 @@ client:
   s3_bucket: "bucket_name"
   s3_delimiter: "|"
   media_with_blob_upload_delay: 500
-database:
-  port: 5432
-  db_password: dbpassword
-  db_name: cs_cs
-  db_host: cs_staging_db.cs-instance.org
-  db_user: dbadminuser
-  db_connect_host: localhost
-  bastion_user: user_for_ssh_tunneling_through_bastion
-  bastion_host: cs_staging_db-bastion.cs-instance.org
