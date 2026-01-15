@@ -11,7 +11,8 @@ module CollectionspaceMigrationTools
         # If you change default values here, update sample_system_config.yml
         @default_values = {
           db_port: 5432,
-          db_connect_host: "localhost"
+          db_connect_host: "localhost",
+          db_tunnel_connection_pause: 3
         }
         @pathvals = %i[client_config_dir config_name_file
           term_manager_config_dir]

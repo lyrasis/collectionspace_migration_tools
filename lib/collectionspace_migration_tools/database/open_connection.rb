@@ -85,13 +85,17 @@ module CollectionspaceMigrationTools
         end
 
         def get_connection(creds)
-          sleep(3)
+          sleeptime = CMT.config.system.db_tunnel_connection_pause
+          sleep(sleeptime)
           connection = PG::Connection.new(**creds)
           CMT.set_connection(connection)
           Success(connection)
         rescue => err
+          msg = "#{err.message}\nTRY: increasing system config "\
+            "db_tunnel_connection_pause value to greater than "\
+            "the current value (#{sleeptime})"
           Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
-            message: err.message))
+            message: msg))
         end
       end
     end
