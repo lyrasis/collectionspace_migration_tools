@@ -19,7 +19,7 @@ RSpec.configure do |config|
   config.include Helpers
   config.color = true
   config.disable_monkey_patching!
-  config.example_status_persistence_file_path = "./tmp/rspec-examples.txt"
+  config.example_status_persistence_file_path = "rspec-examples.txt"
   config.filter_run_when_matching(:focus)
   config.formatter = (ENV["CI"] == "true") ? :progress : :documentation
   config.order = :random
