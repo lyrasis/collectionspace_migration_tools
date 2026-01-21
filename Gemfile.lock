@@ -37,10 +37,10 @@ GIT
 
 GIT
   remote: https://github.com/dts-hosting/cspace_hosted_instance_access.git
-  revision: 55d30cfbbe1a6aa910843ec32e29d3cea2d24af1
+  revision: f87936b3836731057a9e5bebfb7856cd824da285
   branch: main
   specs:
-    cspace_hosted_instance_access (0.0.2)
+    cspace_hosted_instance_access (1.0.0)
       aws-sdk-dynamodb
       aws-sdk-ssm
       openssl (= 3.3.1)
