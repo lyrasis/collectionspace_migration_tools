@@ -14,9 +14,15 @@ endif::[]
 
 == Unreleased
 
+== 5.2.0 (2026-01-20)
+
 === Added
 
 * Add `db_tunnel_connection_pause` to system config, so that the sleep time between tunnelling and making a connection can be increased if connections are failing.
+
+=== Changed
+
+* Makes database connections via new read-only database user
 
 == 5.1.0 (2025-10-21)
 
