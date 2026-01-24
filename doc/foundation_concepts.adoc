@@ -144,10 +144,10 @@ https://github.com/dts-hosting/cspace_hosted_instance_access
 
 Wraps up logic for the following for reuse in cspace-config-untangler, collectionspace_migration_tools, or other tools used interally by Lyrasis staff:
 
-* Get list of deployed tenant names
-* Retrieve admin password parameter for each tenant from SSM
+* Get list of deployed site names
+* Retrieve admin password parameter for each site from SSM
 * Build instance URLs (base, services, config) with correct subdomain
-* Retrieve appropriate database connection parameters for a given tenant
+* Retrieve appropriate database connection parameters for a given site
 
 == CollectionSpace data ecosystem terms/concepts
 

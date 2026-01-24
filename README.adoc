@@ -92,7 +92,7 @@ See https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/cli
 
 You will need to have:
 
-* The tenant name for the instance. These can be found via https://github.com/dts-hosting/cspace_hosted_instance_access[CHIA]. Do `bin/console`, and then `CHIA.tenant_names` to get a list of current tenant names.
+* The site name for the instance. These can be found via https://github.com/dts-hosting/cspace_hosted_instance_access[CHIA]. Do `bin/console`, and then `CHIA.site_names` to get a list of current site names.
 * Record mappers for the instance, downloaded from https://github.com/collectionspace/cspace-config-untangler/tree/main/data/mappers/[the cspace-config-untangler repo]. Instances without their own UI plugin use community-supported profile mappers for the latest release of CollectionSpace. Mappers for hosted clients with their own UI plugins are in Lyrasis-hosted profiles.
 * The domain profile and profile version used by the site. These should match the file name prefixes of the mappers for the instance.
 * If planning to ingest into the instance, the name of the S3 Fast Import bucket for the CS instance (currently we need to request that Mark set this bucket up)

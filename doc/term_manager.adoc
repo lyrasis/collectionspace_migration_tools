@@ -72,9 +72,9 @@ initial_term_list_load_mode_overrides: <11>
 <1> The instance keys should be the name used in the AWS SSM parameter storing each instance's admin password. See TODO: makelink
 <2> We provide a `uri` value here, because we cannot derive the pattern from the instance key. We don't provide any other properties for this instance, because the user name will be the standard `admin@collectionspace.org` and the password will be fetched from ASW SSM.
 <3> We are providing all the details for this instance, and will not be looking up parameters, so technically the key could be anything.
-<4> This instance has chosen a weird subdomain that doesn't match its hosted tenant name, so we need to provide the `uri`.
+<4> This instance has chosen a weird subdomain that doesn't match its hosted site name, so we need to provide the `uri`.
 <5> They also want any changes made to their instance to be tied to a user associated with a known individual. This is the only type of case where you should hard-code authentication credentials in your configs. (Try hard not to do this!)
-<6> BEST CASE! The tenant name in the parameter name is the subdomain of the instance, and we'll use the standard admin username and fetched password.
+<6> BEST CASE! The site name in the parameter name is the subdomain of the instance, and we'll use the standard admin username and fetched password.
 <7> List paths to any Excel workbooks containing shared dynamic term lists (aka vocabularies, term lists). This key can be omitted if you only have shared authority terms.
 <8> List paths to any Excel workbooks containing shared authority term lists as keys, with values being "codes" used to uniquely identify individual authority vocabularies which may get terms added in both sources. For example, we might include Taxon terms in both of these sources, and we will need to create separate initial load batches for taxon-common (ani) and taxon-common (brd). The `authority_sources` key can be omitted if you only have shared term list terms.
 <9> Path to CSV file where version log should be created on first run (and where it can be found for subsequent runs)

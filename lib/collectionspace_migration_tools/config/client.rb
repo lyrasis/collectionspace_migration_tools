@@ -29,18 +29,18 @@ module CollectionspaceMigrationTools
       def pre_manipulate
         return unless hosted?
 
-        tenant = CHIA.tenant_for(hash.dig(:tenant_name))
-        add_option(:base_uri, tenant.services_url)
-        add_option(:username, tenant.user_name)
-        add_option(:password, tenant.admin_password)
+        site = CHIA.site_for(hash.dig(:site_name))
+        add_option(:base_uri, site.services_url)
+        add_option(:username, site.user_name)
+        add_option(:password, site.admin_password)
 
-        db_creds = CMT::Database.db_credentials_for(tenant)
+        db_creds = CMT::Database.db_credentials_for(site)
         %i[db_host db_username db_password db_name].each do |sym|
           add_option(sym, db_creds[sym])
         end
       end
 
-      def hosted? = !hash.dig(:tenant_name).nil?
+      def hosted? = !hash.dig(:site_name).nil?
 
       def manipulate
         add_option(:batch_config_path, nil)
