@@ -30,18 +30,18 @@ module CollectionspaceMigrationTools
       extend Dry::Monads[:result, :do]
 
       class << self
-        # @param tenant_name [nil, String]
-        def call(tenant_name = nil)
-          tenant_name || CMT.config.client.tenant_name
-          creds = get_db_info(tenant_name)
+        # @param site_name [nil, String]
+        def call(site_name = nil)
+          site_name || CMT.config.client.site_name
+          creds = get_db_info(site_name)
           check_connection = CMT.connection
 
-          return new_connection(tenant_name, creds) unless check_connection
+          return new_connection(site_name, creds) unless check_connection
 
           unless check_connection&.open? &&
               check_connection.db == creds[:dbname]
             check_connection.close
-            return new_connection(tenant_name, creds)
+            return new_connection(site_name, creds)
           end
 
           Success(check_connection)
@@ -49,20 +49,20 @@ module CollectionspaceMigrationTools
 
         private
 
-        def new_connection(tenant_name, creds)
-          _tunnel = yield CMT::DB::OpenTunnel.call(tenant_name)
+        def new_connection(site_name, creds)
+          _tunnel = yield CMT::DB::OpenTunnel.call(site_name)
           result = yield get_connection(creds)
 
           Success(result)
         end
 
-        def get_db_info(tenant_name)
-          return db_info_for_configured_tenant unless tenant_name
+        def get_db_info(site_name)
+          return db_info_for_configured_site unless site_name
 
-          db_info_for_given_tenant(tenant_name)
+          db_info_for_given_site(site_name)
         end
 
-        def db_info_for_configured_tenant
+        def db_info_for_configured_site
           {
             host: CMT.config.system.db_connect_host,
             port: CMT.config.system.db_port,
@@ -72,8 +72,8 @@ module CollectionspaceMigrationTools
           }
         end
 
-        def db_info_for_given_tenant(tenant_name)
-          creds = CMT::Database.db_credentials_for(tenant_name)
+        def db_info_for_given_site(site_name)
+          creds = CMT::Database.db_credentials_for(site_name)
 
           {
             host: CMT.config.system.db_connect_host,

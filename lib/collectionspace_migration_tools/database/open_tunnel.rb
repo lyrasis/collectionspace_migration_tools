@@ -9,9 +9,9 @@ module CollectionspaceMigrationTools
       class << self
         include Dry::Monads[:result]
 
-        # @param tenant_name [String]
-        def call(tenant_name = nil)
-          tunnel_command = CMT::Database.tunnel_command(tenant_name)
+        # @param site_name [String]
+        def call(site_name = nil)
+          tunnel_command = CMT::Database.tunnel_command(site_name)
           check_tunnel = CMT.tunnel
 
           if check_tunnel&.open?

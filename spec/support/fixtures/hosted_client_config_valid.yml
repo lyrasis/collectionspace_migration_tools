@@ -1,5 +1,5 @@
 client:
-  tenant_name: ohc
+  site_name: ohc
   page_size: 50
   redis_db_number: 3
   profile: anthro

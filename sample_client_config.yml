@@ -13,9 +13,9 @@ client:
   ## For Lyrasis-hosted client sites, this is all you need to record
   ##   in the config in order to connect to the site and database.
   ##   URLs and connection credentials are handled auto-magically.
-  ##   This should be a name present in `CHIA.tenant_names` list available in
+  ##   This should be a name present in `CHIA.site_names` list available in
   ##   console of dts-hosting/cspace_hosted_instance_access
-  tenant_name: examplesite
+  site_name: examplesite
 
 
   ## FOR LYRASIS-HOSTED CLIENT SITES, DELETE THESE FROM YOUR CONFIG

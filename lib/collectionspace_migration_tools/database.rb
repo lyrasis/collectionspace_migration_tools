@@ -7,34 +7,34 @@ module CollectionspaceMigrationTools
 
     module_function
 
-    # @param tenant [CHIA::Tenant, String]
+    # @param site [CHIA::Site, String]
     # @return [String]
-    def db_credentials_for(tenant)
-      return extract_db_credentials(tenant) if tenant.respond_to?(:db_host)
+    def db_credentials_for(site)
+      return extract_db_credentials(site) if site.respond_to?(:db_host)
 
-      t = CHIA.tenant_for(tenant)
+      t = CHIA.site_for(site)
       extract_db_credentials(t)
     end
 
-    # @param tenant_name [nil, String]
+    # @param site_name [nil, String]
     # @return [String]
-    def tunnel_command(tenant_name = nil)
-      name = tenant_name || CMT.config.client.tenant_name
-      tenant = CHIA.tenant_for(name)
+    def tunnel_command(site_name = nil)
+      name = site_name || CMT.config.client.site_name
+      site = CHIA.site_for(name)
 
-      tenant.db_tunnel_command(
+      site.db_tunnel_command(
         CMT.config.system.bastion_user,
         CMT.config.system.db_port
       )
     end
 
-    # @param tenant [CHIA::Tenant]
-    def extract_db_credentials(tenant)
+    # @param site [CHIA::Site]
+    def extract_db_credentials(site)
       {
-        db_host: tenant.db_host,
-        db_username: tenant.db_user_name,
-        db_password: tenant.db_password,
-        db_name: tenant.db_name
+        db_host: site.db_host,
+        db_username: site.db_user_name,
+        db_password: site.db_password,
+        db_name: site.db_name
       }
     end
   end

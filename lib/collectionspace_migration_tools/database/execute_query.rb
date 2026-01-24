@@ -8,9 +8,9 @@ module CollectionspaceMigrationTools
 
       class << self
         # @param query [String]
-        # @param tenant_name [nil, String]
-        def call(query, tenant_name = nil)
-          db = yield CMT::Database::OpenConnection.call(tenant_name)
+        # @param site_name [nil, String]
+        def call(query, site_name = nil)
+          db = yield CMT::Database::OpenConnection.call(site_name)
           result = yield execute_query(db, query)
 
           Success(result)
