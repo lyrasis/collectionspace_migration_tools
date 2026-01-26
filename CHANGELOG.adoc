@@ -14,6 +14,16 @@ endif::[]
 
 == Unreleased
 
+== 6.0.0 (2026-01-26)
+
+=== Breaking
+
+- Client config files need to specify `site_name` instead of `tenant_name`.
+
+=== Chanaged
+
+- Use CHIA 2.0.0, which refers to sites instead of tenants.
+
 == 5.2.0 (2026-01-20)
 
 === Added
