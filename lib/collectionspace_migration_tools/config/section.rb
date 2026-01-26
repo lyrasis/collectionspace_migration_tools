@@ -4,6 +4,7 @@ module CollectionspaceMigrationTools
   module Config
     # @abstract
     class Section
+      include CMT::Config::DirSegmentReplaceable
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)
 
@@ -30,10 +31,10 @@ module CollectionspaceMigrationTools
         apply_default_values if default_values
         _paths_expanded = yield expand_paths
         pre_manipulate if private_methods.include?(:pre_manipulate)
-        _validated = yield validate
         manipulate if private_methods.include?(:manipulate)
+        handle_subdirs unless subdirvals.empty?
+        _validated = yield validate
         struct = yield to_struct
-        handle_subdirs(struct) unless subdirvals.empty?
 
         Success(struct)
       end
@@ -44,7 +45,7 @@ module CollectionspaceMigrationTools
         :validator
 
       def validate
-        validator.call(hash).either(
+        validator.call(hash.compact).either(
           ->(success) { Success() },
           ->(failure) do
             prefix = "#{self.class.name} validation error(s): "
@@ -81,19 +82,15 @@ module CollectionspaceMigrationTools
         val = hash[key]
         return unless val
 
-        replacedval = if val.start_with?("thisappdir")
-          val.sub("thisappdir", Bundler.root.to_s)
-        else
-          val
-        end
+        replacedval = replace_dir_segment(val)
 
         hash[key] = File.expand_path(replacedval)
           .delete_suffix("/")
       end
 
-      def handle_subdirs(struct)
+      def handle_subdirs
         subdirvals.each do |subdir|
-          CMT::ConfigSubdirectoryHandler.call(config: struct, setting: subdir)
+          CMT::Config::SubdirectoryHandler.call(config: hash, setting: subdir)
         end
       end
 

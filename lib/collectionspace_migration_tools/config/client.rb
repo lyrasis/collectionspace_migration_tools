@@ -5,6 +5,7 @@ module CollectionspaceMigrationTools
     class Client < CMT::Config::Section
       def initialize(hash:)
         super
+
         # If you change default values here, update sample_client_config.yml
         @default_values = {
           page_size: 50,

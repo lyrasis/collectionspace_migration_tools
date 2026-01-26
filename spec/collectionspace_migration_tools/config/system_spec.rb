@@ -58,7 +58,7 @@ RSpec.describe CollectionspaceMigrationTools::Config::System do
   context "when term_manager_config_dir is not found" do
     let(:config) do
       data = sys_config_hash.dup
-      data[:term_manager_config_dir] = "thisappdir/terms"
+      data[:term_manager_config_dir] = "fixturesdir/terms"
       data
     end
 
