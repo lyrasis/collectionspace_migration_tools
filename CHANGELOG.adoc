@@ -20,7 +20,7 @@ endif::[]
 
 - Client config files need to specify `site_name` instead of `tenant_name`.
 
-=== Chanaged
+=== Changed
 
 - Use CHIA 2.0.0, which refers to sites instead of tenants.
 
