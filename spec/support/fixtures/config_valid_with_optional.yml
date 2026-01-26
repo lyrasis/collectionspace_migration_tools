@@ -34,14 +34,14 @@ client:
   # The main directory for the migration project. All other directories can be specified
   #   relative to this
   # This directory must already exist on your system.
-  base_dir: ~/code/cs/migration_tools/data
+  base_dir: fixturesdir/data
 
-  batch_csv: ~/code/cs/migration_tools/data/batch_tracker.csv
+  batch_csv: fixturesdir/data/batch_tracker.csv
   # You can enter a subdirectory relative to base_dir OR a full path to an existing directory anywhere on
   #   your system. If the value as given expands to an existing directory on your machine, that's what
   #   will be used. If not, it'll used subdir value appended to base_dir. The subdirectory will be created
   #   if it does not exist.
-  mapper_dir: ~/code/cs/migration_tools/spec/support/fixtures/record_mappers
+  mapper_dir: record_mappers
 
   # directory in which to store generated xml
   # a sub-directory will be created in this for each csv that you convert to CS XML
@@ -52,7 +52,7 @@ client:
   # This is optional and only needed if you need to tweak the mapper options.
   # `status_check_method` is automatically set to `cache` when using this application to create CSXML.
   # If you are NOT providing a custom config, comment out the following line.
-  batch_config_path: ~/code/cs/migration_tools/spec/support/fixtures/client_batch_config.json
+  batch_config_path: fixturesdir/client_batch_config.json
   auto_refresh_cache_before_mapping: false
   clear_cache_before_refresh: false
 

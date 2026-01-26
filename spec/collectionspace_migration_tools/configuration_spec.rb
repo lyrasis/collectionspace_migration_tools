@@ -65,7 +65,6 @@ RSpec.describe CollectionspaceMigrationTools::Configuration do
   context "with invalid config" do
     let(:config_file) { invalid_config_path }
 
-    # If this test fails make sure you do not have redis running
     it "outputs error message and exits" do
       expect { result }
         .to output(/Could not create config/).to_stdout.and raise_error(

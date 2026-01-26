@@ -28,7 +28,7 @@ module CollectionspaceMigrationTools
         optional(:s3_bucket).filled(:string)
         required(:s3_delimiter).filled(:string)
         required(:max_media_upload_threads).filled(:integer)
-        required(:media_with_blob_upload_delay).filled(:integer)
+        required(:media_with_blob_upload_delay).filled(:float)
         optional(:media_bucket).maybe(:string)
         optional(:db_host).filled(:string)
         optional(:db_username).filled(:string)

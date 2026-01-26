@@ -53,13 +53,11 @@ module Helpers
   end
 
   def setup_mapping
-    mapper_dir = File.join(Bundler.root.to_s, "spec", "support", "fixtures",
-      "record_mappers")
-    CMT.config.client.mapper_dir = mapper_dir
     CMT.config.client.profile = "anthro"
     CMT.config.client.profile_version = "9-0-0"
-    CMT.config.client.batch_config_path = File.join(Bundler.root, "spec",
-      "support", "fixtures", "client_batch_config.json")
+    CMT.config.client.batch_config_path = File.join(
+      fixtures_base, "client_batch_config.json"
+    )
   end
 
   def build_test_archive_csv(

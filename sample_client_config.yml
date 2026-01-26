@@ -59,7 +59,7 @@ client:
   ## The main directory for the migration project. All other
   ## directories can be specified relative to this. **This directory must
   ## already exist on your system.**
-  base_dir: ~/code/cs/migration_tools/data
+  base_dir: fixturesdir/data
 
   ## OPTIONAL SETTING
   ## Path to the default directory for ingestable files for a project.
@@ -80,7 +80,7 @@ client:
   ##   already exist). For example:
   ##
   ##   - entering `mappers` will set this to:
-  ##     `~/code/cs/migration_tools/data/mappers` (the mappers
+  ##     `fixturesdir/mappers` (the mappers
   ##     subdirectory will be created if it doesn't exist)
   ##   - entering
   ##     `~/code/cs/untangler/data/mappers/community_profiles/release_7_0/anthro`

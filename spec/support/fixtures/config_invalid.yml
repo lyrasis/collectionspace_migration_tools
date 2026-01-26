@@ -1,6 +1,7 @@
 client:
-  base_uri: https://core.dev.collectionspace.org/cspace-services/
+  base_uri: https://core.dev.collectionspace.org/blarg
   username: admin@core.collectionspace.org
   password: Administrator
   page_size: 50
   redis_db_number: 1
+  base_dir: fixturesdir/data
