@@ -30,7 +30,7 @@ NOTE: strike-through formatting indicates the option/command is not yet implemen
 * Map batch to CS XML
 ** `thor batch:map obj12`
 ** Examine warnings (`thor batch:map_warnings obj12`, thor batch:map_warnings obj12 --with_counts`, or in `mapper_report.csv`)
-* Upload resulting CS XML to S3 bucket
+* Upload resulting CS XML to Fast Importer Bucket
 ** `thor batch:upload obj12`
 * Run ingest status report - may need to be run repeatedly, if a batch takes a long time to be processed
 ** `thor batch:ingstat obj12`
@@ -203,6 +203,29 @@ Successfully mapped records are written into the batch directory. The file name 
 
 If there are multiple records with the same ID in your batch, the first record will be fine. Subsequent records with the same ID will be treated as errors.
 
+.Duplicate record errors when the records are not actually duplicates
+[WARNING]
+====
+Most of the time a duplicate record error at this point means there is an actual duplicate ID in the batch.
+However, you will very occasionally be perplexed by such an error when you have checked multiple times and _there is no duplicate of the record getting the error_.
+
+This is caused by the fact that the Mac file system is *case-insensitive*.
+You can test this out by trying to create two files named `test.txt` and `Test.txt` in the same directory.
+It won't let you.
+
+When this error occurs, the Base64 encoded file names are literally different due to case differences, but the Mac OS reports a file with that name already exists, because it is comparing case-insensitively.
+
+There are ways I can fix this, but it happens so rarely that it is never a priority to spend time on it.
+
+The easiest way to handle this if you run into it is:
+
+- Continue with the rest of the batch. Records with this error will not be uploaded/transferred to CollectionSpace
+- Save the mapper_report.csv from the batch folder somewhere else before you delete the batch.
+- Delete all successfully mapped rows from the mapper_report.csv, leaving only records with this error. Also delete columns added to your original data to create the mapper_report.csv.
+- Use the resulting, errors-only csv to create and process a new batch.
+- ALSO let Kristina know you ran into this issue, so she can retain a sense of the priority of implementing a real fix for this.
+====
+
 ==== Reports
 ===== `mapper_report.csv`
 Includes the following columns:
@@ -211,9 +234,9 @@ Includes the following columns:
 * `cmt_rec_status`: record status from `CollectionSpace::Mapper::Response` (new or existing)
 * `cmt_outcome`: `success` if XML was created and saved; `failure` if not
 * `cmt_output_file`: name of XML file if created (so you can find a specific record easily for review)
-* `cmt_s3_key`: string that will be used as the AWS S3 object key when XML file is uploaded to bucket. This is a Base64 url-safe encoded string created from:
+* `cmt_s3_key`: string that will be used as the AWS S3 object key for the XML file when it is uploaded to the Fast Importer Bucket. This is a Base64 url-safe encoded string created from:
 ** batch id
-** services api path (includes record csid for updates/deletes, includes blobUri for media with files to ingest)
+** services api path (includes record csid for updates/deletes; blobUri for media with files to ingest)
 ** identifier
 ** action (will control what API method is used to transfer record)
 * `cmt_warnings`: issues to be aware of. They may be fine, or they may indicate something unexpected is going on. Note that you will see a warning here if:
@@ -265,8 +288,10 @@ For details on which records got what warnings, consult mapper_report.csv for th
 
 These records will not be uploaded, so the thing here is to decide if you want to fix whatever issues caused errors now and restart this as a single batch, or whether you want to move ahead with uploading the successes from this batch, and handling errors as a separate set.
 
-=== Upload successfully mapped records to S3 bucket
-The upload of a record to the S3 bucket triggers an AWS Lambda function to attempt ingest of the record.
+=== Upload successfully mapped records to Fast Importer Bucket
+
+The upload of a record to the bucket triggers an AWS Lambda function to attempt ingest of the record via the API.
+The information Lambda function decodes the object key of each item uploaded to derive the exact API call to make for that item.
 
 As part of batch workflow: `thor batch:upload obj12`
 
