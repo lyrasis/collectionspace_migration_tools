@@ -95,7 +95,7 @@ You will need to have:
 * The site name for the instance. These can be found via https://github.com/dts-hosting/cspace_hosted_instance_access[CHIA]. Do `bin/console`, and then `CHIA.site_names` to get a list of current site names.
 * Record mappers for the instance, downloaded from https://github.com/collectionspace/cspace-config-untangler/tree/main/data/mappers/[the cspace-config-untangler repo]. Instances without their own UI plugin use community-supported profile mappers for the latest release of CollectionSpace. Mappers for hosted clients with their own UI plugins are in Lyrasis-hosted profiles.
 * The domain profile and profile version used by the site. These should match the file name prefixes of the mappers for the instance.
-* If planning to ingest into the instance, the name of the S3 Fast Import bucket for the CS instance (currently we need to request that Mark set this bucket up)
+* If planning to ingest into the instance, the name of the S3 Fast Import bucket for the CS instance (currently we need to request that a bucket gets set up by creating a new Zendesk ticket and assigning it to the main CollectionSpace support person in Hosting)
 * If planning to map data into CS XML, an unused Redis db number. Do `thor config:redis_dbs` to see which Redis dbs are already in use.
 
 
