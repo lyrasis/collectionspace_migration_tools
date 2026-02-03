@@ -203,29 +203,6 @@ Successfully mapped records are written into the batch directory. The file name 
 
 If there are multiple records with the same ID in your batch, the first record will be fine. Subsequent records with the same ID will be treated as errors.
 
-.Duplicate record errors when the records are not actually duplicates
-[WARNING]
-====
-Most of the time a duplicate record error at this point means there is an actual duplicate ID in the batch.
-However, you will very occasionally be perplexed by such an error when you have checked multiple times and _there is no duplicate of the record getting the error_.
-
-This is caused by the fact that the Mac file system is *case-insensitive*.
-You can test this out by trying to create two files named `test.txt` and `Test.txt` in the same directory.
-It won't let you.
-
-When this error occurs, the Base64 encoded file names are literally different due to case differences, but the Mac OS reports a file with that name already exists, because it is comparing case-insensitively.
-
-There are ways I can fix this, but it happens so rarely that it is never a priority to spend time on it.
-
-The easiest way to handle this if you run into it is:
-
-- Continue with the rest of the batch. Records with this error will not be uploaded/transferred to CollectionSpace
-- Save the mapper_report.csv from the batch folder somewhere else before you delete the batch.
-- Delete all successfully mapped rows from the mapper_report.csv, leaving only records with this error. Also delete columns added to your original data to create the mapper_report.csv.
-- Use the resulting, errors-only csv to create and process a new batch.
-- ALSO let Kristina know you ran into this issue, so she can retain a sense of the priority of implementing a real fix for this.
-====
-
 ==== Reports
 ===== `mapper_report.csv`
 Includes the following columns:
