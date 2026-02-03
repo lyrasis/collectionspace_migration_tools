@@ -5,6 +5,7 @@ require "thor"
 # tasks for listing record types for reference
 class VocabularyTerms < Thor
   include Dry::Monads[:result]
+
   namespace :vt
 
   desc "add", "add new vocabulary terms from given CSV"

@@ -6,6 +6,7 @@ require "thor/hollaback"
 # tasks to cache authority data
 class Auth < Thor
   include CMT::CliHelpers::Pop
+
   namespace :"pop:auth"
 
   class_option :debug, desc: "Sets up debug mode", aliases: ["-d"],

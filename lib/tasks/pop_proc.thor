@@ -6,6 +6,7 @@ require "thor/hollaback"
 # tasks populating caches with object/procedure data
 class Procedure < Thor
   include CMT::CliHelpers::Pop
+
   namespace :"pop:proc"
 
   class_option :debug, desc: "Sets up debug mode", aliases: ["-d"],

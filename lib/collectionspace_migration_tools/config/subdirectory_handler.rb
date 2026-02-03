@@ -77,7 +77,7 @@ module CollectionspaceMigrationTools
         expanded = File.expand_path(value)
         unless Dir.exist?(expanded)
           raise NonExistentDirectorySpecifiedError.new(setting,
-                                                       expanded)
+            expanded)
         end
 
         update_setting(expanded)
