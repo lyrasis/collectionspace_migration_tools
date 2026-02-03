@@ -7,6 +7,7 @@ require "thor/hollaback"
 class RefnameReport < Thor
   include CMT::CliHelpers
   include Dry::Monads[:result]
+
   namespace :rr
 
   class_around :safe_db

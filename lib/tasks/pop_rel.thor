@@ -6,6 +6,7 @@ require "thor/hollaback"
 # tasks populating caches with relation data
 class Relation < Thor
   include CMT::CliHelpers::Pop
+
   namespace :"pop:rel"
 
   class_option :debug, desc: "Sets up debug mode", aliases: ["-d"],

@@ -71,6 +71,7 @@ end
 class Date
   class << self
     include Nullable
+
     def value
       Faker::Date.backward.strftime(formats.sample)
     end

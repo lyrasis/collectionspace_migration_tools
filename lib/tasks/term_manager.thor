@@ -6,6 +6,7 @@ require "thor"
 # tasks targeting batches and batch csv
 class TermManager < Thor
   include Dry::Monads[:result]
+
   namespace :tm
 
   desc "config", "Display config for TermManager project"
