@@ -43,11 +43,24 @@ module CollectionspaceMigrationTools
       end
 
       def check_existence(name, path, response)
-        if File.exist?(path)
+        if File.exist?(path) && exists_case_sensitively?(name)
           return Failure([:file_already_exists, response, name])
         end
 
-        Success(response)
+        if File.exist?(path)
+          name = name.sub(".xml", "_#{response.object_id}.xml")
+        end
+
+        Success(name)
+      end
+
+      # Mac OS will say the file exists if it is a case insensitive match. If
+      #  the file does not exist with a case sensitive match, it is not really
+      #  a duplicate.
+      def exists_case_sensitively?(name)
+        Dir.new(output_dir)
+          .children
+          .include?(name)
       end
 
       def write(response)
@@ -58,10 +71,11 @@ module CollectionspaceMigrationTools
 
         add_key_warnings(key, response) unless key.warnings.empty?
 
-        _checked = yield check_existence(file_name, path, response)
-        _written = yield write_file(path, response)
+        checkedname = yield check_existence(file_name, path, response)
+        checkedpath = "#{output_dir}/#{checkedname}"
+        _written = yield write_file(checkedpath, response)
 
-        Success([response, file_name, key.value])
+        Success([response, checkedname, key.value])
       end
 
       def write_file(path, response)
