@@ -14,6 +14,12 @@ endif::[]
 
 == Unreleased
 
+== 6.0.1 (2026-02-03)
+
+=== Bugfix
+
+* Fixed the occasional spurious duplicate file error described in https://github.com/lyrasis/collectionspace_migration_tools/issues/69[#69]
+
 == 6.0.0 (2026-01-26)
 
 === Breaking
