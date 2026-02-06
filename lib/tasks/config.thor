@@ -81,9 +81,7 @@ class Config < Thor
   end
 
   no_commands do
-    def config_dir
-      File.join(Bundler.root, "config")
-    end
+    def config_dir = CMT.config.system.client_config_dir
 
     def get_and_parse_configs
       Dir.new(config_dir)
