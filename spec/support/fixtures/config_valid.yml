@@ -14,11 +14,6 @@ client:
   # Refer to how the mappers (i.e. the mapping instructions for each record type) are organized there
   #   to find the proper values to put in here
 
-  # The release number for the instance, not the UI version or profile version
-  # Replace the period with an underscore
-  # This must be in quotes or 7_0 will get interpreted as 70 for some reason.
-  cs_version: "8_0"
-
   # Should match the directory names that organize mappers per release
   profile: anthro
 
