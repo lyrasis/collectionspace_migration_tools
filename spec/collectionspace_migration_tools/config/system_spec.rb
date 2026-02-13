@@ -42,20 +42,20 @@ RSpec.describe CollectionspaceMigrationTools::Config::System do
     end
   end
 
-  context "when missing system aws_profile" do
+  context "when missing system client_config_dir setting" do
     let(:config) do
       data = sys_config_hash.dup
-      data.delete(:aws_profile)
+      data.delete(:client_config_dir)
       data
     end
 
     it "returns Failure with expected message" do
       expect(result).to be_a(Dry::Monads::Failure)
-      expect(result.failure).to match(/aws_profile is missing$/)
+      expect(result.failure).to match(/client_config_dir is missing$/)
     end
   end
 
-  context "when term_manager_config_dir is not found" do
+  context "when term_manager_config_dir given but dir doesn't exist" do
     let(:config) do
       data = sys_config_hash.dup
       data[:term_manager_config_dir] = "fixturesdir/terms"

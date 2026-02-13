@@ -1,20 +1,64 @@
-csv_chunk_size: 50
-max_threads: 10
-max_processes: 6
-aws_profile: collectionspace
-aws_media_ingest_profile: shared
-# Create a directory to hold your client configs, and enter the path to it
-client_config_dir: fixturesdir/data
+# Path to the directory that will contain your per-instance client config files
+client_config_dir: ~/.config/collectionspace_migration_tools/clients
+
 # Path to file that will hold the name of the client config you are currently
 #   working on.
-config_name_file: fixturesdir/current_config
+config_name_file: ~/.config/collectionspace_migration_tools/current_config
+
+# Your CollectionSpace bastion username
 bastion_user: yourusername
-# The following are set by default but you can change them by uncommenting
+
+
+# Path to directory containing configuration for term_manager projects.
+#   Uncomment and set if you need to use term_manager.
+#   term_manager_config_dir:
+#   ~/.config/collectionspace_migration_tools/term_manager
+
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+# All the settings below are set to the values shown by the application. You
+#   can override these default values by uncommenting the setting and
+#   changing the value.
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+# Number of seconds to wait between getting new DB tunnel and
+#   attempting to get database connection. Will be set by default, but
+#   can be overridden by uncommenting in your config. Uncomment the
+#   setting and increase this number if this tool is failing to create
+#   a database connection, but you can make the connection via psql or
+#   pgAdmin with the same credentials.
+# db_tunnel_connection_pause: 3
+
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+# This section of settings can be tweaked to experiment with performance
+#   of actions with parallel processing. See the One time setup > System
+#   config > Parallel processing-related settings section of this
+#   application's README file for more info on these settings.
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+# Maximum number of threads that will be spun up for a given parallel process
+#   run in threads.
+# max_threads: 10
+
+# Maximum number of processes that will be spun up for a given parallel process
+#   run in processes.
+# max_processes: 6
+
+# Number of CSV rows sent to a parallel worker at one time.
+# csv_chunk_size: 50
+
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+# Only change the stuff below if you have very good reason and know how this
+#   tool interacts with your AWS credentials and SSH access to bastion/db
+#   servers
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+# AWS profile used to get site credentials, interact with Fast Import Bucket,
+#   etc.
+# aws_profile: collectionspace
+
+# AWS profile used to interact with any S3 buckets to which clients have
+#   uploaded media
+# aws_media_ingest_profile: shared
+
 # db_port: 5432
 # db_connect_host: localhost
-# Number of seconds to wait between getting new DB tunnel and attempting to
-#   get database connection. Will be set by default, but can be overridden
-#   by uncommenting in your config. Increase this number if this tool is
-#   failing to create a database connection, but you can make the connection
-#   via psql or pgAdmin with the same credentials.
-# db_tunnel_connection_pause: 3
