@@ -98,7 +98,7 @@ RSpec.describe CollectionspaceMigrationTools::Config::System do
     end
   end
 
-  context "when cspace_application_version overridden in yaml" do
+  context "when cs_app_version overridden in yaml" do
     let(:config) do
       path = File.join(fixtures_base, "sys_config_w_term_manager.yml")
       CMT::Parse::YamlConfig.call(path).value!
@@ -106,21 +106,21 @@ RSpec.describe CollectionspaceMigrationTools::Config::System do
 
     it "comes through as a valid string" do
       expect(result).to be_a(Dry::Monads::Success)
-      expect(result.value!.cspace_application_version).to eq("8_1_1")
+      expect(result.value!.cs_app_version).to eq("8_1_1")
     end
   end
 
-  context "with bad cspace_application_version format" do
+  context "with bad cs_app_version format" do
     let(:config) do
       data = sys_config_hash.dup
-      data[:cspace_application_version] = "8.2"
+      data[:cs_app_version] = "8.2"
       data
     end
 
     it "returns Failure" do
       expect(result).to be_a(Dry::Monads::Failure)
       expect(result.failure).to match(
-        /cspace_application_version must follow pattern/
+        /cs_app_version must follow pattern/
       )
     end
   end

@@ -7,7 +7,7 @@ client:
   db_password: yourdbpassword
   db_name: examplesite_examplesite
   redis_db_number: 3
-  cspace_application_version: "7_0"
+  cs_app_version: "7_0"
   profile: anthro
   profile_version: 5-0-0
   base_dir: fixturesdir/data

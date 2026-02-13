@@ -59,7 +59,7 @@ RSpec.describe CollectionspaceMigrationTools::Configuration do
       expect(result.client.clear_cache_before_refresh).to be false
       expect(result.client.media_with_blob_upload_delay).to eq(0.5)
       expect(result.client.db_host).to eq("db.domain.org")
-      expect(result.system.cspace_application_version).to eq("7_0")
+      expect(result.system.cs_app_version).to eq("7_0")
     end
   end
 
