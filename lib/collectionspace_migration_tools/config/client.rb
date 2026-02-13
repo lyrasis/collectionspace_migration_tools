@@ -27,6 +27,7 @@ module CollectionspaceMigrationTools
       private
 
       def pre_manipulate
+        add_option(:cspace_application_version, nil)
         return unless hosted?
 
         site = CHIA.site_for(hash.dig(:site_name))
