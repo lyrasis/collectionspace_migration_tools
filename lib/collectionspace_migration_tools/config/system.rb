@@ -17,7 +17,8 @@ module CollectionspaceMigrationTools
           max_threads: 10,
           max_processes: 6,
           aws_profile: "collectionspace",
-          aws_media_ingest_profile: "shared"
+          aws_media_ingest_profile: "shared",
+          cspace_application_version: "8_2"
         }
         @pathvals = %i[client_config_dir config_name_file
           cspace_config_untangler_dir term_manager_config_dir]

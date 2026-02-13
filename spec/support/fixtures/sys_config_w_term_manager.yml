@@ -8,3 +8,4 @@ config_name_file: fixturesdir/current_config
 bastion_user: name
 term_manager_config_dir: fixturesdir/term_manager_config
 cspace_config_untangler_dir: fixturesdir/untangler
+cspace_application_version: '8_1_1'
