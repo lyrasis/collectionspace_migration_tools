@@ -74,6 +74,10 @@ module CollectionspaceMigrationTools
         if client_path
           instance = yield CMT::Parse::YamlConfig.call(client_path)
           @client = yield CMT::Config::Client.call(hash: instance[:client])
+
+          if @client.cspace_application_version
+            @system.cspace_application_version = @client.cspace_application_version
+          end
         end
       end
       @term_manager = nil
