@@ -12,7 +12,12 @@ module CollectionspaceMigrationTools
         @default_values = {
           db_port: 5432,
           db_connect_host: "localhost",
-          db_tunnel_connection_pause: 3
+          db_tunnel_connection_pause: 3,
+          csv_chunk_size: 50,
+          max_threads: 10,
+          max_processes: 6,
+          aws_profile: "collectionspace",
+          aws_media_ingest_profile: "shared"
         }
         @pathvals = %i[client_config_dir config_name_file
           term_manager_config_dir]

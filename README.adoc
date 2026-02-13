@@ -75,14 +75,27 @@ You have three options for where to put your system config file. These will be c
 
 ==== File contents/settings
 
-csv_chunk_size:: The use/purpose of reading CSVs in chunks is explained in https://xjlin0.github.io/tech/2015/05/25/faster-parsing-csv-with-parallel-processing/[Faster Parsing CSV With Parallel Processing]. Each chunk is sent to a parallel worker for processing. A chunk with more rows will take longer to process, but I have not investigated the tradeoff between queueing up/passing on more chunks vs. larger chunks.
-max_threads:: Maximum number of threads that will be spun up for a given https://github.com/grosser/parallel[parallel] process run in threads.
-max_processes:: Maximum number of processes that will be spun up for a given https://github.com/grosser/parallel[parallel] process run in processes.
-aws_profile:: The name of the second AWS profile you created (the one with `role_arn` and `source_profile` specified.
+The settings are explained in comments in `sample_system_config.yml`
+
+The following section(s) provide additional info that can be better formatted here.
+
+==== Parallel processing-related settings
+
+Where possible, CMT leverages parallel processing to speed up our work.
+
+The https://github.com/grosser/parallel[parallel] gem is used to handle parallel processing.
+
+Threads are generally used where completion of a job is slowed down by something that does not require your computer's processing power, such as uploading files or getting a response from an API.
+
+Processes are generally used where the completion of a job is slowed down by processing work your computer is doing, such as converting a CSV row to XML.
+
+TIP: You can find what uses threads vs. processes by searching this codebase for `CMT.config.system.max_threads` and `CMT.config.system.max_processes`.
+
+The use/purpose of reading CSVs in chunks is explained in https://xjlin0.github.io/tech/2015/05/25/faster-parsing-csv-with-parallel-processing/[Faster Parsing CSV With Parallel Processing]. Each chunk is sent to a parallel worker for processing. A chunk with more rows will take longer to process, but will require fewer threads/processes to complete the entire job. I have not investigated the tradeoff between queueing up/passing on more chunks vs. larger chunks.
 
 NOTE: The default settings seem to be working ok for not-gigantic migration projects on my DTS-issued Macbook Pro, but I have not yet done much testing to figure out optimal settings for these. I _assume_ if things are running super slowly, try upping max_threads/max_processes. If your system is too strained, lower max_threads/max_processes. I confess I'm not entirely sure if it thread vs process makes a difference in terms of system resource usage, but it seemed like a good idea to separate them in case this mattered.
 
-TIP: You can find what uses threads vs. processes by searching this codebase for `CMT.config.system.max_threads` and `CMT.config.system.max_processes`.
+TIP: If you are doing breakpoint-based debugging on any parallelized code, set both `max_threads` and `max_processes` to `1`.
 
 == Per-instance setup
 
