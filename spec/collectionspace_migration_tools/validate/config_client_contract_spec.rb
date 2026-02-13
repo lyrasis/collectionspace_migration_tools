@@ -23,14 +23,6 @@ RSpec.describe CollectionspaceMigrationTools::Validate::ConfigClientContract do
     end
   end
 
-  context "with bad cs_version" do
-    let(:client_config) { valid_config.merge({cs_version: "7.0"}) }
-
-    it "returns Failure" do
-      expect(result).to be_a(Dry::Monads::Failure)
-    end
-  end
-
   context "with bad profile" do
     let(:client_config) { valid_config.merge({profile: "fineart"}) }
 

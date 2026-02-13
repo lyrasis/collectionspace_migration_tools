@@ -12,7 +12,6 @@ module CollectionspaceMigrationTools
         required(:username).filled(:string)
         required(:password).filled(:string)
         required(:page_size).filled(:integer)
-        required(:cs_version).filled(:string)
         required(:profile).filled(:string)
         required(:profile_version).filled(:string)
         required(:base_dir).filled(:string)
@@ -54,8 +53,6 @@ module CollectionspaceMigrationTools
       rule(:ingest_dir).validate(:subdir_exists)
 
       rule(:mapper_dir).validate(:subdir_exists)
-
-      rule(:cs_version).validate(:valid_cs_version)
 
       rule(:base_uri) do
         unless value.end_with?("/cspace-services")

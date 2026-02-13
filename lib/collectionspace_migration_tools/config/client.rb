@@ -9,7 +9,6 @@ module CollectionspaceMigrationTools
         # If you change default values here, update sample_client_config.yml
         @default_values = {
           page_size: 50,
-          cs_version: "7_2",
           batch_dir: "batch_data",
           auto_refresh_cache_before_mapping: true,
           clear_cache_before_refresh: true,
