@@ -12,6 +12,30 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
 
     it "returns Success" do
       expect(result).to be_a(Dry::Monads::Success)
+      expect(result.value!.cspace_application_version).to be_nil
+    end
+  end
+
+  context "when optional cspace_application_version given" do
+    let(:config_hash) do
+      h = valid_config_hash[:client]
+      h.merge!({cspace_application_version: "1_2"})
+    end
+
+    it "returns Success" do
+      expect(result).to be_a(Dry::Monads::Success)
+      expect(result.value!.cspace_application_version).to eq("1_2")
+    end
+  end
+
+  context "when malformed optional cspace_application_version given" do
+    let(:config_hash) do
+      h = valid_config_hash[:client]
+      h.merge!({cspace_application_version: "1.2"})
+    end
+
+    it "returns Failure" do
+      expect(result).to be_a(Dry::Monads::Failure)
     end
   end
 
