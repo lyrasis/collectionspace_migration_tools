@@ -55,6 +55,8 @@ module CollectionspaceMigrationTools
 
       rule(:mapper_dir).validate(:subdir_exists)
 
+      rule(:cs_version).validate(:valid_cs_version)
+
       rule(:base_uri) do
         unless value.end_with?("/cspace-services")
           key.failure(%(must end with "/cspace-services"))
@@ -67,12 +69,6 @@ module CollectionspaceMigrationTools
           unless File.exist?(full)
             key.failure("#{full} does not exist")
           end
-        end
-      end
-
-      rule(:cs_version) do
-        unless /^\d+_\d+$/.match?(value)
-          key.failure("must follow pattern: number underscore number")
         end
       end
 

@@ -15,6 +15,14 @@ module CollectionspaceMigrationTools
         end
       end
 
+      register_macro(:valid_cs_version) do
+        next if value.nil?
+
+        unless /^\d+(_\d+){1,2}$/.match?(value)
+          key.failure("must follow pattern: number underscore number")
+        end
+      end
+
       register_macro(:dir_exists) do
         next if value.nil?
 
