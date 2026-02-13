@@ -1,8 +1,4 @@
-csv_chunk_size: 50
-max_threads: 10
-max_processes: 6
-aws_profile: collectionspace
-aws_media_ingest_profile: shared
 client_config_dir: fixturesdir/config
 config_name_file: fixturesdir/current_config
 bastion_user: name
+cspace_config_untangler_dir: fixturesdir/untangler

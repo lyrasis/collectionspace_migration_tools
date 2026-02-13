@@ -7,3 +7,4 @@ client_config_dir: fixturesdir/config
 config_name_file: fixturesdir/current_config
 bastion_user: name
 term_manager_config_dir: fixturesdir/term_manager_config
+cspace_config_untangler_dir: fixturesdir/untangler

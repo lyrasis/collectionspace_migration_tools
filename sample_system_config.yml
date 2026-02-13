@@ -5,9 +5,12 @@ client_config_dir: ~/.config/collectionspace_migration_tools/clients
 #   working on.
 config_name_file: ~/.config/collectionspace_migration_tools/current_config
 
+# Path to your local copy of
+#   https://github.com/collectionspace/cspace-config-untangler
+cspace_config_untangler_dir: ~/code/cspace-config-untangler
+
 # Your CollectionSpace bastion username
 bastion_user: yourusername
-
 
 # Path to directory containing configuration for term_manager projects.
 #   Uncomment and set if you need to use term_manager.
