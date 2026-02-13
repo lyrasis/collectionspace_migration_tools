@@ -15,7 +15,7 @@ module CollectionspaceMigrationTools
       def initialize(client:, prefix: nil, max: 1000)
         @client = client
         @prefix = prefix
-        @bucket = CMT.config.client.s3_bucket
+        @bucket = CMT.config.client.fast_import_bucket
         @max = max
         @opts = set_opts
         @objects = []

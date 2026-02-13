@@ -52,7 +52,7 @@ client:
   # column/field delimiter for input "CSV" files
   csv_delimiter: ","
 
-  s3_bucket: "config_valid_bucket_name"
+  fast_import_bucket: "config_valid_bucket_name"
   s3_delimiter: "|"
   media_with_blob_upload_delay: 250
   max_media_upload_threads: 5

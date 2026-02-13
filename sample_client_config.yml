@@ -110,7 +110,7 @@ client:
   ##
   ## This is optional, since there may be use cases for CMT where only
   ## non-ingest commands are needed
-  s3_bucket: "bucket_name"
+  fast_import_bucket: "bucket_name"
 
   ## OPTIONAL SETTING
   ## The name of the S3 bucket from which client media files will be
