@@ -40,13 +40,13 @@ client:
   redis_db_number: 3
 
   ## OPTIONAL SETTING
-  ## Set this if you need to override the cspace_application_version
+  ## Set this if you need to override the cs_app_version
   ##   that is set at the SYSTEM config level for a specific client.
   ## The release number for the instance, not the UI version or
   ##   profile version. Replace the period in the actual version
   ##   designation with an underscore. **This must be in quotes or 7_2
   ##   will get interpreted as 70.**
-  # cspace_application_version: "8_1_1"
+  # cs_app_version: "8_1_1"
 
   ## The next two settings are used, in combination with the
   ##   `cs_version` setting, to grab the required record mapping

@@ -9,7 +9,7 @@ module CollectionspaceMigrationTools
         required(:client_config_dir).filled(:string)
         required(:config_name_file).filled(:string)
         required(:cspace_config_untangler_dir).filled(:string)
-        required(:cspace_application_version).filled(:string)
+        required(:cs_app_version).filled(:string)
         required(:csv_chunk_size).filled(:integer)
         required(:max_threads).filled(:integer)
         required(:aws_profile).filled(:string)
@@ -23,7 +23,7 @@ module CollectionspaceMigrationTools
 
       rule(:client_config_dir).validate(:dir_exists)
       rule(:cspace_config_untangler_dir).validate(:dir_exists)
-      rule(:cspace_application_version).validate(:valid_cs_version)
+      rule(:cs_app_version).validate(:valid_cs_version)
       rule(:config_name_file).validate(:file_exists_or_gets_created)
       rule(:term_manager_config_dir).validate(:dir_exists)
     end

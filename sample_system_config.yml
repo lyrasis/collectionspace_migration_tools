@@ -35,7 +35,7 @@ bastion_user: yourusername
 # Format notes: Replace the period in the actual version
 #   designation with an underscore. **This must be in quotes or 7_2
 #   will get interpreted as 70.**
-# cspace_application_version: "8_1_1"
+# cs_app_version: "8_1_1"
 
 # Number of seconds to wait between getting new DB tunnel and
 #   attempting to get database connection. Will be set by default, but
