@@ -59,7 +59,7 @@ RSpec.describe CollectionspaceMigrationTools::Validate::ConfigClientContract do
 
   context "with no S3 bucket" do
     let(:client_config) do
-      valid_config.delete(:s3_bucket)
+      valid_config.delete(:fast_import_bucket)
       valid_config
     end
 

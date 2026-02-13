@@ -8,7 +8,7 @@ client:
   mapper_dir: record_mappers
   batch_dir: batch_data
   csv_delimiter: ","
-  s3_bucket: "bucket_name"
+  fast_import_bucket: "bucket_name"
   s3_delimiter: "|"
   media_with_blob_upload_delay: 250
   max_media_upload_threads: 5

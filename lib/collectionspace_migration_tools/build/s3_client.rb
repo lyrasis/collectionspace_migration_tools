@@ -19,11 +19,11 @@ module CollectionspaceMigrationTools
 
       def initialize
         @profile = CMT.config.system.aws_profile
-        @bucket = CMT.config.client.s3_bucket
+        @bucket = CMT.config.client.fast_import_bucket
       end
 
       def call
-        return Failure(:no_S3_bucket_configured) unless bucket
+        return Failure(:no_fast_import_bucket_configured) unless bucket
 
         client = yield(create_client)
         _try = yield(try(client))

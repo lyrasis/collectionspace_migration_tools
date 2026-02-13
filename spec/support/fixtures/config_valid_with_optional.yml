@@ -59,6 +59,6 @@ client:
   # column/field delimiter for input "CSV" files
   csv_delimiter: ","
 
-  s3_bucket: "bucket_name"
+  fast_import_bucket: "bucket_name"
   s3_delimiter: "|"
   media_with_blob_upload_delay: 500

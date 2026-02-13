@@ -14,7 +14,7 @@ module CollectionspaceMigrationTools
         @file_dir = file_dir
         @rectype = rectype
         @client = client
-        @bucket = CMT.config.client.s3_bucket
+        @bucket = CMT.config.client.fast_import_bucket
         @reporter = reporter
         @media_delay = CMT.config.client.media_with_blob_upload_delay
       end
