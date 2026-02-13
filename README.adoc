@@ -69,9 +69,9 @@ Use the commented `sample_system_config.yml` as an example or starting point.
 
 You have three options for where to put your system config file. These will be checked in the following order. The first one found will be used:
 
-1. Custom filename and location indicated in `COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG` environment variable. You can set this environment variable per-session or permanently in your shell/terminal config.
-2. `~/.config/collectionspace_migration_tools/system_config.yml`
-3. `system_config.yml` file in the base directory of this repository
+1. Custom filename and location indicated in `COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG` environment variable. You can set this environment variable per-session or permanently in your shell/terminal config. *Recommended only for development and testing of this code.*
+2. `~/.config/collectionspace_migration_tools/system_config.yml` *This is the recommended location if you actively use this code to perform migrations work.* Kristina is working to convert all tooling to store personal config in `~/.config/tool_name` because it's easier to back up and migrate your config that way.
+3. `system_config.yml` file in the base directory of this repository. *Not recommended for any purposes except initial testing during first setup*
 
 ==== File contents/settings
 
