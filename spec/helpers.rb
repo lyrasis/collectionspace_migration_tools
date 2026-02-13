@@ -20,7 +20,7 @@ module Helpers
 
   # returns path to system config
   def sys_config_path
-    File.join(Bundler.root, "sample_system_config.yml")
+    File.join(fixtures_base, "hosted_client_sys_config.yml")
   end
 
   # returns valid config parsed as hash

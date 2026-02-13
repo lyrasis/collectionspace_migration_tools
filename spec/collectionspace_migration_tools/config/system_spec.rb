@@ -55,6 +55,34 @@ RSpec.describe CollectionspaceMigrationTools::Config::System do
     end
   end
 
+  context "when missing system cspace_config_untangler_dir setting" do
+    let(:config) do
+      data = sys_config_hash.dup
+      data.delete(:cspace_config_untangler_dir)
+      data
+    end
+
+    it "returns Failure with expected message" do
+      expect(result).to be_a(Dry::Monads::Failure)
+      expect(result.failure).to match(/cspace_config_untangler_dir is missing$/)
+    end
+  end
+
+  context "when cspace_config_untangler_dir given but dir doesn't exist" do
+    let(:config) do
+      data = sys_config_hash.dup
+      data[:cspace_config_untangler_dir] = "fixturesdir/nope"
+      data
+    end
+
+    it "returns Failure with expected message" do
+      expect(result).to be_a(Dry::Monads::Failure)
+      expect(result.failure).to match(
+        /cspace_config_untangler_dir .*nope does not exist/
+      )
+    end
+  end
+
   context "when term_manager_config_dir given but dir doesn't exist" do
     let(:config) do
       data = sys_config_hash.dup

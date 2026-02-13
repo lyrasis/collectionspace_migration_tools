@@ -20,7 +20,7 @@ module CollectionspaceMigrationTools
           aws_media_ingest_profile: "shared"
         }
         @pathvals = %i[client_config_dir config_name_file
-          term_manager_config_dir]
+          cspace_config_untangler_dir term_manager_config_dir]
         @validator = CMT::Validate::ConfigSystemContract
       end
     end
