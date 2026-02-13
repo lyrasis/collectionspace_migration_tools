@@ -36,7 +36,7 @@ See doc/decisions.adoc for more info/background on some of the decisions made
 
 == Requirements
 
-* link:https://www.ruby-lang.org[Ruby] 3.1.0.
+* The Ruby version indicated in the .ruby-version file
 * Docker and docker-compose.
 ** Running the required docker-compose command will by default set up two instances of Redis on ports 6380 and 6381. The port numbers used are configurable as https://github.com/lyrasis/collectionspace_migration_tools#redis-config[described below]
 * The user of this tool will have set up the Github and AWS CLI as detailed in https://github.com/lyrasis/data-migration-docs/tree/main/general#tech-setup[our team technical documentation].
