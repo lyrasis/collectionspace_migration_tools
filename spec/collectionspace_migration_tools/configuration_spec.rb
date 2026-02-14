@@ -64,6 +64,14 @@ RSpec.describe CollectionspaceMigrationTools::Configuration do
   end
 
   context "with invalid config" do
+    before do
+      ENV["COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG"] =
+        File.join(fixtures_base, "sys_config_w_term_manager.yml")
+    end
+    after do
+      ENV.delete("COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG")
+    end
+
     let(:config_file) { invalid_config_path }
 
     it "outputs error message and exits" do

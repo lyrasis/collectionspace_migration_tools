@@ -19,11 +19,11 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
   end
 
   context "without optional mapper_dir" do
-    before do
+    before(:all) do
       ENV["COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG"] =
         File.join(fixtures_base, "sys_config_w_term_manager.yml")
     end
-    after do
+    after(:all) do
       ENV.delete("COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG")
     end
 
@@ -132,6 +132,21 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
   end
 
   context "when valid hosted client config" do
+    before(:all) do
+      ENV["COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG"] =
+        File.join(fixtures_base, "sys_config_w_term_manager.yml")
+    end
+    after(:all) do
+      ENV.delete("COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG")
+    end
+
+    let(:sysconfig) do
+      path = ENV["COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG"]
+      h = CMT::Parse::YamlConfig.call(path).value!
+      h[:cs_app_version] = "8_1_1"
+      CMT::Config::System.call(hash: h).value!
+    end
+
     let(:config_hash) do
       path = File.join(fixtures_base, "hosted_client_config_valid.yml")
       CMT::Parse::YamlConfig.call(path).value![:client]
