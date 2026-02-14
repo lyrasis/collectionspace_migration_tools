@@ -3,7 +3,7 @@
 module CollectionspaceMigrationTools
   module Config
     class Client < CMT::Config::Section
-      def initialize(hash:)
+      def initialize(hash:, context: nil)
         super
 
         # If you change default values here, update sample_client_config.yml
@@ -28,6 +28,7 @@ module CollectionspaceMigrationTools
 
       def pre_manipulate
         add_option(:cs_app_version, nil)
+        add_option(:mapper_dir, set_mapper_dir)
         return unless hosted?
 
         site = CHIA.site_for(hash.dig(:site_name))
@@ -53,6 +54,19 @@ module CollectionspaceMigrationTools
         add_option(:db_username, nil)
         add_option(:db_password, nil)
         add_option(:db_name, nil)
+      end
+
+      def set_mapper_dir
+        return unless context
+
+        version = hash[:cs_app_version] || context.cs_app_version
+        return unless version
+
+        [version, "release_#{version}"].map do |v|
+          segments = [context.cspace_config_untangler_dir, "data", "mappers",
+            "community_profiles", v, hash[:profile]].compact
+          File.join(*segments)
+        end.find { |path| Dir.exist?(path) }
       end
 
       def set_log_group_name

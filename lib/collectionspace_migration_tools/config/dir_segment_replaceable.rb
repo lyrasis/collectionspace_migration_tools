@@ -6,6 +6,8 @@ module CollectionspaceMigrationTools
       # @param val [String]
       # @return [String]
       def replace_dir_segment(val)
+        return unless val
+
         if val.start_with?("fixturesdir")
           val.sub("fixturesdir", File.join(
             Bundler.root.to_s, "spec", "support", "fixtures"

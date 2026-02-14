@@ -3,5 +3,5 @@ client:
   username: admin@core.collectionspace.org
   password: Administrator
   page_size: 50
-  redis_db_number: 1
+  # redis_db_number: 1
   base_dir: fixturesdir/data
