@@ -14,9 +14,13 @@ module CollectionspaceMigrationTools
         end
       end
 
-      def initialize(path: nil, hash: nil)
+      # @param path [NilValue, String] to yml file containing config
+      # @param hash [NilValue, Hash] parsed config data
+      # @param context [NilValue, CMT::Config::Section] or child class
+      def initialize(path: nil, hash: nil, context: nil)
         @path = path ? File.expand_path(path) : nil
         @hash = hash
+        @context = context
         @default_values = nil
         @validator = nil
         @pathvals = []
@@ -41,8 +45,8 @@ module CollectionspaceMigrationTools
 
       private
 
-      attr_reader :path, :hash, :default_values, :pathvals, :subdirvals,
-        :validator
+      attr_reader :path, :hash, :context, :default_values, :pathvals,
+        :subdirvals, :validator
 
       def validate
         validator.call(hash.compact).either(

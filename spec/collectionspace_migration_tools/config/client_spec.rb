@@ -4,8 +4,10 @@ require_relative "../../spec_helper"
 
 RSpec.describe CollectionspaceMigrationTools::Config::Client do
   let(:result) do
-    described_class.call(hash: config_hash)
+    described_class.call(hash: config_hash, context: sysconfig)
   end
+
+  let(:sysconfig) { nil }
 
   context "when valid config" do
     let(:config_hash) { valid_config_hash[:client] }
@@ -13,6 +15,96 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
     it "returns Success" do
       expect(result).to be_a(Dry::Monads::Success)
       expect(result.value!.cs_app_version).to be_nil
+    end
+  end
+
+  context "without optional mapper_dir" do
+    before do
+      ENV["COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG"] =
+        File.join(fixtures_base, "sys_config_w_term_manager.yml")
+    end
+    after do
+      ENV.delete("COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG")
+    end
+
+    let(:config_hash) do
+      h = valid_config_hash[:client]
+      h.delete(:mapper_dir)
+      h
+    end
+
+    context "when untangler lacks release prefix" do
+      let(:sysconfig) do
+        path = ENV["COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG"]
+        h = CMT::Parse::YamlConfig.call(path).value!
+        h[:cs_app_version] = "8_1_1"
+        CMT::Config::System.call(hash: h).value!
+      end
+
+      it "returns Success" do
+        expect(result).to be_a(Dry::Monads::Success)
+        expect(result.value!.mapper_dir).to eq(
+          File.join(fixtures_base, "untangler", "data", "mappers",
+            "community_profiles", "8_1_1", "anthro")
+        )
+      end
+    end
+
+    context "when untangler has release prefix" do
+      let(:sysconfig) do
+        path = ENV["COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG"]
+        h = CMT::Parse::YamlConfig.call(path).value!
+        h[:cs_app_version] = "8_2"
+        CMT::Config::System.call(hash: h).value!
+      end
+
+      it "returns Success" do
+        expect(result).to be_a(Dry::Monads::Success)
+        expect(result.value!.mapper_dir).to eq(
+          File.join(fixtures_base, "untangler", "data", "mappers",
+            "community_profiles", "release_8_2", "anthro")
+        )
+      end
+    end
+
+    context "when mapper_dir cannot be found" do
+      let(:sysconfig) do
+        path = ENV["COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG"]
+        h = CMT::Parse::YamlConfig.call(path).value!
+        h[:cs_app_version] = "6_1"
+        CMT::Config::System.call(hash: h).value!
+      end
+
+      it "returns Failure" do
+        expect(result).to be_a(Dry::Monads::Failure)
+        expect(result.failure).to match(
+          /mapper_dir is missing/
+        )
+      end
+    end
+
+    context "when cs_app_version overridden in client config" do
+      let(:config_hash) do
+        h = valid_config_hash[:client]
+        h.delete(:mapper_dir)
+        h[:cs_app_version] = "8_1_1"
+        h
+      end
+
+      let(:sysconfig) do
+        path = ENV["COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG"]
+        h = CMT::Parse::YamlConfig.call(path).value!
+        h[:cs_app_version] = "8_2"
+        CMT::Config::System.call(hash: h).value!
+      end
+
+      it "returns Success" do
+        expect(result).to be_a(Dry::Monads::Success)
+        expect(result.value!.mapper_dir).to eq(
+          File.join(fixtures_base, "untangler", "data", "mappers",
+            "community_profiles", "8_1_1", "anthro")
+        )
+      end
     end
   end
 

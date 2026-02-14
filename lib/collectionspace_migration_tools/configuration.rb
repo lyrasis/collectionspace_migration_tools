@@ -73,7 +73,9 @@ module CollectionspaceMigrationTools
       unless mode == :check
         if client_path
           instance = yield CMT::Parse::YamlConfig.call(client_path)
-          @client = yield CMT::Config::Client.call(hash: instance[:client])
+          @client = yield CMT::Config::Client.call(
+            hash: instance[:client], context: @system
+          )
 
           if @client.cs_app_version
             @system.cs_app_version = @client.cs_app_version
