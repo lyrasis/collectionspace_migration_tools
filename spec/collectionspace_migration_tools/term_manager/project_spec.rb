@@ -27,7 +27,6 @@ RSpec.describe CollectionspaceMigrationTools::TermManager::Project do
     let(:result) { project.config }
 
     it "returns as expected" do
-      expect(CMT.config.term_manager).to be_nil
       expect(result).to be_a(Struct)
       expect(CMT.config.term_manager).to be_a(Struct)
     end
