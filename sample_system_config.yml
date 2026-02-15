@@ -1,4 +1,6 @@
 # Path to the directory that will contain your per-instance client config files
+# WARNING: Your `client_config_dir` must be in a secure location and must not
+#   be made public via version control or other methods.
 client_config_dir: ~/.config/collectionspace_migration_tools/clients
 
 # Path to file that will hold the name of the client config you are currently
