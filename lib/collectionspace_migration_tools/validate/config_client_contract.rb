@@ -72,8 +72,7 @@ module CollectionspaceMigrationTools
       end
 
       rule(:profile) do
-        ok = %w[anthro bonsai botgarden core fcart herbarium lhmc materials ohc
-          omca publicart]
+        ok = CMT::KNOWN_CS_PROFILES
         unless ok.any?(value)
           key.failure("must be one of: #{ok.join(", ")}")
         end
