@@ -48,15 +48,14 @@ class Config < Thor
   def show
     mode = options[:verbose] ? :prod : :check
     config = CMT::Configuration.call(mode: mode)
+    if config.client.nil?
+      puts "No client config found. Try doing:\n"\
+        "  thor config switch {yourconfigname}. "
+      exit(1)
+    end
 
     if options[:verbose]
-      if config.client.nil?
-        puts "No client config found. Try doing:\n"\
-          "  thor config switch {yourconfigname}. "
-        exit(1)
-      else
-        pp(config)
-      end
+      pp(config)
     else
       puts config.current_client
     end
