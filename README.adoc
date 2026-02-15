@@ -39,10 +39,11 @@ See doc/decisions.adoc for more info/background on some of the decisions made
 * The Ruby version indicated in the .ruby-version file
 * Docker and docker-compose.
 ** Running the required docker-compose command will by default set up two instances of Redis on ports 6380 and 6381. The port numbers used are configurable as https://github.com/lyrasis/collectionspace_migration_tools#redis-config[described below]
-* The user of this tool will have set up the Github and AWS CLI as detailed in https://github.com/lyrasis/data-migration-docs/tree/main/general#tech-setup[our team technical documentation].
-* For each CS instance this tool will be used to manipulate:
-** The user of this tool must be able to connect directly to the CollectionSpace database and perform read-only/select queries. Should be handled by correct assignment of user to the AWS MigrationsRole by Hosting team.
-** If you plan to do batch ingests, there must be an AWS S3 bucket (Fast Import Bucket) set up for ingesting into the instance, and the user of this tool must have permission to add and delete objects to that bucket, as well as list objects in the bucket. Should be handled by correct assignment of user to the AWS MigrationsRole by Hosting team.
+* Set up the Github CLI as detailed in the tech setup instructions in https://github.com/lyrasis/data-migration-docs[our team technical documentation], _*and be authenticated via the CLI*_ as instructed there.
+* Set up AWS credentials and CLI and pass the setup check as detailed in the tech setup instructions in https://github.com/lyrasis/data-migration-docs[our team technical documentation].
+* Set up bastion access as detailed in the tech setup instructions in https://github.com/lyrasis/data-migration-docs[our team technical documentation]
+* *To run batch ingests from CSV data*:
+** There must be an Fast Import Bucket set up for the site you are ingesting into. The command to list existing Fast Import Buckets can be found https://github.com/lyrasis/data-migration-docs/tree/main/collectionspace#list-existing-fast-importer-buckets[in our tech docs].
 
 
 == One-time setup
@@ -52,6 +53,7 @@ To avoid having to prepend `thor`, `rspec` and other commands with `bundle exec`
 If you do not do this step, and running a command you see in the documentation fails, try prepending `bundle exec ` to the command.
 
 === Redis config
+
 This should "just work" without you having to do anything, but you might want to change it if the ports being used for Redis conflict with something you use for other work.
 
 If you want to change the Redis ports, you need to update them in two places:
@@ -60,6 +62,12 @@ If you want to change the Redis ports, you need to update them in two places:
 - the `./redis.yml` file (which tells the application which port/Redis instance to use for storing RefNames vs. CSIDs)
 
 Nothing in `./redis.yml` is sensitive, as it's all just on your local machine.
+
+=== Clone cspace-config-untangler to your machine
+
+Clone the repository from https://github.com/collectionspace/cspace-config-untangler.
+
+You will need the path to the local copy of this repository for setting up your system config in the next step.
 
 === System config
 
@@ -99,27 +107,31 @@ TIP: If you are doing breakpoint-based debugging on any parallelized code, set b
 
 == Per-instance setup
 
-Use the commented `sample_client_config.yml` as an example or starting point.
+You will create per-instance client/site .yml configuration files in the directory you set as `client_config_dir` setting in your system config file.
 
 See https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/client_config_management.adoc[client config management documentation] for more details.
 
-You will need to have:
+== Basic tests of your setup
 
-* The site name for the instance. These can be found via https://github.com/dts-hosting/cspace_hosted_instance_access[CHIA]. Do `bin/console`, and then `CHIA.site_names` to get a list of current site names.
-* Record mappers for the instance, downloaded from https://github.com/collectionspace/cspace-config-untangler/tree/main/data/mappers/[the cspace-config-untangler repo]. Instances without their own UI plugin use community-supported profile mappers for the latest release of CollectionSpace. Mappers for hosted clients with their own UI plugins are in Lyrasis-hosted profiles.
-* The domain profile and profile version used by the site. These should match the file name prefixes of the mappers for the instance.
-* If planning to ingest into the instance, the name of the S3 Fast Import bucket for the CS instance (currently we need to request that a bucket gets set up by creating a new Zendesk ticket and assigning it to the main CollectionSpace support person in Hosting)
-* If planning to map data into CS XML, an unused Redis db number. Do `thor config:redis_dbs` to see which Redis dbs are already in use.
+Once you have done the one-time config and set up at least one instance config, you can verify that your AWS access works by doing the following in this repo's base directory.
 
+First `cd` into the base directory of this application, e.g. `~/code/collectionspace_migration_tools` or whatever you named the folder you cloned this repo into.
 
-== Test your setup
-
-Once you have done the one-time config and set up at least one instance, you can verify that your AWS access works by doing the following in this repo's base directory:
+The following assumes the instance/client config file you created in your `client_config_dir` is named `myclient.yml`.
 
 [source,bash]
 ----
-thor config switch #{instance config filename without .yml on the end}
+thor config switch myclient
+----
 
+If you get an error for that command, it most likely indicates some problem with your config file(s) that needs to be addressed.
+If the error starts with `CollectionspaceMigrationTools::Config::System validation error(s)`, the problem is in your system config.
+If the error starts with `CollectionspaceMigrationTools::Config::Client validation error(s)`, the problem is in your client/instance config.
+
+Once you are able to switch to your config, try:
+
+[source,bash]
+----
 bin/console
 CMT::Build::S3Client.call
 ----
@@ -127,6 +139,15 @@ CMT::Build::S3Client.call
 If you get `Success(#<Aws::S3::Client>)`, good. If you get a `Failure`, something is not right.
 
 == Troubleshooting your setup
+
+=== Config errors
+
+See the following locations for more information, depending on whether your System or Client config is getting an error:
+
+* Comments in `sample_system_config.yml`
+* Comments in `sample_client_config.yml`
+* https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/client_config_management.adoc[Client config management documentation]
+* If you can't figure it out, DM Kristina for assistance
 
 === Cannot make database connection with this tool, though you can do so manually
 
