@@ -14,7 +14,7 @@ module CollectionspaceMigrationTools
         required(:page_size).filled(:integer)
         required(:profile).filled(:string)
         optional(:cs_app_version).maybe(:string)
-        required(:profile_version).filled(:string)
+        optional(:profile_version).maybe(:string)
         required(:base_dir).filled(:string)
         optional(:ingest_dir).filled(:string)
         optional(:batch_csv).maybe(:string)
@@ -80,6 +80,8 @@ module CollectionspaceMigrationTools
       end
 
       rule(:profile_version) do
+        next unless value
+
         unless /^(\d+-){2,}\d+(?:-rc\d+|)$/.match?(value)
           key.failure("must follow pattern: number hyphen number hyphen number")
         end

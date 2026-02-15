@@ -28,7 +28,7 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
     end
 
     let(:config_hash) do
-      h = valid_config_hash[:client]
+      h = valid_config_hash[:client].dup
       h.delete(:mapper_dir)
       h
     end
@@ -41,7 +41,7 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
         CMT::Config::System.call(hash: h).value!
       end
 
-      it "returns Success" do
+      it "returns Success by looking up in untangler dir" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!.mapper_dir).to eq(
           File.join(fixtures_base, "untangler", "data", "mappers",
@@ -52,13 +52,13 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
 
     context "when untangler has release prefix" do
       let(:sysconfig) do
-        path = ENV["COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG"]
+        path = File.join(fixtures_base, "sys_config_w_term_manager.yml")
         h = CMT::Parse::YamlConfig.call(path).value!
         h[:cs_app_version] = "8_2"
         CMT::Config::System.call(hash: h).value!
       end
 
-      it "returns Success" do
+      it "returns Success by looking up in untangler dir" do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!.mapper_dir).to eq(
           File.join(fixtures_base, "untangler", "data", "mappers",
@@ -69,7 +69,7 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
 
     context "when mapper_dir cannot be found" do
       let(:sysconfig) do
-        path = ENV["COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG"]
+        path = File.join(fixtures_base, "sys_config_w_term_manager.yml")
         h = CMT::Parse::YamlConfig.call(path).value!
         h[:cs_app_version] = "6_1"
         CMT::Config::System.call(hash: h).value!
@@ -92,7 +92,7 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
       end
 
       let(:sysconfig) do
-        path = ENV["COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG"]
+        path = File.join(fixtures_base, "sys_config_w_term_manager.yml")
         h = CMT::Parse::YamlConfig.call(path).value!
         h[:cs_app_version] = "8_2"
         CMT::Config::System.call(hash: h).value!
