@@ -17,7 +17,8 @@ module CollectionspaceMigrationTools
           media_with_blob_upload_delay: 500,
           max_media_upload_threads: 5,
           archive_batches: true,
-          batch_archive_filename: "batches_archive.csv"
+          batch_archive_filename: "batches_archive.csv",
+          redis_db_number: 0
         }
         @validator = CMT::Validate::ConfigClientContract
         @pathvals = %i[base_dir batch_csv batch_config_path]
