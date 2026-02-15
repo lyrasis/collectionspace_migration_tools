@@ -10,6 +10,12 @@ require "zeitwerk"
 module CollectionspaceMigrationTools
   ::CMT = CollectionspaceMigrationTools
 
+  # The CollectionSpace community-supported domain profiles and custom UI
+  #   profiles known by this application
+  KNOWN_CS_PROFILES = %w[anthro bonsai botgarden core fcart herbarium lhmc
+    materials publicart
+    ohc omca]
+
   at_exit do
     if CMT.connection&.open?
       CMT.connection.close
