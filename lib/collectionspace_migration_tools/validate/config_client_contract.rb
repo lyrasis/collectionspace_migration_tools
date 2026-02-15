@@ -41,6 +41,7 @@ module CollectionspaceMigrationTools
           path = if ["~", "/"].any? { |char| value.start_with?(char) }
             File.expand_path(value)
           else
+            next unless values[:base_dir]
             File.join(File.expand_path(values[:base_dir]), value)
           end
           unless Dir.exist?(path)
