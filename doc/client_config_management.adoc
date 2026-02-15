@@ -14,32 +14,161 @@ endif::[]
 
 toc::[]
 
+== Creating a client config
+
+You will create client config files in the directory you specified in the `client_config_dir` setting of your system config.
+
+TIP: The config files must use the `.yml` file extension, not `.yaml` or anything else. The filenames should not contain spaces.
+
+TIP: You will need separate configs for `myproject_staging.yml` and `myproject_prod.yml`
+
+Use the commented `sample_client_config.yml` as an example or starting point.
+
+The required basic settings for a typical Lyrasis-hosted client config are:
+
+* base_dir
+* profile
+* site_name
+* redis_db_number (for active migrations)
+* fast_import_bucket (for active migrations)
+* media_bucket (for active migrations involving media file ingest)
+
+=== Basic settings
+
+==== `base_dir`
+
+WARNING: This directory must exist when you try to run CMT with the config.
+
+This will be the base *data* directory CMT uses for the project.
+
+When you are actively working on a migration project for the site using the typical kiba-extend project workflow, you will want to set this to the `mig` subdirectory of the overall data directory of the project, e.g. `~/data/csu/campus/mig`
+
+NOTE: All other client "dir" settings can be specified as full, absolute paths, or as relative paths. If specified as relative paths, CMT will assume `base_dir` is the starting point for the path.
+
+==== `profile`
+
+The value must be in the current KNOWN_CS_PROFILES list that can be found in `/lib/collectionspace_migration_tools.rb`.
+
+This value is used to identify the record types available for a site (`thor rt all`) or to find record mappers for batch mapping of CSV data to CS XML records (`thor batch map ...` or `thor batches map`)
+
+If you do not need to do those operations for a site, you can put any profile value in the config.
+
+Some assumptions made about the `profile` value:
+
+* If no `mapper_dir` is explicitly set in the config, the application will be able to find mappers for the client instance in: `#{system:cspace_config_untangler_dir}/data/mappers/#{system or client:cs_app_version with or without "release_" prefix}/#{profile}/`
+* Individual mapper file names follow the pattern: `#{client:profile}_#{client:profile_version}_#{recordtype}.json`
+These are conventions in how cspace-config-untangler writes out mappers.
+
+==== `site_name`
+
+REQUIRED for Lyrasis-hosted sites.
+
+NOT USED for non-Lyrasis-hosted sites.
+
+Must be a value present in `CHIA.site_names`, so that we can look up site URL and authentication credentials.
+
+==== `redis_db_number`
+
+REQUIRED IN SOME CIRCUMSTANCES. See below for explanation.
+
+If populated, enter a number from 1 to 15.
+
+Redis is only used for caching data values from a site locally for use when building CSXML.
+
+You don't need to set this if:
+
+* You are not performing map commands to create CSXML
+* You are perfoming map commands, but you always clear and refresh the caches before each run of a map command. See the `auto_refresh_cache_before_mapping` and `clear_cache_before_refresh` settings.
+
+For very large migrations where it takes a long time to populate the caches, you may end up setting `auto_refresh_cache_before_mapping` and/or `clear_cache_before_refresh` to false.
+If you do this, or use the command line flags to turn this behavior off per-run, it is critical that you are using a separate database for the project you are working on.
+
+The application does not enforce uniqueness of `redis_db_number` values across your client configs, so check `thor config redis_dbs` to see what numbers are in use.
+
+NOTE: If you don't set this manually, it defaults to `0`.
+
+==== `fast_import_bucket`
+
+REQUIRED for projects using `batch upload` or `batches upload` commands to ingest data into CollectionSpace
+
+The command to list existing Fast Import Buckets can be found https://github.com/lyrasis/data-migration-docs/tree/main/collectionspace#list-existing-fast-importer-buckets[in our tech docs].
+
+==== `media_bucket`
+
+REQUIRED for migration projects that involve ingesting media files.
+
+Hosting/infrastructure will set this up for the client to upload files into, and will provide you with the bucket name.
+
+==== `ingest_dir`
+
+OPTIONAL/OVERRIDEABLE
+Specifies the directory in which the application will look for a filename given as `--csv` value on `thor batch add` command.
+
+By default, this is set to `#{base_dir}/ingest`.
+
+If you give the value `myingestfiles`, the application will look in `#{base_dir}/myingestfiles`
+
+If you give the value `~/some/other/directory`, the application will look there, without bringing your `base_dir` into it.
+
+=== Settings related to special site situations
+
+These situations include:
+
+Site is not hosted by Lyrasis:: special connection settings required
+Site has a custom UI profile, is on a different version of CollectionSpace than other hosted clients, etc.:: special settings for locating and identifying record mappers required
+
+The first situation usually implies the second is also in play.
+
+Some Lyrasis-hosted clients (OHC, UCB sites) are in the second situation.
+
+==== Connection settings
+
+If a site is not hosted by Lyrasis, we can't look up site and database credentials or other information via CHIA by `site_name`.
+
+The typical `site_name` setting is replaced by the following settings:
+
+`base_uri`:: The `cspace-services` URL for the site
+`username`:: used to log in to CollectionSpace application
+`password`:: used to log in to CollectionSpace application
+`db_host`:: for connecting to database
+`db_username`:: for connecting to database
+`db_password`:: for connecting to database
+`db_name`:: the `instancename_instancename` database for site
+
+==== Record mapper idenfication/location settings
+
+todo!
+
+== Working with configs
+
 TIP: Do `thor config` to see all config-related commands. For details on a specific command, do `thor config help THECOMMAND`.
 
-Client/project-specific configuration is stored in .yml files with the directory set as `client_config_dir` in your `system_config.yml`.
 
-TIP: The config files must use the `.yml` file extension, not `.yaml` or anything else.
+=== What configs do you have?
 
-WARNING: Your `client_config_dir` must be in a secure location and must not be made public via version control or other methods.
+[source,bash]
+----
+thor config all
+----
 
-== Creating a new client config
+=== Start working with a given config
 
-For each CS instance you need to work with, you need to create a client config .yml file inside your `client_config_dir`.
+`thor config switch configname`
 
-Copy `sample_client_config.yml` into `./config` with a name clearly identifying your instance (e.g. anthro_dev.yml, clientname_staging.yml, clientname_prod.yml) and edit it.
+NOTE: The name of the active config is stored in a plain text file at the location specified in the `config_name_file` setting of your system config. It persists there until you change it.
 
-`sample_client_config.yml` is self-documenting.
+=== Active config
 
-If you want to start working with the new config, run `thor config:switch clientname_staging`.
-
-== Active config
-
-Do `thor config:show` to show the name of the active config
+Do `thor config:show` to show the name of the active config, without pulling all credentials, etc.
 
 Do `thor config:show -v` to print the full config to screen.
 
-== Updating a client config
+== Making changes to a client config
+
+Edit and save the config file.
+
+If you want to make sure you changes are valid after saving, do `thor config switch editedconfigname`.
+This works even if you edited the active config.
 
 Each time you run a command, the active config is read in from its .yml file.
-
-As of v3.0.0, you no longer need to `thor config switch` after making changes.
+You don't have to run `thor config switch` in order for changes to be picked up, but it may be easier to remember and fix a bad change if you discover it right after saving by running `thor config switch`.
