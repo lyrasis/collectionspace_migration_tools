@@ -14,6 +14,12 @@ endif::[]
 
 == Unreleased
 
+== 7.0.0 (2026-02-15)
+
+=== Breaking
+
+- Simplifly client config by pushing some things to system config and "automagically" figuring out settings for common setup
+
 == 6.0.1 (2026-02-03)
 
 === Bugfix
