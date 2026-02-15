@@ -83,6 +83,59 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
       end
     end
 
+    context "without optional profile_version" do
+      let(:config_hash) do
+        h = valid_config_hash[:client].dup
+        h.delete(:mapper_dir)
+        h.delete(:profile_version)
+        h
+      end
+
+      context "when mappers in untangler have expected format" do
+        let(:sysconfig) do
+          path = File.join(fixtures_base, "sys_config_w_term_manager.yml")
+          h = CMT::Parse::YamlConfig.call(path).value!
+          h[:cs_app_version] = "8_1_1"
+          CMT::Config::System.call(hash: h).value!
+        end
+
+        it "returns Success" do
+          expect(result).to be_a(Dry::Monads::Success)
+          expect(result.value!.profile_version).to eq("9-0-0")
+        end
+      end
+
+      context "when mappers in untangler have unexpected format" do
+        let(:sysconfig) do
+          path = File.join(fixtures_base, "sys_config_w_term_manager.yml")
+          h = CMT::Parse::YamlConfig.call(path).value!
+          h[:cs_app_version] = "8_2"
+          CMT::Config::System.call(hash: h).value!
+        end
+
+        it "returns Failure" do
+          expect(result).to be_a(Dry::Monads::Failure)
+          expect(result.failure).to match(/profile_version must follow pattern/)
+        end
+      end
+
+      context "when mapper_dir does not exist" do
+        let(:sysconfig) do
+          path = File.join(fixtures_base, "sys_config_w_term_manager.yml")
+          h = CMT::Parse::YamlConfig.call(path).value!
+          h[:cs_app_version] = "27_8"
+          CMT::Config::System.call(hash: h).value!
+        end
+
+        it "returns Failure" do
+          expect(result).to be_a(Dry::Monads::Failure)
+          expect(result.failure).to match(
+            /mapper_dir is missing.*profile_version is missing/
+          )
+        end
+      end
+    end
+
     context "when cs_app_version overridden in client config" do
       let(:config_hash) do
         h = valid_config_hash[:client]
@@ -164,6 +217,7 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
 
       allow(CHIA).to receive(:site_for) { mock_site }
       expect(result).to be_a(Dry::Monads::Success)
+      expect(result.value!.profile_version).to eq("9-0-0")
     end
   end
 end
