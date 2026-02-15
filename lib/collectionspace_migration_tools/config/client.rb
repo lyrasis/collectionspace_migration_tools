@@ -29,6 +29,7 @@ module CollectionspaceMigrationTools
       def pre_manipulate
         add_option(:cs_app_version, nil)
         add_option(:mapper_dir, set_mapper_dir)
+        add_option(:profile_version, set_profile_version)
         return unless hosted?
 
         site = CHIA.site_for(hash.dig(:site_name))
@@ -67,6 +68,12 @@ module CollectionspaceMigrationTools
             "community_profiles", v, hash[:profile]].compact
           File.join(*segments)
         end.find { |path| Dir.exist?(path) }
+      end
+
+      def set_profile_version
+        return unless hash[:mapper_dir] && Dir.exist?(hash[:mapper_dir])
+
+        Dir.new(hash[:mapper_dir]).children.first.split("_")[1]
       end
 
       def set_log_group_name
