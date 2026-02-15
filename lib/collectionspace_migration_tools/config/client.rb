@@ -49,7 +49,7 @@ module CollectionspaceMigrationTools
         add_option(:batch_config_path, nil)
         add_option(:fast_import_bucket, nil)
         set_log_group_name
-        add_option(:batch_csv, File.join(hash[:base_dir], "batches.csv"))
+        add_option(:batch_csv, set_batch_csv)
         add_media_blob_delay
         add_option(:db_host, nil)
         add_option(:db_username, nil)
@@ -83,6 +83,12 @@ module CollectionspaceMigrationTools
             "/aws/lambda/#{hash[:fast_import_bucket]}"
           )
         end
+      end
+
+      def set_batch_csv
+        return unless hash[:base_dir]
+
+        File.join(hash[:base_dir], "batches.csv")
       end
 
       def add_media_blob_delay

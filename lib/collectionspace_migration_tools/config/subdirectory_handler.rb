@@ -38,7 +38,7 @@ module CollectionspaceMigrationTools
       # @param setting [Symbol] the setting/method containing the subdirectory
       #   value
       def initialize(config:, setting:)
-        return unless config[setting]
+        return unless config[setting] && config[:base_dir]
 
         @config = config
         @setting = setting
