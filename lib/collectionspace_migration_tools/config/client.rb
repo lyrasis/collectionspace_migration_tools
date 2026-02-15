@@ -30,6 +30,7 @@ module CollectionspaceMigrationTools
         add_option(:cs_app_version, nil)
         add_option(:mapper_dir, set_mapper_dir)
         add_option(:profile_version, set_profile_version)
+        add_option(:ingest_dir, "ingest")
         return unless hosted?
 
         site = CHIA.site_for(hash.dig(:site_name))
