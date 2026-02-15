@@ -3,7 +3,7 @@
 require_relative "../../spec_helper"
 
 RSpec.describe CollectionspaceMigrationTools::Validate::ConfigClientContract do
-  let(:valid_config) { valid_config_hash[:client] }
+  let(:valid_config) { valid_config_hash }
   let(:result) { CMT::Config::Client.call(hash: client_config) }
   # let(:result) { described_class.new.call(client_config).to_monad }
 

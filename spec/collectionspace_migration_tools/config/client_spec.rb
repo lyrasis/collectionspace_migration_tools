@@ -10,7 +10,7 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
   let(:sysconfig) { nil }
 
   context "when valid config" do
-    let(:config_hash) { valid_config_hash[:client] }
+    let(:config_hash) { valid_config_hash }
 
     it "returns Success" do
       expect(result).to be_a(Dry::Monads::Success)
@@ -28,7 +28,7 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
     end
 
     let(:config_hash) do
-      h = valid_config_hash[:client].dup
+      h = valid_config_hash.dup
       h.delete(:mapper_dir)
       h
     end
@@ -85,7 +85,7 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
 
     context "without optional profile_version" do
       let(:config_hash) do
-        h = valid_config_hash[:client].dup
+        h = valid_config_hash.dup
         h.delete(:mapper_dir)
         h.delete(:profile_version)
         h
@@ -138,7 +138,7 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
 
     context "when cs_app_version overridden in client config" do
       let(:config_hash) do
-        h = valid_config_hash[:client]
+        h = valid_config_hash
         h.delete(:mapper_dir)
         h[:cs_app_version] = "8_1_1"
         h
@@ -163,7 +163,7 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
 
   context "when optional cs_app_version given" do
     let(:config_hash) do
-      h = valid_config_hash[:client]
+      h = valid_config_hash
       h.merge!({cs_app_version: "1_2"})
     end
 
@@ -175,7 +175,7 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
 
   context "when malformed optional cs_app_version given" do
     let(:config_hash) do
-      h = valid_config_hash[:client]
+      h = valid_config_hash
       h.merge!({cs_app_version: "1.2"})
     end
 
@@ -202,7 +202,7 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
 
     let(:config_hash) do
       path = File.join(fixtures_base, "hosted_client_config_valid.yml")
-      CMT::Parse::YamlConfig.call(path).value![:client]
+      CMT::Parse::YamlConfig.call(path).value!
     end
 
     it "returns Success" do

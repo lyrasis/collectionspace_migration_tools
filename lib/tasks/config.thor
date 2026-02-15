@@ -29,7 +29,7 @@ class Config < Thor
         fails += 1
       else
         cfg = config.value!
-        vals[File.basename(path, ".yml")] = cfg[:client][:redis_db_number]
+        vals[File.basename(path, ".yml")] = cfg[:redis_db_number] || 0
       end
     end
 

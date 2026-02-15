@@ -1,23 +1,22 @@
-client:
-  base_uri: https://core.dev.collectionspace.org/cspace-services
-  username: admin@core.collectionspace.org
-  password: Administrator
-  db_host: db.domain.org
-  db_username: admin
-  db_password: yourdbpassword
-  db_name: examplesite_examplesite
-  redis_db_number: 3
-  cs_app_version: "7_0"
-  profile: anthro
-  profile_version: 5-0-0
-  base_dir: fixturesdir/data
-  batch_csv: fixturesdir/data/batch_tracker.csv
-  mapper_dir: record_mappers
-  batch_dir: batch_data
-  batch_config_path: fixturesdir/client_batch_config.json
-  auto_refresh_cache_before_mapping: false
-  clear_cache_before_refresh: false
-  csv_delimiter: ","
-  fast_import_bucket: "bucket_name"
-  s3_delimiter: "|"
-  media_with_blob_upload_delay: 500
+base_uri: https://core.dev.collectionspace.org/cspace-services
+username: admin@core.collectionspace.org
+password: Administrator
+db_host: db.domain.org
+db_username: admin
+db_password: yourdbpassword
+db_name: examplesite_examplesite
+redis_db_number: 3
+cs_app_version: "7_0"
+profile: anthro
+profile_version: 5-0-0
+base_dir: fixturesdir/data
+batch_csv: fixturesdir/data/batch_tracker.csv
+mapper_dir: record_mappers
+batch_dir: batch_data
+batch_config_path: fixturesdir/client_batch_config.json
+auto_refresh_cache_before_mapping: false
+clear_cache_before_refresh: false
+csv_delimiter: ","
+fast_import_bucket: "bucket_name"
+s3_delimiter: "|"
+media_with_blob_upload_delay: 500
