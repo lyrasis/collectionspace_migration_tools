@@ -32,7 +32,7 @@ module CollectionspaceMigrationTools
           result = yield(paths(c))
         end
 
-        Success(result)
+        Success(result.sort)
       end
 
       private
