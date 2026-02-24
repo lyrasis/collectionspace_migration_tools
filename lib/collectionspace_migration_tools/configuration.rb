@@ -33,6 +33,11 @@ module CollectionspaceMigrationTools
 
     attr_reader :client, :database, :system, :redis, :term_manager
 
+    # @param client [NilClass, String] path to a client config; If nil, builds
+    #   path from config named in config_name_file
+    # @param system [String] path to system config
+    # @param redis [String] path to redis config
+    # @param mode [:prod, :check]
     def initialize(
       client: nil,
       system: self.class.config_file_path(:system),
