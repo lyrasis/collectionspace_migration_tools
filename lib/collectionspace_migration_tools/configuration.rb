@@ -7,27 +7,9 @@ module CollectionspaceMigrationTools
     include Dry::Monads[:result]
     include Dry::Monads::Do.for(:add_config, :derive_config)
 
-    DEFAULT_FILE_OR_DIR_NAMES = {
-      system: "system_config.yml",
-      redis: "redis.yml",
-      term_manager: "term_manager"
-    }
     class << self
       def call(...)
         new(...).call
-      end
-
-      def config_file_path(type)
-        envkey = "COLLECTIONSPACE_MIGRATION_TOOLS_#{type.upcase}_CONFIG"
-        envpath = ENV[envkey]
-        return envpath if envpath
-
-        name = DEFAULT_FILE_OR_DIR_NAMES[type]
-        dotfile = File.join(File.expand_path("~"), ".config",
-          "collectionspace_migration_tools", name)
-        return dotfile if File.exist?(dotfile)
-
-        File.join(Bundler.root, name)
       end
     end
 
@@ -40,8 +22,8 @@ module CollectionspaceMigrationTools
     # @param mode [:prod, :check]
     def initialize(
       client: nil,
-      system: self.class.config_file_path(:system),
-      redis: self.class.config_file_path(:redis),
+      system: CMT::Config.file_path(:system),
+      redis: CMT::Config.file_path(:redis),
       mode: :prod
     )
       @client = client

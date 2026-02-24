@@ -3,7 +3,7 @@
 module CollectionspaceMigrationTools
   module Config
     class System < CMT::Config::Section
-      DEFAULT_PATH = CMT::Configuration.config_file_path(:system)
+      DEFAULT_PATH = CMT::Config.file_path(:system)
 
       # @param path [String]
       def initialize(path: DEFAULT_PATH, hash: nil)

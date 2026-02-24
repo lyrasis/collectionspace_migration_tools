@@ -3,7 +3,7 @@
 module CollectionspaceMigrationTools
   module Config
     class TermManager < CMT::Config::Section
-      DEFAULT_PATH = CMT::Configuration.config_file_path(:term_manager)
+      DEFAULT_PATH = CMT::Config.file_path(:term_manager)
 
       def initialize(hash:)
         super

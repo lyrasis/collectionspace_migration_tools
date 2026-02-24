@@ -3,7 +3,7 @@
 module CollectionspaceMigrationTools
   module Config
     class Redis < CMT::Config::Section
-      DEFAULT_PATH = CMT::Configuration.config_file_path(:redis)
+      DEFAULT_PATH = CMT::Config.file_path(:redis)
 
       # @param path [String]
       def initialize(path: DEFAULT_PATH, hash: nil)
