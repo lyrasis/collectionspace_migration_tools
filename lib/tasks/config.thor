@@ -48,18 +48,25 @@ class Config < Thor
   def show
     mode = options[:verbose] ? :prod : :check
     config = CMT::Configuration.call(mode: mode)
-    if config.client.nil?
-      puts "No client config found. Try doing:\n"\
-        "  thor config switch {yourconfigname}. "
-      exit(1)
-    end
 
     if options[:verbose]
-      pp(config)
+      verbose_config_show(config)
     else
-      puts config.current_client
+      non_verbose_config_show(config)
     end
-    exit(0)
+
+    # if config.client.nil?
+    #   puts "No client config found. Try doing:\n"\
+    #     "  thor config switch {yourconfigname}. "
+    #   exit(1)
+    # end
+
+    # if options[:verbose]
+    #   pp(config)
+    # else
+    #   puts config.current_client
+    # end
+    # exit(0)
   end
 
   desc "switch CONFIG_NAME_WITHOUT_EXTENSION",
@@ -80,6 +87,30 @@ class Config < Thor
   end
 
   no_commands do
+    def non_verbose_config_show(config)
+      CMT::Config.current_client_config_name(config).either(
+        ->(success) {
+          puts success
+          exit(0)
+        },
+        ->(failure) {
+          puts failure
+          exit(1)
+        }
+      )
+    end
+
+    def verbose_config_show(config)
+      if config.client
+        pp(config)
+        exit(0)
+      else
+        puts "No client config found. Try doing:\n"\
+          "  thor config switch {yourconfigname}. "
+        exit(1)
+      end
+    end
+
     def config_dir = CMT.config.system.client_config_dir
 
     def get_and_parse_configs
