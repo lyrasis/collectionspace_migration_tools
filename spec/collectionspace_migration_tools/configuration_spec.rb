@@ -43,15 +43,12 @@ RSpec.describe CollectionspaceMigrationTools::Configuration do
 
   context "with valid config with optional settings" do
     let(:config_file) do
-      File.join(Bundler.root, "spec", "support", "fixtures",
-        "config_valid_with_optional.yml")
+      File.join(fixtures_base, "config_valid_with_optional.yml")
     end
 
     it "returns Configuration object" do
-      batch_cfg = File.expand_path(
-        "~/code/cs/migration_tools/spec/support/fixtures/"\
-          "client_batch_config.json"
-      )
+      batch_cfg = File.join(fixtures_base, "client_batch_config.json")
+
       expect(result.client.batch_config_path).to eq(batch_cfg)
       expect(result.client.batch_csv).to eq(File.join(result.client.base_dir,
         "batch_tracker.csv"))
