@@ -14,6 +14,8 @@ endif::[]
 
 == Unreleased
 
+* Skip tunnel when creating a db connection if `CMT.config.client.db_tunnel_skip` = `true`
+
 == 7.0.1 (2026-02-25)
 
 - Fix `thor config show` error described in https://github.com/lyrasis/collectionspace_migration_tools/issues/113[#113]
