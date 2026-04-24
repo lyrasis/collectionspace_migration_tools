@@ -50,6 +50,7 @@ ingest_dir: ingest
 # db_username: admin
 # db_password: yourdbpassword
 # db_name: examplesite_examplesite
+# db_tunnel_skip: true
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 # Special settings for locating/identifying record mappers
