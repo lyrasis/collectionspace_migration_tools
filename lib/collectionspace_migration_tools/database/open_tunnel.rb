@@ -11,6 +11,12 @@ module CollectionspaceMigrationTools
 
         # @param site_name [String]
         def call(site_name = nil)
+          if CMT.config.client.db_tunnel_skip
+            tunnel_obj = CMT::NoTunnel.new
+            CMT.set_tunnel(tunnel_obj)
+            return Success(tunnel_obj)
+          end
+
           tunnel_command = CMT::Database.tunnel_command(site_name)
           check_tunnel = CMT.tunnel
 
