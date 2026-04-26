@@ -66,6 +66,7 @@ module CollectionspaceMigrationTools
         .merge({"blob" => "blobs"})
     end
 
+    # @return [Array<String>]
     def mappable
       @mappable ||= Dir.new(CMT.config.client.mapper_dir)
         .children
