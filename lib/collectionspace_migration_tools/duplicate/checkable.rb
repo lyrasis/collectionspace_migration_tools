@@ -17,8 +17,6 @@ module CollectionspaceMigrationTools
 
         puts "\nQuerying for #{name} duplicates..."
         rows = yield(CMT::Database::ExecuteQuery.call(query))
-        CMT.connection&.close
-        CMT.tunnel&.close
 
         Success(rows)
       end
