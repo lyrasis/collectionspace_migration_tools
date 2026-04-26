@@ -18,6 +18,11 @@ class Duplicates < Thor
         }
       )
   end
+
+  desc "check_all", "checks all rectypes for duplicates, and writes any "\
+    "found to `base_dir/duplicate_reports`"
+  def check_all
+    CMT::Duplicate.check_all_and_write_reports
   end
 
   desc "delete RECTYPE",
