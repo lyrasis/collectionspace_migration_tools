@@ -9,16 +9,15 @@ class Duplicates < Thor
 
   desc "check RECTYPE", "check rectype for duplicates"
   def check(rectype)
-    do_check(rectype).either(
-      ->(results) {
-        report_check(results)
-        exit(0)
-      },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
+    CMT::Duplicate::Checker.call(rectype: rectype)
+      .either(
+        ->(results) { exit(0) },
+        ->(failure) {
+          puts failure
+          exit(1)
+        }
+      )
+  end
   end
 
   desc "delete RECTYPE",
@@ -28,22 +27,5 @@ class Duplicates < Thor
       ->(success) { exit(0) },
       ->(failure) { puts failure, exit(1) }
     )
-  end
-
-  no_commands do
-    def do_check(rectype)
-      obj = yield(CMT::RecordTypes.to_obj(rectype))
-      unless obj.respond_to?(:duplicates)
-        return Failure("#{rectype} is not duplicate-checkable")
-      end
-
-      results = yield(obj.duplicates)
-
-      Success(results)
-    end
-
-    def report_check(results)
-      puts "#{results.num_tuples} duplicates"
-    end
   end
 end
