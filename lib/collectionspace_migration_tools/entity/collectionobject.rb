@@ -51,6 +51,29 @@ module CollectionspaceMigrationTools
         Success(query)
       end
 
+      def all_duplicates_query
+        query = <<~SQL
+          with dup as (
+          select cc.objectnumber
+          from collectionobjects_common cc
+          inner join misc on cc.id = misc.id
+          where misc.lifecyclestate != 'deleted'
+          group by cc.objectnumber
+          having count(cc.objectnumber)>1
+          )
+
+          select cc.objectnumber,
+          hier.name as csid
+          from collectionobjects_common cc
+          inner join dup on dup.objectnumber = cc.objectnumber
+          inner join misc on cc.id = misc.id and misc.lifecyclestate != 'deleted'
+          inner join hierarchy hier on cc.id = hier.id
+          order by cc.objectnumber
+        SQL
+
+        Success(query)
+      end
+
       def all_csids_query
         query = <<~SQL
           select h.name as csid, '#{self}' as rectype

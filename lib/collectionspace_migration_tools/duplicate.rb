@@ -13,7 +13,7 @@ module CollectionspaceMigrationTools
       results = {}
       CMT::RecordTypes.mappable
         .each do |rt|
-          result = CMT::Duplicate::Checker.call(rectype: rt)
+          result = CMT::Duplicate::Checker.call(rectype: rt, mode: :all)
           results[rt] = result
           if result.failure?
             f = result.failure
