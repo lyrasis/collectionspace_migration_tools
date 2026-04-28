@@ -49,6 +49,31 @@ module CollectionspaceMigrationTools
         Success(query)
       end
 
+      def all_duplicates_query
+        return status if status.failure?
+
+        field = mapper.id_field
+
+        query = <<~SQL
+          with dup as(
+          select oap.#{field}
+          from #{mapper.base_namespace} oap
+          left join misc on oap.id = misc.id and misc.lifecyclestate != 'deleted'
+          group by oap.#{field}
+          having count(oap.#{field})>1
+          )
+          select oap.#{field},
+          hier.name as csid
+          from #{mapper.base_namespace} oap
+          inner join dup on dup.#{field} = oap.#{field}
+          inner join misc on oap.id = misc.id and misc.lifecyclestate != 'deleted'
+          inner join hierarchy hier on hier.id = oap.id
+          order by oap.#{field}
+        SQL
+
+        Success(query)
+      end
+
       def all_csids_query
         return status if status.failure?
 

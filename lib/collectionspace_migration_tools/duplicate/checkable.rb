@@ -9,11 +9,21 @@ module CollectionspaceMigrationTools
     #   - duplicates_query
     module Checkable
       include Dry::Monads[:result]
-      include Dry::Monads::Do.for(:duplicates)
+      include Dry::Monads::Do.for(:duplicates, :all_duplicates)
 
       def duplicates
         _status = yield(self)
         query = yield(duplicates_query)
+
+        puts "\nQuerying for #{name} duplicates..."
+        rows = yield(CMT::Database::ExecuteQuery.call(query))
+
+        Success(rows)
+      end
+
+      def all_duplicates
+        _status = yield(self)
+        query = yield(all_duplicates_query)
 
         puts "\nQuerying for #{name} duplicates..."
         rows = yield(CMT::Database::ExecuteQuery.call(query))

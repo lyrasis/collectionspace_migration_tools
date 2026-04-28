@@ -14,25 +14,34 @@ module CollectionspaceMigrationTools
         end
       end
 
-      def initialize(rectype:)
+      # @param rectype [String]
+      # @param mode [:single, :all]
+      def initialize(rectype:, mode: :single)
         @rectype = rectype
+        @mode = mode
       end
 
       def call
         obj = yield(CMT::RecordTypes.to_obj(rectype))
-        unless obj.respond_to?(:duplicates)
+        unless obj.respond_to?(check_method)
           errmsg = "#{rectype} is not duplicate-checkable"
           puts errmsg
           return Failure(errmsg)
         end
 
-        results = yield(obj.duplicates)
+        results = yield(obj.send(check_method))
         puts "#{results.num_tuples} duplicates"
 
         Success(results)
       end
 
       def to_monad = Success(self)
+
+      private
+
+      attr_reader :mode
+
+      def check_method = (mode == :single) ? :duplicates : :all_duplicates
     end
   end
 end

@@ -73,12 +73,17 @@ module CollectionspaceMigrationTools
         mapper.type
       end
 
+      # @return [String] like "citations_common"
       def db_term_table
         return status if status.failure?
 
         "#{mapper.document_name}_common"
       end
 
+      # Returns one termDisplayName of each duplicate id value
+      #
+      # mapper.db_term_group_table_name returns a string like
+      #   "citationtermgroup"
       def duplicates_query
         return status if status.failure?
 
@@ -106,6 +111,45 @@ module CollectionspaceMigrationTools
         Success(query)
       end
 
+      # Returns initial termDisplayName and CSID of each duplicate term
+      def all_duplicates_query
+        return status if status.failure?
+
+        query = <<~SQL
+          with auth_vocab_csid as (
+          select acv.id, h.name as csid, acv.shortidentifier from #{db_vocab_table} acv
+          inner join hierarchy h on acv.id = h.id
+          where acv.shortidentifier = '#{mapper.subtype}'
+          ),
+          terms as (
+          select h.parentid as id,
+          tg.termdisplayname,
+          ac.inauthority as authoritycsid
+          from hierarchy h
+          inner join #{db_term_table} ac on ac.id = h.parentid and h.name like '%TermGroupList' and pos = 0
+          inner join #{mapper.db_term_group_table_name} tg on h.id = tg.id
+          inner join auth_vocab_csid avid on avid.csid = ac.inauthority
+          ),
+          duplicates as (
+          select termdisplayname
+          from terms
+          group by termdisplayname
+          having count(termdisplayname)>1
+          )
+
+          select terms.termdisplayname,
+          terms.authoritycsid,
+          hier.name as termcsid
+          from terms
+          inner join duplicates dup on dup.termdisplayname = terms.termdisplayname
+          inner join hierarchy hier on hier.id = terms.id
+          order by terms.termdisplayname
+        SQL
+
+        Success(query)
+      end
+
+      # @return [String] like "citationauthorities_common"
       def db_vocab_table
         return status if status.failure?
 
