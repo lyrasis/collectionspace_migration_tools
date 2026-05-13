@@ -46,7 +46,9 @@ module CollectionspaceMigrationTools
         end
       end
 
-      def hosted? = !hash.dig(:site_name).nil?
+      def hosted?
+        true if hash.dig(:site_name)
+      end
 
       def manipulate
         add_option(:batch_config_path, nil)
