@@ -3,9 +3,13 @@
 require_relative "../../spec_helper"
 
 RSpec.describe CollectionspaceMigrationTools::Validate::ConfigClientContract do
-  let(:valid_config) { valid_config_hash }
+  let(:valid_config) do
+    valid_config_hash.merge({
+      mapper_dir: File.join(fixtures_base, "untangler", "data", "mappers",
+        "community_profiles", "8_1_1", "anthro")
+    })
+  end
   let(:result) { CMT::Config::Client.call(hash: client_config) }
-  # let(:result) { described_class.new.call(client_config).to_monad }
 
   context "with valid data" do
     let(:client_config) { valid_config }

@@ -75,6 +75,9 @@ module CollectionspaceMigrationTools
     end
 
     def client_path
+      if ENV["COLLECTIONSPACE_MIGRATION_TOOLS_CLIENT_CONFIG"]
+        return ENV["COLLECTIONSPACE_MIGRATION_TOOLS_CLIENT_CONFIG"]
+      end
       return path_from_config_name_file if !client
       return client if ["~", "/"].any? { |char| client.start_with?(char) }
 

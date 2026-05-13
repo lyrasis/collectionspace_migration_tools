@@ -42,6 +42,11 @@ RSpec.describe CollectionspaceMigrationTools::Configuration do
   end
 
   context "with valid config with optional settings" do
+    before(:each) do
+      ENV["COLLECTIONSPACE_MIGRATION_TOOLS_CLIENT_CONFIG"] =
+        File.join(fixtures_base, "config_valid_with_optional.yml")
+    end
+
     let(:config_file) do
       File.join(fixtures_base, "config_valid_with_optional.yml")
     end
@@ -61,12 +66,8 @@ RSpec.describe CollectionspaceMigrationTools::Configuration do
   end
 
   context "with invalid config" do
-    before do
-      ENV["COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG"] =
-        File.join(fixtures_base, "sys_config_w_term_manager.yml")
-    end
-    after do
-      ENV.delete("COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG")
+    before(:each) do
+      ENV["COLLECTIONSPACE_MIGRATION_TOOLS_CLIENT_CONFIG"] = invalid_config_path
     end
 
     let(:config_file) { invalid_config_path }
