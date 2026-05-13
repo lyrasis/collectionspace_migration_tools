@@ -35,7 +35,7 @@ module Helpers
 
   # returns path to valid test config (core.dev)
   def valid_config_path
-    File.join(fixtures_base, "config_valid.yml")
+    File.join(fixtures_base, "config", "sample.yml")
   end
 
   # returns path to valid test config (core.dev)

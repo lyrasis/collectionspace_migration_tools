@@ -25,7 +25,17 @@ RSpec.configure do |config|
   config.order = :random
   config.shared_context_metadata_behavior = :apply_to_host_groups
   config.warnings = true
-  config.after(:each) { CMT.reset_config }
+  config.before(:each) do
+    ENV["COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG"] =
+      File.join(fixtures_base, "sys_config_w_term_manager.yml")
+    ENV["COLLECTIONSPACE_MIGRATION_TOOLS_CLIENT_CONFIG"] =
+      File.join(fixtures_base, "config", "sample.yml")
+  end
+  config.after(:each) do
+    ENV.delete("COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG")
+    ENV.delete("COLLECTIONSPACE_MIGRATION_TOOLS_CLIENT_CONFIG")
+    # CMT.reset_config
+  end
 
   config.expect_with(:rspec) do |expectations|
     expectations.syntax = :expect

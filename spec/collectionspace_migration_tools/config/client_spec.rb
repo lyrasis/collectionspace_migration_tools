@@ -10,7 +10,12 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
   let(:sysconfig) { nil }
 
   context "when valid config" do
-    let(:config_hash) { valid_config_hash }
+    let(:config_hash) do
+      valid_config_hash.merge({
+        mapper_dir: File.join(fixtures_base, "untangler", "data", "mappers",
+          "community_profiles", "8_1_1", "anthro")
+      })
+    end
 
     it "returns Success" do
       expect(result).to be_a(Dry::Monads::Success)
@@ -27,11 +32,7 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
       ENV.delete("COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG")
     end
 
-    let(:config_hash) do
-      h = valid_config_hash.dup
-      h.delete(:mapper_dir)
-      h
-    end
+    let(:config_hash) { valid_config_hash }
 
     context "when untangler lacks release prefix" do
       let(:sysconfig) do
@@ -54,7 +55,7 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
       let(:sysconfig) do
         path = File.join(fixtures_base, "sys_config_w_term_manager.yml")
         h = CMT::Parse::YamlConfig.call(path).value!
-        h[:cs_app_version] = "8_2"
+        h[:cs_app_version] = "8_3"
         CMT::Config::System.call(hash: h).value!
       end
 
@@ -62,7 +63,7 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
         expect(result).to be_a(Dry::Monads::Success)
         expect(result.value!.mapper_dir).to eq(
           File.join(fixtures_base, "untangler", "data", "mappers",
-            "community_profiles", "release_8_2", "anthro")
+            "community_profiles", "release_8_3", "anthro")
         )
       end
     end
@@ -164,7 +165,11 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
   context "when optional cs_app_version given" do
     let(:config_hash) do
       h = valid_config_hash
-      h.merge!({cs_app_version: "1_2"})
+      h.merge!({
+        cs_app_version: "1_2",
+        mapper_dir: File.join(fixtures_base, "untangler"),
+        profile_version: "1-2-0"
+      })
     end
 
     it "returns Success" do
