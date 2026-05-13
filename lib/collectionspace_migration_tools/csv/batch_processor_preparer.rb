@@ -98,7 +98,7 @@ module CollectionspaceMigrationTools
       end
 
       def mode
-        return batch_config[:batch_mode] if batch_config.key?(:batch_mode)
+        return batch_config["batch_mode"] if batch_config.key?("batch_mode")
 
         "full record"
       end
