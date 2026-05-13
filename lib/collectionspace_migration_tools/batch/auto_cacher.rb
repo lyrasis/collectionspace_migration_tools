@@ -25,8 +25,8 @@ module CollectionspaceMigrationTools
 
         plan.each { |meth, list| do_command(meth, list) }
 
-        CMT.connection.close
-        CMT.tunnel.close
+        CMT.connection&.close
+        CMT.tunnel&.close
 
         puts "Elapsed time for caching: #{Time.now - starttime}"
         return Success() unless @results.any?(:failure?)
