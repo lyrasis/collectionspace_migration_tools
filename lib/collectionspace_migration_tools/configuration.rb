@@ -90,8 +90,6 @@ module CollectionspaceMigrationTools
       case current_client
       when ""
         nil
-      when "sample"
-        File.join(Bundler.root, "sample_client_config.yml")
       else
         File.expand_path(
           File.join(system.client_config_dir, "#{current_client}.yml")
