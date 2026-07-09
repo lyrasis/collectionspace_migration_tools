@@ -36,10 +36,7 @@ module CollectionspaceMigrationTools
       attr_reader :profile, :bucket
 
       def create_client
-        client = Aws::S3::Client.new(
-          profile: profile
-        )
-        client.config.credentials.assume_role_params[:duration_seconds] = 21600
+        client = Aws::S3::Client.new(profile: profile)
       rescue => err
         msg = "#{err.message} IN #{err.backtrace[0]}"
         Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
