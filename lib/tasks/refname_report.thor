@@ -16,9 +16,15 @@ class RefnameReport < Thor
   desc "list --rectypes place-local work-cona",
     "write refname report that includes terms in listed authority record types"
   def list
+    # rectypes = options[:rectypes].map do |rectype|
+    #   CMT::Entity::Authority.from_str(rectype)
+    # end
     rectypes = options[:rectypes].map do |rectype|
-      CMT::Entity::Authority.from_str(rectype)
+      CMT::RecordTypes.to_obj(rectype)
     end
-    CMT::RefnameReport.write(rectypes)
+    rectypes.select(&:failure?)
+      .each { |rt| puts rt.failure }
+
+    CMT::RefnameReport.write(rectypes.select(&:success?).map(&:value!))
   end
 end
