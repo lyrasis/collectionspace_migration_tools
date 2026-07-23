@@ -14,6 +14,8 @@ endif::[]
 
 == Unreleased
 
+* `thor rr list` now can report on all mappable rectypes, not just authorities
+
 == 7.1.0 (2026-05-13)
 
 * Skip tunnel when creating a db connection if `CMT.config.client.db_tunnel_skip` = `true`
