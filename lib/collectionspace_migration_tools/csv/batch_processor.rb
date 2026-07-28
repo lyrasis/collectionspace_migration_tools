@@ -34,7 +34,7 @@ module CollectionspaceMigrationTools
         _processed = yield(process)
         elap = Time.now - start_time
         puts "Mapping time: #{elap}"
-        puts "INFO: Results written to: #{output_dir}"
+        puts "INFO: CS XML written to: #{output_dir}"
 
         if term_reporter.any_terms?
           _deduplicated = yield(term_reporter.deduplicate)
