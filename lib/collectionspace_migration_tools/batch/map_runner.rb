@@ -59,6 +59,8 @@ module CollectionspaceMigrationTools
         report = yield(CMT::Batch::PostMapReporter.new(batch: batch,
           dir: output_dir).call)
 
+        puts "Mapper report written to: #{report}"
+
         Success(report)
       end
 

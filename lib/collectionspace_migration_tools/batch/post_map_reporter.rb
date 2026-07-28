@@ -71,7 +71,7 @@ module CollectionspaceMigrationTools
         _missing_term = yield(report("missing_terms", missing_term_ct))
 
         @status = "Reporting completed"
-        Success()
+        Success(report_path)
       end
 
       attr_reader :process_type, :batch, :dir, :report_path, :updated, :status
