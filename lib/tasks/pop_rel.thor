@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "thor"
-require "thor/hollaback"
 
 # tasks populating caches with relation data
 class Relation < Thor
@@ -11,7 +10,6 @@ class Relation < Thor
 
   class_option :debug, desc: "Sets up debug mode", aliases: ["-d"],
     type: :boolean
-  class_around :safe_db
 
   desc "ah", "populate CSID cache with authorityhierarchy relations"
   def ah

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "thor"
-require "thor/hollaback"
 
 # Tasks to populate caches
 class Pop < Thor
@@ -10,7 +9,6 @@ class Pop < Thor
 
   class_option :debug, desc: "Sets up debug mode", aliases: ["-d"],
     type: :boolean
-  class_around :safe_db
 
   desc "all", "populate caches with everything"
   def all

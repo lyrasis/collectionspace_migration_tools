@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "thor"
-require "thor/hollaback"
 
 # tasks to cache authority data
 class Auth < Thor
@@ -11,7 +10,6 @@ class Auth < Thor
 
   class_option :debug, desc: "Sets up debug mode", aliases: ["-d"],
     type: :boolean
-  class_around :safe_db
 
   desc "one RECTYPE",
     "populate caches with refnames and csids for ONE authority record type"

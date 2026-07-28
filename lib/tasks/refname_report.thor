@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "thor"
-require "thor/hollaback"
 
 # tasks for writing authority refnames to CSV to be used as lookup tables
 class RefnameReport < Thor
@@ -9,8 +8,6 @@ class RefnameReport < Thor
   include Dry::Monads[:result]
 
   namespace :rr
-
-  class_around :safe_db
 
   option :rectypes, type: :array, aliases: "-r"
   desc "list --rectypes place-local work-cona",

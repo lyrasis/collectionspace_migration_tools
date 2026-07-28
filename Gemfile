@@ -35,7 +35,6 @@ gem "roo"
 gem "smarter_csv", "~> 1.7.4"
 gem "tabulo", "~> 3"
 gem "thor", "~> 1"
-gem "thor-hollaback", "~> 0"
 gem "zeitwerk", "~> 2.5"
 
 group :development do
