@@ -54,19 +54,6 @@ class Config < Thor
     else
       non_verbose_config_show(config)
     end
-
-    # if config.client.nil?
-    #   puts "No client config found. Try doing:\n"\
-    #     "  thor config switch {yourconfigname}. "
-    #   exit(1)
-    # end
-
-    # if options[:verbose]
-    #   pp(config)
-    # else
-    #   puts config.current_client
-    # end
-    # exit(0)
   end
 
   desc "switch CONFIG_NAME_WITHOUT_EXTENSION",

@@ -105,12 +105,6 @@ module CollectionspaceMigrationTools
       exit
     end
 
-    def safe_exit
-      connection&.close
-      tunnel&.close
-      exit
-    end
-
     # @param tunnel_obj [CMT::Tunnel]
     def set_tunnel(tunnel_obj)
       return tunnel if tunnel&.open?
