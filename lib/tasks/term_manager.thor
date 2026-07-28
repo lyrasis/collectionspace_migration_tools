@@ -39,13 +39,13 @@ class TermManager < Thor
     pp(result)
   end
 
-  desc "run", "Run TermManager project"
+  desc "run_plan", "Run TermManager project"
   option :project, required: true, type: :string, aliases: "-p"
   option :instances, required: false, type: :array, aliases: "-i"
   option :term_sources, required: false, type: :array, aliases: "-s"
   option :mode, required: false, type: :string, enum: %w[force_current],
     aliases: "-m"
-  def run
+  def run_plan
     work_in_progress
 
     params = {instances: options[:instances],
