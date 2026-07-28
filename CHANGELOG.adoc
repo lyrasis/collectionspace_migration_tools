@@ -14,8 +14,13 @@ endif::[]
 
 == Unreleased
 
-* `thor rr list` now can report on all mappable rectypes, not just authorities
+== 7.2.0 (2026-07-28)
 
+* `thor rr list` now can report on all mappable rectypes, not just authorities
+* Remove `thor-hollaback` dependency and related code.
+We now rely on the `at_exit` block in the base module to close database tunnel and connection as needed on any form of exit.
+*  Rename `thor tm run` to `thor tm run_plan` - without `thor-hollaback`, thor starts complaining that `run` is a protected keyword
+* `thor batch map` command now outputs both CS XML and mapping report paths separately, more clearly labeling them.
 == 7.1.0 (2026-05-13)
 
 * Skip tunnel when creating a db connection if `CMT.config.client.db_tunnel_skip` = `true`
