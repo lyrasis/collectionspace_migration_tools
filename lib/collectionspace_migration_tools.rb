@@ -17,11 +17,8 @@ module CollectionspaceMigrationTools
     ohc omca]
 
   at_exit do
-    if CMT.connection&.open?
-      CMT.connection.close
-    else
-      CMT.tunnel&.close
-    end
+    CMT.connection.close if CMT.connection&.open?
+    CMT.tunnel&.close if CMT.tunnel&.open?
   end
 
   class << self
