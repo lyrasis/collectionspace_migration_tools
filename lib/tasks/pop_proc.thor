@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "thor"
-require "thor/hollaback"
 
 # tasks populating caches with object/procedure data
 class Procedure < Thor
@@ -11,7 +10,6 @@ class Procedure < Thor
 
   class_option :debug, desc: "Sets up debug mode", aliases: ["-d"],
     type: :boolean
-  class_around :safe_db
 
   desc "one RECTYPE", "populate CSID cache for ONE procedure record type"
   def one(rectype)

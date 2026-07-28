@@ -1,26 +1,9 @@
 # frozen_string_literal: true
 
 module CollectionspaceMigrationTools
+  # Namespace and alias for code used/reused by Thor CLI commands
+  #   in ./lib/tasks
   module CliHelpers
     ::CMT::CliHelpers = CollectionspaceMigrationTools::CliHelpers
-
-    module_function
-
-    def db_disconnect
-      CMT.connection&.close
-      CMT.tunnel&.close
-    end
-
-    def safe_db
-      yield
-    rescue => err
-      raise err if options[:debug]
-      warn err.message
-      db_disconnect
-      exit(1)
-    else
-      db_disconnect
-      exit(0)
-    end
   end
 end
