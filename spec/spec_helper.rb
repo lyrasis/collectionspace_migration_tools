@@ -30,11 +30,11 @@ RSpec.configure do |config|
       File.join(fixtures_base, "sys_config_w_term_manager.yml")
     ENV["COLLECTIONSPACE_MIGRATION_TOOLS_CLIENT_CONFIG"] =
       File.join(fixtures_base, "config", "sample.yml")
+    CMT.reset_config
   end
   config.after(:each) do
     ENV.delete("COLLECTIONSPACE_MIGRATION_TOOLS_SYSTEM_CONFIG")
     ENV.delete("COLLECTIONSPACE_MIGRATION_TOOLS_CLIENT_CONFIG")
-    # CMT.reset_config
   end
 
   config.after(:suite) do
