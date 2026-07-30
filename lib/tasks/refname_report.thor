@@ -17,6 +17,12 @@ class RefnameReport < Thor
     required: true,
     desc: "Mappable record types for which to pull refname/CSID info",
     banner: "person-local person-ulan"
+  option :outputpath,
+    type: :string,
+    aliases: "-o",
+    required: false,
+    desc: "Path where result will be written. Should be a .csv",
+    default: CMT::RefnameReport.default_refname_data_path.value!
   def list
     rectypes = options[:rectypes].map do |rectype|
       CMT::RecordTypes.to_obj(rectype)
@@ -24,6 +30,9 @@ class RefnameReport < Thor
     rectypes.select(&:failure?)
       .each { |rt| puts rt.failure }
 
-    CMT::RefnameReport.write(rectypes.select(&:success?).map(&:value!))
+    CMT::RefnameReport.write(
+      rectypes: rectypes.select(&:success?).map(&:value!),
+      path: options[:outputpath]
+    )
   end
 end
