@@ -1,5 +1,5 @@
-base_uri: https://core.dev.collectionspace.org/cspace-services
-username: admin@core.collectionspace.org
+base_uri: https://anthro.dev.collectionspace.org/cspace-services
+username: admin@anthro.collectionspace.org
 password: Administrator
 page_size: 50
 

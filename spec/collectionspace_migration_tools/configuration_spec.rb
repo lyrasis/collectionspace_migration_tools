@@ -11,7 +11,7 @@ RSpec.describe CollectionspaceMigrationTools::Configuration do
     it "returns Configuration object" do
       expect(result).to be_a(CMT::Configuration)
       expect(result.client.base_uri).to eq(
-        "https://core.dev.collectionspace.org/cspace-services"
+        "https://anthro.dev.collectionspace.org/cspace-services"
       )
       expect(result.client.batch_config_path).to be_nil
       expect(result.client.batch_csv).to eq(File.join(result.client.base_dir,
