@@ -14,6 +14,8 @@ class RefnameReport < Thor
   option :rectypes,
     type: :array,
     aliases: "-r",
+    required: true,
+    desc: "Mappable record types for which to pull refname/CSID info",
     banner: "person-local person-ulan"
   def list
     # rectypes = options[:rectypes].map do |rectype|
