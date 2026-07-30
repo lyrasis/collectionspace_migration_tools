@@ -37,6 +37,11 @@ RSpec.configure do |config|
     # CMT.reset_config
   end
 
+  config.after(:suite) do
+    path = File.join(Bundler.root, "fixturesdir")
+    FileUtils.rm_rf(path) if Dir.exist?(path)
+  end
+
   config.expect_with(:rspec) do |expectations|
     expectations.syntax = :expect
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
