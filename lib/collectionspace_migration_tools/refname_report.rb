@@ -11,6 +11,7 @@ module CollectionspaceMigrationTools
 
     # @param rectypes [Array<#cacheable_data_query>]
     def write(rectypes)
+    # @param path [String] location to write output
       data = yield refname_data(rectypes)
       path = yield refname_data_path
       _written = yield write_blob_data_report(data, path)
@@ -19,6 +20,7 @@ module CollectionspaceMigrationTools
     end
 
     # @param rectypes [Array<#cacheable_data_query>]
+    # @return [Array<Hash>] Dry::Monads::Success wrapping rows of cacheable data
     def refname_data(rectypes)
       data = rectypes.map do |rectype|
         query = yield rectype.cacheable_data_query
