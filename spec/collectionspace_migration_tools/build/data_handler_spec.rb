@@ -3,7 +3,12 @@
 require_relative "../../spec_helper"
 
 RSpec.describe CollectionspaceMigrationTools::Build::DataHandler do
-  before(:all) { setup_mapping }
+  before(:each) do
+    CMT.config.client.batch_config_path = File.join(
+      fixtures_base, "client_batch_config.json"
+    )
+  end
+  after(:each) { CMT.config.client.batch_config_path = nil }
 
   describe "#call" do
     let(:mapper) { CMT::Parse::RecordMapper.call("collectionobject").value! }
