@@ -10,10 +10,12 @@ module CollectionspaceMigrationTools
     module_function
 
     # @param rectypes [Array<#cacheable_data_query>]
-    def write(rectypes)
     # @param path [String] location to write output
+    def write(rectypes:, path:)
+      dir = File.dirname(path)
+      FileUtils.mkdir_p(dir) unless Dir.exist?(dir)
+
       data = yield refname_data(rectypes)
-      path = yield refname_data_path
       _written = yield write_blob_data_report(data, path)
 
       Success()
