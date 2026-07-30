@@ -30,7 +30,7 @@ module CollectionspaceMigrationTools
       Success(data.flatten)
     end
 
-    def refname_data_path
+    def default_refname_data_path
       result = File.join(
         CMT.config.client.base_dir,
         "refname_data.csv"
