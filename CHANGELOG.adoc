@@ -14,6 +14,8 @@ endif::[]
 
 == Unreleased
 
+* Add `path` option to `thor rr list` command
+
 == 7.2.0 (2026-07-28)
 
 * `thor rr list` now can report on all mappable rectypes, not just authorities
