@@ -18,9 +18,6 @@ class RefnameReport < Thor
     desc: "Mappable record types for which to pull refname/CSID info",
     banner: "person-local person-ulan"
   def list
-    # rectypes = options[:rectypes].map do |rectype|
-    #   CMT::Entity::Authority.from_str(rectype)
-    # end
     rectypes = options[:rectypes].map do |rectype|
       CMT::RecordTypes.to_obj(rectype)
     end
