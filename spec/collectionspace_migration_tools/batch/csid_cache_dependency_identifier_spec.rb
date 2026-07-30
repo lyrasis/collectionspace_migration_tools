@@ -2,9 +2,7 @@
 
 require_relative "../../spec_helper"
 
-# rubocop:disable Layout/LineLength
-RSpec.describe CollectionspaceMigrationTools::Batch::CsidCacheDependencyIdentifier do
-  # rubocop:enable Layout/LineLength
+RSpec.describe CMT::Batch::CsidCacheDependencyIdentifier do
   let(:klass) { described_class.new(path: path, mapper: mapper) }
 
   describe "#call" do
