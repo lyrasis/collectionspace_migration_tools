@@ -9,9 +9,12 @@ class RefnameReport < Thor
 
   namespace :rr
 
-  option :rectypes, type: :array, aliases: "-r"
-  desc "list --rectypes place-local work-cona",
+  desc "list",
     "write refname report that includes terms in listed authority record types"
+  option :rectypes,
+    type: :array,
+    aliases: "-r",
+    banner: "person-local person-ulan"
   def list
     # rectypes = options[:rectypes].map do |rectype|
     #   CMT::Entity::Authority.from_str(rectype)
