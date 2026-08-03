@@ -428,6 +428,7 @@ DEPENDENCIES
   refinements (~> 9.1)
   roo
   rspec
+  ruby-progressbar
   simplecov (~> 0.21)
   smarter_csv (~> 1.7.4)
   tabulo (~> 3)
