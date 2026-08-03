@@ -36,7 +36,7 @@ module CollectionspaceMigrationTools
         yield CMT::Config::System.call
       end
       path = system.config_name_file
-      content = File.read(path)
+      content = File.read(path).strip
       if content.empty?
         return Failure(CMT::Failure.new(
           context: "#{self.class.name}.#{__callee__}",
