@@ -39,7 +39,9 @@ module CollectionspaceMigrationTools
       )
     end
 
-    def current_client = File.read(File.expand_path(system.config_name_file))
+    def current_client
+      File.read(File.expand_path(system.config_name_file)).strip
+    end
 
     def add_config(type, hash)
       if type == :term_manager
