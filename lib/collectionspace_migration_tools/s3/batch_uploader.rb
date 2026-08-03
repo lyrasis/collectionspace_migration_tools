@@ -58,7 +58,9 @@ module CollectionspaceMigrationTools
       def process
         puts "Uploading CS XML to S3 (#{threads} threads)..."
         Parallel.map(
-          chunks, in_threads: threads
+          chunks, in_threads: threads, progress: {
+            format: "%t | %B | %c of %u | %a"
+          }
         ) do |chunk|
           worker(chunk)
         end
