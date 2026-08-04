@@ -232,7 +232,6 @@ GEM
       reline (>= 0.6.0)
     racc (1.8.1)
     rainbow (3.1.1)
-    rake (13.4.2)
     rbs (4.1.2)
       logger
       prism (>= 1.6.0)
@@ -366,7 +365,6 @@ DEPENDENCIES
   parallel
   pg
   pry
-  rake
   redis
   reek
   roo
