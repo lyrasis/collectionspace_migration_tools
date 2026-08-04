@@ -47,7 +47,6 @@ group :development do
 end
 
 group :test do
-  gem "guard-rspec", require: false
   gem "mock_redis"
   gem "rspec"
 end
