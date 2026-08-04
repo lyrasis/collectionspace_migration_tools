@@ -116,7 +116,9 @@ RSpec.describe CollectionspaceMigrationTools::Config::Client do
 
         it "returns Failure" do
           expect(result).to be_a(Dry::Monads::Failure)
-          expect(result.failure).to match(/profile_version must follow pattern/)
+          expect(result.failure).to match(
+            /profile_version must follow one of these patterns:/
+          )
         end
       end
 

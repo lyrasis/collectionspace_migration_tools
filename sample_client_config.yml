@@ -55,9 +55,19 @@ ingest_dir: ingest
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 # Special settings for locating/identifying record mappers
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+## Set if different from app-level default
 # cs_app_version: "8_1_1"
-# profile_version: 9-0-0
+
+## Set if different from default location for app version in Untangler published
+##   mappers directory
 # mapper_dir: ~/path/to/directory_containing_json_record_mappers
+
+## Dynamically set by extracting from filename of mapper in `mapper_dir`.
+##   Expected to be in the format `#-#-#` or `#-#-rc#`
+##   Setting this differently is a bad idea, as it needs to match the mapper
+##   file names. Documented here to show what the version in those file names
+##   needs to look like.
+## profile_version: 9-0-0
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 # SPECIAL SETTINGS FOR CONTROLLING MAPPING, INGEST, ETC. BEHAVIOR
