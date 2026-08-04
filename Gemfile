@@ -21,7 +21,6 @@ gem "cspace_hosted_instance_access",
   github: "dts-hosting/cspace_hosted_instance_access",
   branch: "main"
 gem "dry-monads"
-gem "dry-transaction"
 gem "dry-validation"
 gem "parallel"
 gem "pg"
