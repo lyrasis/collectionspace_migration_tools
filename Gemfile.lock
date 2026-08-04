@@ -226,7 +226,6 @@ GEM
     memo_wise (1.13.0)
     memory_profiler (1.1.0)
     method_source (1.1.0)
-    mime-types-data (3.2021.1115)
     mini_mime (1.1.5)
     minitest (6.0.6)
       drb (~> 2.0)
@@ -417,7 +416,6 @@ DEPENDENCIES
   dry-transaction
   dry-validation
   guard-rspec
-  mime-types-data (= 3.2021.1115)
   mock_redis
   parallel
   pg
