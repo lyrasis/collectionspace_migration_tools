@@ -15,9 +15,6 @@ module CollectionspaceMigrationTools
         def services_api_path = "vocabularies"
       end
 
-      def initialize
-      end
-
       def status
         to_monad
       end
