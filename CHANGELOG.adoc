@@ -14,8 +14,15 @@ endif::[]
 
 == Unreleased
 
+== 7.3.0 (2026-08-05)
+
 * Add `path` option to `thor rr list` command
 * Add progress bar to `thor batch upload` command
+* Add new `db_tunnel_initial_connection_timeout` and `db_tunnel_initial_connection_polling_interval` system config settings. See `sample_system_config.yml` for description.
+* Accept CollectionSpace QA profile version values in client config
+* Add `thor vt write` command
+* Require Ruby 4.0.3
+* DEV: Remove unused/unneeded dependencies; minor refactoring
 
 == 7.2.0 (2026-07-28)
 
