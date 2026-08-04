@@ -15,10 +15,6 @@ module CollectionspaceMigrationTools
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)
 
-      # @param svc_path [String]
-      def initialize
-      end
-
       # @param response [CollectionSpace::Mapper::Response]
       def call(response)
         id = yield(get_id(response))

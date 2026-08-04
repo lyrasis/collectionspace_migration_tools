@@ -67,7 +67,6 @@ RSpec.describe CollectionspaceMigrationTools::S3::ObjectKeyCreator do
             expect(res.value).to eq("bmF8L21lZGlhP2Jsb2JVcmk9aHR0cCUzQSUyRiUyR"\
                                     "nBsYWNlLmlvJTJGaW1nJTI1MjAlMjg0JTI5LmpwZ"\
                                     "3wxMjN8Q1JFQVRF")
-            # expect(res.warnings.length).to eq(1)
           end
         end
       end
