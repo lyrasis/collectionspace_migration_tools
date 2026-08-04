@@ -76,7 +76,7 @@ module CollectionspaceMigrationTools
           failures = results.select(&:failure?)
           return Success() if failures.empty?
 
-          failstr = failures.map { |f| f.to_s }
+          failstr = failures.map(&:failure)
             .join("; ")
 
           Failure(failstr)
