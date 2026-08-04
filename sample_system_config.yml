@@ -39,6 +39,15 @@ bastion_user: yourusername
 #   will get interpreted as 70.**
 # cs_app_version: "8_1_1"
 
+# How long to wait for the SSH tunnel to be usable. This timeout exists
+#   mainly so that users can respond to trust prompts or reason about 
+#   errors caused by bad credentials. It's logically distinct from the
+#   database timeout (below), which is used after the tunnel is 
+#   connected. It probably won't be necessary to change these values,
+#   but they can be adjusted if required.
+# db_tunnel_initial_connection_timeout: 30
+# db_tunnel_initial_connection_polling_interval: 2.5
+
 # Number of seconds to wait between getting new DB tunnel and
 #   attempting to get database connection. Will be set by default, but
 #   can be overridden by uncommenting in your config. Uncomment the
