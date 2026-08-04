@@ -242,12 +242,6 @@ GEM
       rbs (>= 4.0.0)
       tsort
     redis (4.2.5)
-    reek (6.5.0)
-      dry-schema (~> 1.13)
-      logger (~> 1.6)
-      parser (~> 3.3.0)
-      rainbow (>= 2.0, < 4.0)
-      rexml (~> 3.1)
     regexp_parser (2.12.0)
     reline (0.6.3)
       io-console (~> 0.5)
@@ -366,7 +360,6 @@ DEPENDENCIES
   pg
   pry
   redis
-  reek
   roo
   rspec
   ruby-progressbar
