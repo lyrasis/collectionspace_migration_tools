@@ -6,7 +6,7 @@ require "erb"
 
 module CollectionspaceMigrationTools
   module S3
-    ObjKey = Struct.new(:value, :warnings, keyword_init: true)
+    ObjKey = Struct.new(:value, :warnings)
 
     # Base 64 hashed filenames for payloads to be transferred via S3
     class ObjectKeyCreator
