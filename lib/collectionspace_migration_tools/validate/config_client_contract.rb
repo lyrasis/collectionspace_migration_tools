@@ -82,8 +82,12 @@ module CollectionspaceMigrationTools
       rule(:profile_version) do
         next unless value
 
-        unless /^(\d+-){2,}\d+(?:-rc\d+|)$/.match?(value)
-          key.failure("must follow pattern: number hyphen number hyphen number")
+        ok = [
+          /^(\d+-){2,}\d+$/,
+          /^\d+-\d+-rc\d+$/
+        ]
+        unless ok.any? { |pattern| pattern.match?(value) }
+          key.failure("must follow one of these patterns: `#-#-#` or `d-d-rc#`")
         end
       end
 

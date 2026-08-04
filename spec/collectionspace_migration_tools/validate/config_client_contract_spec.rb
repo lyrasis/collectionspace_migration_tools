@@ -37,6 +37,14 @@ RSpec.describe CollectionspaceMigrationTools::Validate::ConfigClientContract do
     end
   end
 
+  context "with valid QA profile version" do
+    let(:client_config) { valid_config.dup.merge({profile_version: "9-0-rc1"}) }
+
+    it "returns Success" do
+      expect(result).to be_a(Dry::Monads::Success)
+    end
+  end
+
   context "with bad profile version" do
     let(:client_config) { valid_config.dup.merge({profile_version: "7.0.0"}) }
 
