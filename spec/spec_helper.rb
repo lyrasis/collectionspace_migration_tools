@@ -11,9 +11,11 @@ require "collectionspace_migration_tools"
 require "collectionspace/mapper"
 require "pry"
 
-require "refinements"
-using Refinements::Pathnames
-Pathname.require_tree(__dir__, "support/shared_contexts/**/*.rb")
+Dir[
+  File.join(__dir__, "support/shared_contexts/**/*.rb")
+].sort
+  .each { |path| require path }
+
 
 RSpec.configure do |config|
   config.include Helpers
