@@ -36,7 +36,6 @@ group :development do
   gem "amazing_print"
   gem "asciidoctor"
   gem "almost_standard", github: "kspurgin/almost_standard", branch: "main"
-  gem "bundler-leak"
   gem "dead_end"
   gem "debug"
   gem "rake"
