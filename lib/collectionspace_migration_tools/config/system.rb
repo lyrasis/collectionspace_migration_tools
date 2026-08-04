@@ -13,6 +13,8 @@ module CollectionspaceMigrationTools
           db_port: 5432,
           db_connect_host: "localhost",
           db_tunnel_connection_pause: 3,
+          db_tunnel_initial_connection_timeout: 30,
+          db_tunnel_initial_connection_polling_interval: 2.5,
           csv_chunk_size: 50,
           max_threads: 10,
           max_processes: 6,

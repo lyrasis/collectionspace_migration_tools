@@ -17,6 +17,8 @@ module CollectionspaceMigrationTools
         required(:db_port).filled(:integer)
         required(:db_connect_host).filled(:string)
         required(:db_tunnel_connection_pause).filled(:integer)
+        required(:db_tunnel_initial_connection_timeout).filled(:integer)
+        required(:db_tunnel_initial_connection_polling_interval).filled(:float)
         optional(:aws_media_ingest_profile).maybe(:string)
         optional(:term_manager_config_dir).maybe(:string)
       end

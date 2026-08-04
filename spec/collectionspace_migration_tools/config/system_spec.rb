@@ -42,6 +42,33 @@ RSpec.describe CollectionspaceMigrationTools::Config::System do
     end
   end
 
+  context "when db_tunnel_initial_connection_timeout overridden" do
+    let(:config) do
+      data = sys_config_hash.dup
+      data[:db_tunnel_initial_connection_timeout] = 45
+      data
+    end
+
+    it "returns Success" do
+      expect(result).to be_a(Dry::Monads::Success)
+      expect(result.value!.db_tunnel_initial_connection_timeout).to eq(45)
+    end
+  end
+
+  context "when db_tunnel_initial_connection_polling_interval overridden" do
+    let(:config) do
+      data = sys_config_hash.dup
+      data[:db_tunnel_initial_connection_polling_interval] = 0.5
+      data
+    end
+
+    it "returns Success" do
+      expect(result).to be_a(Dry::Monads::Success)
+      expect(result.value!.db_tunnel_initial_connection_polling_interval).to\
+       eq(0.5)
+    end
+  end
+
   context "when missing system client_config_dir setting" do
     let(:config) do
       data = sys_config_hash.dup

@@ -7,11 +7,6 @@ module CollectionspaceMigrationTools
   module Database
     # Opens SSH tunnel so we can connect to database through bastion server
     class OpenTunnel
-      # How long to wait for the SSH tunnel to connect (allows users to respond to trust prompt)
-      TUNNEL_TIMEOUT = 30
-      # How often to check whether it's connected
-      TUNNEL_POLLING_INTERVAL = 0.25
-
       class << self
         include Dry::Monads[:result]
 
@@ -65,7 +60,10 @@ module CollectionspaceMigrationTools
 
         def wait_for_tunnel(wait_thread)
           port = CMT.config.system.db_port
-          deadline = Time.now + TUNNEL_TIMEOUT
+          timeout = CMT.config.system.db_tunnel_initial_connection_timeout
+          interval = CMT.config.system
+            .db_tunnel_initial_connection_polling_interval
+          deadline = Time.now + timeout
 
           puts "Waiting for SSH tunnel to open on port #{port}."
 
@@ -79,12 +77,13 @@ module CollectionspaceMigrationTools
               TCPSocket.new("127.0.0.1", port).close
               return Success()
             rescue Errno::ECONNREFUSED, Errno::ETIMEDOUT
-              sleep TUNNEL_POLLING_INTERVAL
+              sleep interval
             end
           end
 
           Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
-            message: "Timed out after #{TUNNEL_TIMEOUT}s waiting for SSH tunnel on port #{port} to open."))
+            message: "Timed out after #{timeout}s waiting for SSH"\
+              " tunnel on port #{port} to open."))
         end
       end
     end
