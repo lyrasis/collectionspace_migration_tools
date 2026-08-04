@@ -23,10 +23,6 @@ gem "cspace_hosted_instance_access",
 gem "dry-monads"
 gem "dry-transaction"
 gem "dry-validation"
-# @todo See https://github.com/mime-types/mime-types-data/pull/50
-# `mime-types-data` is a dependency of `mime-types` < `httparty` <
-#   `collectionspace-client`
-gem "mime-types-data", "3.2021.1115"
 gem "parallel"
 gem "pg"
 gem "redis"
