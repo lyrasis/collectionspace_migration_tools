@@ -27,18 +27,64 @@ module CollectionspaceMigrationTools
         "vocabularies"
       end
 
+      # Excludes soft-deleted terms, since we cannot use them to populate
+      #   fields
       def cacheable_data_query
         query = <<~SQL
           with vocab_csids as (
-          select vc.id, h.name as csid, vc.shortidentifier from vocabularies_common vc
+          select
+            vc.id,
+            h.name as csid,
+            vc.shortidentifier
+          from vocabularies_common vc
           inner join hierarchy h on vc.id = h.id
           )
 
-          select vc.shortidentifier as vocab, vic.displayname as term, vic.refname, h.name as csid
+          select
+            vc.shortidentifier as vocab,
+            vic.displayname as term,
+            vic.refname,
+            h.name as csid
           from vocabularyitems_common vic
-          inner join misc on vic.id = misc.id and misc.lifecyclestate != 'deleted'
+          inner join misc on vic.id = misc.id and
+            misc.lifecyclestate != 'deleted'
           inner join vocab_csids vc on vic.inauthority = vc.csid
           inner join hierarchy h on vic.id = h.id
+        SQL
+
+        Success(query)
+      end
+
+      # Includes soft-deleted terms, since their presence can sometimes
+      #   explain odd ingest or UI vocabulary term editing behavior. Also
+      #   includes the small set of populatable fields for terms.
+      def full_data_query
+        query = <<~SQL
+          with vocab_csids as (
+          select
+            vc.id,
+            h.name as csid,
+            vc.shortidentifier
+          from vocabularies_common vc
+          inner join hierarchy h on vc.id = h.id
+          )
+
+          select
+            misc.lifecyclestate,
+            vc.shortidentifier as vocab,
+            vic.displayname as term,
+            vic.description,
+            vic.source,
+            vic.sourcepage,
+            vic.termstatus as status,
+            vic.refname,
+            h.name as csid,
+            cc.uri
+          from vocabularyitems_common vic
+          inner join misc on vic.id = misc.id
+          inner join vocab_csids vc on vic.inauthority = vc.csid
+          inner join hierarchy h on vic.id = h.id
+          inner join collectionspace_core cc on vic.id = cc.id
         SQL
 
         Success(query)
