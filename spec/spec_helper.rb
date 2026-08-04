@@ -16,7 +16,6 @@ Dir[
 ].sort
   .each { |path| require path }
 
-
 RSpec.configure do |config|
   config.include Helpers
   config.color = true
