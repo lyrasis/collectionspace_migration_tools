@@ -300,7 +300,7 @@ GEM
       parser (~> 3.3.0)
       rainbow (>= 2.0, < 4.0)
       rexml (~> 3.1)
-    refinements (9.8.0)
+    refinements (14.4.0)
     regexp_parser (2.12.0)
     reline (0.6.3)
       io-console (~> 0.5)
@@ -402,44 +402,44 @@ PLATFORMS
 
 DEPENDENCIES
   almost_standard!
-  amazing_print (~> 1.4)
-  asciidoctor (~> 2.0)
-  aws-sdk-cloudwatchlogs (~> 1)
-  aws-sdk-s3 (~> 1)
-  benchmark-memory (~> 0.2)
-  bundler-leak (~> 0.2)
+  amazing_print
+  asciidoctor
+  aws-sdk-cloudwatchlogs
+  aws-sdk-s3
+  benchmark-memory
+  bundler-leak
   collectionspace-client!
   collectionspace-mapper!
   collectionspace-refcache!
   cspace_hosted_instance_access!
-  dead_end (~> 3.0)
-  debug (~> 1.4)
+  dead_end
+  debug
   dry-monads
   dry-transaction
-  dry-validation (~> 1.11.1)
+  dry-validation
   guard-rspec
   mime-types-data (= 3.2021.1115)
-  mock_redis (= 0.36.0)
-  parallel (~> 1.22)
-  pg (~> 1.4)
-  pry (~> 0.14)
-  rake (~> 13.0)
-  redis (~> 4.2.1)
-  reek (~> 6.1)
-  refinements (~> 9.1)
+  mock_redis
+  parallel
+  pg
+  pry
+  rake
+  redis
+  reek
+  refinements
   roo
   rspec
   ruby-progressbar
-  simplecov (~> 0.21)
-  smarter_csv (~> 1.7.4)
-  tabulo (~> 3)
-  thor (~> 1)
+  simplecov
+  smarter_csv
+  tabulo
+  thor
   time_up
-  yard (~> 0.9)
-  zeitwerk (~> 2.5)
+  yard
+  zeitwerk
 
 RUBY VERSION
-   ruby 3.4.1p0
+   ruby 4.0.3p0
 
 BUNDLED WITH
    2.7.1
