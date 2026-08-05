@@ -18,13 +18,14 @@ module CollectionspaceMigrationTools
             :"populate_#{cache_type}_cache"
           end
 
-          rectype.send(meth).either(
-            ->(success) { puts "Done" },
-            ->(failure) {
-              puts "QUERY/POPULATE FAILED FOR #{rectype.to_s.upcase}\n"\
-                "#{failure}"
-            }
-          )
+          query = rectype.send(meth)
+
+          if query.success?
+            puts "Done"
+          else
+            puts "QUERY/POPULATE FAILED FOR #{rectype.to_s.upcase}\n"\
+              "#{CMT::Failure.to_s(query)}"
+          end
         end
         duration = Time.now - starttime
         puts "Elapsed caching time: #{duration}"

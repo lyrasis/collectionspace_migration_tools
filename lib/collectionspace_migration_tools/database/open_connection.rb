@@ -91,11 +91,9 @@ module CollectionspaceMigrationTools
           CMT.set_connection(connection)
           Success(connection)
         rescue => err
-          msg = "#{err.message}\nTRY: increasing system config "\
+          Failure("#{err.message}\nTRY: increasing system config "\
             "db_tunnel_connection_pause value to greater than "\
-            "the current value (#{sleeptime})"
-          Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
-            message: msg))
+            "the current value (#{sleeptime})")
         end
       end
     end

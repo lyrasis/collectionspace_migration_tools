@@ -19,16 +19,13 @@ module CollectionspaceMigrationTools
         result = CollectionSpace::Mapper::VocabularyTerms::Handler.new(
           client: use_client
         )
-      rescue CollectionSpace::Mapper::NoClientServiceError => err
-        msg = "collectionspace-client does not have a service configured "\
-          "for #{err.message}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      rescue => err
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: err))
-      else
+
         Success(result)
+      rescue CollectionSpace::Mapper::NoClientServiceError => err
+        Failure("collectionspace-client does not have a service configured "\
+          "for #{err.message}")
+      rescue => err
+        Failure(err.message)
       end
     end
   end

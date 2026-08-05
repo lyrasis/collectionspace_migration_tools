@@ -13,7 +13,7 @@ RSpec.describe CollectionspaceMigrationTools::Parse::RecordMapper do
 
       it "is Failure" do
         expect(result).to be_a(Dry::Monads::Failure)
-        expect(result.failure.message).to start_with("No record mapper "\
+        expect(result.failure).to start_with("No record mapper "\
                                                      "for #{rectype}")
       end
     end

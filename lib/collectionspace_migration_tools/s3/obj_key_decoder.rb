@@ -67,21 +67,16 @@ module CollectionspaceMigrationTools
           successes.each { |success| csv << success.values }
           failures.each do |failure|
             csv << [
-              failure.context.match(/\((.*)\)/)[1],
+              failure.trace,
               "DECODE ERROR",
-              failure.message
+              failure.failure
             ]
           end
         end
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(
-          CMT::Failure.new(
-            context: "#{self.class.name}.#{__callee__}", message: msg
-          )
-        )
-      else
+
         Success(path)
+      rescue => err
+        Failure(err.message)
       end
     end
   end

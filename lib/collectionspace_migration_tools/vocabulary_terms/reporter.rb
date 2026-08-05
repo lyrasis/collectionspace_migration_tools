@@ -59,10 +59,7 @@ module CollectionspaceMigrationTools
 
         Success()
       rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(
-          context: "#{name}.#{__callee__}(#{key})", message: msg
-        ))
+        Failure(err.message)
       end
 
       def headers(rows) = rows.first.keys

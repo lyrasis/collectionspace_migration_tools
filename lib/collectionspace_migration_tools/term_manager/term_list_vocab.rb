@@ -42,10 +42,10 @@ module CollectionspaceMigrationTools
             row["term"]
           end
         end.compact.sort
+
         Success(result)
       rescue => err
-        Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
-          message: err.message))
+        Failure(err.message)
       end
 
       def to_s

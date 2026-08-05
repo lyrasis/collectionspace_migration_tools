@@ -20,14 +20,12 @@ module CollectionspaceMigrationTools
 
       def build_client(config)
         client = CollectionSpace::Client.new(config)
-      rescue => err
-        Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
-          message: err.message))
-      else
+
         return Success(client) if client
 
-        Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
-          message: "No CS Client object"))
+        Failure("No CS Client object")
+      rescue => err
+        Failure(err.message)
       end
 
       def build_client_config(include_deleted:)
@@ -38,25 +36,21 @@ module CollectionspaceMigrationTools
           page_size: CMT.config.client.page_size,
           include_deleted: include_deleted
         )
-      rescue => err
-        Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
-          message: err.message))
-      else
+
         return Success(config) if config
 
-        Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
-          message: "No CS Configuration object"))
+        Failure("No CS Configuration object")
+      rescue => err
+        Failure(err.message)
       end
 
       def verify(client)
         result = client.can_authenticate?
         return Success(client) if result
 
-        Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
-          message: "Client cannot authenticate to CS instance"))
+        Failure("Client cannot authenticate to CS instance")
       rescue => err
-        Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
-          message: err.message))
+        Failure(err.message)
       end
     end
   end

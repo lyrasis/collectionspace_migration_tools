@@ -49,15 +49,10 @@ module CollectionspaceMigrationTools
 
       def unpack(response)
         stream = response.log_streams.first
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(
-          CMT::Failure.new(
-            context: "#{name}.#{__callee__}", message: msg
-          )
-        )
-      else
+
         Success(stream)
+      rescue => err
+        Failure(err.message)
       end
     end
   end

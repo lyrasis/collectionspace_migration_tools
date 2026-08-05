@@ -119,8 +119,7 @@ module CollectionspaceMigrationTools
 
         return Success(File.join(base, file)) if file
 
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: "Term manager config not found for #{id}"))
+        Failure("Term manager config not found for #{id}")
       end
     end
   end

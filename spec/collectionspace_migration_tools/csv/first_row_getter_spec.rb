@@ -15,7 +15,7 @@ RSpec.describe CollectionspaceMigrationTools::Csv::FirstRowGetter do
 
       it "is Failure" do
         expect(result).to be_a(Dry::Monads::Failure)
-        expect(result.failure.message).to start_with("No such file")
+        expect(result.failure).to start_with("No such file")
       end
     end
 
@@ -33,7 +33,7 @@ RSpec.describe CollectionspaceMigrationTools::Csv::FirstRowGetter do
 
       it "is Failure" do
         expect(result).to be_a(Dry::Monads::Failure)
-        expect(result.failure.message).to start_with("Invalid byte sequence "\
+        expect(result.failure).to start_with("Invalid byte sequence "\
                                                      "in UTF-8")
       end
     end

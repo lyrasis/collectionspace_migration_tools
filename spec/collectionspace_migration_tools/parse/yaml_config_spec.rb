@@ -21,7 +21,7 @@ RSpec.describe CollectionspaceMigrationTools::Parse::YamlConfig do
 
     it "is Failure" do
       expect(result).to be_a(Dry::Monads::Failure)
-      expect(result.failure.message).to start_with("No such file or directory")
+      expect(result.failure).to start_with("No such file or directory")
     end
   end
 
@@ -30,7 +30,7 @@ RSpec.describe CollectionspaceMigrationTools::Parse::YamlConfig do
 
     it "is Failure" do
       expect(result).to be_a(Dry::Monads::Failure)
-      expect(result.failure.context).to eq(
+      expect(result.trace).to include(
         "CollectionspaceMigrationTools::Parse::YamlConfig.parse"
       )
     end

@@ -22,8 +22,7 @@ module CollectionspaceMigrationTools
           result = db.exec(query)
           Success(result)
         rescue => err
-          Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
-            message: err.message))
+          Failure(err.message)
         end
       end
     end

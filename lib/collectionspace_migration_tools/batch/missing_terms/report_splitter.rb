@@ -72,12 +72,10 @@ module CollectionspaceMigrationTools
               by_auth[vocab] = [row[:term]]
             end
           end
-        rescue => err
-          msg = "#{err.message} IN #{err.backtrace[0]}"
-          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-            message: msg))
-        else
+
           Success(by_auth)
+        rescue => err
+          Failure(err.message)
         end
 
         def rewrite_vocab_terms(source, vocab_dir)
@@ -92,24 +90,20 @@ module CollectionspaceMigrationTools
             csv << headers
             vocab_terms.each { |arr| csv << [arr[1], arr[3]] }
           end
-        rescue => err
-          msg = "#{err.message} IN #{err.backtrace[0]}"
-          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-            message: msg))
-        else
+
           Success([target, source])
+        rescue => err
+          Failure(err.message)
         end
 
         def write(hash)
           result = hash.map do |vocab, terms|
             write_file(vocab, terms)
           end
-        rescue => err
-          msg = "#{err.message} IN #{err.backtrace[0]}"
-          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-            message: msg))
-        else
+
           Success(result)
+        rescue => err
+          Failure(err.message)
         end
 
         def write_file(vocab, terms)
@@ -118,12 +112,10 @@ module CollectionspaceMigrationTools
             csv << ["termdisplayname"]
             terms.each { |term| csv << [term] }
           end
-        rescue => err
-          msg = "#{err.message} IN #{err.backtrace[0]}"
-          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-            message: msg))
-        else
+
           Success(target)
+        rescue => err
+          Failure(err.message)
         end
       end
     end

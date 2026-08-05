@@ -74,12 +74,10 @@ module CollectionspaceMigrationTools
         end
 
         FileUtils.rm(path)
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success()
+      rescue => err
+        Failure(err.message)
       end
 
       def to_monad

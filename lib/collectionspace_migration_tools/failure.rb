@@ -1,29 +1,22 @@
 # frozen_string_literal: true
 
 module CollectionspaceMigrationTools
-  class Failure
-    attr_reader :context, :message
+  module Failure
+    module_function
 
-    def initialize(context:, message:)
-      @context = context
-      @message = message
+    # @param failobj [Dry::Monads::Failure]
+    # @return [String]
+    def for_csv(failobj)
+      "ERROR: #{failobj.trace}: #{failobj.failure}"
     end
 
-    def backtrace
-      if message.respond_to?(:backtrace)
-        message.backtrace
-      end
-    end
-
-    def for_csv
-      "ERROR in #{context}: #{message}"
-    end
-
-    def to_s
+    # @param failobj [Dry::Monads::Failure]
+    # @return [String]
+    def to_s(failobj)
       <<~MSG
-        ERROR in #{context}
+        ERROR in #{failobj.trace}
         MESSAGE:
-        #{message}
+        #{failobj.failure}
       MSG
     end
   end

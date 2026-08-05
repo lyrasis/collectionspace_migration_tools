@@ -33,15 +33,10 @@ module CollectionspaceMigrationTools
         result = Base64.urlsafe_encode64(
           [batch, final_path, id, action].join(separator)
         )
-      rescue
-        Failure(
-          CMT::Failure.new(
-            context: "#{self.class.name}.#{__callee__}",
-            message: err
-          )
-        )
-      else
+
         Success(CMT::S3::ObjKey.new(value: result, warnings: warnings))
+      rescue => err
+        Failure(err.message)
       end
 
       def to_monad

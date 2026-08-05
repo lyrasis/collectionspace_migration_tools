@@ -38,12 +38,10 @@ module CollectionspaceMigrationTools
         result = Dir.new(dir)
           .children
           .count { |file| File.extname(file) == ".xml" }
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success(result)
+      rescue => err
+        Failure(err.message)
       end
 
       def do_reporting

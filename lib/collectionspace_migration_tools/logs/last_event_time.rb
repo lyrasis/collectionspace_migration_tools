@@ -30,15 +30,10 @@ module CollectionspaceMigrationTools
         epoch_w_ms = stream.last_event_timestamp
         localtime = Time.at(0, epoch_w_ms, :millisecond)
         result = "#{localtime} (#{localtime.utc})"
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(
-          CMT::Failure.new(
-            context: "#{name}.#{__callee__}", message: msg
-          )
-        )
-      else
+
         Success(result)
+      rescue => err
+        Failure(err.message)
       end
     end
   end

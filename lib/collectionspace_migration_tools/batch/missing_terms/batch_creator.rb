@@ -50,12 +50,10 @@ module CollectionspaceMigrationTools
           result = Dir.new(source_dir).children
             .select { |filename| addable?(filename) }
             .map { |filename| "#{source_dir}/#{filename}" }
-        rescue => err
-          msg = "#{err.message} IN #{err.backtrace[0]}"
-          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-            message: msg))
-        else
+
           Success(result)
+        rescue => err
+          Failure(err.message)
         end
 
         def add_batch(path, idx)
@@ -90,12 +88,10 @@ module CollectionspaceMigrationTools
           result = paths.each_with_index.map do |path, idx|
             add_batch(path, idx)
           end
-        rescue => err
-          msg = "#{err.message} IN #{err.backtrace[0]}"
-          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-            message: msg))
-        else
+
           Success(result)
+        rescue => err
+          Failure(err.message)
         end
 
         def get_rectype(path)

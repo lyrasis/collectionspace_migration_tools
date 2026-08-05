@@ -88,10 +88,10 @@ module CollectionspaceMigrationTools
         ent = yield CMT::RecordTypes.to_obj(vocab.mappable_rectype_name)
         all_fields = ent.mappings.map { |m| m["datacolumn"] }
         @known_fields = all_fields
+
         Success(all_fields)
       rescue => err
-        Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
-          message: err.message))
+        Failure(err.message)
       end
 
       def write_csv(filename, headers, rows)
@@ -100,10 +100,10 @@ module CollectionspaceMigrationTools
           csv << headers
           rows.each { |row| csv << row.values_at(*headers) }
         end
+
         Success(path)
       rescue => err
-        Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
-          message: err.message))
+        Failure(err.message)
       end
 
       def to_log(result, action)

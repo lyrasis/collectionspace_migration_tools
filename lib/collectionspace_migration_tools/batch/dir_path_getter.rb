@@ -39,21 +39,19 @@ module CollectionspaceMigrationTools
         else
           "#{batch_dir}/#{timestamp}_#{mapper.type_subtype}"
         end
-      rescue => err
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: err))
-      else
+
         @path = result
         Success(result)
+      rescue => err
+        Failure(err.message)
       end
 
       def create_dir
         FileUtils.mkdir_p(path)
-      rescue => err
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: err))
-      else
+
         Success(path)
+      rescue => err
+        Failure(err.message)
       end
 
       def ensure_dir

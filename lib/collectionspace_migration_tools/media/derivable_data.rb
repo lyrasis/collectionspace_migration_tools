@@ -11,10 +11,9 @@ module CollectionspaceMigrationTools
       end
 
       def to_h
-        deriv.either(
-          ->(success) { success_to_h(success) },
-          ->(failure) { failure_to_h(failure) }
-        )
+        return success_to_h(deriv.value!) if deriv.success?
+
+        failure_to_h(deriv)
       end
 
       def to_monad
@@ -25,13 +24,13 @@ module CollectionspaceMigrationTools
 
       attr_reader :blob, :deriv
 
-      # @param data [CMT::Failure]
-      def failure_to_h(data)
+      # @param deriv [Dry::Monads::Failure]
+      def failure_to_h(deriv)
         blob.to_h
           .merge({
             "derivable?" => "y",
             "check_success?" => "n",
-            "error_msgs" => data.for_csv
+            "error_msgs" => CMT::Failure.for_csv(deriv)
           })
       end
 

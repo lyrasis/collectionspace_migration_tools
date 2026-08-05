@@ -23,11 +23,10 @@ module CollectionspaceMigrationTools
           CSV.parse_line(file, headers: true,
             col_sep: CMT.config.client.csv_delimiter)
         end
-      rescue => err
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: err.message))
-      else
+
         Success(result)
+      rescue => err
+        Failure(err.message)
       end
 
       def to_monad

@@ -44,12 +44,10 @@ module CollectionspaceMigrationTools
             }
           })
         end
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success(result)
+      rescue => err
+        Failure(err.message)
       end
 
       def chunks
@@ -64,12 +62,11 @@ module CollectionspaceMigrationTools
 
       def errored_chunks(arr)
         result = arr.select { |response| !response.errors.empty? }
+        return Success() if result.empty?
+
+        Failure(result)
       rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
-        result.empty? ? Success() : Failure(result)
+        Failure(err.message)
       end
     end
   end

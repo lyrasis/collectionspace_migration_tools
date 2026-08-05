@@ -8,15 +8,10 @@ module CollectionspaceMigrationTools
 
     def client_response(client, command, params)
       response = client.send(command, params)
-    rescue => err
-      msg = "#{err.message} IN #{err.backtrace[0]}"
-      Failure(
-        CMT::Failure.new(
-          context: "#{name}.#{__callee__}", message: msg
-        )
-      )
-    else
+
       Success(response)
+    rescue => err
+      Failure(err.message)
     end
 
     # @param datestr [String] in format "2023-10-31", "2023-10-31 23:59",
@@ -25,15 +20,10 @@ module CollectionspaceMigrationTools
     #   AWS log timestamps
     def self.timestamp_from_datestring(datestr)
       result = (Time.parse(datestr).to_f * 1000.0).to_i
-    rescue => err
-      msg = "#{err.message} IN #{err.backtrace[0]}"
-      Failure(
-        CMT::Failure.new(
-          context: "#{name}.#{__callee__}", message: msg
-        )
-      )
-    else
+
       Success(result)
+    rescue => err
+      Failure(err.message)
     end
 
     # @param timestamp [Integer] epoch-with-milliseconds date/time
@@ -43,15 +33,10 @@ module CollectionspaceMigrationTools
       result = CMT::Logs.format_timestring(
         Time.at(0, timestamp, :millisecond)
       )
-    rescue => err
-      msg = "#{err.message} IN #{err.backtrace[0]}"
-      Failure(
-        CMT::Failure.new(
-          context: "#{name}.#{__callee__}", message: msg
-        )
-      )
-    else
+
       Success(result)
+    rescue => err
+      Failure(err.message)
     end
 
     def self.format_timestring(time)

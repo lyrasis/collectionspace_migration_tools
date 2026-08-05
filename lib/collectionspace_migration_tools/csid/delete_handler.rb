@@ -54,14 +54,11 @@ module CollectionspaceMigrationTools
           csv << headers
           rows.each { |row| csv << row.values_at(*headers) }
         end
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(
-          context: "#{self.class.name}.#{__callee__}", message: msg
-        ))
-      else
         puts "Wrote CSID delete report to #{path}..."
+
         Success()
+      rescue => err
+        Failure(err.message)
       end
     end
   end

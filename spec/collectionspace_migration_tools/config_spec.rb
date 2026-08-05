@@ -14,7 +14,7 @@ RSpec.describe CollectionspaceMigrationTools::Config do
       config = CMT::Configuration.call(mode: :check)
       result = CMT::Config.current_client_config_name(config)
       expect(result).to be_a(Dry::Monads::Failure)
-      expect(result.failure.message).to match(/No client config found/)
+      expect(result.failure).to match(/No client config found/)
       File.open(CMT.config.system.config_name_file, "w") do |file|
         file << "sample"
       end

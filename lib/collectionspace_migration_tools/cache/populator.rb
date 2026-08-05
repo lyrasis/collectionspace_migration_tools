@@ -55,13 +55,10 @@ module CollectionspaceMigrationTools
         redis.pipelined do |pipeline|
           data.each { |row| pipeline.set(*key_val(row)) }
         end
-      rescue => err
-        Failure(
-          CMT::Failure.new(context: "#{name}.#{__callee__}",
-            message: err.message)
-        )
-      else
+
         Success("ok")
+      rescue => err
+        Failure(err.message)
       end
 
       def problem_report(failure)

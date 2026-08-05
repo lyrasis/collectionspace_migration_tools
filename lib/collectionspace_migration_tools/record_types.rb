@@ -112,18 +112,12 @@ module CollectionspaceMigrationTools
       end
 
       result = mappable_type_to_service_path_mapping[rectype]
-    rescue => err
-      msg = "#{err.message} IN #{err.backtrace[0]}"
-      Failure(CMT::Failure.new(
-        context: "#{name}.#{__callee__}", message: msg
-      ))
-    else
+
       return Success(result) if result
 
-      msg = "No services path found for `#{rectype}`"
-      Failure(CMT::Failure.new(
-        context: "#{name}.#{__callee__}", message: msg
-      ))
+      Failure("No services path found for `#{rectype}`")
+    rescue => err
+      Failure(err.message)
     end
 
     def mappable_type_to_service_path_mapping

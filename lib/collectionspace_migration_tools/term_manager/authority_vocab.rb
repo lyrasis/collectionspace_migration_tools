@@ -37,10 +37,10 @@ module CollectionspaceMigrationTools
 
       def convert_query_result_to_terms(rows)
         result = rows.map { |row| row["term"] }.compact.sort
+
         Success(result)
       rescue => err
-        Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
-          message: err.message))
+        Failure(err.message)
       end
 
       def to_s

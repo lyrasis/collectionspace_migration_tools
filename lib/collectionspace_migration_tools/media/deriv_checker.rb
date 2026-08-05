@@ -36,20 +36,12 @@ module CollectionspaceMigrationTools
 
       def get_client_response(path)
         result = client.get(path)
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(
-          context: "#{self.class.name}.#{__callee__}", message: msg
-        ))
-      else
+
         return Success(result.parsed) if result.result.success?
 
-        Failure(
-          CMT::Failure.new(
-            context: result.class.name,
-            message: "#{result.status_code}: #{result.parsed}"
-          )
-        )
+        Failure("#{result.status_code}: #{result.parsed}")
+      rescue => err
+        Failure(err.message)
       end
     end
   end

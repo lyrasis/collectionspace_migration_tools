@@ -15,8 +15,7 @@ module CollectionspaceMigrationTools
         path = Pathname.new(File.expand_path(str))
         return Success(path) if path.file?
 
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: "#{str} does not exist"))
+        Failure("#{str} does not exist")
       end
     end
   end

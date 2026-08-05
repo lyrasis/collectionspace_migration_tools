@@ -68,15 +68,10 @@ module CollectionspaceMigrationTools
       def get_duration(done_time, start_time)
         duration = Time.parse(done_time) - Time.parse(start_time)
         result = formatted_duration(duration)
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(
-          CMT::Failure.new(
-            context: "#{name}.#{__callee__}", message: msg
-          )
-        )
-      else
+
         Success(result)
+      rescue => err
+        Failure(err.message)
       end
 
       def formatted_duration(total_seconds)

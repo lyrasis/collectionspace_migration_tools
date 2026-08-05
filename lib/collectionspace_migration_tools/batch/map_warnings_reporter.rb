@@ -38,12 +38,10 @@ module CollectionspaceMigrationTools
 
       def compile_warnings(chunked)
         result = {}.merge(*chunked) { |key, oldval, newval| oldval + newval }
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success(result)
+      rescue => err
+        Failure(err.message)
       end
 
       def extract_warnings(path)
@@ -67,12 +65,10 @@ module CollectionspaceMigrationTools
           in_processes: CMT.config.system.max_processes) do |chunk|
           warning_extractor(chunk)
         end
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success(result)
+      rescue => err
+        Failure(err.message)
       end
 
       def warning_extractor(chunk)

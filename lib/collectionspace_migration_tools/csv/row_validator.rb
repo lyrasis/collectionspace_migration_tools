@@ -31,11 +31,10 @@ module CollectionspaceMigrationTools
 
       def validate(row)
         result = handler.validate(row)
-      rescue => err
-        Failure(CMT::Failure.new(context: "Handler.validate",
-          message: err.message))
-      else
+
         Success(result)
+      rescue => err
+        Failure(err.message)
       end
     end
   end

@@ -35,8 +35,7 @@ module CollectionspaceMigrationTools
       def check_file
         return Success(path) if File.file?(path)
 
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: "#{path} does not exist"))
+        Failure("#{path} does not exist")
       end
     end
   end

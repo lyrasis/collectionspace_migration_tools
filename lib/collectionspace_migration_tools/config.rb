@@ -38,11 +38,10 @@ module CollectionspaceMigrationTools
       path = system.config_name_file
       content = File.read(path).strip
       if content.empty?
-        return Failure(CMT::Failure.new(
-          context: "#{self.class.name}.#{__callee__}",
-          message: "No client config found. Try doing:\n"\
+        return Failure(
+          "No client config found. Try doing:\n"\
           "  thor config switch {yourconfigname}. "
-        ))
+        )
       end
 
       Success(content)

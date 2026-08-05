@@ -52,12 +52,10 @@ module CollectionspaceMigrationTools
           to_do = [check_headers, derived_populated].select do |chk|
             chk.failure?
           end
-        rescue => err
-          msg = "#{err.message} IN #{err.backtrace[0]}"
-          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-            message: msg))
-        else
+
           Success(to_do)
+        rescue => err
+          Failure(err.message)
         end
 
         def derive_rec_ct(rows)

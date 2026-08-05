@@ -32,16 +32,10 @@ module CollectionspaceMigrationTools
         end
         elap = Time.now - start_time
         puts "Threaded derivative checking time: #{elap}"
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(
-          CMT::Failure.new(
-            context: "#{self.class.name}.#{__callee__}",
-            message: msg
-          )
-        )
-      else
+
         Success(result.flatten)
+      rescue => err
+        Failure(err.message)
       end
 
       private
@@ -66,13 +60,10 @@ module CollectionspaceMigrationTools
             deriv: checker.call(blobcsid: row["blobcsid"])
           ).to_h
         end
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(
-          context: "#{self.class.name}.#{__callee__}", message: msg
-        ))
-      else
+
         Success(result)
+      rescue => err
+        Failure(err.message)
       end
     end
   end

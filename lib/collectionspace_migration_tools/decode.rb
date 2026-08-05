@@ -11,13 +11,10 @@ module CollectionspaceMigrationTools
 
     def key(key)
       result = Base64.urlsafe_decode64(key)
-    rescue => err
-      msg = "#{err.message} IN #{err.backtrace[0]}"
-      Failure(CMT::Failure.new(
-        context: "#{name}.#{__callee__}(#{key})", message: msg
-      ))
-    else
+
       Success(result)
+    rescue => err
+      Failure(err.message)
     end
 
     def segments(key)
