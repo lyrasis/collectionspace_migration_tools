@@ -34,10 +34,10 @@ module CollectionspaceMigrationTools
 
       def map(row)
         result = handler.process(row)
-      rescue => err
-        Failure(CMT::Failure.new(context: "Handler.process", message: err))
-      else
+
         Success(result)
+      rescue => err
+        Failure(err.message)
       end
 
       def wrap_result(result)

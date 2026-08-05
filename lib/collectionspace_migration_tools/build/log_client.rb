@@ -34,22 +34,18 @@ module CollectionspaceMigrationTools
         client = Aws::CloudWatchLogs::Client.new(
           profile: profile
         )
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success(client)
+      rescue => err
+        Failure(err.message)
       end
 
       def try(client)
         result = client.describe_log_groups(limit: 5)
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success(result)
+      rescue => err
+        Failure(err.message)
       end
     end
   end

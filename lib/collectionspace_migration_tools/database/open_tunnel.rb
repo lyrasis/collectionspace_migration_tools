@@ -43,8 +43,7 @@ module CollectionspaceMigrationTools
           wait_thread = Process.detach(tunnel_pid)
 
           unless tunnel_pid.is_a?(Integer)
-            return Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
-              message: "Tunnel not created"))
+            return Failure("Tunnel not created")
           end
 
           ready = wait_for_tunnel(wait_thread)
@@ -54,8 +53,7 @@ module CollectionspaceMigrationTools
           CMT.set_tunnel(tunnel_obj)
           Success(tunnel_obj)
         rescue => err
-          Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
-            message: err))
+          Failure(err.message)
         end
 
         def wait_for_tunnel(wait_thread)
@@ -69,8 +67,7 @@ module CollectionspaceMigrationTools
 
           until Time.now > deadline
             unless wait_thread.alive?
-              return Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
-                message: "SSH tunnel process exited!"))
+              return Failure("SSH tunnel process exited!")
             end
 
             begin
@@ -81,9 +78,8 @@ module CollectionspaceMigrationTools
             end
           end
 
-          Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
-            message: "Timed out after #{timeout}s waiting for SSH"\
-              " tunnel on port #{port} to open."))
+          Failure("Timed out after #{timeout}s waiting for SSH "\
+              "tunnel on port #{port} to open.")
         end
       end
     end

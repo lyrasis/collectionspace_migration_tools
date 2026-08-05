@@ -51,12 +51,10 @@ module CollectionspaceMigrationTools
 
       def compile(response)
         @objects << response.contents.map(&:key)
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success()
+      rescue => err
+        Failure(err.message)
       end
 
       def continuation(token)
@@ -69,12 +67,10 @@ module CollectionspaceMigrationTools
 
       def get_response(args = opts)
         response = client.list_objects_v2(**args)
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success(response)
+      rescue => err
+        Failure(err.message)
       end
 
       def process(response)

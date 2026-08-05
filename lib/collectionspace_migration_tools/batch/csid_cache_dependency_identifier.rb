@@ -105,12 +105,10 @@ module CollectionspaceMigrationTools
         end
         elapsed = Time.now - stime
         puts "Elapsed time: #{elapsed}"
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success(res)
+      rescue => err
+        Failure(err.message)
       end
 
       def extract_nhr_rectypes
@@ -123,12 +121,10 @@ module CollectionspaceMigrationTools
         end
         elapsed = Time.now - stime
         puts "Elapsed time: #{elapsed}"
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success(res)
+      rescue => err
+        Failure(err.message)
       end
 
       def map_authority_values(arr)
@@ -136,22 +132,18 @@ module CollectionspaceMigrationTools
           splitval = rectype.split("/")
           "#{type_lookup[splitval[0]]}-#{subtype_lookup[splitval[1]]}"
         end
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success(res)
+      rescue => err
+        Failure(err.message)
       end
 
       def map_nhr_values(arr)
         res = arr.map { |rectype| type_lookup[rectype] }
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success(res)
+      rescue => err
+        Failure(err.message)
       end
 
       def nhr_worker(chunk)

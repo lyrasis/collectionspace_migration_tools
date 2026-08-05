@@ -73,14 +73,11 @@ module CollectionspaceMigrationTools
           csv << headers
           rows.each { |row| csv << row.values_at(*headers) }
         end
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(
-          context: "#{self.class.name}.#{__callee__}", message: msg
-        ))
-      else
+
         puts "Wrote derivatives report to #{outpath}..."
         Success()
+      rescue => err
+        Failure(err.message)
       end
 
       # @param rows [Array<CSV::Row>]
@@ -93,16 +90,13 @@ module CollectionspaceMigrationTools
             deriv: checker.call(blobcsid: row["blobcsid"])
           ).to_h
         end
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(
-          context: "#{self.class.name}.#{__callee__}", message: msg
-        ))
-      else
+
         elap = Time.now - start_time
         puts "Derivative checking time: #{elap}"
 
         Success(result)
+      rescue => err
+        Failure(err.message)
       end
 
       def get_underivable(rows)
@@ -113,13 +107,10 @@ module CollectionspaceMigrationTools
               "check_success?" => "n/a"
             })
         end
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(
-          context: "#{self.class.name}.#{__callee__}", message: msg
-        ))
-      else
+
         Success(result)
+      rescue => err
+        Failure(err.message)
       end
 
       def group_rows(path)
@@ -129,13 +120,10 @@ module CollectionspaceMigrationTools
           derivable?(row["mimetype"]) ? derivable << row : underivable << row
         end
         result = {derivable: derivable, underivable: underivable}
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(
-          context: "#{self.class.name}.#{__callee__}", message: msg
-        ))
-      else
+
         Success(result)
+      rescue => err
+        Failure(err.message)
       end
 
       def image?(mimetype)

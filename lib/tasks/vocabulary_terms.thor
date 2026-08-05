@@ -14,35 +14,36 @@ class VocabularyTerms < Thor
     "configured, you may just give the filename. Otherwise, give the full "\
     "to file."
   def add
-    CMT::VocabularyTerms.add(options[:csv]).either(
-      ->(success) { exit(0) },
-      ->(failure) do
-        if failure.is_a?(Exception)
-          puts failure.message
-          puts failure.backtrace
-        else
-          puts failure
-        end
-        exit(1)
+    result = CMT::VocabularyTerms.add(options[:csv])
+    if result.success?
+      exit(0)
+    else
+      if result.is_a?(Exception)
+        puts result.message
+        puts result.backtrace
+      else
+        puts result.failure
+        purs result.trace
       end
-    )
+      exit(1)
+    end
   end
 
   desc "delete_all VOCAB", "delete all terms in given vocabulary machine name"
   def delete_all(vocab)
-    CMT::VocabularyTerms::VocabClearer.call(vocabname: vocab)
-      .either(
-        ->(_success) { exit(0) },
-        ->(failure) do
-          if failure.is_a?(Exception)
-            puts failure.message
-            puts failure.backtrace
-          else
-            puts failure
-          end
-          exit(1)
-        end
-      )
+    result = CMT::VocabularyTerms::VocabClearer.call(vocabname: vocab)
+    if result.success?
+      exit(0)
+    else
+      if result.is_a?(Exception)
+        puts result.message
+        puts result.backtrace
+      else
+        puts result.failure
+        purs result.trace
+      end
+      exit(1)
+    end
   end
 
   desc "write", "write CSV containing all vocabulary term data for the "\
@@ -58,21 +59,21 @@ class VocabularyTerms < Thor
     default: false,
     desc: "Whether to include soft-deleted vocabulary terms in the output"
   def write
-    CMT::VocabularyTerms::Reporter.new(
+    result = CMT::VocabularyTerms::Reporter.new(
       path: options[:outputpath],
       include_deletes: options[:include_deletes]
     ).call
-      .either(
-        ->(success) { exit(0) },
-        ->(failure) do
-          if failure.is_a?(Exception)
-            puts failure.message
-            puts failure.backtrace
-          else
-            puts failure
-          end
-          exit(1)
-        end
-      )
+    if result.success?
+      exit(0)
+    else
+      if result.is_a?(Exception)
+        puts result.message
+        puts result.backtrace
+      else
+        puts result.failure
+        purs result.trace
+      end
+      exit(1)
+    end
   end
 end

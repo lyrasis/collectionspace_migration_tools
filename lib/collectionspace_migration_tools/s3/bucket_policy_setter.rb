@@ -37,10 +37,7 @@ module CollectionspaceMigrationTools
 
       def get_bucket
         unless CMT.config.client.respond_to?(:media_bucket)
-          return Failure(CMT::Failure.new(
-            context: "#{self.class.name}.#{__callee__}",
-            message: "No client media_bucket setting specified"
-          ))
+          return Failure("No client media_bucket setting specified")
         end
 
         Success(CMT.config.client.media_bucket)
@@ -51,16 +48,10 @@ module CollectionspaceMigrationTools
           bucket: bucket,
           public_access_block_configuration: public_access_block_config
         })
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(
-          CMT::Failure.new(
-            context: "#{self.class.name}.#{__callee__}",
-            message: msg
-          )
-        )
-      else
+
         Success(resp)
+      rescue => err
+        Failure(err.message)
       end
 
       def public_access_block_config
@@ -83,16 +74,10 @@ module CollectionspaceMigrationTools
             bucket: bucket
           })
         end
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(
-          CMT::Failure.new(
-            context: "#{self.class.name}.#{__callee__}",
-            message: msg
-          )
-        )
-      else
+
         Success(resp)
+      rescue => err
+        Failure(err.message)
       end
 
       def public_policy

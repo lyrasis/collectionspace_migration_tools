@@ -31,12 +31,10 @@ module CollectionspaceMigrationTools
         CSV.open(path, "a") do |csv|
           duplicates.each { |row| csv << row.values_at(*headers) }
         end
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success(path)
+      rescue => err
+        Failure(err.message)
       end
 
       def to_monad

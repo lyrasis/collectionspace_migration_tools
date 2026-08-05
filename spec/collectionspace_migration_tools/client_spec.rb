@@ -18,11 +18,11 @@ RSpec.describe CollectionspaceMigrationTools::Client do
       after(:each) { CMT.reset_config }
       it "returns a Failure with expected message" do
         expect(result).to be_a(Dry::Monads::Failure)
-        expect(result.failure.context).to eq(
+        expect(result.trace).to include(
           "CollectionspaceMigrationTools::Client.verify"
         )
         msg = "Client cannot authenticate to CS instance"
-        expect(result.failure.message).to include(msg)
+        expect(result.failure).to eq(msg)
       end
     end
   end

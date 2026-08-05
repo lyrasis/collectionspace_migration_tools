@@ -37,12 +37,10 @@ module CollectionspaceMigrationTools
 
         def build_batches_csv
           CSV.open(path, "wb") { |csv| csv << headers }
-        rescue => err
-          msg = "#{err.message} IN #{err.backtrace[0]}"
-          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-            message: msg))
-        else
+
           File.exist?(path) ? Success() : Failure()
+        rescue => err
+          Failure(err.message)
         end
       end
     end

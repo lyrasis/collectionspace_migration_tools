@@ -50,7 +50,7 @@ module CollectionspaceMigrationTools
 
       def process_failure(failure)
         if failure.is_a?(CMT::Failure)
-          failure.message
+          failure.failure
         else
           failure
         end

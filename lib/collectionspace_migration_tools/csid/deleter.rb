@@ -40,38 +40,23 @@ module CollectionspaceMigrationTools
         result = row["csid"]
         return Success(result) if result
 
-        msg = "No CSID in row"
-        Failure(CMT::Failure.new(
-          context: "#{self.class.name}.#{__callee__}", message: msg
-        ))
+        Failure("No CSID in row")
       end
 
       def get_rectype(row)
         result = row["rectype"]
         return Success(result) if result
 
-        msg = "No rectype in row"
-        Failure(CMT::Failure.new(
-          context: "#{self.class.name}.#{__callee__}", message: msg
-        ))
+        Failure("No rectype in row")
       end
 
       def get_client_response(path)
         result = client.delete(path)
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(
-          context: "#{self.class.name}.#{__callee__}", message: msg
-        ))
-      else
         return Success(result.parsed) if result.result.success?
 
-        Failure(
-          CMT::Failure.new(
-            context: result.class.name,
-            message: "#{result.status_code}: #{result.parsed}"
-          )
-        )
+        Failure("#{result.status_code}: #{result.parsed}")
+      rescue => err
+        Failure(err.message)
       end
     end
   end

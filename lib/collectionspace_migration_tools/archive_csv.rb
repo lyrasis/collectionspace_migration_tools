@@ -32,12 +32,10 @@ module CollectionspaceMigrationTools
     def parse
       data = File.read(path)
       table = CSV.parse(data, headers: true)
-    rescue => err
-      msg = "#{err.message} IN #{err.backtrace[0]}"
-      Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-        message: msg))
-    else
+
       Success(table)
+    rescue => err
+      Failure(err.message)
     end
 
     def file_check_failure_msg = "No archives CSV file present"

@@ -43,29 +43,24 @@ module CollectionspaceMigrationTools
 
       def parse(str)
         result = JSON.parse(str)
-      rescue => err
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: err))
-      else
+
         Success(result)
+      rescue => err
+        Failure(err.message)
       end
 
       def read
         return Success("{}") if path.nil?
 
         unless File.exist?(path)
-          msg = "Batch config file does not exist at #{path}"
-          return Failure(CMT::Failure.new(
-            context: "#{self.class.name}.#{__callee__}", message: msg
-          ))
+          return Failure("Batch config file does not exist at #{path}")
         end
 
         result = File.read(path)
-      rescue => err
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: err))
-      else
+
         Success(result)
+      rescue => err
+        Failure(err.message)
       end
     end
   end

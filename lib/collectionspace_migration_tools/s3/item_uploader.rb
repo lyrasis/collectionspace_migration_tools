@@ -47,14 +47,11 @@ module CollectionspaceMigrationTools
           bucket: bucket,
           key: s3key
         })
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
         return Success() if result.etag
 
         Failure("failed to upload without throwing error")
+      rescue => err
+        Failure(err.message)
       end
 
       def xmlfile(row)

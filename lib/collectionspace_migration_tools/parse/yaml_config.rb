@@ -19,21 +19,18 @@ module CollectionspaceMigrationTools
 
         def parse(yaml)
           parsed = Psych.load(yaml, symbolize_names: true)
-        rescue => err
-          msg = "YAML could not be parsed: #{err.message}"
-          Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
-            message: msg))
-        else
+
           Success(parsed)
+        rescue => err
+          Failure("YAML could not be parsed: #{err.message}")
         end
 
         def read(config_path)
           yaml_string = File.read(config_path)
-        rescue => err
-          Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
-            message: err.message))
-        else
+
           Success(yaml_string)
+        rescue => err
+          Failure(err.message)
         end
       end
     end

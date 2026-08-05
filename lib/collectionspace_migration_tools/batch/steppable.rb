@@ -58,24 +58,20 @@ module CollectionspaceMigrationTools
         send(meth).each do |header|
           data[header] = "" if data.key?(header)
         end
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success()
+      rescue => err
+        Failure(err.message)
       end
       private :clear_step_fields
 
       def rollback_status(steptype)
         meth = :"#{steptype}_previous_status"
         data["batch_status"] = send(meth)
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success()
+      rescue => err
+        Failure(err.message)
       end
 
       def delete_step_reports(steptype)
@@ -83,12 +79,10 @@ module CollectionspaceMigrationTools
         send(meth).each do |path|
           FileUtils.rm(path) if File.exist?(path)
         end
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success()
+      rescue => err
+        Failure(err.message)
       end
       private :delete_step_reports
 

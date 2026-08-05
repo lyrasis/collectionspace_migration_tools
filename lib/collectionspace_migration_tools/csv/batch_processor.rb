@@ -67,12 +67,10 @@ module CollectionspaceMigrationTools
           in_processes: CMT.config.system.max_processes) do |chunk|
           worker(chunk)
         end
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success()
+      rescue => err
+        Failure(err.message)
       end
 
       def worker(chunk)

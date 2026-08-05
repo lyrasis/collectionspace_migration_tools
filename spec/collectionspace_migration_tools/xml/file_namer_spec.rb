@@ -22,7 +22,7 @@ RSpec.describe CollectionspaceMigrationTools::Xml::FileNamer do
       let(:rec_id) { "" }
       it "returns Failure" do
         expect(result).to be_a(Dry::Monads::Failure)
-        expect(result.failure.message).to eq("no id found for record")
+        expect(result.failure).to eq("no id found for record")
       end
     end
   end

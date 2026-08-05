@@ -36,12 +36,9 @@ module CollectionspaceMigrationTools
 
       def build_archive_csv
         CSV.open(path, "wb") { |csv| csv << headers }
+        File.exist?(path) ? Success() : Failure("#{path} does not exist")
       rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
-        File.exist?(path) ? Success() : Failure()
+        Failure(err.message)
       end
     end
   end

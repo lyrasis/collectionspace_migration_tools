@@ -42,12 +42,10 @@ module CollectionspaceMigrationTools
         CSV.open(path, "a", headers: true) do |csv|
           csv << headers.map { |hdr| batch.send(hdr.to_sym) }
         end
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success()
+      rescue => err
+        Failure(err.message)
       end
     end
   end

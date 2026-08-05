@@ -59,13 +59,10 @@ module CollectionspaceMigrationTools
           csv << headers
           rows.each { |row| csv << row.values_at(*headers) }
         end
-      rescue => err
-        Failure(CMT::Failure.new(
-          context: "#{name}.#{__callee__}",
-          message: err.message
-        ))
-      else
+
         Success()
+      rescue => err
+        Failure(err.message)
       end
       private :csv_writer
     end

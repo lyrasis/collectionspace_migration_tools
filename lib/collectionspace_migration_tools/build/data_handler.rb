@@ -29,21 +29,16 @@ module CollectionspaceMigrationTools
           csid_cache: CMT.csid_cache,
           config: batch_config
         )
-      rescue CollectionSpace::Mapper::NoClientServiceError => err
-        msg = "collectionspace-client does not have a service configured "\
-          "for #{err.message}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      rescue CollectionSpace::Mapper::IdFieldNotInMapperError
-        msg = "Cannot determine the unique ID field for this record type. "\
-          "RecordMapper needs correction"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      rescue => err
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: err))
-      else
+
         Success(result)
+      rescue CollectionSpace::Mapper::NoClientServiceError => err
+        Failure("collectionspace-client does not have a service configured "\
+          "for #{err.message}")
+      rescue CollectionSpace::Mapper::IdFieldNotInMapperError
+        Failure("Cannot determine the unique ID field for this record type. "\
+          "RecordMapper needs correction")
+      rescue => err
+        Failure(err.message)
       end
 
       private

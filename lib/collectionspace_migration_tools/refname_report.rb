@@ -39,13 +39,9 @@ module CollectionspaceMigrationTools
         CMT.config.client.base_dir,
         "refname_data.csv"
       )
-    rescue => err
-      msg = "#{err.message} IN #{err.backtrace[0]}"
-      Failure(CMT::Failure.new(
-        context: "#{self.class.name}.#{__callee__}", message: msg
-      ))
-    else
       Success(result)
+    rescue => err
+      Failure(err.message)
     end
 
     def write_blob_data_report(rows, path)
@@ -54,14 +50,10 @@ module CollectionspaceMigrationTools
         csv << headers
         rows.each { |row| csv << row.values }
       end
-    rescue => err
-      msg = "#{err.message} IN #{err.backtrace[0]}"
-      Failure(CMT::Failure.new(
-        context: "#{self.class.name}.#{__callee__}", message: msg
-      ))
-    else
       puts "Wrote refname data report to #{path}..."
       Success()
+    rescue => err
+      Failure(err.message)
     end
   end
 end

@@ -37,22 +37,18 @@ module CollectionspaceMigrationTools
 
       def create_client
         client = Aws::S3::Client.new(profile: profile)
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success(client)
+      rescue => err
+        Failure(err.message)
       end
 
       def try(client)
         result = client.get_bucket_location({bucket: bucket})
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success(result)
+      rescue => err
+        Failure(err.message)
       end
     end
   end

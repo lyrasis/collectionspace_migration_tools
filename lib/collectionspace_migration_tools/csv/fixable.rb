@@ -11,12 +11,10 @@ module CollectionspaceMigrationTools
         data = table.values_at(*headers)
         mapped = data.map { |rowdata| CSV::Row.new(headers, rowdata) }
         mapped.each { |row| new_table << row }
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success(new_table)
+      rescue => err
+        Failure(err.message)
       end
     end
   end

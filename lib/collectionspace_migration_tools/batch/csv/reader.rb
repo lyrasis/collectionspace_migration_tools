@@ -138,12 +138,10 @@ module CollectionspaceMigrationTools
         def delete_from_table(bid)
           table.by_row!
           table.delete_if { |row| row["id"] == bid }
-        rescue => err
-          msg = "#{err.message} IN #{err.backtrace[0]}"
-          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-            message: msg))
-        else
+
           Success()
+        rescue => err
+          Failure(err.message)
         end
 
         def header_check
@@ -167,12 +165,10 @@ module CollectionspaceMigrationTools
 
         def read_batches_csv
           data = File.read(CMT.config.client.batch_csv)
-        rescue => err
-          msg = "#{err.message} IN #{err.backtrace[0]}"
-          Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-            message: msg))
-        else
+
           Success(data)
+        rescue => err
+          Failure(err.message)
         end
       end
     end

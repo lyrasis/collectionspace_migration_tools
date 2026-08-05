@@ -37,11 +37,10 @@ module CollectionspaceMigrationTools
 
       def insert_name(hash)
         hash["config"]["mapper_name"] = rectype
-      rescue => err
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: err))
-      else
+
         Success(hash)
+      rescue => err
+        Failure(err.message)
       end
 
       def mapper_path
@@ -52,29 +51,25 @@ module CollectionspaceMigrationTools
 
       def parse(json)
         result = JSON.parse(json)
-      rescue => err
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: err))
-      else
+
         Success(result)
+      rescue => err
+        Failure(err.message)
       end
 
       def read_json
         result = File.read(mapper_path)
-      rescue => err
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: err))
-      else
+
         Success(result)
+      rescue => err
+        Failure(err.message)
       end
 
       def validate_rectype
         return Success(rectype) if CMT::RecordTypes.mappable.any?(rectype)
 
-        msg = "No record mapper for #{rectype} in "\
-          "#{CMT.config.client.mapper_dir}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
+        Failure("No record mapper for #{rectype} in "\
+          "#{CMT.config.client.mapper_dir}")
       end
     end
   end

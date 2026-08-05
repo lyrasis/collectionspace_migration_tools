@@ -63,7 +63,7 @@ RSpec.describe CollectionspaceMigrationTools::RecordTypes do
       let(:rectype) { "foo" }
       it "returns expected" do
         expect(result).to be_a(Dry::Monads::Failure)
-        expect(result.failure.message).to eq("No services path found for `foo`")
+        expect(result.failure).to eq("No services path found for `foo`")
       end
     end
   end

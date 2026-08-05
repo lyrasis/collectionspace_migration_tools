@@ -51,44 +51,36 @@ module CollectionspaceMigrationTools
 
       def basenames(filenames)
         result = filenames.map { |fn| File.basename(fn, ".yml") }
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success(result)
+      rescue => err
+        Failure(err.message)
       end
 
       def children
         result = Dir.new(config_dir)
           .children
           .select { |file| File.extname(file) == ".yml" }
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success(result)
+      rescue => err
+        Failure(err.message)
       end
 
       def copy_source
         FileUtils.cp(source_path, target_path)
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success()
+      rescue => err
+        Failure(err.message)
       end
 
       def paths(filenames)
         result = filenames.map { |fn| File.join(config_dir, fn) }
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success(result)
+      rescue => err
+        Failure(err.message)
       end
     end
   end

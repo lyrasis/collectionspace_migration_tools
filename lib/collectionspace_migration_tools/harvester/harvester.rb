@@ -34,34 +34,24 @@ module CollectionspaceMigrationTools
 
       def get_record(uri)
         result = client.get(uri)
+
         Success(result)
       rescue CollectionSpace::RequestError => err
-        msg = "Request failure getting record #{uri}: #{err.message}"
-        Failure(CMT::Failure.new(
-          context: "#{self.class.name}.#{__callee__}", message: msg
-        ))
+        Failure("Request failure getting record #{uri}: #{err.message}")
       rescue => err
-        msg = "Unexpected error getting record #{uri}: #{err.message}"
-        Failure(CMT::Failure.new(
-          context: "#{self.class.name}.#{__callee__}", message: msg
-        ))
+        Failure("Unexpected error getting record #{uri}: #{err.message}")
       end
 
       def get_record_count
         total_results = client.count(service_path)
+
         Success(total_results)
       rescue CollectionSpace::RequestError => err
-        msg = "Request failure getting count for #{rec_type} "\
-          "(#{service_path}): #{err.message}"
-        Failure(CMT::Failure.new(
-          context: "#{self.class.name}.#{__callee__}", message: msg
-        ))
+        Failure("Request failure getting count for #{rec_type} "\
+          "(#{service_path}): #{err.message}")
       rescue => err
-        msg = "Unexpected error getting count for #{rec_type} "\
-          "(#{service_path}): #{err.message}"
-        Failure(CMT::Failure.new(
-          context: "#{self.class.name}.#{__callee__}", message: msg
-        ))
+        Failure("Unexpected error getting count for #{rec_type} "\
+          "(#{service_path}): #{err.message}")
       end
 
       def harvest
@@ -90,14 +80,11 @@ module CollectionspaceMigrationTools
       def write_xml(record, result)
         csid = record["uri"].split("/").last
         filename = File.join(target_dir, "#{csid}.xml")
-
         File.write(filename, result.xml.to_s)
+
         Success()
       rescue => err
-        msg = "Unexpected error writing XML for #{csid}: #{err.message}"
-        Failure(CMT::Failure.new(
-          context: "#{self.class.name}.#{__callee__}", message: msg
-        ))
+        Failure("Unexpected error writing XML for #{csid}: #{err.message}")
       end
     end
   end

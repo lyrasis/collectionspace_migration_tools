@@ -41,22 +41,18 @@ module CollectionspaceMigrationTools
 
       def backup_old
         FileUtils.cp(current, backup)
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success()
+      rescue => err
+        Failure(err.message)
       end
 
       def delete_backup
         FileUtils.rm(backup) if File.exist?(backup)
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success()
+      rescue => err
+        Failure(err.message)
       end
 
       def do_rewrite(table)
@@ -68,20 +64,17 @@ module CollectionspaceMigrationTools
       end
 
       def process_rewrite_failure(failure)
-        if failure.context.end_with?("backup_old")
-          msg = "Could not back up existing batches CSV. Did not not "\
-            "update.\nACTION FOR YOU: none\nError received was:\n"\
-            "#{failure.message}"
-          @status = Failure(CMT::Failure.new(context: failure.context,
-            message: msg))
-        elsif failure.context.end_with?("write_new")
-          msg = "Backed up existing batches CSV. Update write failed. To "\
-            "protect the data we did not revert to the backup automatically."\
-            "\nACTION FOR YOU: Manually verify the existing file was not "\
+        if failure.end_with?("backup_old")
+          @status = Failure("Could not back up existing batches CSV. Did not "\
+                            "update.\nACTION FOR YOU: none\n"\
+                            "Error received was:\n#{failure}")
+        elsif failure.end_with?("write_new")
+          @status = Failure("Backed up existing batches CSV. Update write "\
+                            "failed. To protect the data we did not revert "\
+                            "to the backup automatically.\n"\
+            "ACTION FOR YOU: Manually verify the existing file was not "\
             "rewritten or corrupted, and delete the backup.\n"\
-            "Error received was:\n#{failure.message}"
-          @status = Failure(CMT::Failure.new(context: failure.context,
-            message: msg))
+            "Error received was:\n#{failure}")
         else
           warn("Batches csv successfully updated, but we could not delete the "\
                "backup. You may wish to manually delete it.")
@@ -92,12 +85,10 @@ module CollectionspaceMigrationTools
 
       def write_new(table)
         File.open(current, "w") { |file| file << table.to_csv }
-      rescue => err
-        msg = "#{err.message} IN #{err.backtrace[0]}"
-        Failure(CMT::Failure.new(context: "#{self.class.name}.#{__callee__}",
-          message: msg))
-      else
+
         Success()
+      rescue => err
+        Failure(err.message)
       end
     end
   end

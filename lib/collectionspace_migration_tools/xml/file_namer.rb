@@ -31,22 +31,15 @@ module CollectionspaceMigrationTools
 
       def encode(id)
         hashed = Base64.urlsafe_encode64(id)
-      rescue => err
-        Failure(CMT::Failure.new(
-          context: "#{self.class.name}.#{__callee__}", message: err
-        ))
-      else
+
         Success(hashed)
+      rescue => err
+        Failure(err.message)
       end
 
       def get_id(response)
         id = response.identifier
-        if id.blank?
-          return Failure(CMT::Failure.new(
-            context: "#{self.class.name}.#{__callee__}",
-            message: "no id found for record"
-          ))
-        end
+        return Failure("no id found for record") if id.blank?
 
         Success(id)
       end
