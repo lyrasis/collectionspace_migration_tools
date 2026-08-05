@@ -65,18 +65,9 @@ module CollectionspaceMigrationTools
       @connection = connection_obj
     end
 
-    def csid_cache
-      return @csid_cache if instance_variable_defined?(:@csid_cache)
+    def csid_cache = get_cache(:csid)
 
-      csid_cache = CMT::Cache::Builder.call(:csid)
-      if csid_cache.success?
-        @csid_cache = csid_cache.value!
-        return @csid_cache
-      end
-
-      puts csid_cache.failure
-      exit
-    end
+    def refname_cache = get_cache(:refname)
 
     def get_csv_path(csv)
       config = CMT.config.client
@@ -92,19 +83,6 @@ module CollectionspaceMigrationTools
       @domain ||= client.domain
     end
 
-    def refname_cache
-      return @refname_cache if instance_variable_defined?(:@refname_cache)
-
-      refname_cache = CMT::Cache::Builder.call(:refname)
-      if refname_cache.success?
-        @refname_cache = refname_cache.value!
-        return @refname_cache
-      end
-
-      puts refname_cache.failure
-      exit
-    end
-
     # @param tunnel_obj [CMT::Tunnel]
     def set_tunnel(tunnel_obj)
       return tunnel if tunnel&.open?
@@ -117,6 +95,22 @@ module CollectionspaceMigrationTools
   Process.setproctitle("CMT")
 
   private
+
+  def get_cache(type)
+    iv = :"@#{type}_cache"
+    return instance_variable_get(iv) if instance_variable_defined?(iv)
+
+    cache = CMT::Cache::Builder.call(type)
+    if cache.success?
+      result = cache.value!
+      instance_variable_set(iv, result)
+      return result
+    end
+
+    puts cache.failure
+    exit(1)
+  end
+  module_function :get_cache
 
   def get_full_path(csv)
     return File.expand_path(csv) if csv.start_with?("~")
