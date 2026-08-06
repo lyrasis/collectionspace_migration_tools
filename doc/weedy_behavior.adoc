@@ -1,0 +1,265 @@
+:toc:
+:toc-placement!:
+:toclevels: 4
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+= CollectionSpace behavior: IN THE WEEDS
+
+toc::[]
+
+[INFORMATION]
+====
+Non-hierarchical and hierarchical relationship records are stored in the same database table: `relations_common`.
+They are distinguished by the `relationshiptype` value in that table: `affects` or `hasBroader`.
+====
+
+== Non-hierarchical relationships (NHRs)
+
+NHRs may be created between:
+
+....
+object <=> object
+object <=> procedure
+procedure <=> procedure
+....
+
+For each NHR between a pair of objects/procedures, *_two_* records are created in CollectionSpace:
+
+....
+A affects B
+B affects A
+....
+
+`affects` is the `relationshiptype` stored in the database for records that are part of an NHR.
+
+===  CollectionSpace does NOT clean up NHRs when records are hard-deleted
+
+Kristina was told early in her CollectionSpace journey that CollectionSpace handles deleting NHRs when one or both of the records involved in a relationship are deleted.
+
+Kristina assumed that, since she was not told CollectionSpace handles soft-deleting NHRs when one or both of the records involved in a relationship are soft-deleted, that "delete" meant "delete".
+
+Alas, if you hard-delete an object/procedure, any NHRs where that record was subject or object of the relationship remain.
+
+=== Adding NHRs
+
+https://collectionspace.atlassian.net/browse/DRYD-2159[Jira issue documenting inconsistent NHR creation logic in UI vs API\]
+
+=== Experimenting with relationships
+
+First, let's generate a one-sided relationship.
+These may occur naturally when:
+
+* Bulk ingest of the XML record for one side of an NHR fails, but the other side's ingest succeeds
+* The CollectionSpace process that creates both underlying records when a user relates records in the UI fails to create one side of the relationship{empty}footnote:[It is assumed this type of failure is technically possible, but perhaps this process does something fancy like rolling back to pre-relation state if either relationship record creation fails.]
+* Someone nefariously makes an API call to create just one side of the relation for testing purposes, as shown below...
+
+[source,ruby]
+----
+~/code/cs/migration_tools
+❯ bin/console
+[1] pry(main)> c = CMT.client
+=> #<CollectionSpace::Client:0x00000001235d6f28
+ @config=
+  #<CollectionSpace::Configuration:0x00000001235d72c0
+   @base_uri="https://site.staging.collectionspace.org/cspace-services",
+   @include_deleted=false,
+   @page_size=50,
+   @password="redacted",
+   @throttle=0,
+   @timeout=60,
+   @username="redacted",
+   @verbose=false,
+   @verify_ssl=true>>
+[2] pry(main)> rel1 = File.read(File.expand_path("~/data/obj_to_lmi.xml"))
+=> "<?xml version=\"1.0\"?>\n<document>\n  <ns2:relations_common xmlns:ns2=\"http://collectionspace.org/services/relation\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n    <subjectCsid>fd45aca0-ab44-4c2b-a499</subjectCsid>\n    <relationshipType>affects</relationshipType>\n    <objectCsid>7438500f-fc56-41e3-ac1d</objectCsid>\n  </ns2:relations_common>\n</document>\n"
+[3] pry(main)> response = c.post("relations", rel1)
+=> #<CollectionSpace::Response:0x0000000123cbae20
+ @parsed=nil,
+ @result=
+  #<HTTParty::Response:0x2890 parsed_response=nil, @response=#<Net::HTTPCreated 201  readbody=true>, @headers={"date" => ["Thu, 06 Aug 2026 22:16:01 GMT"], "content-length" => ["0"], "connection" => ["close"], "vary" => ["Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"], "set-cookie" => ["JSESSIONID=EF3912A29DE9C150F3FB883596B372D8; Path=/cspace-services; Secure; HttpOnly"], "location" => ["https://site.staging.collectionspace.org/cspace-services/relations/8f3488bb-4956-4006-95c7"], "x-content-type-options" => ["nosniff"], "x-xss-protection" => ["1; mode=block"], "cache-control" => ["no-cache, no-store, max-age=0, must-revalidate"], "pragma" => ["no-cache"], "expires" => ["0"], "strict-transport-security" => ["max-age=31536000 ; includeSubDomains"], "x-frame-options" => ["DENY"]}>,
+ @status_code=201,
+ @xml=nil>
+ [4] pry(main)> response.result.success?
+=> true
+----
+
+We will repeatedly use the following query to check the status of relations records for this pair in the database:
+
+[source,sql]
+----
+select
+  misc.lifecyclestate,
+  rels.subjectdocumenttype,
+  rels.relationshiptype,
+  rels.objectdocumenttype,
+  rels.subjectcsid,
+  rels.subjecturi,
+  rels.subjectrefname,
+  rels.objectcsid,
+  rels.objecturi,
+  rels.objectrefname
+from relations_common rels
+inner join misc on rels.id = misc.id
+where
+  (subjectcsid = 'fd45aca0-ab44-4c2b-a499' and objectcsid = '7438500f-fc56-41e3-ac1d')
+  or
+  (objectcsid = 'fd45aca0-ab44-4c2b-a499' and subjectcsid = '7438500f-fc56-41e3-ac1d')
+----
+
+The result is as expected:
+
+....
+┌────────────────┬─────────────────────┬──────────────────┬────────────────────┐
+│ lifecyclestate │ subjectdocumenttype │ relationshiptype │ objectdocumenttype │
+├────────────────┼─────────────────────┼──────────────────┼────────────────────┤
+│ project        │ CollectionObject    │ affects          │ Movement           │
+└────────────────┴─────────────────────┴──────────────────┴────────────────────┘
+....
+
+==== Manually, in the UI
+
+The process:
+
+* Find the relationship "end" that was created and delete it. (Must use top "Related" tab to do this. "Unrelate" is not available when opening relations from sidebar.)
+** Using the example above, I go into the object record and unrelate from the movement
+* At this point, I run the test query again in the database and get NO ROWS.
+
+**NHRs are HARD DELETED when deleted via the UI**
+
+* From the object record in the UI, relate to the movement record
+* Run the query. Output is as expected:
+
+....
+┌────────────────┬─────────────────────┬──────────────────┬────────────────────┐
+│ lifecyclestate │ subjectdocumenttype │ relationshiptype │ objectdocumenttype │
+├────────────────┼─────────────────────┼──────────────────┼────────────────────┤
+│ project        │ CollectionObject    │ affects          │ Movement           │
+│ project        │ Movement            │ affects          │ CollectionObject   │
+└────────────────┴─────────────────────┴──────────────────┴────────────────────┘
+....
+
+* With the properly-reciprocal relationship in place again, unrelate the records again in the UI.
+Go into the Related > LMI tab at the top of the Object and unrelate.
+* Run the query again:
+
+....
+┌────────────────┬─────────────────────┬──────────────────┬────────────────────┐
+│ lifecyclestate │ subjectdocumenttype │ relationshiptype │ objectdocumenttype │
+├────────────────┼─────────────────────┼──────────────────┼────────────────────┤
+│ project        │ Movement            │ affects          │ CollectionObject   │
+└────────────────┴─────────────────────┴──────────────────┴────────────────────┘
+....
+
+That is unexpected.
+
+Is this an artifact of the special behavior between objects and movements, to populate the `computedcurrentlocation` field in the object?
+
+That field is still populated in the object with the currentlocation of the movement that is related to the object.
+
+* Go to the Related > Object tab at the top of the LMI record and attempt to remove the relationship
+* **Get error: Some records could not be unrelated: Cannot read properties of undefined (reading 'get')**
+
+* Let's try to delete it via an API call:
+** To get the CSID of the relation record I want to delete, I add `inner join hierarchy hier on rels.id = hier.id` in my test query and add `hier.name` as one of the selected fields.
+
+[source,ruby]
+----
+[2] pry(main)> response = c.delete("relations/100426ab-a379-4aa6-8a25")
+=> #<CollectionSpace::Response:0x0000000122d147a0
+ @parsed=nil,
+ @result=
+  #<HTTParty::Response:0x2890 parsed_response=nil, @response=#<Net::HTTPOK 200  readbody=true>, @headers={"date" => ["Thu, 06 Aug 2026 23:21:57 GMT"], "content-length" => ["0"], "connection" => ["close"], "vary" => ["Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"], "set-cookie" => ["JSESSIONID=218D7C9BD87A929A548D0AF384E69F8A; Path=/cspace-services; Secure; HttpOnly"], "x-content-type-options" => ["nosniff"], "x-xss-protection" => ["1; mode=block"], "cache-control" => ["no-cache, no-store, max-age=0, must-revalidate"], "pragma" => ["no-cache"], "expires" => ["0"], "strict-transport-security" => ["max-age=31536000 ; includeSubDomains"], "x-frame-options" => ["DENY"]}>,
+ @status_code=200,
+ @xml=nil>
+----
+
+* Check in the UI
+** The LMI -> Object relationship no longer displays
+** The Object record no longer has a `computedcurrentlocation` value
+* Run test query again -> NO results, as expected.
+
+==== OK switching to a different site to try LMI/Object unrelating again
+
+* Create the reciprocal relation
+* Run test query:
+
+....
+┌────────────────┬─────────────────────┬──────────────────┬────────────────────┐
+│ lifecyclestate │ subjectdocumenttype │ relationshiptype │ objectdocumenttype │
+├────────────────┼─────────────────────┼──────────────────┼────────────────────┤
+│ project        │ CollectionObject    │ affects          │ Movement           │
+│ project        │ Movement            │ affects          │ CollectionObject   │
+└────────────────┴─────────────────────┴──────────────────┴────────────────────┘
+....
+
+* Go into Object in UI and unrelate the LMI
+** No errors; no warnings; relation no longer displays in Object record
+* Run test query
+** NO RESULTS, as expected.
+** So, there is no general CollectionSpace problem around this. It's an issue with the first site, which may be having other issues
+
+==== Simulate what happens when you ingest both sides of an NHR again via CMT
+
+* Get obj => lmi XML record as string: `objlmi = File.read(File.expand_path("~/data/obj_to_lmi.xml"))`
+* Create obj => lmi relationship via API: `c.post("relations", objlmi)`
+* status 201 = success
+* Verify one-way relationship in UI
+* Run test query:
+
+....
+┌────────────────┬─────────────────────┬──────────────────┬────────────────────┐
+│ lifecyclestate │ subjectdocumenttype │ relationshiptype │ objectdocumenttype │
+├────────────────┼─────────────────────┼──────────────────┼────────────────────┤
+│ project        │ CollectionObject    │ affects          │ Movement           │
+└────────────────┴─────────────────────┴──────────────────┴────────────────────┘
+....
+
+If we re-mapped the original CSV row creating this one-sided relationship in CMT and mapped it without refreshing the NHR data in our cache, it's going to re-POST the obj => lmi  record, and POST the lmi => obj record.
+
+* Re-create obj => lmi relationship via API: `c.post("relations", objlmi)`
+
+[source,ruby]
+----
+[4] pry(main)> c.post("relations", objlmi)
+=> #<CollectionSpace::Response:0x00000001235d53d0
+ @parsed="Create request failed: org.nuxeo.ecm.core.api.ConcurrentUpdateException: Failed to save session, Concurrent update",
+ @result="Create request failed: org.nuxeo.ecm.core.api.ConcurrentUpdateException: Failed to save session, Concurrent update",
+ @status_code=409,
+ @xml=nil>
+----
+
+With other record types, the 409 status is labeled "Conflict", which would be more accurate/helpful here. It's refusing to create another relationship with the same subject/object pair.
+
+[TIP]
+.*Takeaway*
+====
+If you get in a one-way relationship situation while batch loading NHRs, always re-cache before using CMT to reload failures, or you will get errors about not being able to re-create the side that already got created.
+====
+
+== Hierarchical relationships (HRs)
+
+HRs may be created between:
+
+....
+object => object
+item in authority vocabulary => item in same authority vocabulary
+....
+
+For each HR between a pair of records, *_one_* record is created in CollectionSpace:
+
+....
+B hasBroader A
+....
+
+`hasBroader` is the `relationshiptype` stored in the database for records indicate an HR.
+
+=== ❓Also not cleaned up when records are hard-deleted?
+
+TODO: verify/document
