@@ -12,7 +12,19 @@ endif::[]
 
 = Changelog
 
-== Unreleased
+Switched from using releases to tags with 7.3.0.
+Old releases were deleted from the repository, leaving their associated tags in place.
+This was done to avoid v7.2.0 displaying as "latest release" on the repo front page forever.
+
+The top-level headers in this file should match the tags for the given changes.
+
+Tags previously associated with releases are prefixed with "v", as the tags were generally aligned with the release names including the prefix.
+
+Going forward, tags will omit the "v".
+
+The tags generally align with the spirit of https://semver.org[semantic versioning].
+
+== Untagged
 
 == 7.3.0 (2026-08-05)
 
@@ -24,37 +36,37 @@ endif::[]
 * Require Ruby 4.0.3
 * DEV: Remove unused/unneeded dependencies; minor refactoring
 
-== 7.2.0 (2026-07-28)
+== v7.2.0 (2026-07-28)
 
 * `thor rr list` now can report on all mappable rectypes, not just authorities
 * Remove `thor-hollaback` dependency and related code.
 We now rely on the `at_exit` block in the base module to close database tunnel and connection as needed on any form of exit.
 *  Rename `thor tm run` to `thor tm run_plan` - without `thor-hollaback`, thor starts complaining that `run` is a protected keyword
 * `thor batch map` command now outputs both CS XML and mapping report paths separately, more clearly labeling them.
-== 7.1.0 (2026-05-13)
+== v7.1.0 (2026-05-13)
 
 * Skip tunnel when creating a db connection if `CMT.config.client.db_tunnel_skip` = `true`
 * Add `thor duplicates check_all` command
 * Fix closing of db/tunnel after each duplicate check query
 * Fix bug with passing `batch_config` to collectionspace-mapper
 
-== 7.0.1 (2026-02-25)
+== v7.0.1 (2026-02-25)
 
 - Fix `thor config show` error described in https://github.com/lyrasis/collectionspace_migration_tools/issues/113[#113]
 
-== 7.0.0 (2026-02-15)
+== v7.0.0 (2026-02-15)
 
 === Breaking
 
 - Simplifly client config by pushing some things to system config and "automagically" figuring out settings for common setup
 
-== 6.0.1 (2026-02-03)
+== v6.0.1 (2026-02-03)
 
 === Bugfix
 
 * Fixed the occasional spurious duplicate file error described in https://github.com/lyrasis/collectionspace_migration_tools/issues/69[#69]
 
-== 6.0.0 (2026-01-26)
+== v6.0.0 (2026-01-26)
 
 === Breaking
 
@@ -64,7 +76,7 @@ We now rely on the `at_exit` block in the base module to close database tunnel a
 
 - Use CHIA 2.0.0, which refers to sites instead of tenants.
 
-== 5.2.0 (2026-01-20)
+== v5.2.0 (2026-01-20)
 
 === Added
 
@@ -74,7 +86,7 @@ We now rely on the `at_exit` block in the base module to close database tunnel a
 
 * Makes database connections via new read-only database user
 
-== 5.1.0 (2025-10-21)
+== v5.1.0 (2025-10-21)
 
 === Added
 
@@ -87,13 +99,13 @@ We now rely on the `at_exit` block in the base module to close database tunnel a
 * Fix for ruby/openssl bug
 * Do not hit CHIA if getting non-verbose current client config (Resolves https://github.com/lyrasis/collectionspace_migration_tools/issues/73[#73])
 
-== 5.0.1 (2025-06-10)
+== v5.0.1 (2025-06-10)
 
 === Bugfix
 
 * Fix for error message: "WARNING: unable to load thorfile "/lib/tasks/term_manager.thor": undefined method `no_command' for Thor::Sandbox::TermManager:Class"
 
-== 5.0.0 (2025-06-09)
+== v5.0.0 (2025-06-09)
 
 === Breaking
 
@@ -118,7 +130,7 @@ To upgrade:
 * You can now indicate the location of your system config file via setting an environment variable, via dotfile convention. See the README section on System config for details.
 
 
-== 4.1.0 (2024-09-12)
+== v4.1.0 (2024-09-12)
 === Added
 
 * Support for deleting vocabularies via `thor csid delete`
@@ -133,7 +145,7 @@ To upgrade:
 * Fixes issue where, if you had somehow gotten into a state where the current config was invalid, you could not switch to another config using the `thor config switch` command.
 * Fixes issue where `batches delete_done` command deleted non-done batches
 
-== 4.0.0 (2024-04-15)
+== v4.0.0 (2024-04-15)
 
 === Breaking
 
@@ -158,7 +170,7 @@ To upgrade:
 
 * Fix issue with `vt add` command, in which ampersands in terms were not escaped in the created XML, causing errors (https://github.com/lyrasis/collectionspace_migration_tools/issues/39[#39])
 
-== 3.0.1 (2024-03-11)
+== v3.0.1 (2024-03-11)
 
 === Changes
 
@@ -170,7 +182,7 @@ To upgrade:
 * Fix for https://github.com/lyrasis/collectionspace_migration_tools/issues/55[#55] - `thor batch mtprep` command failing when all missing terms are vocabulary terms (not authority terms)
 * When batch config's `batch_mode` is "date details", autocache vocabularies for the batch (https://github.com/lyrasis/collectionspace_migration_tools/issues/58[#58])
 
-== 3.0.0 (2024-03-01)
+== v3.0.0 (2024-03-01)
 === Breaking
 
 * Client configuration management changes. To use new version:
@@ -193,19 +205,19 @@ To upgrade:
 * Report issue/don't fail messily when there is a missing item type value in a nonhierarchicalrelationship row
 * Fix failure when reporting ingstat for batches with non-ingested items (i.e. items that failed map or upload steps and were thus not ingested)
 
-== 2.2.5 (2024-02-11)
+== v2.2.5 (2024-02-11)
 === Bugfixes
 - Uses new version of `collectionspace-mapper` with a bugfix to prevent errors in reporting failures in date details mapping.
 
-== 2.2.4 (2024-02-07)
+== v2.2.4 (2024-02-07)
 === Added
 - Use new version of `collectionspace-mapper` that supports ingesting fields in same repeating field group as a structured date when you are ingesting structured date details for a date in that group.
 
-== 2.2.3 (2024-02-01)
+== v2.2.3 (2024-02-01)
 === Bugfixes
 - Use new version of `collectionspace-mapper` that supports retaining `%NULLVALUE%` fields as blank fields, and sets `shortid` correctly when mapping date details for authority records.
 
-== 2.2.2 (2023-12-19)
+== v2.2.2 (2023-12-19)
 === Added
 - `thor rt:delete_all` command for objects, procedures, and authorities. Do `thor rt help delete_all` for more details. (PR#42)
 - Attempts to handle ingest errors using AWS Lambda logs -- still janky (PR#43, 44, 46)
@@ -216,12 +228,12 @@ To upgrade:
 - Update `collectionspace-mapper` to get fix for https://github.com/collectionspace/collectionspace-mapper/issues/148[#148] (PR#47)
 - Fixes CLI output where processes didn't report about themselves correctly (PR#47)
 
-== 2.2.1 (2023-04-26)
+== v2.2.1 (2023-04-26)
 === Bugfixes (related to media file ingest)
 - Update `collectionspace-mapper` to get fix for https://github.com/lyrasis/collectionspace_migration_tools/issues/34[#34]
 - Escape spaces in `mediafileuri` values, then url_encode them before construction S3 object key (https://github.com/lyrasis/collectionspace_migration_tools/issues/36[#36])
 
-== 2.2.0 (2023-04-24)
+== v2.2.0 (2023-04-24)
 === Added
 * Optional `aws_media_ingest_profile` system config setting, specifying AWS profile through which to access client media ingest bucket
 * Optional `media_bucket` client config setting, specifying name of client media ingest bucket
@@ -229,11 +241,11 @@ To upgrade:
 ** thor bucket:public (makes bucket public, so media can be ingested)
 ** thor bucket:private (makes bucket private)
 
-== 2.1.0 (2023-04-19)
+== v2.1.0 (2023-04-19)
 === Added
 * Ability to ingest structured date details. See https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/dates.adoc[Dates workflows documentation] for details.
 
-== 2.0.0 (2023-03-10)
+== v2.0.0 (2023-03-10)
 === Breaking
 * Upload of CS XML objects to S3 bucket for ingest now requires AWS profile to be set up on local system, and `aws_profile` setting in `system_config.yml`
 
@@ -245,7 +257,7 @@ To upgrade:
 === Changed
 * A number of client config settings now have defaults set by the tool, and do not need to be included in your config YML files unless you need to override the default values. See `CLIENT_CONFIG_DEFAULTS` in `lib/collectionspace_migration_tools/configuration.rb` for details. (PR#27)
 
-== 1.1.0 (2022-12-14)
+== v1.1.0 (2022-12-14)
 
 === Added
 * `thor csid:delete` command, allowing deletion of records by rectype+CSID. Do `thor csid help delete` for more details.
@@ -258,7 +270,7 @@ To upgrade:
 === Bugfixes
 * Fixes issue in `thor media:deriv_report` where report generation would fail if there was only one derivative item for a blob.
 
-== 1.0.0 (2022-12-08)
+== v1.0.0 (2022-12-08)
 This is not a breaking change, but reflects this is now being used for CS migrations by more than one person.
 
 === Added
@@ -269,14 +281,14 @@ This is not a breaking change, but reflects this is now being used for CS migrat
 * `thor media:deriv_report` command to generate report of derivatives present for each `blobcsid` given. See https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/media.adoc[media ingest documentation].
 * Optional `:media_with_blob_upload_delay` client config setting. When uploading to S3 bucket for ingest, will wait this long after each media record that has an associated `mediaFileURI` value.
 
-== 0.1.2 (2022-12-02)
+== v0.1.2 (2022-12-02)
 * Use `collectionspace-mapper` v4.1.2 to get error handling bugfix
 
-== 0.1.1 (2022-11-21)
+== v0.1.1 (2022-11-21)
 === Bugfixes
 * Use `collectionspace-mapper` v4.1.1 to get scalar date creation bugfix
 
-== 0.1.0 (2022-11-17)
+== v0.1.0 (2022-11-17)
 === Added
 * Ability to ingest vocabulary terms. See https://github.com/lyrasis/collectionspace_migration_tools/blob/main/doc/add_vocabulary_terms.adoc[documentation] (https://github.com/lyrasis/collectionspace_migration_tools/pull/21[PR#21])
 
@@ -286,7 +298,7 @@ This is not a breaking change, but reflects this is now being used for CS migrat
 === Deleted
 * Config validation constraint requiring `bastion-host` value to contain `bastion`. The host for tunneling for a project I am working on does not contain `bastion` (https://github.com/lyrasis/collectionspace_migration_tools/pull/19[PR#19])
 
-== 0.0.2 (2022-10-18)
+== v0.0.2 (2022-10-18)
 
 === Bugfixes
 * Bumps version of `collectionspace-mapper` used, to get fixes for date processing (https://github.com/lyrasis/collectionspace_migration_tools/pull/17[PR#17])
@@ -294,9 +306,5 @@ This is not a breaking change, but reflects this is now being used for CS migrat
 === Added
 * `ohc` as valid profile in `config_client_contract` (https://github.com/lyrasis/collectionspace_migration_tools/pull/15[PR#15])
 
-== 0.0.1 (2022-02-11)
+== v0.0.1 (2022-02-11)
 * Added initial working version (skeletal!)
-
-== 0.0.0 (2022-02-01)
-
-* Added initial implementation.
