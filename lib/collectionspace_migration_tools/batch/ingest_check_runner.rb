@@ -32,6 +32,16 @@ module CollectionspaceMigrationTools
           client: client, prefix: prefix
         )
         bucket_objs = yield lister.call
+        events = yield fast_importer_log_events(batch)
+
+        if events.empty?
+          return Failure("Ingest has not yet started for this batch.\n"\
+                         "There may be S3 objects for another batch delaying "\
+                         "the ingest of this batch. You can check the total "\
+                         "number of objects in the bucket via the "\
+                         "`thor bucket objects` command and compare the total "\
+                         "object count to the number of objects uploaded.")
+        end
 
         unless bucket_objs.empty?
           _statuscheck = yield CMT::Batch::IngestStatusChecker.call(
