@@ -26,6 +26,15 @@ The tags generally align with the spirit of https://semver.org[semantic versioni
 
 == Untagged
 
+=== Added
+
+* Count-only `thor bucket objct` and `thor batch lbc` commands.
+NOTE: They are still sloooow because S3 has to return all the object keys
+
+=== Bugfixes
+
+* https://github.com/lyrasis/collectionspace_migration_tools/issues/139[#139] - Fixed by checking whether there are any AWS log events for the batch before declaring the batch complete and attempting to find the time of the latest log event for the batch in order set the batch ingest completion time and duration.
+
 == 7.3.0 (2026-08-05)
 
 * Add `path` option to `thor rr list` command
