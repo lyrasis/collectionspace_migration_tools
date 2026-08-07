@@ -32,6 +32,20 @@ class Bucket < Thor
     )
   end
 
+  desc "objct", "returns keys of objects in bucket"
+  def objct
+    CMT::S3::Bucket.objects(count_only: true).either(
+      ->(success) {
+        puts success
+        exit(0)
+      },
+      ->(failure) {
+        puts failure
+        exit(1)
+      }
+    )
+  end
+
   desc "private", "sets policy of MEDIA INGEST bucket to private"
   def private
     CMT::S3::BucketPolicySetter.call(policy: :private).either(
