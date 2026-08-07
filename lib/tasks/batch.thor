@@ -67,6 +67,21 @@ class Batch < Thor
     )
   end
 
+  desc "lbc BATCHID",
+    "(L)ist (b)ucket (c)ount. Print just the number of objects in the bucket"
+  def lbc(id)
+    CMT::S3::Bucket.batch_objects(id, count_only: true).either(
+      ->(success) {
+        puts success
+        exit(0)
+      },
+      ->(failure) {
+        puts failure
+        exit(1)
+      }
+    )
+  end
+
   desc "delete BATCHID",
     "Removes batch row from batches CSV and deletes batch directory"
   def delete(id)

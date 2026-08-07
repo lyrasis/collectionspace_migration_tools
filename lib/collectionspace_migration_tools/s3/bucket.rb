@@ -7,11 +7,13 @@ module CollectionspaceMigrationTools
 
       module_function
 
-      def batch_objects(id)
+      def batch_objects(id, count_only: false)
         batch = yield(CMT::Batch.find(id))
         client = yield(CMT::Build::S3Client.call)
         list = yield(CMT::S3::BucketLister.call(client: client,
           prefix: batch.prefix))
+
+        return Success(list.length) if count_only
 
         Success(list)
       end
@@ -24,9 +26,11 @@ module CollectionspaceMigrationTools
         Success(emptied)
       end
 
-      def objects
+      def objects(count_only: false)
         client = yield(CMT::Build::S3Client.call)
         list = yield(CMT::S3::BucketLister.call(client: client))
+
+        return Success(list.length) if count_only
 
         Success(list)
       end
