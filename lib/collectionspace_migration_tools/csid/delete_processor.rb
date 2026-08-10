@@ -29,7 +29,9 @@ module CollectionspaceMigrationTools
         puts "Making API calls to delete records (#{thread_ct} threads)..."
         start_time = Time.now
         result = Parallel.map(chunks,
-          in_threads: thread_ct) do |chunk|
+          in_threads: thread_ct, progress: {
+            format: "%t | %B | %c of %u | %a"
+          }) do |chunk|
           worker(chunk)
         end
         elap = Time.now - start_time
