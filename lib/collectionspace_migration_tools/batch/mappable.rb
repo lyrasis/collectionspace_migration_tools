@@ -21,7 +21,7 @@ module CollectionspaceMigrationTools
       end
 
       def map_step_report_paths
-        ["mapping_report.csv", "missing_terms.csv"].map do |report|
+        ["mapper_report.csv", "missing_terms.csv"].map do |report|
           "#{dirpath}/#{report}"
         end
       end
