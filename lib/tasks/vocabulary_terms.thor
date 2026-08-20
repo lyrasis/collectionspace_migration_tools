@@ -28,6 +28,23 @@ class VocabularyTerms < Thor
     )
   end
 
+  desc "delete_all VOCAB", "delete all terms in given vocabulary machine name"
+  def delete_all(vocab)
+    CMT::VocabularyTerms::VocabClearer.call(vocabname: vocab)
+      .either(
+        ->(_success) { exit(0) },
+        ->(failure) do
+          if failure.is_a?(Exception)
+            puts failure.message
+            puts failure.backtrace
+          else
+            puts failure
+          end
+          exit(1)
+        end
+      )
+  end
+
   desc "write", "write CSV containing all vocabulary term data for the "\
     "active client instance"
   option :outputpath,
