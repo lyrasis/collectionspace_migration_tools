@@ -30,7 +30,8 @@ The tags generally align with the spirit of https://semver.org[semantic versioni
 
 * Count-only `thor bucket objct` and `thor batch lbc` commands.
 NOTE: They are still sloooow because S3 has to return all the object keys
-* Add progress bar to `thor csid delete` command
+* Progress bar to `thor csid delete` command
+* `thor vt delete_all VOCAB` command
 
 === Bugfixes
 
