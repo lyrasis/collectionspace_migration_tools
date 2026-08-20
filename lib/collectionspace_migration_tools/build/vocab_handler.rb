@@ -15,8 +15,10 @@ module CollectionspaceMigrationTools
       end
 
       def call(client = nil)
+        use_client = client || CMT.client
+        use_client.config.include_deleted = true
         result = CollectionSpace::Mapper::VocabularyTerms::Handler.new(
-          client: client || CMT.client
+          client: use_client
         )
       rescue CollectionSpace::Mapper::NoClientServiceError => err
         msg = "collectionspace-client does not have a service configured "\
