@@ -38,6 +38,9 @@ group :development do
   gem "almost_standard", github: "kspurgin/almost_standard", branch: "main"
   gem "dead_end"
   gem "debug"
+  # Before they screwed up inclusion of webrick, required for running yard
+  #   server
+  gem "rackup", "=2.1.0"
   gem "simplecov"
   gem "time_up"
   gem "yard"
