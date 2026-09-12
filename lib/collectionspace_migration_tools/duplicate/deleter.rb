@@ -4,8 +4,8 @@ module CollectionspaceMigrationTools
   module Duplicate
     class Deleter
       include Dry::Monads[:result]
-      include Dry::Monads::Do.for(:call, :duplicates, :rerun_deletes,
-        :run_deletes)
+      include Dry::Monads::Do.for(:call, :duplicates, :deduplicate,
+        :deduplicate_id)
 
       class << self
         def call(...)
@@ -13,24 +13,23 @@ module CollectionspaceMigrationTools
         end
       end
 
-      def initialize(rectype:, batchdir: nil)
+      # @param rectype [String] a mappable rectype
+      def initialize(rectype:)
         @rectype = rectype
-        @dupe_csv = batchdir.nil? ? nil : File.join(
-          CMT.config.client.batch_dir, batchdir, "duplicate_report.csv"
-        )
-        @id = "dd"
-        @action = "delete"
-        @iteration = 1
       end
 
       def call
-        _first_run = yield(run_deletes)
-
-        until remaining.nil?
-          rerun_deletes
+        dupe_ids = yield duplicates
+        if dupe_ids.num_tuples == 0
+          puts "No duplicate #{rectype} records found"
+          return Success()
         end
 
-        puts "No duplicates found"
+        client = yield CMT::Client.call
+        basepath = yield CMT::RecordTypes.services_api_path(rectype)
+
+        yield deduplicate(dupe_ids, client, basepath)
+
         Success()
       end
 
@@ -49,49 +48,64 @@ module CollectionspaceMigrationTools
         Success(dupes)
       end
 
-      def rerun_deletes
-        source = yield(write_remaining_to_csv)
-        @remaining = nil
-        _del = yield(CMT::Batch.delete(id))
-        _rerun = yield(run_deletes(source))
+      def ts(str)
+        return Failure(:no_f) if str.start_with?("f")
+
+        Success(str)
+      end
+
+      def tss(arr)
+        res = arr.map { |str| ts(str) }
+        return Success(:all_good) if res.all?(&:success?)
+
+        Failure(res.select(&:failure?))
+      end
+
+      def deduplicate(tuples, client, basepath)
+        results = tuples.values
+          .flatten
+          .map { |id| deduplicate_id(id, client, basepath) }
+        _chk = yield check_compiled_results(results)
 
         Success()
       end
 
-      def run_deletes(source_csv = dupe_csv)
-        @iteration += 1
-        if source_csv.nil?
-          initial = yield(duplicates)
-          if initial.num_tuples > 0
-            @remaining = initial
-            source_csv = yield(write_remaining_to_csv)
-          else
-            return Success()
-          end
-        end
+      def deduplicate_id(id, client, basepath)
+        response = yield get_response(id, client, basepath)
+        paths = response.parsed["abstract_common_list"]["list_item"]
+          .map { |h| h["uri"] }
+        paths.shift
+        puts "Deleting #{paths.length} duplicate(s) of #{id}"
 
-        _add = yield(CMT::Batch::Add.call(id: id, csv: source_csv,
-          rectype: rectype, action: action))
-        _map = yield(CMT::Batch::MapRunner.call(batch_id: id))
-        _upload = yield(CMT::Batch::UploadRunner.call(batch_id: id))
-        _status = yield(CMT::Batch::IngestCheckRunner.call(
-          batch_id: id,
-          wait: 0.5,
-          checks: 100,
-          rechecks: 3,
-          autodelete: true
-        ))
-        dupes = yield(duplicates)
-        @remaining = dupes if dupes.num_tuples > 0
-        _cleared = yield(CMT::Batch.delete(id))
+        results = paths.map { |path| delete_record(client, path, id) }
+        _chk = yield check_compiled_results(results)
 
         Success()
       end
 
-      def write_remaining_to_csv
-        path = File.join(Bundler.root, "tmp",
-          "duplicate_report_#{iteration}.csv")
-        CMT::Duplicate::CsvWriter.call(path: path, duplicates: remaining)
+      def get_response(id, client, basepath)
+        response = client.find(type: basepath, value: id)
+        return Success(response) if response.result.success?
+
+        Failure("Cannot lookup #{id}; API status code: #{response.status_code}")
+      rescue => err
+        Failure("Error looking up #{id}: #{err.message}")
+      end
+
+      def delete_record(client, path, id)
+        response = client.delete(path)
+        return Success() if response.result.success?
+
+        Failure("Cannot delete #{path} (#{id}); "\
+                "API status code: #{response.status_code}")
+      rescue => err
+        Failure("Error deleting #{path} (#{id}): #{err.message}")
+      end
+
+      def check_compiled_results(results)
+        return Success() if results.all?(&:success?)
+
+        Failure(results.select(&:failure?).map(&:failure))
       end
     end
   end
