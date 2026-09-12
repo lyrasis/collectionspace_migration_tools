@@ -29,8 +29,14 @@ class Duplicates < Thor
     "deletes all duplicate records of a given mappable rectype"
   def delete(rectype)
     CMT::Duplicate::Deleter.call(rectype: rectype).either(
-      ->(success) { exit(0) },
-      ->(failure) { puts failure, exit(1) }
+      ->(success) {
+        puts "All duplicate #{rectype} records deleted"
+        exit(0)
+      },
+      ->(failure) {
+        failure.each { |f| puts f }
+        exit(1)
+      }
     )
   end
 end
