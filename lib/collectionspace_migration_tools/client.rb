@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "collectionspace/client"
-require "dry/monads"
-
 module CollectionspaceMigrationTools
   # Service object returning CollectionSpace::Client object
   class Client
