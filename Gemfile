@@ -47,7 +47,7 @@ group :development do
 end
 
 group :test do
-  gem "mock_redis"
+  gem "mock_redis", "=0.36.0"
   gem "rspec"
 end
 
