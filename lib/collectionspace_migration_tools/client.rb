@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "collectionspace/client"
+
 module CollectionspaceMigrationTools
   # Service object returning CollectionSpace::Client object
   class Client
