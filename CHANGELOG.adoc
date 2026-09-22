@@ -32,6 +32,7 @@ The tags generally align with the spirit of https://semver.org[semantic versioni
 NOTE: They are still sloooow because S3 has to return all the object keys
 * Progress bar to `thor csid delete` command
 * `thor vt delete_all VOCAB` command
+* `thor rels check_nhrs` command
 
 === Bugfixes
 
