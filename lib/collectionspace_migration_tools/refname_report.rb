@@ -42,7 +42,7 @@ module CollectionspaceMigrationTools
     rescue => err
       msg = "#{err.message} IN #{err.backtrace[0]}"
       Failure(CMT::Failure.new(
-        context: "#{name}.#{__callee__}(#{key})", message: msg
+        context: "#{self.class.name}.#{__callee__}", message: msg
       ))
     else
       Success(result)
@@ -57,7 +57,7 @@ module CollectionspaceMigrationTools
     rescue => err
       msg = "#{err.message} IN #{err.backtrace[0]}"
       Failure(CMT::Failure.new(
-        context: "#{name}.#{__callee__}(#{key})", message: msg
+        context: "#{self.class.name}.#{__callee__}", message: msg
       ))
     else
       puts "Wrote refname data report to #{path}..."
