@@ -12,7 +12,7 @@ module CollectionspaceMigrationTools
     def db_credentials_for(site)
       return extract_db_credentials(site) if site.respond_to?(:db_host)
 
-      t = CHIA.site_for(site)
+      t = CHIA.site_for(site.name)
       extract_db_credentials(t)
     end
 
