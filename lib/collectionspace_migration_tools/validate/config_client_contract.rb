@@ -83,11 +83,12 @@ module CollectionspaceMigrationTools
         next unless value
 
         ok = [
-          /^(\d+-){2,}\d+$/,
+          /^(\d+-){1,2}\d+$/,
           /^\d+-\d+-rc\d+$/
         ]
         unless ok.any? { |pattern| pattern.match?(value) }
-          key.failure("must follow one of these patterns: `#-#-#` or `d-d-rc#`")
+          key.failure("(#{value}) must follow one of these patterns: "\
+                      "`#-#`, `#-#-#` or `#-#-rc#`")
         end
       end
 
