@@ -39,14 +39,16 @@ GIT
 
 GIT
   remote: https://github.com/dts-hosting/cspace_hosted_instance_access.git
-  revision: 0ca7805e1515f8d6241683ec078d3fb54ae418a6
+  revision: 52696a25ca55decee9d1ef86ab4ae2402265bdf4
   branch: main
   specs:
-    cspace_hosted_instance_access (2.0.2)
-      aws-sdk-dynamodb
+    cspace_hosted_instance_access (3.0.0)
+      aws-sdk-ecs
       aws-sdk-ssm
+      dry-configurable
       openssl (= 3.3.1)
       rexml
+      thor
       zeitwerk
 
 GIT
@@ -93,8 +95,8 @@ GEM
       jmespath (~> 1, >= 1.6.1)
       logger
       rexml (~> 3.4, >= 3.4.2)
-    aws-sdk-dynamodb (1.174.0)
-      aws-sdk-core (~> 3, >= 3.256.0)
+    aws-sdk-ecs (1.192.0)
+      aws-sdk-core (~> 3, >= 3.216.0)
       aws-sigv4 (~> 1.5)
     aws-sdk-kms (1.132.0)
       aws-sdk-core (~> 3, >= 3.256.0)
