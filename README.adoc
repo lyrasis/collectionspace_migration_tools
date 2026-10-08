@@ -69,6 +69,14 @@ Clone the repository from https://github.com/collectionspace/cspace-config-untan
 
 You will need the path to the local copy of this repository for setting up your system config in the next step.
 
+=== Clone cspace_hosted_instance_access (CHIA) to your machine and tell Bundler to use this local copy (recommended/optional)
+
+It is helpful to have CHIA set up locally so you can use its thor commands to get admin and database passwords for connecting to sites outside of the context of CMT.
+
+If you don't already have CHIA on your machine, clone the repository from https://github.com/dts-hosting/cspace_hosted_instance_access.
+
+See https://github.com/dts-hosting/cspace_hosted_instance_access#otherappuse[the CHIA README on usage in other apps] for how to point CMT at your local copy of CHIA via Bundler config, and explanation of why it is recommended you do so.
+
 === System config
 
 Use the commented `sample_system_config.yml` as an example or starting point.
