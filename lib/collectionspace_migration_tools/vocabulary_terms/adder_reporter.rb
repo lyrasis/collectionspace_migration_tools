@@ -14,6 +14,8 @@ module CollectionspaceMigrationTools
         ["vocab", "term", "status", "message"]
       end
 
+      attr_reader :path
+
       def initialize(output_dir)
         timestamp = DateTime.now.strftime("%Y%m%d_%H%M")
         @path = "#{output_dir}/vocab_terms_add_#{timestamp}.csv"
@@ -36,8 +38,6 @@ module CollectionspaceMigrationTools
       end
 
       private
-
-      attr_reader :path
 
       def write_row(row)
         CSV.open(path, "a") do |csv|
