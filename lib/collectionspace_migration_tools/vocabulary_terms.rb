@@ -12,6 +12,8 @@ module CollectionspaceMigrationTools
       )
       _result = yield processor.call
 
+      puts "Report written to #{processor.report_path}"
+
       Success()
     end
   end
