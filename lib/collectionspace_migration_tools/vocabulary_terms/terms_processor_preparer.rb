@@ -34,6 +34,7 @@ module CollectionspaceMigrationTools
         term_reporter = yield CMT::VocabularyTerms::AdderReporter.new(
           output_dir
         )
+
         adder = yield CMT::VocabularyTerms::TermAdder.new(
           handler: handler,
           reporter: term_reporter
