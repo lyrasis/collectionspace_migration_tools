@@ -27,6 +27,8 @@ module CollectionspaceMigrationTools
         Failure(err)
       end
 
+      def report_path = adder.reporter.path
+
       def to_monad
         Success(self)
       end

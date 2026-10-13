@@ -8,6 +8,8 @@ module CollectionspaceMigrationTools
     class TermAdder
       include Dry::Monads[:result]
 
+      attr_reader :reporter
+
       # @param handler [CollectionSpace::Mapper::VocabularyTerms::Handler]
       # @param reporter [CMT::VocabularyTerms::AdderReporter]
       def initialize(handler:, reporter:)
@@ -33,7 +35,7 @@ module CollectionspaceMigrationTools
 
       private
 
-      attr_reader :handler, :reporter
+      attr_reader :handler
 
       def add_term(row)
         term = row["term"].sub("&", "&amp;")
