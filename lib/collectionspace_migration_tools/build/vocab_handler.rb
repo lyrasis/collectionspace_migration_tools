@@ -15,8 +15,7 @@ module CollectionspaceMigrationTools
       end
 
       def call(client = nil)
-        use_client = client || CMT.client
-        use_client.config.include_deleted = true
+        use_client = client || CMT::Client.call(include_deleted: true).value!
         result = CollectionSpace::Mapper::VocabularyTerms::Handler.new(
           client: use_client
         )
