@@ -44,7 +44,6 @@ module CollectionspaceMigrationTools
           adder: adder
         )
 
-        handler.client.config.include_deleted = false
         Success(processor)
       end
 
