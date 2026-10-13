@@ -8,8 +8,8 @@ module CollectionspaceMigrationTools
     class << self
       include Dry::Monads[:result]
 
-      def call
-        build_client_config.bind do |config|
+      def call(include_deleted: false)
+        build_client_config(include_deleted: include_deleted).bind do |config|
           build_client(config).bind do |client|
             verify(client)
           end
@@ -30,12 +30,13 @@ module CollectionspaceMigrationTools
           message: "No CS Client object"))
       end
 
-      def build_client_config
+      def build_client_config(include_deleted:)
         config = CollectionSpace::Configuration.new(
           base_uri: CMT.config.client.base_uri,
           username: CMT.config.client.username,
           password: CMT.config.client.password,
-          page_size: CMT.config.client.page_size
+          page_size: CMT.config.client.page_size,
+          include_deleted: include_deleted
         )
       rescue => err
         Failure(CMT::Failure.new(context: "#{name}.#{__callee__}",
