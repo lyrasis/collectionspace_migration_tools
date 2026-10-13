@@ -39,7 +39,7 @@ module CollectionspaceMigrationTools
 
       def add_term(row)
         term = row["term"].sub("&", "&amp;")
-        handler.add_term(vocab: row["vocab"], term: term)
+        handler.add_term(vocab: row["vocab"], term: term, row: row)
       end
     end
   end
