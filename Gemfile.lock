@@ -12,7 +12,7 @@ GIT
 
 GIT
   remote: https://github.com/collectionspace/collectionspace-mapper.git
-  revision: 0d5857e58a0fafc8890b9f1f4e226bf561fd0d00
+  revision: df49703a7bb4423edd232bd614e562c1e1d37dae
   branch: migration-tools
   specs:
     collectionspace-mapper (6.3.1)
