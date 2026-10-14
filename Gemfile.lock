@@ -19,7 +19,6 @@ GIT
       activesupport
       chronic
       collectionspace-client
-      collectionspace-refcache
       dry-configurable
       dry-monads
       memo_wise
