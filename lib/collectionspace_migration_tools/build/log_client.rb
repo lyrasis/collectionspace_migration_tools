@@ -41,7 +41,10 @@ module CollectionspaceMigrationTools
       end
 
       def try(client)
-        result = client.describe_log_groups(limit: 5)
+        result = client.filter_log_events({
+          log_group_name: CMT.config.client.log_group_name,
+          limit: 1
+        })
 
         Success(result)
       rescue => err
