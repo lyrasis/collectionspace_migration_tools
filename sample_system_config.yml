@@ -37,12 +37,12 @@ bastion_user: yourusername
 # Format notes: Replace the period in the actual version
 #   designation with an underscore. **This must be in quotes or 7_2
 #   will get interpreted as 70.**
-# cs_app_version: "8_1_1"
+# cs_app_version: "9_0"
 
 # How long to wait for the SSH tunnel to be usable. This timeout exists
-#   mainly so that users can respond to trust prompts or reason about 
+#   mainly so that users can respond to trust prompts or reason about
 #   errors caused by bad credentials. It's logically distinct from the
-#   database timeout (below), which is used after the tunnel is 
+#   database timeout (below), which is used after the tunnel is
 #   connected. It probably won't be necessary to change these values,
 #   but they can be adjusted if required.
 # db_tunnel_initial_connection_timeout: 30
