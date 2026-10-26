@@ -16,6 +16,58 @@ RSpec.describe CollectionspaceMigrationTools::Config::System do
     end
   end
 
+  context "when csv_quote_escaping overridden" do
+    let(:config) do
+      data = sys_config_hash.dup
+      data[:csv_quote_escaping] = "backslash"
+      data
+    end
+
+    it "converts value to Symbol" do
+      expect(result).to be_a(Dry::Monads::Success)
+      expect(result.value!.csv_quote_escaping).to eq(:backslash)
+    end
+  end
+
+  context "when csv_quote_boundary overridden" do
+    let(:config) do
+      data = sys_config_hash.dup
+      data[:csv_quote_boundary] = "standard"
+      data
+    end
+
+    it "converts value to Symbol" do
+      expect(result).to be_a(Dry::Monads::Success)
+      expect(result.value!.csv_quote_boundary).to eq(:standard)
+    end
+  end
+
+  context "when csv_strip_chars_from_headers overridden with String" do
+    let(:config) do
+      data = sys_config_hash.dup
+      data[:csv_strip_chars_from_headers] = '"'
+      data
+    end
+
+    it "converts value to Regexp" do
+      expect(result).to be_a(Dry::Monads::Success)
+      expect(result.value!.csv_strip_chars_from_headers).to eq(/"/)
+    end
+  end
+
+  context "when csv_strip_chars_from_headers overridden with Regexp" do
+    let(:config) do
+      data = sys_config_hash.dup
+      data[:csv_strip_chars_from_headers] = /["&]/
+      data
+    end
+
+    it "converts value to Regexp" do
+      expect(result).to be_a(Dry::Monads::Success)
+      expect(result.value!.csv_strip_chars_from_headers).to eq(/["&]/)
+    end
+  end
+
   context "when bastion_user overridden" do
     let(:config) do
       data = sys_config_hash.dup

@@ -20,11 +20,41 @@ module CollectionspaceMigrationTools
           max_processes: 6,
           aws_profile: "collectionspace",
           aws_media_ingest_profile: "shared",
-          cs_app_version: "9_0"
+          cs_app_version: "9_0",
+          csv_col_sep: ",",
+          csv_row_sep: "\n",
+          csv_quote_char: '"',
+          csv_quote_escaping: :double_quotes,
+          csv_quote_boundary: :legacy,
+          csv_strip_chars_from_headers: /"/,
+          csv_convert_values_to_numeric: false,
+          csv_strings_as_keys: true
         }
         @pathvals = %i[client_config_dir config_name_file
           cspace_config_untangler_dir term_manager_config_dir]
         @validator = CMT::Validate::ConfigSystemContract
+      end
+
+      private
+
+      def manipulate
+        %i[csv_quote_escaping csv_quote_boundary].each do |key|
+          convert_to_symbol(key)
+        end
+
+        convert_to_regexp(:csv_strip_chars_from_headers)
+      end
+
+      def convert_to_symbol(key)
+        return if hash[key].is_a?(Symbol)
+
+        hash[key] = hash[key].to_sym
+      end
+
+      def convert_to_regexp(key)
+        return if hash[key].is_a?(Regexp)
+
+        hash[key] = Regexp.new(hash[key])
       end
     end
   end
