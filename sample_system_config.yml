@@ -57,6 +57,23 @@ bastion_user: yourusername
 # db_tunnel_connection_pause: 3
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+# CSV DIALECT DETAILS
+# SmarterCSV has started trying to be "smarter" in how it parses CSVs,
+#   effectively breaking multiline values in cells, and single-column CSVs
+#   with its assumptions. Since it no longer makes reasonable assumptions,
+#   we need to hard-code our dialect conventions.
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+# csv_col_sep: ","
+# csv_row_sep: "\n"
+# csv_quote_char: "\""
+# csv_quote_escaping: double_quotes
+# csv_quote_boundary: legacy
+# csv_strip_chars_from_headers: '"'
+# csv_convert_values_to_numeric: false
+# csv_strings_as_keys: true
+
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 # This section of settings can be tweaked to experiment with performance
 #   of actions with parallel processing. See the One time setup > System
 #   config > Parallel processing-related settings section of this
