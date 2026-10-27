@@ -5,51 +5,36 @@ require "thor"
 
 # tasks targeting batches and batch csv
 class Batches < Thor
+  include CMT::CliHelpers
   include Dry::Monads[:result]
 
   desc "fix_csv",
     "Updates batch-tracking CSV to add missing headers and derive "\
     "automatically generated values"
   def fix_csv
-    CMT::Batch::Csv::Fixer.call.either(
-      ->(ok) {
-        puts ok
-        exit(0)
-      },
-      ->(failure) {
-        puts "Fix FAILED: #{failure}"
-        exit(1)
-      }
-    )
+    report_result(CMT::Batch::Csv::Fixer.call)
   end
 
   desc "init_csv",
     "Creates new batch-tracking CSV if one does not exist. Checks existing "\
     "has up-to-date format"
   def init_csv
-    CMT::Batch::Csv::Creator.call.either(
-      ->(success) {
+    report_result(
+      CMT::Batch::Csv::Creator.call,
+      successlogic: ->(result) do
         puts "Wrote new file at #{CMT.config.client.batch_csv}"
-        exit(0)
-      },
-      ->(failure) do
+      end,
+      failurelogic: ->(result) do
         path = CMT.config.client.batch_csv
         FileUtils.rm(path) if File.exist?(path)
-        puts failure
-        exit(1)
+        puts result.failure
       end
     )
   end
 
   desc "delete_done", "Delete completed batches"
   def delete_done
-    CMT::Batches.delete_done.either(
-      ->(success) { exit(0) },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
+    report_result(CMT::Batches.delete_done)
   end
 
   desc "done", "Brief listing of batches that are done"
@@ -64,17 +49,13 @@ class Batches < Thor
   option :rechecks, required: false, type: :numeric, default: 1
   option :dupedelete, required: false, type: :boolean, default: false
   def ingstat
-    CMT::Batches.ingstat(
-      wait: options[:sleep],
-      checks: options[:checks],
-      rechecks: options[:rechecks],
-      autodelete: options[:dupedelete]
-    ).either(
-      ->(success) { exit(0) },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
+    report_result(
+      CMT::Batches.ingstat(
+        wait: options[:sleep],
+        checks: options[:checks],
+        rechecks: options[:rechecks],
+        autodelete: options[:dupedelete]
+      )
     )
   end
 
@@ -82,13 +63,7 @@ class Batches < Thor
   option :autocache, required: false, type: :boolean
   option :clearcache, required: false, type: :boolean
   def map
-    CMT::Batches.map(options[:autocache], options[:clearcache]).either(
-      ->(success) { exit(0) },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
+    report_result(CMT::Batches.map(options[:autocache], options[:clearcache]))
   end
 
   desc "show", "Brief listing of batch ids and info"
@@ -114,27 +89,15 @@ class Batches < Thor
 
   desc "upload", "Uploads all mapped batches' CS XML to S3 bucket"
   def upload
-    CMT::Batches.upload.either(
-      ->(success) { exit(0) },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
+    report_result(CMT::Batches.upload)
   end
 
   no_commands do
     def batch_lister(status)
       reader = CMT::Batch::Csv::Reader.new
-      reader.find_status(status).either(
-        ->(success) {
-          reader.to_cli_table(success)
-          exit(0)
-        },
-        ->(failure) {
-          puts failure
-          exit(1)
-        }
+      report_result(
+        reader.find_status(status),
+        successlogic: ->(result) { reader.to_cli_table(result.value!) }
       )
     end
   end

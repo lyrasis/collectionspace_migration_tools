@@ -4,17 +4,13 @@ require "fileutils"
 
 # tasks targeting Config
 class Config < Thor
+  include CMT::CliHelpers
+
   desc "all", "shows names of all configs in `repo_dir/config`"
   def all
-    CMT::Config::Lister.call(type: :basename).either(
-      ->(success) {
-        success.each { |cfg| puts cfg }
-        exit(0)
-      },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
+    report_result(
+      CMT::Config::Lister.call(type: :basename),
+      successlogic: ->(result) { result.value!.each { |cfg| puts cfg } }
     )
   end
 
@@ -60,31 +56,18 @@ class Config < Thor
     "Validates the specified client config, and if valid, resets the current "\
     "config value stored in `config_name_file` (see system config)"
   def switch(name)
-    CMT::Config::Switcher.call(client: name).either(
-      ->(success) {
+    report_result(
+      CMT::Config::Switcher.call(client: name),
+      successlogic: ->(result) do
         puts "NOW USING CONFIG:"
-        pp(success.redact_for_display)
-        exit(0)
-      },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
+        pp(result.value!.redact_for_display)
+      end
     )
   end
 
   no_commands do
     def non_verbose_config_show(config)
-      CMT::Config.current_client_config_name(config).either(
-        ->(success) {
-          puts success
-          exit(0)
-        },
-        ->(failure) {
-          puts failure
-          exit(1)
-        }
-      )
+      report_result(CMT::Config.current_client_config_name(config))
     end
 
     def verbose_config_show(config)

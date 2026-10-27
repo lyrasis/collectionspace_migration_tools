@@ -3,28 +3,15 @@
 require "thor"
 
 class Decode < Thor
+  include CMT::CliHelpers
+
   desc "objects", "decodes object keys of all objects in S3 bucket"
   def objects
-    CMT::S3::ObjKeyDecoder.call(mode: :csv).either(
-      ->(success) { exit(0) },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
+    report_result(CMT::S3::ObjKeyDecoder.call(mode: :csv))
   end
 
   desc "key KEY", "decodes S3 object key; useful for debugging, etc."
   def key(key)
-    CMT::Decode.key(key).either(
-      ->(success) {
-        puts success
-        exit(0)
-      },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
+    report_result(CMT::Decode.key(key))
   end
 end

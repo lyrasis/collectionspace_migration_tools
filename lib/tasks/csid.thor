@@ -5,6 +5,7 @@ require "thor"
 
 # tasks that manipulate records directly via the API by CSID
 class Csid < Thor
+  include CMT::CliHelpers
   include Dry::Monads[:result]
 
   desc "delete", "deletes records by CSID"
@@ -26,13 +27,6 @@ class Csid < Thor
     default: nil,
     desc: "Path to CSV with `rectype` and `csid` columns"
   def delete
-    CMT::Csid::DeleteHandler.call(csv_path: options[:csv])
-      .either(
-        ->(success) { exit(0) },
-        ->(failure) {
-          puts failure
-          exit(1)
-        }
-      )
+    report_result(CMT::Csid::DeleteHandler.call(csv_path: options[:csv]))
   end
 end

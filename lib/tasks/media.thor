@@ -5,18 +5,13 @@ require "thor"
 
 # tasks related to verifying media ingest
 class Media < Thor
+  include CMT::CliHelpers
   include Dry::Monads[:result]
 
   desc "blob_data", "writes CSV of media identificationnumber and "\
                     "blob data, if present"
   def blob_data
-    CMT::Media.blob_data_report.either(
-      ->(success) { exit(0) },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
+    report_result(CMT::Media.blob_data_report)
   end
 
   desc "deriv_report", "writes CSV of derivative data"
@@ -41,13 +36,6 @@ class Media < Thor
     default: nil,
     desc: "Path to CSV with `blobcsid` & `mimetype` columns"
   def deriv_report
-    CMT::Media::DerivReporter.call(csv_path: options[:csv])
-      .either(
-        ->(success) { exit(0) },
-        ->(failure) {
-          puts failure
-          exit(1)
-        }
-      )
+    report_result(CMT::Media::DerivReporter.call(csv_path: options[:csv]))
   end
 end

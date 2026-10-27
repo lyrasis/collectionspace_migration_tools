@@ -4,15 +4,11 @@ require "thor"
 
 # tasks targeting both RefCaches
 class Caches < Thor
+  include CMT::CliHelpers
+
   desc "clear", "remove all keys from both caches"
   def clear
-    CMT::Caches::Clearer.call.either(
-      ->(success) { exit(0) },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
+    report_result(CMT::Caches::Clearer.call)
   end
 
   desc "size", "print size of both caches"
