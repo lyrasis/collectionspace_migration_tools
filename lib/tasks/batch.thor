@@ -4,6 +4,7 @@ require "thor"
 
 # tasks targeting a single batch
 class Batch < Thor
+  include CMT::CliHelpers
   include Dry::Monads[:result]
 
   desc "add",
@@ -19,79 +20,46 @@ class Batch < Thor
     desc: "create, update, or delete"
 
   def add
-    CMT::Batch::Add.call(
-      id: options[:id],
-      csv: options[:csv],
-      rectype: options[:rectype],
-      action: options[:action]
-    ).either(
-      ->(success) {
-        put_added(success)
-        exit(0)
-      },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
+    report_result(
+      CMT::Batch::Add.call(
+        id: options[:id],
+        csv: options[:csv],
+        rectype: options[:rectype],
+        action: options[:action]
+      ),
+      successlogic: put_added
     )
   end
 
   desc "cb BATCHID",
     "(C)lear (b)ucket. Delete objects from this batch from S3 bucket"
   def cb(id)
-    CMT::S3::Bucket.empty(id).either(
-      ->(success) {
-        puts success
-        exit(0)
-      },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
+    report_result(CMT::S3::Bucket.empty(id))
   end
 
   desc "lb BATCHID",
     "(L)ist (b)ucket. List keys of objects from this batch in S3 bucket"
   def lb(id)
-    CMT::S3::Bucket.batch_objects(id).either(
-      ->(success) {
+    report_result(
+      CMT::S3::Bucket.batch_objects(id),
+      successlogic: ->(result) do
+        success = result.value!
         puts success
         puts "Total: #{success.length}"
-        exit(0)
-      },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
+      end
     )
   end
 
   desc "lbc BATCHID",
     "(L)ist (b)ucket (c)ount. Print just the number of objects in the bucket"
   def lbc(id)
-    CMT::S3::Bucket.batch_objects(id, count_only: true).either(
-      ->(success) {
-        puts success
-        exit(0)
-      },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
+    report_result(CMT::S3::Bucket.batch_objects(id, count_only: true))
   end
 
   desc "delete BATCHID",
     "Removes batch row from batches CSV and deletes batch directory"
   def delete(id)
-    CMT::Batch.delete(id).either(
-      ->(success) { exit(0) },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
+    report_result(CMT::Batch.delete(id))
   end
 
   option :sleep, required: false, type: :numeric, default: 1.5
@@ -103,18 +71,14 @@ class Batch < Thor
   long_desc(File.read(File.join(Bundler.root, "lib", "tasks",
     "batch_ingstat.txt")))
   def ingstat(id)
-    CMT::Batch::IngestCheckRunner.call(
-      batch_id: id,
-      wait: options[:sleep],
-      checks: options[:checks],
-      rechecks: options[:rechecks],
-      autodelete: options[:dupedelete]
-    ).either(
-      ->(success) { exit(0) },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
+    report_result(
+      CMT::Batch::IngestCheckRunner.call(
+        batch_id: id,
+        wait: options[:sleep],
+        checks: options[:checks],
+        rechecks: options[:rechecks],
+        autodelete: options[:dupedelete]
+      )
     )
   end
 
@@ -122,31 +86,16 @@ class Batch < Thor
   option :autocache, required: false, type: :boolean
   option :clearcache, required: false, type: :boolean
   def map(id)
-    CMT::Batch.map(id, options[:autocache], options[:clearcache]).either(
-      ->(success) { exit(0) },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
+    report_result(CMT::Batch.map(id, options[:autocache], options[:clearcache]))
   end
 
   desc "map_warnings BATCHID",
     "List unique warnings from batch mapper_report.csv"
   option :with_counts, required: false, type: :boolean, default: false
   def map_warnings(id)
-    CMT::Batch::MapWarningsReporter.call(batch_id: id).either(
-      ->(warnings) {
-        if options[:with_counts]
-          report_warnings_with_counts(warnings)
-        else
-          report_warnings(warnings)
-        end
-      },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
+    report_result(
+      CMT::Batch::MapWarningsReporter.call(batch_id: id),
+      successlogic: report_map_warnings
     )
   end
 
@@ -154,8 +103,48 @@ class Batch < Thor
     "Splits missing term report into term source specific CSVs and creates "\
     "batches to add terms"
   def mtprep(id)
-    CMT::Batch.prep_missing_terms(id).either(
-      ->(success) {
+    report_result(
+      CMT::Batch.prep_missing_terms(id),
+      successlogic: mtprep_success
+    )
+  end
+
+  desc "rb_ingstat BATCHID",
+    "Clears the ingest-related columns for the batch in batches CSV and "\
+    "deletes any ingest reports"
+  def rb_ingstat(id)
+    report_result(CMT::Batch.rollback_ingest(id))
+  end
+
+  desc "rb_map BATCHID",
+    "Clears the mapping-related columns for the batch in batches CSV and "\
+    "deletes mapping reports"
+  def rb_map(id)
+    report_result(CMT::Batch.rollback_map(id))
+  end
+
+  desc "rb_upload BATCHID",
+    "Clears the upload-related columns for the batch in batches CSV and "\
+    "deletes upload report. NOTE this does NOT undo any ingest operations "\
+    "triggered by successfully uploaded records"
+  def rb_upload(id)
+    report_result(CMT::Batch.rollback_upload(id))
+  end
+
+  desc "show BATCHID", "Shows batch data currently in batches CSV"
+  def show(id)
+    report_result(CMT::Batch.find(id))
+  end
+
+  desc "upload BATCHID", "Uploads a batch's CS XML to S3 bucket"
+  def upload(id)
+    report_result(CMT::Batch::UploadRunner.call(batch_id: id))
+  end
+
+  no_commands do
+    def mtprep_success
+      ->(result) do
+        success = result.value!
         if success == "No missing terms batches to create"
           puts "No missing authority terms. Check ingest or batch directory "\
             "for vocabulary terms to load"
@@ -164,110 +153,38 @@ class Batch < Thor
           puts "Check ingest or batch directory for missing vocabulary terms "\
             "to load"
         end
-        exit(0)
-      },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
-  end
-
-  desc "rb_ingstat BATCHID",
-    "Clears the ingest-related columns for the batch in batches CSV and "\
-      "deletes any ingest reports"
-  def rb_ingstat(id)
-    CMT::Batch.rollback_ingest(id).either(
-      ->(success) {
-        puts success
-        exit(0)
-      },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
-  end
-
-  desc "rb_map BATCHID",
-    "Clears the mapping-related columns for the batch in batches CSV and "\
-      "deletes mapping reports"
-  def rb_map(id)
-    CMT::Batch.rollback_map(id).either(
-      ->(success) {
-        puts success
-        exit(0)
-      },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
-  end
-
-  desc "rb_upload BATCHID",
-    "Clears the upload-related columns for the batch in batches CSV and "\
-    "deletes upload report. NOTE this does NOT undo any ingest operations "\
-    "triggered by successfully uploaded records"
-  def rb_upload(id)
-    CMT::Batch.rollback_upload(id).either(
-      ->(success) {
-        puts success
-        exit(0)
-      },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
-  end
-
-  desc "show BATCHID", "Shows batch data currently in batches CSV"
-  def show(id)
-    CMT::Batch.find(id).either(
-      ->(batch) {
-        puts batch
-        exit(0)
-      },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
-  end
-
-  desc "upload BATCHID", "Uploads a batch's CS XML to S3 bucket"
-  def upload(id)
-    CMT::Batch::UploadRunner.call(batch_id: id).either(
-      ->(success) { exit(0) },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
-  end
-
-  no_commands do
-    def put_added(success)
-      puts "Successfully added batch with the following info:"
-      success.each { |key, val| puts "  #{key}: #{val}" }
+      end
     end
 
-    def report_warnings(warnings)
-      puts warnings.keys.sort
-      exit(0)
+    def put_added
+      ->(result) do
+        puts "Successfully added batch with the following info:"
+        result.value!.each { |key, val| puts "  #{key}: #{val}" }
+      end
     end
 
-    def report_warnings_with_counts(warnings)
-      max_val_length = warnings.values.map(&:to_s).max_by do |val|
-        val.length
-      end.length
+    def report_map_warnings
+      return report_warnings_with_counts if options[:with_counts]
 
-      warnings.sort_by { |_key, val| val }
-        .reverse_each do |key, val|
-          puts "#{val.to_s.rjust(max_val_length)} : #{key}"
-        end
-      exit(0)
+      report_warnings
+    end
+
+    def report_warnings
+      ->(result) { puts result.value!.keys.sort }
+    end
+
+    def report_warnings_with_counts
+      ->(result) do
+        warnings = result.value!
+        max_val_length = warnings.values.map(&:to_s).max_by do |val|
+          val.length
+        end.length
+
+        warnings.sort_by { |_key, val| val }
+          .reverse_each do |key, val|
+            puts "#{val.to_s.rjust(max_val_length)} : #{key}"
+          end
+      end
     end
   end
 end

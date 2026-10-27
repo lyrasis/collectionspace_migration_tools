@@ -5,72 +5,40 @@ require "thor"
 
 # tasks targeting S3 bucket
 class Bucket < Thor
+  include CMT::CliHelpers
   include Dry::Monads[:result]
 
   desc "empty", "deletes all objects from bucket"
   def empty
-    CMT::S3::Bucket.empty.either(
-      ->(success) {
-        puts success
-        exit(0)
-      },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
+    report_result(CMT::S3::Bucket.empty)
   end
 
   desc "objs", "returns keys of objects in bucket"
   def objs
-    CMT::S3::Bucket.objects.either(
-      ->(list) { handle_list(list) },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
+    report_result(
+      CMT::S3::Bucket.objects,
+      successlogic: ->(result) { handle_list(result.value!) }
     )
   end
 
   desc "objct", "returns keys of objects in bucket"
   def objct
-    CMT::S3::Bucket.objects(count_only: true).either(
-      ->(success) {
-        puts success
-        exit(0)
-      },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
+    report_result(CMT::S3::Bucket.objects(count_only: true))
   end
 
   desc "private", "sets policy of MEDIA INGEST bucket to private"
   def private
-    CMT::S3::BucketPolicySetter.call(policy: :private).either(
-      ->(success) {
-        puts "Success"
-        exit(0)
-      },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
+    report_result(
+      CMT::S3::BucketPolicySetter.call(policy: :private),
+      successlogic: report_success
     )
   end
 
   desc "public", "sets policy of MEDIA INGEST bucket to public for ingest"
   def public
-    CMT::S3::BucketPolicySetter.call(policy: :public).either(
-      ->(success) {
-        puts "Success"
-        exit(0)
-      },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
+    report_result(
+      CMT::S3::BucketPolicySetter.call(policy: :public),
+      successlogic: report_success
     )
   end
 
@@ -84,5 +52,7 @@ class Bucket < Thor
       end
       exit(0)
     end
+
+    def report_success = ->(_default) { puts "Success" }
   end
 end

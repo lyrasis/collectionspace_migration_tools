@@ -4,6 +4,7 @@ require "thor"
 
 # tasks for listing record types for reference
 class VocabularyTerms < Thor
+  include CMT::CliHelpers
   include Dry::Monads[:result]
 
   namespace :vt
@@ -14,36 +15,12 @@ class VocabularyTerms < Thor
     "configured, you may just give the filename. Otherwise, give the full "\
     "to file."
   def add
-    result = CMT::VocabularyTerms.add(options[:csv])
-    if result.success?
-      exit(0)
-    else
-      if result.is_a?(Exception)
-        puts result.message
-        puts result.backtrace
-      else
-        puts result.failure
-        purs result.trace
-      end
-      exit(1)
-    end
+    report_result(CMT::VocabularyTerms.add(options[:csv]))
   end
 
   desc "delete_all VOCAB", "delete all terms in given vocabulary machine name"
   def delete_all(vocab)
-    result = CMT::VocabularyTerms::VocabClearer.call(vocabname: vocab)
-    if result.success?
-      exit(0)
-    else
-      if result.is_a?(Exception)
-        puts result.message
-        puts result.backtrace
-      else
-        puts result.failure
-        purs result.trace
-      end
-      exit(1)
-    end
+    report_result(CMT::VocabularyTerms::VocabClearer.call(vocabname: vocab))
   end
 
   desc "write", "write CSV containing all vocabulary term data for the "\
@@ -59,21 +36,11 @@ class VocabularyTerms < Thor
     default: false,
     desc: "Whether to include soft-deleted vocabulary terms in the output"
   def write
-    result = CMT::VocabularyTerms::Reporter.new(
-      path: options[:outputpath],
-      include_deletes: options[:include_deletes]
-    ).call
-    if result.success?
-      exit(0)
-    else
-      if result.is_a?(Exception)
-        puts result.message
-        puts result.backtrace
-      else
-        puts result.failure
-        purs result.trace
-      end
-      exit(1)
-    end
+    report_result(
+      CMT::VocabularyTerms::Reporter.new(
+        path: options[:outputpath],
+        include_deletes: options[:include_deletes]
+      ).call
+    )
   end
 end

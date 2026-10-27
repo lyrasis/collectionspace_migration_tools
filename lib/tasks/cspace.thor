@@ -5,6 +5,7 @@ require "thor"
 
 # Miscellaneous commands on the CollectionSpace instance
 class Cspace < Thor
+  include CMT::CliHelpers
   include Dry::Monads[:result]
 
   desc "reindex", "initiate fulltext reindex of the instance"
@@ -16,16 +17,9 @@ class Cspace < Thor
     success indicates that the process has been initiated.
   LONGDESC
   def reindex
-    CMT::Cspace::Reindexer.call
-      .either(
-        ->(success) do
-          puts "Reindexing successfully initiated"
-          exit(0)
-        end,
-        ->(failure) do
-          puts failure
-          exit(1)
-        end
-      )
+    report_result(
+      CMT::Cspace::Reindexer.call,
+      successlogic: ->(_result) { puts "Reindexing successfully initiated" }
+    )
   end
 end

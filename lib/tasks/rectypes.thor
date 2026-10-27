@@ -6,6 +6,7 @@ require "thor"
 class Rectypes < Thor
   namespace :rt
 
+  include CMT::CliHelpers
   include Dry::Monads[:result]
   include Dry::Monads::Do.for(:check_is_deleteable, :do_delete_all)
 
@@ -48,13 +49,7 @@ class Rectypes < Thor
     hierarchical relationships or used in records will not be deleted.
   LONGDESC
   def delete_all(rectype)
-    do_delete_all(rectype).either(
-      ->(success) { exit(0) },
-      ->(failure) {
-        puts failure
-        exit(1)
-      }
-    )
+    report_result(do_delete_all(rectype))
   end
 
   no_commands do

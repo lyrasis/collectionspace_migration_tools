@@ -4,6 +4,7 @@ require "thor"
 
 # tasks for working with relations records
 class Rels < Thor
+  include CMT::CliHelpers
   include Dry::Monads[:result]
 
   desc "check_nhrs", "check the status of given nonhierarchical relationships"
@@ -49,13 +50,6 @@ class Rels < Thor
       puts "Created new directory: #{outpath.dirname}"
     end
 
-    CMT::Rels::NhrChecker.call(input: inpath, output: outpath)
-      .either(
-        ->(success) { exit(0) },
-        ->(failure) {
-          puts failure
-          exit(1)
-        }
-      )
+    report_result(CMT::Rels::NhrChecker.call(input: inpath, output: outpath))
   end
 end

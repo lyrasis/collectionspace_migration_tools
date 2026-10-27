@@ -5,8 +5,8 @@ require "thor"
 
 # tasks targeting CS XML payloads
 class Upload < Thor
-  include Dry::Monads[:result]
   include CMT::CliHelpers::Map
+  include Dry::Monads[:result]
 
   desc "dir DIRNAME",
     "uploads files in mapper output directory to S3 bucket for ingest"
@@ -17,7 +17,7 @@ class Upload < Thor
 
     if uploader.failure?
       puts uploader.failure
-      exit
+      exit(1)
     else
       uploader.value!.call.either(
         ->(uploader) {

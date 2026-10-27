@@ -4,19 +4,13 @@ require "thor"
 
 # tasks targeting duplicate CS entities
 class Duplicates < Thor
+  include CMT::CliHelpers
   include Dry::Monads[:result]
   include Dry::Monads::Do.for(:do_check)
 
   desc "check RECTYPE", "check rectype for duplicates"
   def check(rectype)
-    CMT::Duplicate::Checker.call(rectype: rectype)
-      .either(
-        ->(results) { exit(0) },
-        ->(failure) {
-          puts failure
-          exit(1)
-        }
-      )
+    report_result(CMT::Duplicate::Checker.call(rectype: rectype))
   end
 
   desc "check_all", "checks all rectypes for duplicates, and writes any "\
@@ -28,15 +22,9 @@ class Duplicates < Thor
   desc "delete RECTYPE",
     "deletes all duplicate records of a given mappable rectype"
   def delete(rectype)
-    CMT::Duplicate::Deleter.call(rectype: rectype).either(
-      ->(success) {
-        puts "All duplicate #{rectype} records deleted"
-        exit(0)
-      },
-      ->(failure) {
-        failure.each { |f| puts f }
-        exit(1)
-      }
+    report_result(
+      CMT::Duplicate::Deleter.call(rectype: rectype),
+      failurelogic: ->(result) { result.failure.each { |f| puts f } }
     )
   end
 end
