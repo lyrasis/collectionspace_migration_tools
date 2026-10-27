@@ -2,7 +2,7 @@
 
 require "thor"
 
-# tasks targeting one RefCache at a time
+# tasks targeting one Refcache at a time
 class Cache < Thor
   desc "clear CACHETYPE", "remove all keys from given cache (csid, refname)"
   def clear(cachetype)

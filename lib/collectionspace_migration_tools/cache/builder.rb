@@ -6,7 +6,7 @@ require "dry/monads/do"
 
 module CollectionspaceMigrationTools
   module Cache
-    # Service object to return a CollectionSpace::RefCache object
+    # Service object to return a CollectionSpace::Refcache object
     class Builder
       class << self
         def call(arg)
@@ -18,7 +18,7 @@ module CollectionspaceMigrationTools
       # @todo specify Do.for(:call)
       include Dry::Monads::Do
 
-      # @param cache_type [Symbol] the type of RefCache to return: :refname or
+      # @param cache_type [Symbol] the type of Refcache to return: :refname or
       #   :csid
       def call(cache_type)
         port = yield(get_port(cache_type))
@@ -32,10 +32,10 @@ module CollectionspaceMigrationTools
       private
 
       def build_cache(cache_config)
-        cache = CollectionSpace::RefCache.new(config: cache_config)
+        cache = CollectionSpace::Refcache.new(config: cache_config)
         return Success(cache) if cache
 
-        Failure("No CS RefCache object")
+        Failure("No CS Refcache object")
       rescue => err
         Failure(err.message)
       end
@@ -49,7 +49,7 @@ module CollectionspaceMigrationTools
         }
         return Success(config) if config
 
-        Failure("No RefCache Configuration object")
+        Failure("No Refcache Configuration object")
       rescue => err
         Failure(err.message)
       end

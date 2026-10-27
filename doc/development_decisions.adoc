@@ -24,7 +24,7 @@ Redis also offers the ability to run multiple instances at once, and to have sep
 
 === Required
 
-* Cache and retrieve RefNames and CSIDs for the same keys (i.e. the term/record fingerprint used as unique id in RefCache)
+* Cache and retrieve RefNames and CSIDs for the same keys (i.e. the term/record fingerprint used as unique id in Refcache)
 * Data in cache should be persisted when we aren't actively working on a migration
 * Work on migrations for multiple clients simultaneously, and to be able to wipe out full cache for a given client quickly without affecting other clients
 
@@ -57,4 +57,4 @@ In a number of places, I ran into people saying that using multiple databases in
 ** `csids`, running on port 6380
 * Each client/migration project's config.yml includes a required `redis_db_number` setting, which controls which database is used in the Redis instances for that client
 ** This allows all keys for a given client to efficiently be removed via `FLUSHDB` command
-* One instance of `CollectionSpace::RefCache` is set up to act as client to `refnames`, and another to act as client to `csids`. These two should be able to both be processing/populating simultaneously
+* One instance of `CollectionSpace::Refcache` is set up to act as client to `refnames`, and another to act as client to `csids`. These two should be able to both be processing/populating simultaneously
