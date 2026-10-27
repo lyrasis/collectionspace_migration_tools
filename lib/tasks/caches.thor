@@ -2,7 +2,7 @@
 
 require "thor"
 
-# tasks targeting both RefCaches
+# tasks targeting both Refcaches
 class Caches < Thor
   include CMT::CliHelpers
 

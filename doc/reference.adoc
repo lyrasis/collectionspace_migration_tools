@@ -103,7 +103,7 @@ Relations between terms can only be looked up/found by subject term CSID and obj
 
 QUERY RESULT: refname, csid
 
-RefCache get/put signature: type, subtype, displayName
+Refcache get/put signature: type, subtype, displayName
 
 === collectionobjects
 
@@ -124,7 +124,7 @@ id = the csid and displayName is the HumanID, so this is the easiest one to deal
 
 QUERY RESULT: refname
 
-RefCache get/put signature: type, nil, displayName
+Refcache get/put signature: type, nil, displayName
 
 === procedures
 
@@ -136,7 +136,7 @@ DB Query complication: the database table and the field name to get the HumanID 
 
 QUERY RESULT: refname, HumanID
 
-RefCache get/put signature: type, nil, HumanID
+Refcache get/put signature: type, nil, HumanID
 
 === relations
 

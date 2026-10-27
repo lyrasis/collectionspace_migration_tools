@@ -15,7 +15,7 @@ gem "collectionspace-mapper",
   branch: "main",
   github: "collectionspace/collectionspace-mapper"
 gem "collectionspace-refcache",
-  tag: "v1.0.0",
+  branch: "data-toolkit",
   github: "collectionspace/collectionspace-refcache"
 gem "cspace_hosted_instance_access",
   github: "dts-hosting/cspace_hosted_instance_access",
