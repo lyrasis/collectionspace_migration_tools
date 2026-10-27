@@ -8,6 +8,7 @@ module CollectionspaceMigrationTools
     # Handles parallel processing of CSID deletes
     class DeleteProcessor
       include Dry::Monads[:result]
+      include Dry::Monads::Do.for(:call)
 
       class << self
         def call(...)
@@ -28,7 +29,8 @@ module CollectionspaceMigrationTools
 
         puts "Making API calls to delete records (#{thread_ct} threads)..."
         start_time = Time.now
-        result = Parallel.map(chunks,
+        chunks = yield CMT::Csv::Chunker.call(csv_path)
+        result = Parallel.map(chunks.process,
           in_threads: thread_ct, progress: {
             format: "%t | %B | %c of %u | %a"
           }) do |chunk|
@@ -45,16 +47,6 @@ module CollectionspaceMigrationTools
       private
 
       attr_reader :deleter, :csv_path, :result_obj
-
-      def chunks
-        SmarterCSV.process(
-          csv_path, {
-            chunk_size: CMT.config.system.csv_chunk_size,
-            convert_values_to_numeric: false,
-            strings_as_keys: true
-          }
-        )
-      end
 
       def worker(chunk)
         chunk.map do |row|

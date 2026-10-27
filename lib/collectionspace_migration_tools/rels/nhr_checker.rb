@@ -40,8 +40,10 @@ module CollectionspaceMigrationTools
         report << headers
 
         client = yield CMT::Client.call
+        rows = yield CMT::Csv::Chunker.call(source, chunk_size: nil)
+        rows.process
 
-        _processed = yield process(client, report, headers)
+        _processed = yield process(client, rows, report, headers)
 
         report.close
         elap = Time.now - start_time
@@ -72,13 +74,13 @@ module CollectionspaceMigrationTools
         Failure("Input CSV must include field(s): #{required.join(", ")}")
       end
 
-      def process(client, report, headers)
+      def process(client, rows, report, headers)
         Parallel.map(
-          chunks, in_threads: threads, progress: {
+          rows, in_threads: threads, progress: {
             format: "%t | %B | %c of %u | %a"
           }
-        ) do |chunk|
-          worker(chunk, client, report, headers)
+        ) do |row|
+          check_nhr(row, client, report, headers)
         end
       rescue => err
         Failure(err)
@@ -94,10 +96,6 @@ module CollectionspaceMigrationTools
             strings_as_keys: true
           }
         )
-      end
-
-      def worker(chunk, client, report, headers)
-        chunk.each { |row| check_nhr(row, client, report, headers) }
       end
 
       def check_nhr(row, client, report, headers)

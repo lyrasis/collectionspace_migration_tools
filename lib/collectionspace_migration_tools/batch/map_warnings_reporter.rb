@@ -26,8 +26,9 @@ module CollectionspaceMigrationTools
         batch_dir = yield(CMT::Batch.dir(id))
         map_report = File.join(CMT.config.client.batch_dir, batch_dir,
           "mapper_report.csv")
-        chunked_warnings = yield(extract_warnings(map_report))
-        warnings = yield(compile_warnings(chunked_warnings))
+        chunks = yield CMT::Csv::Chunker.call(map_report)
+        processed = yield process_csv_chunks(chunks)
+        warnings = yield(compile_warnings(processed))
 
         Success(warnings)
       end
@@ -60,8 +61,8 @@ module CollectionspaceMigrationTools
         )
       end
 
-      def process_csv_chunks(path)
-        result = Parallel.map(chunks(path),
+      def process_csv_chunks(chunks)
+        result = Parallel.map(chunks.process,
           in_processes: CMT.config.system.max_processes) do |chunk|
           warning_extractor(chunk)
         end
@@ -76,6 +77,7 @@ module CollectionspaceMigrationTools
           .compact
           .map { |warnings| warnings.split(";") }
           .flatten
+          .map(&:strip)
           .group_by { |warning| warning }
           .map { |warning, occs| [warning, occs.length] }
           .to_h

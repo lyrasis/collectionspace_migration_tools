@@ -65,25 +65,16 @@ module CollectionspaceMigrationTools
       end
 
       def report
-        _processed = yield(process)
+        chunks = yield CMT::Csv::Chunker.call(source)
+        _processed = yield process(chunks)
 
         Success(path)
       end
 
-      def chunks
-        SmarterCSV.process(
-          source, {
-            chunk_size: CMT.config.system.csv_chunk_size,
-            convert_values_to_numeric: false,
-            strings_as_keys: true
-          }
-        )
-      end
-
-      def process
+      def process(chunks)
         puts "Processing/writing ingest report..."
 
-        Parallel.map(chunks,
+        Parallel.map(chunks.process,
           in_threads: CMT.config.system.max_threads) do |chunk|
           worker(chunk)
         end

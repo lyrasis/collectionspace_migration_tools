@@ -5,7 +5,7 @@ require "dry/monads/do"
 
 module CollectionspaceMigrationTools
   module Csv
-    # Handles spinning off record mapping for individual rows
+    # Checks for unknown headers, and missing required fields/values
     class BatchPreprocessor
       include Dry::Monads[:result]
       include Dry::Monads::Do.for(:call)

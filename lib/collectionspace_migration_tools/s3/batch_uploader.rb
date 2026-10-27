@@ -25,7 +25,8 @@ module CollectionspaceMigrationTools
 
       def call
         start_time = Time.now
-        _processed = yield(process)
+        chunks = yield CMT::Csv::Chunker.call(csv_path)
+        _processed = yield process(chunks)
         elap = Time.now - start_time
         puts "Upload time: #{elap}"
         puts "INFO: Results written to: #{reporter.path}"
@@ -45,20 +46,10 @@ module CollectionspaceMigrationTools
 
       attr_reader :csv_path, :threads, :uploader, :reporter
 
-      def chunks
-        SmarterCSV.process(
-          csv_path, {
-            chunk_size: CMT.config.system.csv_chunk_size,
-            convert_values_to_numeric: false,
-            strings_as_keys: true
-          }
-        )
-      end
-
-      def process
+      def process(chunks)
         puts "Uploading CS XML to S3 (#{threads} threads)..."
         Parallel.map(
-          chunks, in_threads: threads, progress: {
+          chunks.process, in_threads: threads, progress: {
             format: "%t | %B | %c of %u | %a"
           }
         ) do |chunk|
