@@ -21,7 +21,7 @@ module CollectionspaceMigrationTools
       def call
         result = File.open(path) do |file|
           CSV.parse_line(file, headers: true,
-            col_sep: CMT.config.client.csv_delimiter)
+            col_sep: CMT.config.system.csv_col_sep)
         end
 
         Success(result)

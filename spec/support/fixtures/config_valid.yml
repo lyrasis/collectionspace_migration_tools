@@ -43,9 +43,6 @@ batch_dir: batch_data
 # If you are NOT providing a custom config, comment out the following line.
 # batch_config_path: ~/code/cs/migration_tools/spec/support/fixtures/client_batch_config.json
 
-# column/field delimiter for input "CSV" files
-csv_delimiter: ","
-
 fast_import_bucket: "config_valid_bucket_name"
 s3_delimiter: "|"
 media_with_blob_upload_delay: 250
