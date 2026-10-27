@@ -30,6 +30,7 @@ module CollectionspaceMigrationTools
 
         yield deduplicate(dupe_ids, client, basepath)
 
+        puts "All duplicate #{rectype} records deleted"
         Success()
       end
 
