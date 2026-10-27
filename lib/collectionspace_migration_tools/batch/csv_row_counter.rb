@@ -32,7 +32,8 @@ module CollectionspaceMigrationTools
                          "specify value")
         end
 
-        _processed = yield(process(field, value))
+        reader = yield CMT::Csv::Chunker.call(path)
+        _processed = yield process(reader, field, value)
         Success(counts.sum)
       end
 
@@ -44,12 +45,8 @@ module CollectionspaceMigrationTools
         @counts << ct
       end
 
-      def process(field, value)
-        SmarterCSV.process(path, {
-          chunk_size: CMT.config.system.csv_chunk_size,
-          convert_values_to_numeric: false,
-          strings_as_keys: true
-        }) do |chunk|
+      def process(reader, field, value)
+        reader.each_chunk do |chunk|
           if field && value
             add_count(chunk.count do |row|
                         row.key?(field) && row[field] == value

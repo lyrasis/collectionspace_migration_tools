@@ -43,9 +43,10 @@ module CollectionspaceMigrationTools
       attr_reader :path, :mapper, :name, :type_lookup, :subtype_lookup
 
       def analyze_authority_hierarchy
-        extracted = yield(extract_authority_hierarchy_rectypes)
+        chunks = yield CMT::Csv::Chunker.call(path)
+        extracted = yield extract_authority_hierarchy_rectypes(chunks)
         combined = extracted.inject({}, :merge)
-        mapped = yield(map_authority_values(combined.keys))
+        mapped = yield map_authority_values(combined.keys)
 
         mapped << name
 
@@ -53,9 +54,10 @@ module CollectionspaceMigrationTools
       end
 
       def analyze_nonhierarchicalrelationship
-        extracted = yield(extract_nhr_rectypes)
+        chunks = yield CMT::Csv::Chunker.call(path)
+        extracted = yield extract_nhr_rectypes(chunks)
         combined = extracted.inject({}, :merge)
-        mapped = yield(map_nhr_values(combined.keys))
+        mapped = yield map_nhr_values(combined.keys)
 
         if mapped.any?(&:nil?)
           return Failure("Some records have no item_type value(s)")
@@ -74,16 +76,6 @@ module CollectionspaceMigrationTools
         result
       end
 
-      def chunks
-        SmarterCSV.process(
-          path, {
-            chunk_size: CMT.config.system.csv_chunk_size,
-            convert_values_to_numeric: false,
-            strings_as_keys: true
-          }
-        )
-      end
-
       def dependent_setup
         case name
         when "authorityhierarchy"
@@ -95,11 +87,11 @@ module CollectionspaceMigrationTools
         end
       end
 
-      def extract_authority_hierarchy_rectypes
+      def extract_authority_hierarchy_rectypes(chunks)
         puts "Analyzing authority_hierarchy source CSV for record types to "\
           "csid-cache..."
         stime = Time.now
-        res = Parallel.map(chunks,
+        res = Parallel.map(chunks.process,
           in_processes: CMT.config.system.max_processes) do |chunk|
           authority_hierarchy_worker(chunk)
         end
@@ -111,11 +103,11 @@ module CollectionspaceMigrationTools
         Failure(err.message)
       end
 
-      def extract_nhr_rectypes
+      def extract_nhr_rectypes(chunks)
         puts "Analyzing nonhierarchicalrelationship source CSV for record "\
           "types to csid-cache..."
         stime = Time.now
-        res = Parallel.map(chunks,
+        res = Parallel.map(chunks.process,
           in_processes: CMT.config.system.max_processes) do |chunk|
           nhr_worker(chunk)
         end

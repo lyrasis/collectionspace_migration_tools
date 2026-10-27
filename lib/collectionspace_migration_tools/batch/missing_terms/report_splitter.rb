@@ -38,8 +38,11 @@ module CollectionspaceMigrationTools
           batches_dir = CMT.config.client.batch_dir
           batch_dir = yield batch.get("dir")
           source = File.join(batches_dir, batch_dir, "missing_terms.csv")
+          rows = yield CMT::Csv::Chunker.call(
+            source, chunk_size: nil, strings_as_keys: false
+          )
 
-          prephash = yield prepare_by_authority(source)
+          prephash = yield prepare_by_authority(rows)
           written = yield write(prephash)
           paths = yield check_write(written)
 
@@ -59,10 +62,9 @@ module CollectionspaceMigrationTools
           Failure(result)
         end
 
-        def prepare_by_authority(source)
+        def prepare_by_authority(rows)
           by_auth = {}
-          SmarterCSV.process(source) do |rowarr|
-            row = rowarr[0]
+          rows.process.each do |row|
             vocab = row[:vocabulary]
             next if vocab.start_with?("vocabularies-")
 

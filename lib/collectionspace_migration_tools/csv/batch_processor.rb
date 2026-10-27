@@ -31,7 +31,8 @@ module CollectionspaceMigrationTools
         _preprocessed = yield(preprocess)
 
         start_time = Time.now
-        _processed = yield(process)
+        chunks = yield CMT::Csv::Chunker.call(csv_path)
+        _processed = yield process(chunks)
         elap = Time.now - start_time
         puts "Mapping time: #{elap}"
         puts "INFO: CS XML written to: #{output_dir}"
@@ -50,20 +51,10 @@ module CollectionspaceMigrationTools
           first_row: first_row, batch: self)
       end
 
-      def chunks
-        SmarterCSV.process(
-          csv_path, {
-            chunk_size: CMT.config.system.csv_chunk_size,
-            convert_values_to_numeric: false,
-            strings_as_keys: true
-          }
-        )
-      end
-
-      def process
+      def process(chunks)
         puts "Mapping CSV rows to CS XML..."
 
-        Parallel.map(chunks,
+        Parallel.map(chunks.process,
           in_processes: CMT.config.system.max_processes) do |chunk|
           worker(chunk)
         end
