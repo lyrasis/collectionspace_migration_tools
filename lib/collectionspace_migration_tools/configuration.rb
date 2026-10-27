@@ -51,6 +51,12 @@ module CollectionspaceMigrationTools
       Success(self)
     end
 
+    def redact_for_display
+      client.password = "[REDACTED]"
+      client.db_password = "[REDACTED]"
+      self
+    end
+
     private
 
     attr_reader :system_path, :redis_path, :mode

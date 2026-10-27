@@ -63,7 +63,7 @@ class Config < Thor
     CMT::Config::Switcher.call(client: name).either(
       ->(success) {
         puts "NOW USING CONFIG:"
-        pp(success)
+        pp(success.redact_for_display)
         exit(0)
       },
       ->(failure) {
@@ -89,7 +89,7 @@ class Config < Thor
 
     def verbose_config_show(config)
       if config.client
-        pp(config)
+        pp(config.redact_for_display)
         exit(0)
       else
         puts "No client config found. Try doing:\n"\
