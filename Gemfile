@@ -12,7 +12,7 @@ gem "collectionspace-client",
   branch: "main",
   github: "collectionspace/collectionspace-client"
 gem "collectionspace-mapper",
-  branch: "migration-tools",
+  branch: "main",
   github: "collectionspace/collectionspace-mapper"
 gem "collectionspace-refcache",
   tag: "v1.0.0",
