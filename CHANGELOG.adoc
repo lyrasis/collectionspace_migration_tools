@@ -26,6 +26,14 @@ The tags generally align with the spirit of https://semver.org[semantic versioni
 
 == Untagged
 
+== 7.4.2 (2026-10-27)
+
+=== Dev
+
+* Use new main branch of collectionspace-mapper (7.0.0)
+* Use data-toolkit branch of collectionspace-refcache (1.1.0)
+* Use Ruby 4.0.5
+
 == 7.4.1 (2026-10-27)
 
 This is precipitated by SmarterCSV updates which caused errors or improper parsing of the CSV format emitted by default by `kiba-extend` projects.
