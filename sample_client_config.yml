@@ -119,9 +119,6 @@ ingest_dir: ingest
 # here.
 # clear_cache_before_refresh: true
 
-# Column/field delimiter for input "CSV" files
-# csv_delimiter: ","
-
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 # Ingest behavior
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=

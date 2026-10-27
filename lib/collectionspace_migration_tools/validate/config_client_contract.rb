@@ -24,7 +24,6 @@ module CollectionspaceMigrationTools
         optional(:batch_config_path).maybe(:string)
         optional(:auto_refresh_cache_before_mapping).filled(:bool)
         optional(:clear_cache_before_refresh).filled(:bool)
-        required(:csv_delimiter).filled(:string)
         optional(:fast_import_bucket).filled(:string)
         required(:s3_delimiter).filled(:string)
         required(:max_media_upload_threads).filled(:integer)

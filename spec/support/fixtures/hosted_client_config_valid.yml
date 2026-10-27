@@ -4,7 +4,6 @@ redis_db_number: 3
 profile: anthro
 base_dir: fixturesdir/data
 batch_dir: batch_data
-csv_delimiter: ","
 fast_import_bucket: "bucket_name"
 s3_delimiter: "|"
 media_with_blob_upload_delay: 250
