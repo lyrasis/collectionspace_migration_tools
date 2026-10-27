@@ -26,6 +26,31 @@ The tags generally align with the spirit of https://semver.org[semantic versioni
 
 == Untagged
 
+== 7.4.1 (2026-10-27)
+
+This is precipitated by SmarterCSV updates which caused errors or improper parsing of the CSV format emitted by default by `kiba-extend` projects.
+In particular:
+
+* Single-column CSVs with quoted headings failed with an error that no col_sep could be found.
+Setting `strip_chars_from_headers` to `/"/` fixes this.
+* Defaulting to auto-detection of CSV dialect produced general mayhem as expected.
+This is solved by hard-coding `col_sep`, `row_sep`, `quote_char` and `quote_escaping` options.
+* Correctly quoted cell values containing line feed characters began being broken into separate rows.
+Setting `quote_boundary` to `:legacy` (hey, it USED to just work) fixes this.
+
+=== Changes
+
+* Passwords are obfuscated in STDOUT output of `thor config show -v` or `thor config switch`
+
+=== Dev
+
+* Move rarely used client `csv_delimiter` setting to system `csv_col_sep` setting
+* Add other CSV dialect settings now needed for SmarterCSV to act right to system config.
+The defaults are set for the expected processing of CSVs produced with `kiba-extend` defaults, so the changes should be mostly invisible.
+* Added a CLI Helper `report_result` method to report `Dry::Monads::Result` outcomes, and refactored commands to use this method.
+This should have done a long time ago as the `#either`-based `Result` handling code had gotten very repetitive.
+This needed to be done now because we are now relying on `Dry::Monads::Failure.trace`, which can't be called on the unwrapped `failure` inside an `either` Proc.
+
 == 7.4.0 (2026-10-20)
 
 === Added
