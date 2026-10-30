@@ -26,6 +26,10 @@ The tags generally align with the spirit of https://semver.org[semantic versioni
 
 == Untagged
 
+=== Dev
+
+* Use master branch of collectionspace-refcache, now that `data-toolkit` branch is merged.
+
 == 7.4.2 (2026-10-27)
 
 === Dev
