@@ -29,8 +29,8 @@ GIT
 
 GIT
   remote: https://github.com/collectionspace/collectionspace-refcache.git
-  revision: 5df5bcd5544d131a73ff5020f63461605d834941
-  branch: data-toolkit
+  revision: 3b504d3ea314fbc3245aac2c13e54087f556d0be
+  branch: master
   specs:
     collectionspace-refcache (1.0.1)
       redis (~> 4.2.1)
